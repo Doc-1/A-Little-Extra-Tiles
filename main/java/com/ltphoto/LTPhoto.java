@@ -43,7 +43,7 @@ public class LTPhoto
 	
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-    	GuiHandler.registerGuiHandler("lt-import", new CustomGuiHandler() {
+    	GuiHandler.registerGuiHandler("photo-import", new CustomGuiHandler() {
 			
 			@Override
 			@SideOnly(Side.CLIENT)
