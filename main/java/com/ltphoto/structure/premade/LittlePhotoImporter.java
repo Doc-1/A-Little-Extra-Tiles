@@ -35,7 +35,7 @@ public class LittlePhotoImporter extends LittleStructurePremade {
 	@Override
 	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
 		if (!worldIn.isRemote)
-			LGuiHandler.openGui("lt-import", new NBTTagCompound(), playerIn, getMainTile());
+			LGuiHandler.openGui("photo-import", new NBTTagCompound(), playerIn, getMainTile());
 		return true;
 	}
 	
