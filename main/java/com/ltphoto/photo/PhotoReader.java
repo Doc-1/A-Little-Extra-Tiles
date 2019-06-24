@@ -44,7 +44,16 @@ public class PhotoReader {
 		ItemStack stack = null; // create empty advanced recipe itemstack
 		String bBox = "";
 		String output = "";
+		
+		LittleGridContext context = LittleGridContext.get(); // the context you want to use, LittleGridContext.get() returns the default one (which is 16 in most cases)
+		List<LittleTilePreview> tiles = new ArrayList<>();
 
+		stack = new ItemStack(LittleTiles.recipeAdvanced);
+		LittlePreviews previews = new LittlePreviews(context);
+		
+		
+		
+		
 		for(; width>x; x++) {
 
 			if(pixelCount == area) {
@@ -61,33 +70,28 @@ public class PhotoReader {
 			System.out.println(x+" "+z);
 			System.out.println(r+" "+g+" "+b);
 			
+			if (a > 0) { // no need to add transparent tiles
+				int color = ColorUtils.RGBAToInt(r, g, b, a); // Converts the rgba to color
+				LittleTileBlockColored tile = new LittleTileBlockColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
+				tile.box = new LittleTileBox(new LittleTileVec(x, 1, z));
+				tiles.add(tile.getPreviewTile());
+			}
+			
+			BasicCombiner.combinePreviews(tiles); // minimize tiles used
+			
+			for (LittleTilePreview tile : tiles) {
+				previews.addWithoutCheckingPreview(tile);
+			}
+			LittleTilePreview.savePreview(previews, stack); // save tiles to itemstacks
 			
 			//Goes down to the next line of pixels
+			
 			if(x == (width-1)) {
 				z += 1;
 				x = -1;
 			}
 		}
-		LittleGridContext context = LittleGridContext.get(); // the context you want to use, LittleGridContext.get() returns the default one (which is 16 in most cases)
-		List<LittleTilePreview> tiles = new ArrayList<>();
-
-		if (a > 0) { // no need to add transparent tiles
-			int color = ColorUtils.RGBAToInt(r, g, b, a); // Converts the rgba to color
-			LittleTileBlockColored tile = new LittleTileBlockColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
-			tile.box = new LittleTileBox(new LittleTileVec(x+1, 1, z+1));
-			tiles.add(tile.getPreviewTile());
-		}
-		
-		BasicCombiner.combinePreviews(tiles); // minimize tiles used
-		stack = new ItemStack(LittleTiles.recipeAdvanced);
-		LittlePreviews previews = new LittlePreviews(context);
-		
-		for (LittleTilePreview tile : tiles) {
-			previews.addWithoutCheckingPreview(tile);
-		}
-		LittleTilePreview.savePreview(previews, stack); // save tiles to itemstacks
-		
-		SubContainerPhotoImport.setItemStack(stack);
+		System.out.println(stack.getTagCompound());
 	}
 
 }
