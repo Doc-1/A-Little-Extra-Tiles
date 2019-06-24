@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -22,14 +23,20 @@ import com.creativemd.littletiles.common.items.ItemPremadeStructure;
 import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.gui.SubGuiPhotoImport;
+import com.ltphoto.server.LTPhotoServer;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
 
 @Mod(modid = LTPhoto.MODID, name = LTPhoto.NAME, version = LTPhoto.VERSION)
 public class LTPhoto
 {
+	
+	@SidedProxy(clientSide = "com.ltphoto.client.LTPhotoClient", serverSide = "com.ltphoto.server.LTPhotoServer")
+	public static LTPhotoServer proxy;
+	
     public static final String MODID = "ltphoto";
     public static final String NAME = "LT Photo Converter";
     public static final String VERSION = "1.0";
+    
 	
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {

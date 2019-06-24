@@ -17,6 +17,8 @@ import com.ltphoto.photo.PhotoReader;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 
 
@@ -49,10 +51,15 @@ public class SubGuiPhotoImport extends SubGui {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				ItemStack stack = new ItemStack(LittleTiles.chisel);
-				SubContainerPhotoImport.setItemStack(stack);
-				sendPacketToServer(new NBTTagCompound());
-				// nbt.setString("text", textfield.text);
+				try {
+					NBTTagCompound nbt = PhotoReader.printPhoto(textfield.text);
+					sendPacketToServer(JsonToNBT.getTagFromJson(nbt.toString()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				catch (NBTException e) {
+					e.printStackTrace();
+				}
 				
 			}
 		});

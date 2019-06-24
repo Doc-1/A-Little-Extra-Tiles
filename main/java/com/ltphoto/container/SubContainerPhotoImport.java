@@ -3,6 +3,9 @@ package com.ltphoto.container;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.utils.mc.WorldUtils;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.common.items.ItemRecipe;
+import com.creativemd.littletiles.common.items.ItemRecipeAdvanced;
+import com.creativemd.littletiles.common.utils.converting.StructureStringUtils;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryBasic;
@@ -26,14 +29,22 @@ public class SubContainerPhotoImport extends SubContainer {
 	
 	@Override
 	public void onPacketReceive(NBTTagCompound nbt) {
-		itemStack.setCount(1);
-		slot.setInventorySlotContents(0, itemStack);
+		ItemStack stack = slot.getStackInSlot(0);
+		if (stack.getItem() instanceof ItemRecipe || stack.getItem() instanceof ItemRecipeAdvanced || (getPlayer().capabilities.isCreativeMode && stack.isEmpty())) {
+			ItemStack newStack = StructureStringUtils.importStructure(nbt);
+			if (stack.getItem() instanceof ItemRecipe) {
+				stack.setTagCompound(newStack.getTagCompound());
+				newStack = stack;
+			} else {
+				if (getPlayer().isCreative() && stack.isEmpty())
+					newStack.setCount(1);
+				else
+					newStack.setCount(stack.getCount());
+			}
+			slot.setInventorySlotContents(0, newStack);
+		}
 	}
-	
-	public static void setItemStack(ItemStack stack) {
-		itemStack = stack;
-	}
-	
+
 	@Override
 	public void onClosed() {
 		super.onClosed();
