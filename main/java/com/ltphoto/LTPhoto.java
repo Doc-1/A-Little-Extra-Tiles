@@ -30,19 +30,10 @@ public class LTPhoto
     public static final String MODID = "ltphoto";
     public static final String NAME = "LT Photo Converter";
     public static final String VERSION = "1.0";
-    
-    public static CreativeTabs lTPhotoTab = new CreativeTabs("littletiles") {
-		
-		@Override
-		public ItemStack getTabIconItem() {
-			return new ItemStack(LittleTiles.chisel);
-		}
-	};
-	
-	public static Item premade;
 	
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+
     	GuiHandler.registerGuiHandler("photo-import", new CustomGuiHandler() {
 			
 			@Override
@@ -57,13 +48,10 @@ public class LTPhoto
 			}
 		});
 
-		premade = new ItemPremadeStructure().setUnlocalizedName("LTPremade").setRegistryName("premade");
-		
-    	LittleStructurePremade.registerPremadeStructureType("photoimporter", LTPhoto.MODID, LittlePhotoImporter.class);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-    	
+    	LittleStructurePremade.registerPremadeStructureType("photoimporter", LTPhoto.MODID, LittlePhotoImporter.class);
     }
 }

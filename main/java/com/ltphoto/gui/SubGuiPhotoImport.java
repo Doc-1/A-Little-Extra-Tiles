@@ -11,19 +11,22 @@ import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.container.SlotChangeEvent;
+import com.creativemd.littletiles.LittleTiles;
+import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.photo.PhotoReader;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 
 public class SubGuiPhotoImport extends SubGui {
 	
 	public GuiTextfield textfield;
-	public GuiTextfield textfield2;
 	
 	@Override
 	public void createControls() {
 		textfield = new GuiTextfield("file", "", 10, 30, 150, 14);
-		textfield2 = new GuiTextfield("model", "", 50, 30, 150, 14);
 		controls.add(textfield);
 		controls.add(new GuiButton("Paste", 10, 52) {
 			
@@ -46,12 +49,9 @@ public class SubGuiPhotoImport extends SubGui {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				try {
-					PhotoReader.readPhoto(textfield.text);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
+				ItemStack stack = new ItemStack(LittleTiles.chisel);
+				SubContainerPhotoImport.setItemStack(stack);
+				sendPacketToServer(new NBTTagCompound());
 				// nbt.setString("text", textfield.text);
 				
 			}
