@@ -35,10 +35,15 @@ public class PhotoReader {
 	private static int b = 0;
 	private static int a = 0;
 	
-	public static NBTTagCompound printPhoto(String fileName) throws IOException {
+	//Grid size of the structure 16 is default
+	private static int gridSize = 16;
+	
+	public static NBTTagCompound photoToNBT(String fileName) throws IOException {
+		//Set image
 		File file = new File(fileName);
 		BufferedImage image = ImageIO.read(file);
 		
+		//Image variables
 		int width = image.getWidth();
 		int height = image.getHeight();
 		int area = width * height;
@@ -46,12 +51,10 @@ public class PhotoReader {
 		x = 0;
 		z = 0;
 		
-		ItemStack stack = null; 
-		String bBox = "";
-		String output = "";
+		ItemStack stack = null;
 		
 		// the context you want to use, LittleGridContext.get() returns the default one (which is 16 in most cases)
-		LittleGridContext context = LittleGridContext.get();
+		LittleGridContext context = LittleGridContext.get(32);
 		LittlePreviews previews = new LittlePreviews(context);
 		
 		for(; width>x; x++) {
@@ -63,40 +66,53 @@ public class PhotoReader {
 
 			// Getting pixel color by position x and y 
 			Color c = new Color(image.getRGB(x,z));
-			a =c.getAlpha();
+			a = c.getAlpha();
 			r = c.getRed();
 			g  = c.getGreen();
 			b  = c.getBlue();
-			System.out.println(x+" "+z);
-			System.out.println(r+" "+g+" "+b+" "+a);
 			
 			List<LittleTilePreview> tiles = new ArrayList<>();
-
 			stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
 			
 			if (a > 0) { // no need to add transparent tiles
 				int color = ColorUtils.RGBAToInt(r, g, b, a); // Converts the rgba to color
 				LittleTileBlockColored tile = new LittleTileBlockColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
-				tile.box = new LittleTileBox(new LittleTileVec(x, 1, z));
+				tile.box = new LittleTileBox(new LittleTileVec(x, 0, z));
 				tiles.add(tile.getPreviewTile());
 			}
 			
 			BasicCombiner.combinePreviews(tiles); // minimize tiles used
 			
-			//I think this is the cause for the repeating tiles
 			for (LittleTilePreview tile : tiles) {
 				previews.addWithoutCheckingPreview(tile);
 			}
 			LittleTilePreview.savePreview(previews, stack); // save tiles to itemstacks
-			
-			if(x == (width-1)) {
-				z += 1;
-				x = -1;
-			}
+			nextRow(width);
 		}
 		System.out.println(stack.getTagCompound());
 		
 		return stack.getTagCompound();
 	}
+	
+	public static BufferedImage nbtToPhoto() {
+		
+		return null;
+	}
+	
+	private static void nextRow(int wid) {
+		if(x == (wid-1)) {
+			z += 1;
+			x = -1;
+		}
+	}
+	
+	private static BufferedImage resize(BufferedImage img, int height, int width) {
+        Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resized.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return resized;
+    }
 
 }
