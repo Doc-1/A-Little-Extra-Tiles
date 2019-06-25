@@ -7,11 +7,19 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.IOException;
 
+import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.container.SlotChangeEvent;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.common.items.ItemMultiTiles;
+import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
+import com.creativemd.littletiles.common.utils.selection.mode.SelectionMode.SelectionResult;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.photo.PhotoReader;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
@@ -25,11 +33,18 @@ import net.minecraft.nbt.NBTTagCompound;
 public class SubGuiPhotoImport extends SubGui {
 	
 	public GuiTextfield textfield;
-	
+
 	@Override
 	public void createControls() {
 		textfield = new GuiTextfield("file", "", 10, 30, 150, 14);
 		controls.add(textfield);
+		
+		
+		GuiComboBox contextBox = new GuiComboBox("grid", 128, 0, 15, LittleGridContext.getNames());
+		contextBox.select(ItemMultiTiles.currentContext.size + "");
+		controls.add(contextBox);
+		
+		
 		controls.add(new GuiButton("Paste", 10, 52) {
 			
 			@Override
@@ -47,23 +62,24 @@ public class SubGuiPhotoImport extends SubGui {
 			}
 		});
 		
-		controls.add(new GuiButton("Scan", 128, 52) {
+		controls.add(new GuiButton("Print", 128, 52) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
+				boolean rememberStructure = ((GuiCheckBox) get("remember_structure")).value;
+				
 				try {
-					NBTTagCompound nbt = PhotoReader.printPhoto(textfield.text);
-					sendPacketToServer(JsonToNBT.getTagFromJson(nbt.toString()));
+					NBTTagCompound nbt = PhotoReader.photoToNBT(textfield.text);
+					sendPacketToServer(nbt);
 				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				catch (NBTException e) {
 					e.printStackTrace();
 				}
 				
 			}
 		});
+
 	}
+	
 	
 	@CustomEventSubscribe
 	public void onSlotChange(SlotChangeEvent event) {
