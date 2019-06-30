@@ -12,10 +12,10 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SubContainerPhotoImport extends SubContainer {
+public class SubContainerBlock extends SubContainer {
 	
 	public final InventoryBasic slot = new InventoryBasic("slot", false, 1);
-	public SubContainerPhotoImport(EntityPlayer player) {
+	public SubContainerBlock(EntityPlayer player) {
 		super(player);
 	}
 	
