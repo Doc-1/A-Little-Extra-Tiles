@@ -28,6 +28,7 @@ import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.common.items.ItemPremadeStructure;
 import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
+import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerBlock;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.gui.SubGuiBlock;
@@ -49,7 +50,7 @@ public class LTPhoto
 	
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
-
+    	Config.checkConfigFile();
     	GuiHandler.registerGuiHandler("test", new CustomGuiHandler() {
 			
 			@Override

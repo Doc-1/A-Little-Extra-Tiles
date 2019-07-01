@@ -28,6 +28,7 @@ import com.creativemd.littletiles.common.tiles.preview.LittlePreviews;
 import com.creativemd.littletiles.common.tiles.preview.LittleTilePreview;
 import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
 import com.google.common.base.Charsets;
+import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerPhotoImport;
 
 import net.minecraft.item.ItemStack;
@@ -53,7 +54,8 @@ public class PhotoReader {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
-		System.out.println(input);
+		int maxPixelAmount = Config.maxPixelAmount;
+		
 		if(isBlock) {
 			in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
 		}else if(uploadOption) {
@@ -81,7 +83,7 @@ public class PhotoReader {
 					int width = image.getWidth();
 					int height = image.getHeight();
 					
-					if(!((width*height)>16384)) {
+					if(!((width*height)>maxPixelAmount)) {
 						LittleGridContext context = LittleGridContext.get(grid);
 						List<LittleTilePreview> tiles = new ArrayList<>();
 						int expected = image.getWidth() * image.getHeight();

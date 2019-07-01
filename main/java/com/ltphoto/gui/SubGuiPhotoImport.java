@@ -22,6 +22,7 @@ import com.creativemd.littletiles.common.items.ItemMultiTiles;
 import com.creativemd.littletiles.common.tiles.LittleTile;
 import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
 import com.creativemd.littletiles.common.utils.selection.mode.SelectionMode.SelectionResult;
+import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.photo.PhotoReader;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
@@ -32,7 +33,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-
 
 public class SubGuiPhotoImport extends SubGui {
 	
@@ -64,12 +64,8 @@ public class SubGuiPhotoImport extends SubGui {
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
 				playSound(SoundEvents.UI_BUTTON_CLICK);
-				this.value = !value;
-				if(this.value) {
-					useURL.value = false;
-				}else {
-					useURL.value = true;
-				}
+				useFile.value = true;
+				useURL.value = false;
 				raiseEvent(new GuiControlChangedEvent(this));
 				return true;
 			}
@@ -80,17 +76,15 @@ public class SubGuiPhotoImport extends SubGui {
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
 				playSound(SoundEvents.UI_BUTTON_CLICK);
-				this.value = !value;
-				if(this.value) {
-					useFile.value = false;
-				}else {
-					useFile.value = true;
-				}
+				useFile.value = false;
+				useURL.value = true;
 				raiseEvent(new GuiControlChangedEvent(this));
 				return true;
 			}
 		});
-		
+		if(!Config.allowURL) {
+			useURL.enabled = false;
+		}
 		
 		controls.add(new GuiButton("Paste", 10, 60) {
 			
