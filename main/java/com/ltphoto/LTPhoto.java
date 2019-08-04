@@ -4,16 +4,19 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,17 +34,20 @@ import com.creativemd.littletiles.common.structure.premade.LittleStructurePremad
 import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerBlock;
 import com.ltphoto.container.SubContainerPhotoImport;
+import com.ltphoto.container.SubContainerTypeWriter;
 import com.ltphoto.gui.SubGuiBlock;
 import com.ltphoto.gui.SubGuiPhotoImport;
+import com.ltphoto.gui.SubGuiTypeWriter;
 import com.ltphoto.server.LTPhotoServer;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
+import com.ltphoto.structure.premade.LittleTypeWriter;
 
 @Mod(modid = LTPhoto.MODID, name = LTPhoto.NAME, version = LTPhoto.VERSION)
 public class LTPhoto
 {
 	
 	@SidedProxy(clientSide = "com.ltphoto.client.LTPhotoClient", serverSide = "com.ltphoto.server.LTPhotoServer")
-	public static LTPhotoServer proxy;
+	public static CommonProxy proxy;
 	
     public static final String MODID = "ltphoto";
     public static final String NAME = "LT Photo Converter";
@@ -50,8 +56,8 @@ public class LTPhoto
 	
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
-    	Config.checkConfigFile();
-    	GuiHandler.registerGuiHandler("test", new CustomGuiHandler() {
+    	proxy.preInit(event);
+    	GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			
 			@Override
 			@SideOnly(Side.CLIENT)
@@ -78,6 +84,20 @@ public class LTPhoto
 				return new SubContainerPhotoImport(player);
 			}
 		});
+    	
+    	GuiHandler.registerGuiHandler("type-writter", new CustomGuiHandler() {
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubGuiTypeWriter();
+			}
+			
+			@Override
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubContainerTypeWriter(player);
+			}
+		});
 
     }
     
@@ -85,15 +105,21 @@ public class LTPhoto
     @EventHandler
     public void Init(FMLInitializationEvent event) {
     	LittleStructurePremade.registerPremadeStructureType("photoimporter", LTPhoto.MODID, LittlePhotoImporter.class);
+    	LittleStructurePremade.registerPremadeStructureType("typewriter", LTPhoto.MODID, LittleTypeWriter.class);
 
     	GameRegistry.addShapedRecipe(new ResourceLocation("craft_photo_importer"), new ResourceLocation("ltphoto"),
     			LittleStructurePremade.getPremadeStack("photoimporter"), new Object[]{
+    					"XXX",
     					"XZX",
     					"XYX",
-    					"XXX",
     					'X', Items.IRON_INGOT,
     					'Y', LittleTiles.recipeAdvanced,
-    					'Z', Items.PAPER
+    					'Z', Blocks.SAPLING,
     	});
+    }
+    
+    @EventHandler
+    public void PostInit(FMLPostInitializationEvent event) {
+    	proxy.postInit(event);
     }
 }

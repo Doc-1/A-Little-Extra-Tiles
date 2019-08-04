@@ -65,20 +65,7 @@ public class GuiStack extends GuiStackSelectorAll{
 			facing = EnumFacing.NORTH;
 			break;
 		}
-		
-		Block block = Block.getBlockFromItem(itemStack.getItem());
-		Item item = itemStack.getItem();
-		int damage = item.getDamage(itemStack);
-		int meta = item.getMetadata(damage);
-		IBlockState state = block.getStateFromMeta(meta);
-		
-		ResourceLocation reg = block.getRegistryName();
-		ResourceLocation location = new ResourceLocation(reg.toString());
-		Minecraft minecraft = Minecraft.getMinecraft();
-		BlockRendererDispatcher ren = minecraft.getBlockRendererDispatcher();
-		System.out.println(facing);
-		texture = ren.getModelForState(state).getQuads(state, facing, 0).get(0).getSprite().toString();
-		
+		getTexture(itemStack);
 	}
 	
 	public EnumFacing getEnumFacing() {
@@ -92,24 +79,28 @@ public class GuiStack extends GuiStackSelectorAll{
 			if(facing == null) {
 				facing = EnumFacing.NORTH;
 			}
-			Block block = Block.getBlockFromItem(itemStack.getItem());
-			Item item = itemStack.getItem();
-			int damage = item.getDamage(itemStack);
-			int meta = item.getMetadata(damage);
-			IBlockState state = block.getStateFromMeta(meta);
-			
-			ResourceLocation reg = block.getRegistryName();
-			ResourceLocation location = new ResourceLocation(reg.toString());
-			Minecraft minecraft = Minecraft.getMinecraft();
-			BlockRendererDispatcher ren = minecraft.getBlockRendererDispatcher();
-			System.out.println(facing);
-			texture = ren.getModelForState(state).getQuads(state, facing, 0).get(0).getSprite().toString();
-			
+			getTexture(itemStack);
 			caption = stack.getDisplayName();
 			this.selected = stack;
 			raiseEvent(new GuiControlChangedEvent(this));
 			return true;
 		}
 		return false;
+	}
+	
+	public String getTexture(ItemStack stack) {
+		Block block = Block.getBlockFromItem(stack.getItem());
+		Item item = stack.getItem();
+		int damage = item.getDamage(stack);
+		int meta = item.getMetadata(damage);
+		IBlockState state = block.getStateFromMeta(meta);
+		
+		ResourceLocation reg = block.getRegistryName();
+		ResourceLocation location = new ResourceLocation(reg.toString());
+		Minecraft minecraft = Minecraft.getMinecraft();
+		BlockRendererDispatcher ren = minecraft.getBlockRendererDispatcher();
+		System.out.println(facing);
+		texture = ren.getModelForState(state).getQuads(state, facing, 0).get(0).getSprite().toString();
+		return texture;
 	}
 }

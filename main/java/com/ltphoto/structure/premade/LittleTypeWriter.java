@@ -47,10 +47,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
-public class LittlePhotoImporter extends LittleStructurePremade {
+public class LittleTypeWriter extends LittleStructurePremade {
 
 	
-	public LittlePhotoImporter(LittleStructureType type) {
+	public LittleTypeWriter(LittleStructureType type) {
 		super(type);
 	}
 	
@@ -65,7 +65,7 @@ public class LittlePhotoImporter extends LittleStructurePremade {
 	@Override
 	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
 		if (!worldIn.isRemote) {
-			LittleGuiHandler.openGui("photo-import", new NBTTagCompound(), playerIn, getMainTile());
+			LittleGuiHandler.openGui("type-writter", new NBTTagCompound(), playerIn, getMainTile());
 		}
 		return true;
 	}

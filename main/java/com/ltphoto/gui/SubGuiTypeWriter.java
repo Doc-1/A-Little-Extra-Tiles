@@ -1,29 +1,43 @@
 package com.ltphoto.gui;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.lwjgl.util.Color;
 
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.common.config.SpecialServerConfig;
+import com.creativemd.littletiles.common.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.gui.handler.LittleGuiHandler;
+import com.creativemd.littletiles.common.items.ItemLittleChisel;
 import com.creativemd.littletiles.common.items.ItemMultiTiles;
 import com.creativemd.littletiles.common.tiles.LittleTile;
+import com.creativemd.littletiles.common.tiles.preview.LittleTilePreview;
 import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
 import com.creativemd.littletiles.common.utils.selection.mode.SelectionMode.SelectionResult;
+import com.creativemd.littletiles.common.utils.shape.DragShape;
 import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerPhotoImport;
+import com.ltphoto.font.FontReader;
 import com.ltphoto.photo.PhotoReader;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
@@ -34,60 +48,47 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import scala.actors.threadpool.Arrays;
 
-public class SubGuiPhotoImport extends SubGui {
+public class SubGuiTypeWriter extends SubGui {
 	
 	public GuiTextfield textfield;
-	public GuiCheckBox useFile = null;
-	public GuiCheckBox useURL = null;
-	public GuiCheckBox isRescale = null;
+	public List<String> names;
+
+	public int BLACK = ColorUtils.BLACK;
+	
+	public List<String> getFonts() {
+		names = new ArrayList<>();
+		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		for (int i = 0; i < fonts.length; i++) {
+			names.add(fonts[i]);
+		}
+		return names;
+	}
 	
 	@Override
 	public void createControls() {
-		textfield = new GuiTextfield("file", "", 10, 26, 150, 14);
-		controls.add(textfield);
 		
-		GuiTextfield xScale = new GuiTextfield("xScale", "64", 115, 60, 20, 14);
-		controls.add(xScale);
+		Color color = ColorUtils.IntToRGBA(BLACK);
+		controls.add(new GuiColorPicker("picker", 0, 40, color, SpecialServerConfig.isTransparencyEnabled(getPlayer()), SpecialServerConfig.getMinimumTransparency(getPlayer())));
 		
-		GuiTextfield yScale = new GuiTextfield("yScale", "64", 145, 60, 20, 14);
-		controls.add(yScale);
-
-		isRescale = new GuiCheckBox("isRescale", translate("Resize Image?         X      Y"), 8, 43, false);
-		controls.add(isRescale);
-		
-		GuiComboBox contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
+		GuiComboBox contextBox = new GuiComboBox("grid", 155, 20, 15, LittleGridContext.getNames());
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
 		controls.add(contextBox);
 		
-		controls.add(useFile = new GuiCheckBox("useFile", translate("Use file path"), 40, -5, true) {
+		textfield = new GuiTextfield("input", "", 20, 20, 100, 14);
+		controls.add(textfield);
 		
-			@Override
-			public boolean mousePressed(int posX, int posY, int button) {
-				playSound(SoundEvents.UI_BUTTON_CLICK);
-				useFile.value = true;
-				useURL.value = false;
-				raiseEvent(new GuiControlChangedEvent(this));
-				return true;
-			}
-		});
+		GuiTextfield fontSize = new GuiTextfield("fontSize", "48", 128, 20, 20, 14);
+		controls.add(fontSize);
 		
-		controls.add(useURL = new GuiCheckBox("useURL", translate("Use a URL"), 40, 10, false) {
-			
-			@Override
-			public boolean mousePressed(int posX, int posY, int button) {
-				playSound(SoundEvents.UI_BUTTON_CLICK);
-				useFile.value = false;
-				useURL.value = true;
-				raiseEvent(new GuiControlChangedEvent(this));
-				return true;
-			}
-		});
-		if(!Config.isAllowURL()) {
-			useURL.enabled = false;
-		}
+		getFonts();
+		GuiComboBox fontType = new GuiComboBox("fontType", 20, 0, 150, names);
+		int index = names.indexOf(fontType.caption);
+		fontType.select(names.get(index));
+		controls.add(fontType);
 		
-		controls.add(new GuiButton("Paste", 10, 60) {
+		controls.add(new GuiButton("Paste", 142, 62) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
@@ -104,38 +105,32 @@ public class SubGuiPhotoImport extends SubGui {
 			}
 		});
 		
-		controls.add(new GuiButton("Print", 50, 60) {
+		controls.add(new GuiButton("Print ", 142, 41) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				if(isRescale.value) {
-					GuiTextfield yScale = (GuiTextfield) get("yScale");
-					int resizeY = Integer.parseInt(yScale.text);
-					GuiTextfield xScale = (GuiTextfield) get("xScale");
-					int resizeX = Integer.parseInt(xScale.text);
-					PhotoReader.setScale(resizeX, resizeY);
-				}
 				
-				GuiComboBox contextBox = (GuiComboBox) get("grid");
-				int grid = Integer.parseInt(contextBox.caption);
+				GuiColorPicker picker = (GuiColorPicker) get("picker");
+				int color = ColorUtils.RGBAToInt(picker.color);
+				
+				GuiTextfield contextField = (GuiTextfield) get("fontSize");
+				int fontSize = Integer.parseInt(contextField.text);
+					
+				GuiComboBox contextBox = (GuiComboBox) get("fontType");
+				String font = contextBox.caption;
+				
+				GuiComboBox contextBox_2 = (GuiComboBox) get("grid");
+				int grid = Integer.parseInt(contextBox_2.caption);
+				
 				try {
-					NBTTagCompound nbt = PhotoReader.photoToNBT(textfield.text, useURL.value, grid);
+					NBTTagCompound nbt = FontReader.photoToNBT(textfield.text, font, grid, fontSize, color);
 					sendPacketToServer(nbt);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				
 			}
 		});
-		
-		controls.add(new GuiButton("-->", 145, 0) {
-			
-			@Override
-			public void onClicked(int x, int y, int button) {
-				closeGui();
-				GuiHandler.openGui("block",  new NBTTagCompound(), getPlayer());
-			}
-
-		});
-
 	}
+	
 }

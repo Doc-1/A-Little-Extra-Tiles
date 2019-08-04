@@ -6,7 +6,7 @@ public class AtlasSpriteToPath {
 
 	private String modid;
 	private String path;
-	
+
 	public AtlasSpriteToPath(String texture) {
 		String[] pathArray = texture.split("'");
 		pathArray = pathArray[1].split(":");

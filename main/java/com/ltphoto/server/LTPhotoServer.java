@@ -1,16 +1,7 @@
 package com.ltphoto.server;
 
-public class LTPhotoServer {
+import com.ltphoto.CommonProxy;
 
-	public void loadSidePre() {
-		
-	}
-	
-	public void loadSide() {
-		
-	}
-	
-	public void loadSidePost() {
-		
-	}
+public class LTPhotoServer extends CommonProxy{
+
 }
