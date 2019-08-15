@@ -20,35 +20,11 @@ public class Config {
 
     private static final String CATEGORY_GENERAL = "general";
 
-    private static boolean allowURL = true;
-    private static String blockedSites = "www.url.com,www.url2.com";
-    private static int maxPixelAmount = 9604;
-    private static int colorAccuracy = 0;
-    private static int maxPixelText = 250000;
-    public static void readConfig() {
-        Configuration cfg = CommonProxy.config;
-        try {
-            cfg.load();
-            initGeneralConfig(cfg);
-        } catch (Exception e1) {
-        
-        } finally {
-            if (cfg.hasChanged()) {
-                cfg.save();
-            }
-        }
-    }
-
-    private static void initGeneralConfig(Configuration cfg) {
-        cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General configuration");
-        // cfg.getBoolean() will get the value in the config if it is already specified there. If not it will create the value.
-        allowURL = cfg.getBoolean("allowURL", CATEGORY_GENERAL, allowURL, "Set to false if you do not want people to import from any website.");
-        blockedSites = cfg.getString("blockedSites", CATEGORY_GENERAL, blockedSites, "Any URL listed here will be blocked.(WIP not working)");
-        maxPixelAmount = cfg.getInt("maxPixelAmount", CATEGORY_GENERAL, maxPixelAmount, 1, 921600, "Strongly recommended not to increase this value. Large photos will take an extremely long time to compile.");
-        colorAccuracy = cfg.getInt("colorAccuracy", CATEGORY_GENERAL, colorAccuracy, 0, 239, "This will make it so colors will not be as accurate. For example, if set to 10 any color within 211-219 will go to 210.");
-        maxPixelText = cfg.getInt("maxPixelText", CATEGORY_GENERAL, maxPixelText, 1, 921600, "Increasing this value is not recommended. This value sets the limit on how many pixels the printing press can export.");
-
-    }
+    protected static boolean allowURL = true;
+    protected static String blockedSites = "www.url.com,www.url2.com";
+    protected static int maxPixelAmount = 9604;
+    protected static int colorAccuracy = 0;
+    protected static int maxPixelText = 250000;
 
 	public static boolean isAllowURL() {
 		return allowURL;
@@ -77,4 +53,32 @@ public class Config {
 		return false;
 	}
 
+	
+	
+	/*
+	public static void readConfig() {
+        Configuration cfg = CommonProxy.config;
+        try {
+            cfg.load();
+            initGeneralConfig(cfg);
+        } catch (Exception e1) {
+        
+        } finally {
+            if (cfg.hasChanged()) {
+                cfg.save();
+            }
+        }
+    }
+	
+    private static void initGeneralConfig(Configuration cfg) {
+        cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General configuration");
+        // cfg.getBoolean() will get the value in the config if it is already specified there. If not it will create the value.
+        allowURL = cfg.getBoolean("allowURL", CATEGORY_GENERAL, allowURL, "Set to false if you do not want people to import from any website.");
+        blockedSites = cfg.getString("blockedSites", CATEGORY_GENERAL, blockedSites, "Any URL listed here will be blocked.(WIP not working)");
+        maxPixelAmount = cfg.getInt("maxPixelAmount", CATEGORY_GENERAL, maxPixelAmount, 1, 921600, "Strongly recommended not to increase this value. Large photos will take an extremely long time to compile.");
+        colorAccuracy = cfg.getInt("colorAccuracy", CATEGORY_GENERAL, colorAccuracy, 0, 239, "This will make it so colors will not be as accurate. For example, if set to 10 any color within 211-219 will go to 210.");
+        maxPixelText = cfg.getInt("maxPixelText", CATEGORY_GENERAL, maxPixelText, 1, 921600, "Increasing this value is not recommended. This value sets the limit on how many pixels the printing press can export.");
+
+    }
+    */
 }

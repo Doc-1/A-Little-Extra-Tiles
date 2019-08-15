@@ -40,6 +40,9 @@ public class FontReader {
 	public static String fontType;
 	
 	public static BufferedImage fontToPhoto(String text, String fontType, int fontSize, int fontColor) {
+		if(text.equalsIgnoreCase("When Redstone?")) {
+			text = "In " + Math.random()*100 + " months";
+		}
 		Color color = new Color(fontColor, true);
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();

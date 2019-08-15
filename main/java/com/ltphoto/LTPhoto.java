@@ -1,48 +1,71 @@
 package com.ltphoto;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.Loader;
+
+import java.awt.Color;
 
 import javax.annotation.Nonnull;
+
+import org.lwjgl.opengl.GL11;
 
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.common.blocks.ItemBlockColored;
+import com.creativemd.littletiles.common.blocks.ItemBlockFlowingLava;
+import com.creativemd.littletiles.common.blocks.ItemBlockFlowingWater;
+import com.creativemd.littletiles.common.blocks.ItemBlockTransparentColored;
+import com.creativemd.littletiles.common.items.ItemBlockTiles;
+import com.creativemd.littletiles.common.items.ItemHammer;
 import com.creativemd.littletiles.common.items.ItemPremadeStructure;
 import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
 import com.ltphoto.config.Config;
+import com.ltphoto.config.IGCMLoader;
 import com.ltphoto.container.SubContainerBlock;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.container.SubContainerTypeWriter;
 import com.ltphoto.gui.SubGuiBlock;
 import com.ltphoto.gui.SubGuiPhotoImport;
 import com.ltphoto.gui.SubGuiTypeWriter;
+import com.ltphoto.items.TapeMessure;
 import com.ltphoto.server.LTPhotoServer;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
 import com.ltphoto.structure.premade.LittleTypeWriter;
 
 @Mod(modid = LTPhoto.MODID, name = LTPhoto.NAME, version = LTPhoto.VERSION)
+@Mod.EventBusSubscriber
 public class LTPhoto
 {
 	
@@ -53,10 +76,17 @@ public class LTPhoto
     public static final String NAME = "LT Photo Converter";
     public static final String VERSION = "1.0";
     
+	public static Item tapeMessure;
+	
+
+	
 	
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
     	proxy.preInit(event);
+    	
+    	tapeMessure = new TapeMessure("tapeMessure");
+
     	GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			
 			@Override
@@ -98,9 +128,13 @@ public class LTPhoto
 				return new SubContainerTypeWriter(player);
 			}
 		});
-
     }
     
+    
+    @SubscribeEvent
+	public static void registerItems(RegistryEvent.Register<Item> event) {
+		event.getRegistry().registerAll(tapeMessure);
+	}
     
     @EventHandler
     public void Init(FMLInitializationEvent event) {
@@ -114,8 +148,20 @@ public class LTPhoto
     					"XYX",
     					'X', Items.IRON_INGOT,
     					'Y', LittleTiles.recipeAdvanced,
-    					'Z', Blocks.SAPLING,
+    					'Z', Blocks.GLASS_PANE,
     	});
+    	
+    	GameRegistry.addShapedRecipe(new ResourceLocation("craft_typewriter"), new ResourceLocation("ltphoto"),
+    			LittleStructurePremade.getPremadeStack("typewriter"), new Object[]{
+    					" X ",
+    					"XXX",
+    					"XYX",
+    					'X', Items.IRON_INGOT,
+    					'Y', LittleTiles.recipeAdvanced,
+    	});
+    	
+    	if (Loader.isModLoaded("igcm"))
+			IGCMLoader.initIGCM();
     }
     
     @EventHandler
