@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -18,22 +19,21 @@ public class TapeRenderer {
 		String item = "ltphoto:tapemessure";
 		String mainItem = player.getHeldItemMainhand().getItem().getRegistryName().toString();
 		TapeMessure tape = new TapeMessure();
-		System.out.println(mainItem.equals(item));
-		System.out.println(mainItem + " " + item);
+		//Gets the data from the Tape Measure the player is holding
 		if (item.equals(mainItem)) {
 			tape = (TapeMessure) player.getHeldItemMainhand().getItem();
 		}
 		
 		if (tape.a != null && tape.b != null) {
+			String t = String.valueOf(tape.minX + " " + tape.minY + " " + tape.minZ + " " + tape.maxX + " " + tape.maxY + " " + tape.maxZ);
+			player.sendStatusMessage(new TextComponentString(t), true);
+			double minY = tape.minY;
+			double minX = tape.minX;
+			double minZ = tape.minZ;
 			
-			System.out.println("true AB");
-			double minY = tape.a.y;
-			double minX = tape.a.x;
-			double minZ = tape.a.z;
-			
-			double maxY = tape.b.y;
-			double maxX = tape.b.x;
-			double maxZ = tape.b.z;
+			double maxY = tape.maxY;
+			double maxX = tape.maxX;
+			double maxZ = tape.maxZ;
 			
 			double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
 			double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();

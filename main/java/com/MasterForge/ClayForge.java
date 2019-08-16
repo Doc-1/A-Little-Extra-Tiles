@@ -55,10 +55,10 @@ public class ClayForge extends LittleStructurePremade {
 		BlockPos min = new BlockPos(context.toBlockOffset(minX), context.toBlockOffset(minY), context.toBlockOffset(minZ));
 		LittleTileVec minVec = new LittleTileVec((int) (minX - (long) min.getX() * (long) context.size), (int) (minY - (long) min.getY() * (long) context.size), (int) (minZ - (long) min.getZ() * (long) context.size));
 		
+		//Tells what structure to use next.
 		String next = null;
 		if (type.id.equals("clayForge1"))
 			next = "clayForge2";
-		
 		ItemStack stack = getPremadeStack(next); // Change this line to support different states
 		LittlePreviews previews = LittlePreviews.getPreview(stack, true);
 		LittleTileVec previewMinVec = previews.getMinVec();
@@ -74,7 +74,7 @@ public class ClayForge extends LittleStructurePremade {
 		previews.getPlacePreviews(placePreviews, null, true, LittleTileVec.ZERO);
 		
 		HashMap<BlockPos, PlacePreviews> splitted = LittleActionPlaceStack.getSplittedTiles(previews.context, placePreviews, min);
-		
+		//Test if the structure can be placed.
 		if (LittleActionPlaceStack.canPlaceTiles(null, worldIn, splitted, PlacementMode.overwrite.getCoordsToCheck(splitted, min), PlacementMode.overwrite, (LittleTile x) -> !x.isChildOfStructure(this))) {
 			// Remove existing structure
 			for (Entry<TileEntityLittleTiles, ArrayList<LittleTile>> entry : getAllTiles(new HashMapList<>()).entrySet()) {

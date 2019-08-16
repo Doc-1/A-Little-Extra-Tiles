@@ -35,12 +35,13 @@ public class TapeMessure extends Item {
 	public Vec3d a;
 	public Vec3d b;
 	
-	public static int x;
-	public static int y;
-	public static int z;
-	public static int x2;
-	public static int y2;
-	public static int z2;
+	public double minY;
+	public double minX;
+	public double minZ;
+	
+	public double maxY;
+	public double maxX;
+	public double maxZ;
 	
 	public static double differenceX;
 	public static double differenceZ;
@@ -64,18 +65,6 @@ public class TapeMessure extends Item {
 		tooltip.add("the size of a placed tile");
 	}
 	
-	public int getPermX() {
-		return makePositive(x - x2);
-	}
-	
-	public int getPermY() {
-		return makePositive(y - y2);
-	}
-	
-	public int getPermZ() {
-		return makePositive(z - z2);
-	}
-	
 	public Vec3d getFirstPos() {
 		return a;
 	}
@@ -92,6 +81,8 @@ public class TapeMessure extends Item {
 		this.player = player;
 		this.world = worldIn;
 		
+		double cont = 1 / context.size;
+		
 		LittleTileVec vec = new LittleTileVec(context, res);
 		if (player.isSneaking()) {
 			a = res.hitVec;
@@ -102,40 +93,82 @@ public class TapeMessure extends Item {
 		}
 		
 		if (firstPos != null && secondPos != null) {
-			x = (makePositive(firstPos.contextVec.vec.x)) + 1;
-			y = (makePositive(firstPos.contextVec.vec.y)) + 1;
-			z = (makePositive(firstPos.contextVec.vec.z)) + 1;
+			System.out.println(facing.toString());
+			minY = firstPos.getPosY();
+			minX = firstPos.getPosX();
+			minZ = firstPos.getPosZ();
 			
-			x2 = (makePositive(secondPos.contextVec.vec.x)) + 1;
-			y2 = (makePositive(secondPos.contextVec.vec.y)) + 1;
-			z2 = (makePositive(secondPos.contextVec.vec.z)) + 1;
+			maxY = secondPos.getPosY();
+			maxX = secondPos.getPosX();
+			maxZ = secondPos.getPosZ();
 			
 			if (facing.equals(facing.UP)) {
-				y--;
-				y2--;
-				if (y == 0) {
-					y = context.size;
-					y2 = context.size;
-				}
+				
 			} else if (facing.equals(facing.EAST)) {
-				x--;
-				x2--;
+				
 			} else if (facing.equals(facing.SOUTH)) {
-				z--;
-				z2--;
+				if (minY < maxY && minX < maxX) {
+					maxY += 0.03125;
+					maxX += 0.03125;
+				} else if (minY > maxY && minX > maxX) {
+					minY += 0.03125;
+					minX += 0.03125;
+				} else if (minY > maxY && minX < maxX) {
+					maxX += 0.03125;
+					minY += 0.03125;
+				} else if (minY < maxY && minX > maxX) {
+					maxY += 0.03125;
+					minX += 0.03125;
+				} else if (minY == maxY && minX < maxX) {
+					maxY += 0.03125;
+					maxX += 0.03125;
+				} else if (minY == maxY && minX > maxX) {
+					maxY += 0.03125;
+					minX += 0.03125;
+				} else if (minX == maxX && minY < maxY) {
+					maxY += 0.03125;
+					minX += 0.03125;
+				} else if (minX == maxX && minY > maxY) {
+					minY += 0.03125;
+					minX += 0.03125;
+				} else if (minX == maxX && minY == maxY && minZ == maxZ) {
+					maxY += 0.03125;
+					minX += 0.03125;
+				}
 			}
-			
-			System.out.println(x + " " + y + " " + z + " " + facing.toString());
 		}
 		
 		return EnumActionResult.PASS;
 	}
 	
-	public int makePositive(int num) {
+	public double makePositive(double num) {
 		if (num < 0) {
 			num *= -1;
 		}
 		return num;
 	}
+	
+	/* x = (makePositive(firstPos.getPosX())) + cont;
+	 * y = (makePositive(firstPos.getPosY())) + cont;
+	 * z = (makePositive(firstPos.getPosZ())) + cont;
+	 * 
+	 * x2 = (makePositive(secondPos.getPosX())) + cont;
+	 * y2 = (makePositive(secondPos.getPosY())) + cont;
+	 * z2 = (makePositive(secondPos.getPosZ())) + cont; */
+	
+	/* if (facing.equals(facing.UP)) {
+	 * y--;
+	 * y2--;
+	 * if (y == 0) {
+	 * y = context.size;
+	 * y2 = context.size;
+	 * }
+	 * } else if (facing.equals(facing.EAST)) {
+	 * x--;
+	 * x2--;
+	 * } else if (facing.equals(facing.SOUTH)) {
+	 * z--;
+	 * z2--;
+	 * } */
 	
 }
