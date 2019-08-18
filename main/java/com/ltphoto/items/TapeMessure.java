@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import com.creativemd.littletiles.common.tiles.vec.LittleTilePos;
 import com.creativemd.littletiles.common.tiles.vec.LittleTileVec;
 import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
+import com.ltphoto.render.SelectLittleTile;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
@@ -35,13 +36,8 @@ public class TapeMessure extends Item {
 	public Vec3d a;
 	public Vec3d b;
 	
-	public double minY;
-	public double minX;
-	public double minZ;
-	
-	public double maxY;
-	public double maxX;
-	public double maxZ;
+	public SelectLittleTile select = new SelectLittleTile();
+	public SelectLittleTile select_2 = new SelectLittleTile();
 	
 	public static double differenceX;
 	public static double differenceZ;
@@ -65,77 +61,73 @@ public class TapeMessure extends Item {
 		tooltip.add("the size of a placed tile");
 	}
 	
-	public Vec3d getFirstPos() {
-		return a;
-	}
-	
-	public Vec3d getSecondPos() {
-		return b;
-	}
-	
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		LittleGridContext context = LittleGridContext.get(32);
 		RayTraceResult res = player.rayTrace(4.0, (float) 0.1);
-		Vec3d results = res.hitVec;
+		LittleTileVec vec = new LittleTileVec(context, res);
+		
 		this.player = player;
 		this.world = worldIn;
-		
 		double cont = 1 / context.size;
 		
-		LittleTileVec vec = new LittleTileVec(context, res);
 		if (player.isSneaking()) {
 			a = res.hitVec;
 			firstPos = new LittleTilePos(res, context);
+			select = new SelectLittleTile(firstPos, context, facing);
 		} else {
 			b = res.hitVec;
 			secondPos = new LittleTilePos(res, context);
+			select_2 = new SelectLittleTile(secondPos, context, facing);
 		}
 		
-		if (firstPos != null && secondPos != null) {
-			System.out.println(facing.toString());
-			minY = firstPos.getPosY();
-			minX = firstPos.getPosX();
-			minZ = firstPos.getPosZ();
+		if (firstPos != null) {
 			
-			maxY = secondPos.getPosY();
-			maxX = secondPos.getPosX();
-			maxZ = secondPos.getPosZ();
+			System.out.println();
 			
-			if (facing.equals(facing.UP)) {
-				
-			} else if (facing.equals(facing.EAST)) {
-				
-			} else if (facing.equals(facing.SOUTH)) {
-				if (minY < maxY && minX < maxX) {
-					maxY += 0.03125;
-					maxX += 0.03125;
-				} else if (minY > maxY && minX > maxX) {
-					minY += 0.03125;
-					minX += 0.03125;
-				} else if (minY > maxY && minX < maxX) {
-					maxX += 0.03125;
-					minY += 0.03125;
-				} else if (minY < maxY && minX > maxX) {
-					maxY += 0.03125;
-					minX += 0.03125;
-				} else if (minY == maxY && minX < maxX) {
-					maxY += 0.03125;
-					maxX += 0.03125;
-				} else if (minY == maxY && minX > maxX) {
-					maxY += 0.03125;
-					minX += 0.03125;
-				} else if (minX == maxX && minY < maxY) {
-					maxY += 0.03125;
-					minX += 0.03125;
-				} else if (minX == maxX && minY > maxY) {
-					minY += 0.03125;
-					minX += 0.03125;
-				} else if (minX == maxX && minY == maxY && minZ == maxZ) {
-					maxY += 0.03125;
-					minX += 0.03125;
-				}
-			}
+			String side = facing.toString();
+			
+			/* if (minX < maxX && minY < maxY && minZ > maxZ && facing.toString().equals("east")) {
+			 * maxY += 0.03125;
+			 * } else if (minY > maxY && minX < maxX && facing.toString().equals("east")) {
+			 * 
+			 * } else if (minY < maxY && minX < maxX) {
+			 * maxY += 0.03125;
+			 * maxX += 0.03125;
+			 * } else if (minY > maxY && minX < maxX) {
+			 * maxX += 0.03125;
+			 * System.out.println("5");
+			 * } else if (minY < maxY && minZ < maxZ) {
+			 * maxZ += 0.03125;
+			 * } else if (minY > maxY && minZ > maxZ) {
+			 * minY += 0.03125;
+			 * } else if (minY == maxY && minX < maxX && minZ > maxZ) {
+			 * maxY += 0.03125;
+			 * } else if (minY > maxY && minX > maxX) {
+			 * minY += 0.03125;
+			 * minX += 0.03125;
+			 * } else if (minY > maxY && minX < maxX) {
+			 * maxX += 0.03125;
+			 * minY += 0.03125;
+			 * } else if (minY < maxY && minX > maxX) {
+			 * maxY += 0.03125;
+			 * minX += 0.03125;
+			 * } else if (minY == maxY && minX < maxX) {
+			 * maxY += 0.03125;
+			 * maxX += 0.03125;
+			 * } else if (minY == maxY && minX > maxX) {
+			 * maxY += 0.03125;
+			 * minX += 0.03125;
+			 * } else if (minX == maxX && minY < maxY) {
+			 * maxY += 0.03125;
+			 * minX += 0.03125;
+			 * } else if (minX == maxX && minY > maxY) {
+			 * minY += 0.03125;
+			 * minX += 0.03125;
+			 * } else if (minX == maxX && minY == maxY && minZ == maxZ) {
+			 * maxY += 0.03125;
+			 * minX += 0.03125;
+			 * } */
 		}
 		
 		return EnumActionResult.PASS;
