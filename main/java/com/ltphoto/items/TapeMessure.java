@@ -63,7 +63,7 @@ public class TapeMessure extends Item {
 	
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		LittleGridContext context = LittleGridContext.get(32);
+		LittleGridContext context = LittleGridContext.get(16);
 		RayTraceResult res = player.rayTrace(4.0, (float) 0.1);
 		LittleTileVec vec = new LittleTileVec(context, res);
 		
@@ -81,7 +81,7 @@ public class TapeMessure extends Item {
 			select_2 = new SelectLittleTile(secondPos, context, facing);
 		}
 		
-		if (firstPos != null) {
+		if (firstPos != null && secondPos != null) {
 			
 			System.out.println();
 			

@@ -8,14 +8,17 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class TapeRenderer {
 	
+	public static RenderWorldLastEvent event;
+	
 	@SubscribeEvent
 	public void render(RenderWorldLastEvent event) {
-		
+		this.event = event;
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		String item = "ltphoto:tapemessure";
 		String mainItem = player.getHeldItemMainhand().getItem().getRegistryName().toString();
@@ -27,33 +30,17 @@ public class TapeRenderer {
 		if (tape.a != null) {
 			//player.sendStatusMessage(new TextComponentString(t), true);
 			
-			double maxY = tape.select.maxY;
-			double maxX = tape.select.maxX;
-			double maxZ = tape.select.maxZ;
-			
-			double minY = tape.select.minY;
-			double minX = tape.select.minX;
-			double minZ = tape.select.minZ;
-			
-			double maxY_2 = tape.select_2.maxY;
-			double maxX_2 = tape.select_2.maxX;
-			double maxZ_2 = tape.select_2.maxZ;
-			
-			double minY_2 = tape.select_2.minY;
-			double minX_2 = tape.select_2.minX;
-			double minZ_2 = tape.select_2.minZ;
-			
-			double lineMaxX = tape.select.centerX;
-			double lineMaxY = tape.select.centerY;
-			double lineMaxZ = tape.select.centerZ;
-			
-			double lineMinX = tape.select_2.centerX;
-			double lineMinY = tape.select_2.centerY;
-			double lineMinZ = tape.select_2.centerZ;
-			
 			double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
 			double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
 			double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
+			
+			double centerX_1 = tape.select.centerX;
+			double centerY_1 = tape.select.centerY;
+			double centerZ_1 = tape.select.centerZ;
+			
+			double centerX_2 = tape.select_2.centerX;
+			double centerY_2 = tape.select_2.centerY;
+			double centerZ_2 = tape.select_2.centerZ;
 			
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -62,10 +49,106 @@ public class TapeRenderer {
 			GlStateManager.depthMask(false);
 			GlStateManager.disableDepth();
 			
-			drawBoundingBox(minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001, maxX + 0.001 - d0, maxY - d1 + 0.001, maxZ - d2 + 0.001, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
-			drawBoundingBox(minX_2 - d0 - 0.001, minY_2 - d1 - 0.001, minZ_2 - d2 - 0.001, maxX_2 + 0.001 - d0, maxY_2 - d1 + 0.001, maxZ_2 - d2 + 0.001, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
-			drawLine(lineMinX - d0 - 0.001, lineMinY - d1 - 0.001, lineMinZ - d2 - 0.001, lineMaxX + 0.001 - d0, lineMaxY - d1 + 0.001, lineMaxZ - d2 + 0.001, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			/* 0 0 - x<x2 y>y2
+			 * 1 -1 /
+			 * 
+			 * 0 0 - x>x2 y<y2
+			 * -1 1 /
+			 * 
+			 * 0 0 - x>x2 y>y2
+			 * -1 -1 /
+			 * 
+			 * 0 0 - x<x2 y<y2
+			 * 1 1 / */
 			
+			if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("1");
+				drawBoundingBox(tape.select.corner_6, tape.select_2.corner_2, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("2");
+				drawBoundingBox(tape.select.corner_3, tape.select_2.corner_7, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("3");
+				drawBoundingBox(tape.select.corner_5, tape.select_2.corner_1, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("4");
+				drawBoundingBox(tape.select.corner_4, tape.select_2.corner_8, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			}
+			
+			if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("5");
+				drawBoundingBox(tape.select.corner_7, tape.select_2.corner_3, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("6");
+				drawBoundingBox(tape.select.corner_2, tape.select_2.corner_6, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("7");
+				drawBoundingBox(tape.select.corner_8, tape.select_2.corner_4, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("8");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			}
+			if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("9");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("10");
+				drawBoundingBox(tape.select.corner_5, tape.select_2.corner_1, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("11");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("12");
+				drawBoundingBox(tape.select.corner_5, tape.select_2.corner_1, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("13");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("14");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("15");
+				drawBoundingBox(tape.select.corner_5, tape.select_2.corner_1, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			}
+			if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("16");
+				drawBoundingBox(tape.select.corner_5, tape.select_2.corner_1, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("17");
+				drawBoundingBox(tape.select.corner_4, tape.select_2.corner_8, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("18");
+				drawBoundingBox(tape.select.corner_8, tape.select_2.corner_4, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("19");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			}
+			if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("20");
+				drawBoundingBox(tape.select.corner_5, tape.select_2.corner_1, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("21");
+				drawBoundingBox(tape.select.corner_2, tape.select_2.corner_6, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("22");
+				drawBoundingBox(tape.select.corner_7, tape.select_2.corner_3, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
+				System.out.println("23");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			}
+			if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("24");
+				drawBoundingBox(tape.select.corner_8, tape.select_2.corner_4, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("25");
+				drawBoundingBox(tape.select.corner_3, tape.select_2.corner_7, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
+				System.out.println("26");
+				drawBoundingBox(tape.select.corner_6, tape.select_2.corner_2, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			} else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
+				System.out.println("27");
+				drawBoundingBox(tape.select.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+			}
 			GlStateManager.enableDepth();
 			GlStateManager.depthMask(true);
 			GlStateManager.enableTexture2D();
@@ -73,20 +156,40 @@ public class TapeRenderer {
 		}
 	}
 	
-	public static void drawBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha) {
+	public static void drawBoundingBox(Vec3d vec_1, Vec3d vec_2, float red, float green, float blue, float alpha) {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		
+		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
+		
+		double minX = vec_1.x;
+		double minY = vec_1.y;
+		double minZ = vec_1.z;
+		
+		double maxX = vec_2.x;
+		double maxY = vec_2.y;
+		double maxZ = vec_2.z;
+		
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
-		drawBoundingBox(bufferbuilder, minX, minY, minZ, maxX, maxY, maxZ, red, green, blue, alpha);
+		drawBoundingBox(bufferbuilder, minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001, maxX + 0.001 - d0, maxY - d1 + 0.001, maxZ - d2 + 0.001, red, green, blue, alpha);
 		tessellator.draw();
 	}
 	
 	public static void drawLine(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha) {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		
+		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
+		
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
-		bufferbuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-		bufferbuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+		bufferbuilder.pos(minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
+		bufferbuilder.pos(maxX + 0.001 - d0, maxY - d1 + 0.001, maxZ - d2 + 0.001).color(red, green, blue, alpha).endVertex();
 		tessellator.draw();
 	}
 	
@@ -112,3 +215,5 @@ public class TapeRenderer {
 	}
 	
 }
+//drawLine(tape.select.corner_1.x, tape.select.corner_1.y, tape.select.corner_1.z, tape.select.corner_4.x, tape.select.corner_1.y, tape.select_2.corner_4.z, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
+//drawLine(tape.select_2.corner_6.x, tape.select_2.corner_5.y, tape.select.corner_6.z, tape.select_2.corner_5.x, tape.select_2.corner_5.y, tape.select_2.corner_5.z, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
