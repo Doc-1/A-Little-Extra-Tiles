@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import com.creativemd.littletiles.common.tiles.vec.LittleTilePos;
 import com.creativemd.littletiles.common.tiles.vec.LittleTileVec;
 import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
-import com.ltphoto.render.SelectLittleTile;
+import com.ltphoto.tiles.SelectLittleTile;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
@@ -63,7 +63,7 @@ public class TapeMessure extends Item {
 	
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		LittleGridContext context = LittleGridContext.get(16);
+		LittleGridContext context = LittleGridContext.get(32);
 		RayTraceResult res = player.rayTrace(4.0, (float) 0.1);
 		LittleTileVec vec = new LittleTileVec(context, res);
 		
@@ -82,52 +82,7 @@ public class TapeMessure extends Item {
 		}
 		
 		if (firstPos != null && secondPos != null) {
-			
-			System.out.println();
-			
 			String side = facing.toString();
-			
-			/* if (minX < maxX && minY < maxY && minZ > maxZ && facing.toString().equals("east")) {
-			 * maxY += 0.03125;
-			 * } else if (minY > maxY && minX < maxX && facing.toString().equals("east")) {
-			 * 
-			 * } else if (minY < maxY && minX < maxX) {
-			 * maxY += 0.03125;
-			 * maxX += 0.03125;
-			 * } else if (minY > maxY && minX < maxX) {
-			 * maxX += 0.03125;
-			 * System.out.println("5");
-			 * } else if (minY < maxY && minZ < maxZ) {
-			 * maxZ += 0.03125;
-			 * } else if (minY > maxY && minZ > maxZ) {
-			 * minY += 0.03125;
-			 * } else if (minY == maxY && minX < maxX && minZ > maxZ) {
-			 * maxY += 0.03125;
-			 * } else if (minY > maxY && minX > maxX) {
-			 * minY += 0.03125;
-			 * minX += 0.03125;
-			 * } else if (minY > maxY && minX < maxX) {
-			 * maxX += 0.03125;
-			 * minY += 0.03125;
-			 * } else if (minY < maxY && minX > maxX) {
-			 * maxY += 0.03125;
-			 * minX += 0.03125;
-			 * } else if (minY == maxY && minX < maxX) {
-			 * maxY += 0.03125;
-			 * maxX += 0.03125;
-			 * } else if (minY == maxY && minX > maxX) {
-			 * maxY += 0.03125;
-			 * minX += 0.03125;
-			 * } else if (minX == maxX && minY < maxY) {
-			 * maxY += 0.03125;
-			 * minX += 0.03125;
-			 * } else if (minX == maxX && minY > maxY) {
-			 * minY += 0.03125;
-			 * minX += 0.03125;
-			 * } else if (minX == maxX && minY == maxY && minZ == maxZ) {
-			 * maxY += 0.03125;
-			 * minX += 0.03125;
-			 * } */
 		}
 		
 		return EnumActionResult.PASS;
@@ -139,28 +94,5 @@ public class TapeMessure extends Item {
 		}
 		return num;
 	}
-	
-	/* x = (makePositive(firstPos.getPosX())) + cont;
-	 * y = (makePositive(firstPos.getPosY())) + cont;
-	 * z = (makePositive(firstPos.getPosZ())) + cont;
-	 * 
-	 * x2 = (makePositive(secondPos.getPosX())) + cont;
-	 * y2 = (makePositive(secondPos.getPosY())) + cont;
-	 * z2 = (makePositive(secondPos.getPosZ())) + cont; */
-	
-	/* if (facing.equals(facing.UP)) {
-	 * y--;
-	 * y2--;
-	 * if (y == 0) {
-	 * y = context.size;
-	 * y2 = context.size;
-	 * }
-	 * } else if (facing.equals(facing.EAST)) {
-	 * x--;
-	 * x2--;
-	 * } else if (facing.equals(facing.SOUTH)) {
-	 * z--;
-	 * z2--;
-	 * } */
 	
 }

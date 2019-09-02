@@ -1,4 +1,4 @@
-package com.ltphoto.render;
+package com.ltphoto.tiles;
 
 import com.creativemd.littletiles.common.tiles.vec.LittleTilePos;
 import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
