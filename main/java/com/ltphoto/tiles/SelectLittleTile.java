@@ -102,7 +102,6 @@ public class SelectLittleTile {
 		centerY = boxMinY + centerOffSet;
 		centerZ = boxMinZ + centerOffSet;
 		
-		System.out.println(centerX + " " + centerY + " " + centerZ + " " + centerOffSet);
 	}
 	
 	public double makePositive(double num) {
