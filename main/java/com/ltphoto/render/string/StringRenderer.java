@@ -26,7 +26,7 @@ public class StringRenderer {
 		
 		for (int i = 0; i < 6; i++) {
 			
-			char[] c = { 'A', 'B', 'A', 'A', 'A', 'B' };
+			char[] c = { 'B', 'L', 'O', 'C', 'K', ' ' };
 			
 			double x = start.x;
 			double y = start.y;

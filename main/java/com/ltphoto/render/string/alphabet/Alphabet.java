@@ -2,6 +2,8 @@ package com.ltphoto.render.string.alphabet;
 
 import java.util.ArrayList;
 
+import com.ltphoto.render.string.Char.Facing;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,49 +78,18 @@ public class Alphabet {
 		
 		switch (input) {
 		case 'A':
-			bufferbuilder.pos((minX) - d0 - 0.001, (minY) - d1 - 0.001, (minZ) - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
-			bufferbuilder.pos((minX) - d0 - 0.001, (minY) - d1 - 0.001, (minZ) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.08) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.025) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.05) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.03) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.04) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.03) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.01) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.05) - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
-			
-			/* vec.add(new Vec3d(0, 0, 0.05));
-			 * vec.add(new Vec3d(0.08, 0, 0.025));
-			 * vec.add(new Vec3d(0, 0, 0));
-			 * vec.add(new Vec3d(0.03, 0, 0.01));
-			 * vec.add(new Vec3d(0.03, 0, 0.04)); */
+			A a = new A(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'B':
-			bufferbuilder.pos((minX) - d0 - 0.001, (minY) - d1 - 0.001, (minZ) - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
-			bufferbuilder.pos((minX + 0.08) - d0 - 0.001, (minY) - d1 - 0.001, (minZ) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.075) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.025) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.07) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.04) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.06) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.05) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.042) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.04) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.04) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.025) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.04) - d0 - 0.001, (minY) - d1 - 0.001, (minZ) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.04) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.025) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.037) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.04) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.03) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.05) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.012) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.04) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0.005) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.025) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX + 0) - d0 - 0.001, (minY) - d1 - 0.001, (minZ) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			bufferbuilder.pos((minX) - d0 - 0.001, (minY) - d1 - 0.001, (minZ + 0.05) - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
-			
-			/* vec.addAll(line(0, 0, 0 + next));
-			 * vec.addAll(halfCurve(0, 0, 0 + next, false));
-			 * vec.addAll(halfCurve(-0.04, 0, 0 + next, false)); */
+			B b = new B(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'C':
-			/* vec.addAll(fullCurve(0, 0, 0.033 + next * 2, true)); */
+			C c = new C(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'D':
-			/* vec.addAll(line(0, 0, 0 + next * 3));
-			 * vec.addAll(fullCurve(0, 0, 0 + next * 3, false)); */
 			break;
 		case 'E':
+			E e = new E(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'F':
 			break;
@@ -127,18 +98,22 @@ public class Alphabet {
 		case 'H':
 			break;
 		case 'I':
+			I i = new I(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'J':
 			break;
 		case 'K':
+			K k = new K(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'L':
+			L l = new L(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'M':
 			break;
 		case 'N':
 			break;
 		case 'O':
+			O o = new O(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'Q':
 			break;
@@ -147,6 +122,7 @@ public class Alphabet {
 		case 'S':
 			break;
 		case 'T':
+			T t = new T(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case 'U':
 			break;
@@ -159,6 +135,8 @@ public class Alphabet {
 		case 'Y':
 			break;
 		case 'Z':
+			break;
+		case ' ':
 			break;
 		default:
 		
