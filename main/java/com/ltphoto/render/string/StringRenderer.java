@@ -24,9 +24,8 @@ public class StringRenderer {
 		GlStateManager.depthMask(false);
 		GlStateManager.disableDepth();
 		
-		for (int i = 0; i < 6; i++) {
-			
-			char[] c = { 'B', 'L', 'O', 'C', 'K', ' ' };
+		char[] c = { 'C', 'E', 'I', 'K', 'L', 'O', 'T' };
+		for (int i = 0; i < c.length; i++) {
 			
 			double x = start.x;
 			double y = start.y;

@@ -2,7 +2,7 @@ package com.ltphoto.render.string.alphabet;
 
 import java.util.ArrayList;
 
-import com.ltphoto.render.string.Char.Facing;
+import com.ltphoto.render.string.alphabet.Char.Facing;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
