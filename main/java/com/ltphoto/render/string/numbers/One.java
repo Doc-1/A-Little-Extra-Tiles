@@ -1,4 +1,4 @@
-package com.ltphoto.render.string.alphabet;
+package com.ltphoto.render.string.numbers;
 
 import java.util.ArrayList;
 
@@ -8,13 +8,13 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-public class I extends DrawCharacter {
+public class One extends DrawCharacter {
 	
-	public I(Facing facing, BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
+	public One(Facing facing, BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
 		
 	}
 	
-	public I(Vec3d start, Facing facing, double scale, BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
+	public One(Vec3d start, Facing facing, double scale, BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
 		this.scale = scale;
 		this.facing = facing;
 		this.bufferbuilder = bufferbuilder;
@@ -33,8 +33,7 @@ public class I extends DrawCharacter {
 		vec.add(new Vec3d(0, 0, 0.0));
 		vec.add(new Vec3d(0, 0, 0.025));
 		vec.add(new Vec3d(0.08, 0, 0.025));
-		vec.add(new Vec3d(0.08, 0, 0));
-		vec.add(new Vec3d(0.08, 0, 0.05));
+		vec.add(new Vec3d(0.05, 0, 0));
 		
 		return vec;
 	}

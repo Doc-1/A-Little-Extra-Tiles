@@ -1,4 +1,4 @@
-package com.ltphoto.render.string.alphabet;
+package com.ltphoto.render.string;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-public class Char {
+public class DrawCharacter {
 	
 	public Vec3d start;
 	public Facing facing;
@@ -86,7 +86,6 @@ public class Char {
 			if (i == 0) {
 				bufferbuilder.pos((x + pos_1.get(i)) - d0 - 0.001, (y + pos_2.get(i)) - d1 - 0.001, (z + pos_3.get(i)) - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
 			} else {
-				
 				bufferbuilder.pos((x + pos_1.get(i)) - d0 - 0.001, (y + pos_2.get(i)) - d1 - 0.001, (z + pos_3.get(i)) - d2 - 0.001).color(red, green, blue, alpha).endVertex();
 			}
 			

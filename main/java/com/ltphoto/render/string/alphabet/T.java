@@ -2,11 +2,13 @@ package com.ltphoto.render.string.alphabet;
 
 import java.util.ArrayList;
 
+import com.ltphoto.render.string.DrawCharacter;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-public class T extends Char {
+public class T extends DrawCharacter {
 	
 	public T(Facing facing, BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
 		

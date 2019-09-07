@@ -1,4 +1,6 @@
-package com.ltphoto.render.string.alphabet;
+package com.ltphoto.render.string.numbers;
+
+import java.util.ArrayList;
 
 import com.ltphoto.render.string.DrawCharacter.Facing;
 
@@ -8,15 +10,22 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-public class Alphabet {
+public class Numbers {
 	
 	public BufferBuilder bufferbuilder;
 	public RenderWorldLastEvent event;
 	public int numOfVecs;
 	
-	public Alphabet(BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
+	public Numbers(BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
 		this.bufferbuilder = bufferbuilder;
 		this.event = event;
+	}
+	
+	public ArrayList<Vec3d> line(double startX, double startY, double startZ) {
+		ArrayList<Vec3d> vec = new ArrayList<Vec3d>(1);
+		vec.add(new Vec3d(0 + startX, 0 + startY, 0 + startZ));
+		vec.add(new Vec3d(0.08 + startX, 0 + startY, 0 + startZ));
+		return vec;
 	}
 	
 	public void setBuffer(BufferBuilder bufferbuilder) {
@@ -39,67 +48,38 @@ public class Alphabet {
 		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
 		
 		switch (input) {
-		case 'A':
-			A a = new A(start, Facing.UP, 1, bufferbuilder, event);
+		case '1':
+			One one = new One(start, Facing.UP, 1, bufferbuilder, event);
 			break;
-		case 'B':
-			B b = new B(start, Facing.UP, 1, bufferbuilder, event);
+		case '2':
+			
 			break;
-		case 'C':
-			C c = new C(start, Facing.UP, 1, bufferbuilder, event);
+		case '3':
+			
 			break;
-		case 'D':
+		case '4':
+			
 			break;
-		case 'E':
-			E e = new E(start, Facing.UP, 1, bufferbuilder, event);
+		case '5':
+			
 			break;
-		case 'F':
+		case '6':
+			
 			break;
-		case 'G':
+		case '7':
+			
 			break;
-		case 'H':
+		case '8':
+			
 			break;
-		case 'I':
-			I i = new I(start, Facing.UP, 1, bufferbuilder, event);
+		case '9':
+			
 			break;
-		case 'J':
-			break;
-		case 'K':
-			K k = new K(start, Facing.UP, 1, bufferbuilder, event);
-			break;
-		case 'L':
-			L l = new L(start, Facing.UP, 1, bufferbuilder, event);
-			break;
-		case 'M':
-			break;
-		case 'N':
-			break;
-		case 'O':
-			O o = new O(start, Facing.UP, 1, bufferbuilder, event);
-			break;
-		case 'Q':
-			break;
-		case 'R':
-			break;
-		case 'S':
-			break;
-		case 'T':
-			T t = new T(start, Facing.UP, 1, bufferbuilder, event);
-			break;
-		case 'U':
-			break;
-		case 'V':
-			break;
-		case 'W':
-			break;
-		case 'X':
-			break;
-		case 'Y':
-			break;
-		case 'Z':
+		case '0':
+			
 			break;
 		default:
-		
+			break;
 		}
 		
 	}

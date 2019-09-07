@@ -1,6 +1,7 @@
 package com.ltphoto.render.string;
 
 import com.ltphoto.render.string.alphabet.Alphabet;
+import com.ltphoto.render.string.numbers.Numbers;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,18 +25,28 @@ public class StringRenderer {
 		GlStateManager.depthMask(false);
 		GlStateManager.disableDepth();
 		
-		char[] c = { 'C', 'E', 'I', 'K', 'L', 'O', 'T' };
+		String str = "BLOCK TILE 1";
+		char[] c = str.toCharArray();
 		for (int i = 0; i < c.length; i++) {
 			
 			double x = start.x;
 			double y = start.y;
 			double z = start.z;
+			
 			if (i != 0) {
 				z = start.z + 0.065;
 			}
+			
 			start = new Vec3d(x, y, z);
-			Alphabet alphabet = new Alphabet(bufferbuilder, event);
-			alphabet.character(c[i], start, red, green, blue, alpha);
+			
+			if (c[i] >= 'A' && c[i] <= 'Z') {
+				Alphabet alphabet = new Alphabet(bufferbuilder, event);
+				alphabet.character(c[i], start, red, green, blue, alpha);
+			} else if (c[i] >= '0' && c[i] <= '9') {
+				Numbers number = new Numbers(bufferbuilder, event);
+				number.character(c[i], start, red, green, blue, alpha);
+			}
+			
 		}
 		
 		tessellator.draw();
