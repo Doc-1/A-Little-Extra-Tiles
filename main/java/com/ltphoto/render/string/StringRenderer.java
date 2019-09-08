@@ -2,6 +2,7 @@ package com.ltphoto.render.string;
 
 import com.ltphoto.render.string.alphabet.Alphabet;
 import com.ltphoto.render.string.numbers.Numbers;
+import com.ltphoto.render.string.specialcharacters.SpecialChar;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -12,7 +13,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class StringRenderer {
 	
-	public static void drawString(Vec3d start, RenderWorldLastEvent event, float red, float green, float blue, float alpha) {
+	public static void drawString(Vec3d start, String str, RenderWorldLastEvent event, float red, float green, float blue, float alpha) {
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -25,7 +26,6 @@ public class StringRenderer {
 		GlStateManager.depthMask(false);
 		GlStateManager.disableDepth();
 		
-		String str = "BLOCK TILE 1";
 		char[] c = str.toCharArray();
 		for (int i = 0; i < c.length; i++) {
 			
@@ -45,6 +45,9 @@ public class StringRenderer {
 			} else if (c[i] >= '0' && c[i] <= '9') {
 				Numbers number = new Numbers(bufferbuilder, event);
 				number.character(c[i], start, red, green, blue, alpha);
+			} else {
+				SpecialChar specialChar = new SpecialChar(bufferbuilder, event);
+				specialChar.character(c[i], start, red, green, blue, alpha);
 			}
 			
 		}

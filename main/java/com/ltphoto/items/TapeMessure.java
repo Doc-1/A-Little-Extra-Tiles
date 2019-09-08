@@ -39,9 +39,9 @@ public class TapeMessure extends Item {
 	public SelectLittleTile select = new SelectLittleTile();
 	public SelectLittleTile select_2 = new SelectLittleTile();
 	
-	public static double differenceX;
-	public static double differenceZ;
-	public static double differenceY;
+	public double differenceX;
+	public double differenceZ;
+	public double differenceY;
 	
 	public TapeMessure() {
 		
@@ -86,6 +86,17 @@ public class TapeMessure extends Item {
 		}
 		
 		return EnumActionResult.PASS;
+	}
+	
+	public String distence(double pos_1, double pos_2) {
+		LittleGridContext context = LittleGridContext.get(32);
+		
+		double contDecimal = 1D / context.size;
+		double distence = (makePositive(pos_1 - pos_2)) + contDecimal;
+		int denominator = context.size;
+		String[] dis = String.valueOf(distence).split("\\.");
+		double numerator = context.size * Double.parseDouble("0." + dis[1]);
+		return "BLOCK " + dis[0] + " TILE " + (int) (numerator) + "/" + denominator;
 	}
 	
 	public double makePositive(double num) {

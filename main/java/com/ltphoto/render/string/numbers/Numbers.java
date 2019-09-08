@@ -52,31 +52,31 @@ public class Numbers {
 			One one = new One(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '2':
-			
+			Two two = new Two(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '3':
-			
+			Three three = new Three(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '4':
-			
+			Four four = new Four(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '5':
-			
+			Five five = new Five(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '6':
-			
+			Six six = new Six(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '7':
-			
+			Seven seven = new Seven(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '8':
-			
+			Eight eight = new Eight(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '9':
-			
+			Nine nine = new Nine(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		case '0':
-			
+			Zero zero = new Zero(start, Facing.UP, 1, bufferbuilder, event);
 			break;
 		default:
 			break;

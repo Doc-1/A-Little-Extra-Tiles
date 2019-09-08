@@ -43,7 +43,7 @@ public class TapeRenderer {
 			double centerY_2 = tape.select_2.centerY;
 			double centerZ_2 = tape.select_2.centerZ;
 			
-			StringRenderer.drawString(tape.select.boxCorner_1, event, 0.0F, 1.0F, 0F, 1.0F);
+			StringRenderer.drawString(tape.select.boxCorner_1, tape.distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
 			
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
