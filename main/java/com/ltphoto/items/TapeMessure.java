@@ -56,9 +56,7 @@ public class TapeMessure extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add("rightclick to increase and");
-		tooltip.add("shift+rightclick to decrease");
-		tooltip.add("the size of a placed tile");
+		tooltip.add("THIS IS WIP!");
 	}
 	
 	@Override

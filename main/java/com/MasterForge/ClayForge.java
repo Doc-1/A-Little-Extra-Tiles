@@ -1,3 +1,4 @@
+/*
 package com.MasterForge;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class ClayForge extends LittleStructurePremade {
 		
 		HashMap<BlockPos, PlacePreviews> splitted = LittleActionPlaceStack.getSplittedTiles(previews.context, placePreviews, min);
 		//Test if the structure can be placed.
-		if (LittleActionPlaceStack.canPlaceTiles(null, worldIn, splitted, PlacementMode.overwrite.getCoordsToCheck(splitted, min), PlacementMode.overwrite, (LittleTile x) -> !x.isChildOfStructure(this))) {
+		if (LittleActionPlaceStack.canPlaceTiles(null, worldIn, splitted, PlacementMode.overwrite.getCoordsToCheck(splitted, min), PlacementMode.overwrite, (LittleTile x) -> !x.isChildOfStructure(this), false)) {
 			// Remove existing structure
 			for (Entry<TileEntityLittleTiles, ArrayList<LittleTile>> entry : getAllTiles(new HashMapList<>()).entrySet()) {
 				entry.getKey().removeTiles(entry.getValue());
@@ -88,3 +89,4 @@ public class ClayForge extends LittleStructurePremade {
 	}
 	
 }
+*/

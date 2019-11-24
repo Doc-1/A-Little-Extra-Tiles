@@ -78,14 +78,12 @@ public class LTPhoto
     
 	public static Item tapeMessure;
 	
-
-	
 	
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
     	proxy.preInit(event);
     	
-    	tapeMessure = new TapeMessure("tapeMessure");
+    	tapeMessure = new TapeMessure("tapemessure");
 
     	GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			
