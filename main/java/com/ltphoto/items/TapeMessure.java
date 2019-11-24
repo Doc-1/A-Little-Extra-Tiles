@@ -94,7 +94,14 @@ public class TapeMessure extends Item {
 		int denominator = context.size;
 		String[] dis = String.valueOf(distence).split("\\.");
 		double numerator = context.size * Double.parseDouble("0." + dis[1]);
-		return "BLOCK " + dis[0] + " TILE " + (int) (numerator) + "/" + denominator;
+		
+		if((int)(numerator)==0) {
+			return "BLOCK " + dis[0];
+		}else {
+			return "BLOCK " + dis[0] + " TILE " + (int) (numerator) + "/" + denominator;
+
+		}
+		
 	}
 	
 	public double makePositive(double num) {

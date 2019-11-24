@@ -225,6 +225,7 @@ public class TapeRenderer {
 		tessellator.draw();
 	}
 	
+	/*Experiment*/
 	public static void drawCircle(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		
