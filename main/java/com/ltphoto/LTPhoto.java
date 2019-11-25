@@ -59,7 +59,7 @@ import com.ltphoto.container.SubContainerTypeWriter;
 import com.ltphoto.gui.SubGuiBlock;
 import com.ltphoto.gui.SubGuiPhotoImport;
 import com.ltphoto.gui.SubGuiTypeWriter;
-import com.ltphoto.items.TapeMessure;
+import com.ltphoto.items.TapeMeasure;
 import com.ltphoto.server.LTPhotoServer;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
 import com.ltphoto.structure.premade.LittleTypeWriter;
@@ -83,7 +83,7 @@ public class LTPhoto
     public void PreInit(FMLPreInitializationEvent event) {
     	proxy.preInit(event);
     	
-    	tapeMessure = new TapeMessure("tapemessure");
+    	tapeMessure = new TapeMeasure("tapemessure");
 
     	GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			

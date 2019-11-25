@@ -16,7 +16,6 @@ public class LTPhotoClient extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
 		MinecraftForge.EVENT_BUS.register(new TapeRenderer());
-		MinecraftForge.EVENT_BUS.register(new StringRenderer());
 	}
 	
 }

@@ -1,6 +1,7 @@
 package com.ltphoto.render;
 
-import com.ltphoto.items.TapeMessure;
+import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
+import com.ltphoto.items.TapeMeasure;
 import com.ltphoto.render.string.StringRenderer;
 
 import net.minecraft.client.Minecraft;
@@ -17,15 +18,45 @@ public class TapeRenderer {
 	
 	public static RenderWorldLastEvent event;
 	
+	public String distence(double pos_1, double pos_2) {
+		LittleGridContext context = LittleGridContext.get(16);
+		
+		double contDecimal = 1D / context.size;
+		double distence = (makePositive(pos_1 - pos_2)) + contDecimal;
+		int denominator = context.size;
+		String[] dis = String.valueOf(distence).split("\\.");
+		double numerator = context.size * Double.parseDouble("0." + dis[1]);
+		
+		if((int)(numerator)==0) {
+			return dis[0] + " BLOCK ";
+		}else {
+			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
+		}
+	}
+	
+	/* Finds the center of two positions or points
+	 */
+	public double centerOf(double pos_1, double pos_2){
+		
+		return 1D;
+	}
+
+	public double makePositive(double num) {
+		if (num < 0) {
+			num *= -1;
+		}
+		return num;
+	}
+	
 	@SubscribeEvent
 	public void render(RenderWorldLastEvent event) {
 		this.event = event;
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		String item = "ltphoto:tapemessure";
 		String mainItem = player.getHeldItemMainhand().getItem().getRegistryName().toString();
-		TapeMessure tape = new TapeMessure();
+		TapeMeasure tape = new TapeMeasure();
 		if (item.equals(mainItem)) {
-			tape = (TapeMessure) player.getHeldItemMainhand().getItem();
+			tape = (TapeMeasure) player.getHeldItemMainhand().getItem();
 		}
 		
 		if (tape.a != null && tape.b != null) {
@@ -43,7 +74,7 @@ public class TapeRenderer {
 			double centerY_2 = tape.select_2.centerY;
 			double centerZ_2 = tape.select_2.centerZ;
 			
-			StringRenderer.drawString(tape.select.boxCorner_1, tape.distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			StringRenderer.drawString(tape.select.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
 			
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -64,6 +95,14 @@ public class TapeRenderer {
 			 * 0 0 - x<x2 y<y2
 			 * 1 1 / */
 			
+			
+			drawLine(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
+			
+			
+			drawCircle(centerX_1, centerY_1, centerZ_1, 1.0F, 1.0F, 1.0F, 1.0F);
+
+			
+			/*
 			if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
 				drawBoundingBox(tape.select.corner_6, tape.select_2.corner_2, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 				drawBoundingBox(tape.select.corner_1, tape.select.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
@@ -178,6 +217,7 @@ public class TapeRenderer {
 				drawBoundingBox(tape.select.corner_1, tape.select.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 				drawBoundingBox(tape.select_2.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 			}
+			*/
 			
 			//drawCircle(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 			GlStateManager.enableDepth();
@@ -226,7 +266,7 @@ public class TapeRenderer {
 	}
 	
 	/*Experiment*/
-	public static void drawCircle(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha) {
+	public static void drawCircle(double minX, double minY, double minZ, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		
 		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
@@ -236,11 +276,33 @@ public class TapeRenderer {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
-		double pi = Math.PI;
-		for (double y = 1; y < 10; y = y * pi) {
-			bufferbuilder.pos(minX - d0 - 0.001, (y * minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
+		
+		double y = 0.0;
+		for (double x1=-3.0; x1<=3; x1=x1+0.01) {
+			String Bitch = String.format("%.3f", x1);
+			x1 = Double.parseDouble(Bitch);
 			
+			double x = x1/10;
+			String Fuck =String.format("%.3f", x);
+			x = Double.parseDouble(Fuck);
+			y = (Math.sqrt(Math.pow(3,2)-Math.pow(x1, 2)))/10;
+			//System.out.println(x+" "+y);
+			bufferbuilder.pos((minX+x) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
+
 		}
+		for (double x1=-3.0; x1<=3; x1=x1+0.01) {
+			String Bitch = String.format("%.3f", x1);
+			x1 = Double.parseDouble(Bitch);
+			
+			double x = x1/10;
+			String Fuck =String.format("%.3f", x);
+			x = Double.parseDouble(Fuck);
+			y = -(Math.sqrt(Math.pow(3,2)-Math.pow(x1, 2)))/10;
+			//System.out.println(x+" "+y);
+			bufferbuilder.pos((minX+x) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
+
+		}
+		
 		tessellator.draw();
 	}
 	
