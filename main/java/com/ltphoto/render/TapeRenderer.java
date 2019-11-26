@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -18,7 +19,16 @@ public class TapeRenderer {
 	
 	public static RenderWorldLastEvent event;
 	
-	public String distence(double pos_1, double pos_2) {
+	public double distence(double pos_1, double pos_2) {
+		LittleGridContext context = LittleGridContext.get(16);
+		
+		double contDecimal = 1D / context.size;
+		double distence = (makePositive(pos_1 - pos_2)) + contDecimal;
+		
+		return distence;
+	}
+	
+	public String distenceStr(double pos_1, double pos_2) {
 		LittleGridContext context = LittleGridContext.get(16);
 		
 		double contDecimal = 1D / context.size;
@@ -74,8 +84,10 @@ public class TapeRenderer {
 			double centerY_2 = tape.select_2.centerY;
 			double centerZ_2 = tape.select_2.centerZ;
 			
-			StringRenderer.drawString(tape.select.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
-			
+			//StringRenderer.drawString(tape.select.boxCorner_1, distenceStr(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			String t = Double.toString(distence(centerX_1, centerX_2));
+			player.sendStatusMessage(new TextComponentString(t), true);
+
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			GlStateManager.glLineWidth(2.0F);
@@ -261,7 +273,7 @@ public class TapeRenderer {
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
 		bufferbuilder.pos(minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-		bufferbuilder.pos(maxX + 0.001 - d0, maxY - d1 + 0.001, maxZ - d2 + 0.001).color(red, green, blue, alpha).endVertex();
+		bufferbuilder.pos(maxX - d0 - 0.001, maxY - d1 - 0.001, maxZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
 		tessellator.draw();
 	}
 	
@@ -278,30 +290,36 @@ public class TapeRenderer {
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
 		
 		double y = 0.0;
-		for (double x1=-3.0; x1<=3; x1=x1+0.01) {
-			String Bitch = String.format("%.3f", x1);
-			x1 = Double.parseDouble(Bitch);
-			
-			double x = x1/10;
-			String Fuck =String.format("%.3f", x);
-			x = Double.parseDouble(Fuck);
-			y = (Math.sqrt(Math.pow(3,2)-Math.pow(x1, 2)))/10;
-			//System.out.println(x+" "+y);
-			bufferbuilder.pos((minX+x) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-
-		}
-		for (double x1=-3.0; x1<=3; x1=x1+0.01) {
-			String Bitch = String.format("%.3f", x1);
-			x1 = Double.parseDouble(Bitch);
-			
-			double x = x1/10;
-			String Fuck =String.format("%.3f", x);
-			x = Double.parseDouble(Fuck);
-			y = -(Math.sqrt(Math.pow(3,2)-Math.pow(x1, 2)))/10;
-			//System.out.println(x+" "+y);
-			bufferbuilder.pos((minX+x) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-
-		}
+		double x = -0.62;
+		
+		do {
+			String cleanDouble = String.format("%.3f", x);
+			x = Double.parseDouble(cleanDouble);
+			double newX = x;
+			newX = newX/10;
+			cleanDouble = String.format("%.3f", newX);
+			newX = Double.parseDouble(cleanDouble);
+			y = (Math.sqrt(Math.pow(0.62,2)-Math.pow(x, 2)))/10;
+			//System.out.println(x + " / " + newX + " " + y);
+			bufferbuilder.pos((newX + minX) - d0 -0.001, (y + minY) - d1, minZ - d2).color(red, green, blue, alpha).endVertex();
+			x = x + 0.01;
+		}while(!Double.isNaN(y));
+		
+		y = 0.0;
+		x = -1.24;
+		
+		do {
+			String cleanDouble = String.format("%.3f", x);
+			x = Double.parseDouble(cleanDouble);
+			double newX = x;
+			newX = newX/10;
+			cleanDouble = String.format("%.3f", newX);
+			newX = Double.parseDouble(cleanDouble);
+			y = -(Math.sqrt(Math.pow(1.24,2)-Math.pow(x, 2)))/10;
+			//System.out.println(x + " / " + newX + " " + y);
+			bufferbuilder.pos((newX + minX) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
+			x = x + 0.01;
+		}while(!Double.isNaN(y));
 		
 		tessellator.draw();
 	}
@@ -325,6 +343,12 @@ public class TapeRenderer {
 		buffer.pos(maxX, maxY, minZ).color(red, green, blue, 0.0F).endVertex();
 		buffer.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
 		buffer.pos(maxX, minY, minZ).color(red, green, blue, 0.0F).endVertex();
+	}
+	
+	private static double cleanDouble(double doub) {
+		String clean = String.format("%.3f", doub);
+		doub = Double.parseDouble(clean);
+		return doub;
 	}
 	
 }
