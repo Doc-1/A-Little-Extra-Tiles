@@ -19,16 +19,16 @@ public class TapeRenderer {
 	
 	public static RenderWorldLastEvent event;
 	
-	public double distence(double pos_1, double pos_2) {
+	public double radius(double pos_1, double pos_2) {
 		LittleGridContext context = LittleGridContext.get(16);
 		
-		double contDecimal = 1D / context.size;
-		double distence = (makePositive(pos_1 - pos_2)) + contDecimal;
+		double contDecimal = (1D / context.size);
+		double distence = (((makePositive(pos_1 - pos_2)) + contDecimal) * context.size) - 1D;
 		
-		return distence;
+		return (distence/context.size) * 10D;
 	}
 	
-	public String distenceStr(double pos_1, double pos_2) {
+	public String distence(double pos_1, double pos_2) {
 		LittleGridContext context = LittleGridContext.get(16);
 		
 		double contDecimal = 1D / context.size;
@@ -42,13 +42,6 @@ public class TapeRenderer {
 		}else {
 			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
 		}
-	}
-	
-	/* Finds the center of two positions or points
-	 */
-	public double centerOf(double pos_1, double pos_2){
-		
-		return 1D;
 	}
 
 	public double makePositive(double num) {
@@ -85,7 +78,7 @@ public class TapeRenderer {
 			double centerZ_2 = tape.select_2.centerZ;
 			
 			//StringRenderer.drawString(tape.select.boxCorner_1, distenceStr(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
-			String t = Double.toString(distence(centerX_1, centerX_2));
+			String t = Double.toString(radius(centerX_1, centerX_2));
 			player.sendStatusMessage(new TextComponentString(t), true);
 
 			GlStateManager.enableBlend();
@@ -111,7 +104,7 @@ public class TapeRenderer {
 			drawLine(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
 			
 			
-			drawCircle(centerX_1, centerY_1, centerZ_1, 1.0F, 1.0F, 1.0F, 1.0F);
+			drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
 
 			
 			/*
@@ -278,7 +271,7 @@ public class TapeRenderer {
 	}
 	
 	/*Experiment*/
-	public static void drawCircle(double minX, double minY, double minZ, float red, float green, float blue, float alpha) {
+	public static void drawCircle(double minX, double minY, double minZ, double radius, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		
 		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
@@ -290,37 +283,34 @@ public class TapeRenderer {
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
 		
 		double y = 0.0;
-		double x = -0.62;
+		double x = -radius;
+		double newX = x;
 		
-		do {
-			String cleanDouble = String.format("%.3f", x);
-			x = Double.parseDouble(cleanDouble);
-			double newX = x;
+		while(!Double.isNaN(y)) {
+			x = cleanDouble(x);
+			newX = x;
 			newX = newX/10;
-			cleanDouble = String.format("%.3f", newX);
-			newX = Double.parseDouble(cleanDouble);
-			y = (Math.sqrt(Math.pow(0.62,2)-Math.pow(x, 2)))/10;
+			newX = cleanDouble(newX);
+			y = (Math.sqrt(Math.pow(radius,2)-Math.pow(x, 2)))/10;
 			//System.out.println(x + " / " + newX + " " + y);
 			bufferbuilder.pos((newX + minX) - d0 -0.001, (y + minY) - d1, minZ - d2).color(red, green, blue, alpha).endVertex();
-			x = x + 0.01;
-		}while(!Double.isNaN(y));
-		
+			x = x + 0.5;
+		}
+
 		y = 0.0;
-		x = -1.24;
+		x = -radius;
 		
 		do {
-			String cleanDouble = String.format("%.3f", x);
-			x = Double.parseDouble(cleanDouble);
-			double newX = x;
+			x = cleanDouble(x);
+			newX = x;
 			newX = newX/10;
-			cleanDouble = String.format("%.3f", newX);
-			newX = Double.parseDouble(cleanDouble);
-			y = -(Math.sqrt(Math.pow(1.24,2)-Math.pow(x, 2)))/10;
+			newX = cleanDouble(newX);
+			y = -(Math.sqrt(Math.pow(radius,2)-Math.pow(x, 2)))/10;
 			//System.out.println(x + " / " + newX + " " + y);
 			bufferbuilder.pos((newX + minX) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			x = x + 0.01;
+			x = x + 0.1;
 		}while(!Double.isNaN(y));
-		
+
 		tessellator.draw();
 	}
 	
