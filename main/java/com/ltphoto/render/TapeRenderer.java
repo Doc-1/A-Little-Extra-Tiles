@@ -294,22 +294,22 @@ public class TapeRenderer {
 			y = (Math.sqrt(Math.pow(radius,2)-Math.pow(x, 2)))/10;
 			//System.out.println(x + " / " + newX + " " + y);
 			bufferbuilder.pos((newX + minX) - d0 -0.001, (y + minY) - d1, minZ - d2).color(red, green, blue, alpha).endVertex();
-			x = x + 0.5;
+			x = x + 0.125;
 		}
 
 		y = 0.0;
-		x = -radius;
+		x = radius;
 		
-		do {
+		while(!Double.isNaN(y)) {
 			x = cleanDouble(x);
 			newX = x;
 			newX = newX/10;
 			newX = cleanDouble(newX);
 			y = -(Math.sqrt(Math.pow(radius,2)-Math.pow(x, 2)))/10;
-			//System.out.println(x + " / " + newX + " " + y);
+			System.out.println(x + " / " + newX + " " + y);
 			bufferbuilder.pos((newX + minX) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
-			x = x + 0.1;
-		}while(!Double.isNaN(y));
+			x = x - 0.125;
+		}
 
 		tessellator.draw();
 	}
@@ -336,7 +336,7 @@ public class TapeRenderer {
 	}
 	
 	private static double cleanDouble(double doub) {
-		String clean = String.format("%.3f", doub);
+		String clean = String.format("%.4f", doub);
 		doub = Double.parseDouble(clean);
 		return doub;
 	}
