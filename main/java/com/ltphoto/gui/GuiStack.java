@@ -1,48 +1,31 @@
 package com.ltphoto.gui;
 
-import java.awt.image.BufferedImage;
-
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
-import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll.StackCollector;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
+import com.creativemd.creativecore.common.utils.mc.BlockUtils;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockStone;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
-import net.minecraft.client.renderer.block.model.ModelManager;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.model.SimpleBakedModel;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiStack extends GuiStackSelectorAll{
-
+public class GuiStack extends GuiStackSelectorAll {
+	
 	public String texture;
 	private EnumFacing facing;
 	private ItemStack itemStack;
 	
-	public GuiStack(String name, int x, int y, int width, EntityPlayer player, StackCollector collector,
-			boolean searchBar) {
+	public GuiStack(String name, int x, int y, int width, EntityPlayer player, StackCollector collector, boolean searchBar) {
 		super(name, x, y, width, player, collector, searchBar);
 	}
 	
 	public void setEnumFacing(String face) {
-		switch(face) {
+		switch (face) {
 		case "up":
 			facing = EnumFacing.UP;
 			break;
@@ -76,7 +59,7 @@ public class GuiStack extends GuiStackSelectorAll{
 	public boolean setSelected(ItemStack stack) {
 		if (stacks.contains(stack)) {
 			itemStack = stack;
-			if(facing == null) {
+			if (facing == null) {
 				facing = EnumFacing.NORTH;
 			}
 			getTexture(itemStack);
@@ -93,7 +76,7 @@ public class GuiStack extends GuiStackSelectorAll{
 		Item item = stack.getItem();
 		int damage = item.getDamage(stack);
 		int meta = item.getMetadata(damage);
-		IBlockState state = block.getStateFromMeta(meta);
+		IBlockState state = BlockUtils.getState(block, meta);
 		
 		ResourceLocation reg = block.getRegistryName();
 		ResourceLocation location = new ResourceLocation(reg.toString());
