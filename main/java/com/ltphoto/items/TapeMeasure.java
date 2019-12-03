@@ -29,7 +29,6 @@ public class TapeMeasure extends Item {
 	public LittleTilePos firstPos;
 	public LittleTilePos secondPos;
 	
-	public Minecraft mc = Minecraft.getMinecraft();
 	public EntityPlayer player;
 	public World world;
 	
