@@ -43,7 +43,7 @@ public class SelectLittleTile {
 	
 	public SelectLittleTile(LittleTilePos corner, LittleGridContext con, EnumFacing side) {
 		context = con;
-		gridOffSet = context.gridMCLength;
+		gridOffSet = context.pixelSize;
 		facing = side;
 		
 		boxMinY = corner.getPosY();
@@ -104,10 +104,4 @@ public class SelectLittleTile {
 		
 	}
 	
-	public double makePositive(double num) {
-		if (num < 0) {
-			num *= -1;
-		}
-		return num;
-	}
 }

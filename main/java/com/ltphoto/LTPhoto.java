@@ -38,6 +38,7 @@ import javax.annotation.Nonnull;
 
 import org.lwjgl.opengl.GL11;
 
+import com.MasterForge.DummyStructure;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
@@ -138,6 +139,10 @@ public class LTPhoto
     public void Init(FMLInitializationEvent event) {
     	LittleStructurePremade.registerPremadeStructureType("photoimporter", LTPhoto.MODID, LittlePhotoImporter.class);
     	LittleStructurePremade.registerPremadeStructureType("typewriter", LTPhoto.MODID, LittleTypeWriter.class);
+
+    	
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_1", LTPhoto.MODID, DummyStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_2", LTPhoto.MODID, LittleTypeWriter.class);
 
     	GameRegistry.addShapedRecipe(new ResourceLocation("craft_photo_importer"), new ResourceLocation("ltphoto"),
     			LittleStructurePremade.getPremadeStack("photoimporter"), new Object[]{

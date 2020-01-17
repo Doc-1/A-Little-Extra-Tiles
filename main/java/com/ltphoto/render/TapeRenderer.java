@@ -23,7 +23,7 @@ public class TapeRenderer {
 		LittleGridContext context = LittleGridContext.get(16);
 		
 		double contDecimal = (1D / context.size);
-		double distence = (((makePositive(pos_1 - pos_2)) + contDecimal) * context.size) - 1D;
+		double distence = (((Math.abs(pos_1 - pos_2)) + contDecimal) * context.size) - 1D;
 		
 		return (distence/context.size) * 10D;
 	}
@@ -32,7 +32,7 @@ public class TapeRenderer {
 		LittleGridContext context = LittleGridContext.get(16);
 		
 		double contDecimal = 1D / context.size;
-		double distence = (makePositive(pos_1 - pos_2)) + contDecimal;
+		double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
 		int denominator = context.size;
 		String[] dis = String.valueOf(distence).split("\\.");
 		double numerator = context.size * Double.parseDouble("0." + dis[1]);
@@ -42,14 +42,7 @@ public class TapeRenderer {
 		}else {
 			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
 		}
-	}
-
-	public double makePositive(double num) {
-		if (num < 0) {
-			num *= -1;
-		}
-		return num;
-	}
+	} 
 	
 	@SubscribeEvent
 	public void render(RenderWorldLastEvent event) {
@@ -77,7 +70,7 @@ public class TapeRenderer {
 			double centerY_2 = tape.select_2.centerY;
 			double centerZ_2 = tape.select_2.centerZ;
 			
-			//StringRenderer.drawString(tape.select.boxCorner_1, distenceStr(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			StringRenderer.drawString(tape.select.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
 			String t = Double.toString(radius(centerX_1, centerX_2));
 			player.sendStatusMessage(new TextComponentString(t), true);
 
@@ -101,13 +94,13 @@ public class TapeRenderer {
 			 * 1 1 / */
 			
 			
-			drawLine(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
+			//drawLine(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
 			
 			
-			drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
+			//drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
 
 			
-			/*
+			
 			if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
 				drawBoundingBox(tape.select.corner_6, tape.select_2.corner_2, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 				drawBoundingBox(tape.select.corner_1, tape.select.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
@@ -222,7 +215,7 @@ public class TapeRenderer {
 				drawBoundingBox(tape.select.corner_1, tape.select.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 				drawBoundingBox(tape.select_2.corner_1, tape.select_2.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 			}
-			*/
+			
 			
 			//drawCircle(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 			GlStateManager.enableDepth();
@@ -306,7 +299,7 @@ public class TapeRenderer {
 			newX = newX/10;
 			newX = cleanDouble(newX);
 			y = -(Math.sqrt(Math.pow(radius,2)-Math.pow(x, 2)))/10;
-			System.out.println(x + " / " + newX + " " + y);
+			//System.out.println(x + " / " + newX + " " + y);
 			bufferbuilder.pos((newX + minX) - d0 - 0.001, (y + minY) - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, alpha).endVertex();
 			x = x - 0.125;
 		}

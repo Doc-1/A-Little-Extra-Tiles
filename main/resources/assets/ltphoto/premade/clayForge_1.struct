@@ -1,0 +1,1 @@
+{tiles:[{boxes:[[I;0,0,5,1,8,11],[I;1,0,3,2,8,13],[I;2,0,2,3,8,14],[I;3,0,1,5,8,15],[I;5,0,0,11,8,16],[I;11,0,1,13,8,15],[I;13,0,2,14,8,14],[I;14,0,3,15,8,13],[I;15,0,5,16,8,11]],tile:{color:-7460352,meta:10,block:"littletiles:ltcoloredblock",tID:"BlockTileColored"},group:1b}],min:[I;0,0,0],size:[I;16,8,16],count:9}
