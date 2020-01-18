@@ -3,6 +3,7 @@ package com.MasterForge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -26,17 +27,25 @@ import com.creativemd.littletiles.common.utils.vec.SurroundingBox;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import scala.reflect.internal.Trees.This;
 
 public class MultiTileStructure extends LittleStructurePremade {
 	
-	private int seriesIndex = 2;
+	private int counter = 0;
+	private int seriesIndex = 5;
 	private String seriesName = type.id.toString().split("_")[0];
 	
 	public MultiTileStructure(LittleStructureType type) {
@@ -59,6 +68,12 @@ public class MultiTileStructure extends LittleStructurePremade {
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
+		playerIn.sendStatusMessage(new TextComponentString("  "+counter), true);
+		heldItem.getCount();
+		Iterator iterator = playerIn.inventoryContainer.inventoryItemStacks.iterator();
+		while(iterator.hasNext()) {
+			System.out.println(iterator.next());
+		}
 		String next = nextSeries();
 		if(!next.isEmpty()) {
 			SurroundingBox box = new SurroundingBox(false).add(tiles.entrySet());
@@ -96,5 +111,4 @@ public class MultiTileStructure extends LittleStructurePremade {
 		}
 		return true;
 	}
-
 }

@@ -142,13 +142,18 @@ public class LTPhoto
     	LittleStructurePremade.registerPremadeStructureType("typewriter", LTPhoto.MODID, LittleTypeWriter.class);
 
     	
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_1", LTPhoto.MODID, MultiTileStructure.class);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_2", LTPhoto.MODID, LittleTypeWriter.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_1", LTPhoto.MODID, MultiTileStructure.class); 
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_2", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_3", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_4", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_5", LTPhoto.MODID, MultiTileStructure.class);
     	
-    	MultiTileStructureRecipe.addRecipe("clayForge_1", new Object[] {Items.IRON_INGOT, 5});
-    	MultiTileStructureRecipe.addRecipe("clayForge_2", new Object[] {Items.APPLE, 2});
-    	MultiTileStructureRecipe.findRecipe();
-    	
+    	MultiTileStructureRecipe.addRecipe("clayForge_1", Items.CLAY_BALL, 5);
+    	MultiTileStructureRecipe.addRecipe("clayForge_2", Items.CLAY_BALL, 4);
+    	MultiTileStructureRecipe.addRecipe("clayForge_3", Items.CLAY_BALL, 8);
+    	MultiTileStructureRecipe.addRecipe("clayForge_4", Items.CLAY_BALL, 9);
+    	MultiTileStructureRecipe.addRecipe("clayForge_5", Items.CLAY_BALL, 9);
+
     	GameRegistry.addShapedRecipe(new ResourceLocation("craft_photo_importer"), new ResourceLocation("ltphoto"),
     			LittleStructurePremade.getPremadeStack("photoimporter"), new Object[]{
     					"XXX",

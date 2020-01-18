@@ -1,5 +1,6 @@
 package com.ltphoto.client;
 
+import com.MasterForge.MultiTileStructure;
 import com.ltphoto.CommonProxy;
 import com.ltphoto.render.TapeRenderer;
 import com.ltphoto.render.string.StringRenderer;
@@ -17,5 +18,4 @@ public class LTPhotoClient extends CommonProxy {
 		super.preInit(e);
 		MinecraftForge.EVENT_BUS.register(new TapeRenderer());
 	}
-	
 }

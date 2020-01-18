@@ -10,41 +10,40 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class MultiTileStructureRecipe {
 	
-	public static HashMap<Object, Integer> recipeDict = new HashMap<>();
+	public static HashMap<Object, ItemStack> recipeDict = new HashMap<>();
 	
 	/**
 	 * @param id
 	 * ID of the premade structure
-	 * @param ingredients
-	 * List of Items/Blocks/Structures then followed by an integer indicating the number of that item needed.
-	 * The ingredients with be required in the order that is inputed
+	 * @param ingredient
+	 * 
 	 */
-	public static void addRecipe(String id, Object... ingredients) {
-		int amount = 0;
-		Object ingredient = null;
-		for(int x=0; x<ingredients.length; x++) {
-			if(ingredients[x] instanceof Integer) {
-				amount = (int) ingredients[x];
-				System.out.println(ingredients[x] + " Amount");
-			}else if(ingredients[x] instanceof Item || ingredients[x] instanceof Block) {
-				ingredient = ingredients[x];
-				System.out.println(ingredients[x] + " Ingredient");
-			}else {
-				System.out.println(ingredients[x] + " Error " + ingredients[x].getClass());
-			}
+	public static void addRecipe(String id, Object ingredient, int count) {
+		if(ingredient instanceof Item) {
+			recipeDict.put(id, new ItemStack((Item) ingredient,count));
+		}else if(ingredient instanceof Block) {
+			recipeDict.put(id, new ItemStack((Block) ingredient,count));
 		}
-		recipeDict.put(ingredient, amount);
 	}
 	
-	public static void findRecipe() {
+	public static String findRecipe(String id) {
 		Set set = recipeDict.entrySet();
 		Iterator iterator = set.iterator();
 		while(iterator.hasNext()) {
-	         Map.Entry mentry = (Map.Entry)iterator.next();
-	         System.out.println("key is: "+ mentry.getKey() + " & Value is: " + mentry.getValue());
+
+			Map.Entry mentry = (Map.Entry)iterator.next();
+			if(mentry.getKey().equals(id)) {
+		         ItemStack ingredient = (ItemStack) mentry.getValue();
+		         return "Structure is: "+ mentry.getKey() + " & it takes " + ingredient + " ";
+			}
 		}
+		return "";
 	}
+	
+	
+	
 }
