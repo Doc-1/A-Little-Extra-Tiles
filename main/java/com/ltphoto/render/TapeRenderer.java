@@ -1,6 +1,6 @@
 package com.ltphoto.render;
 
-import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.ltphoto.items.TapeMeasure;
 import com.ltphoto.render.string.StringRenderer;
 
