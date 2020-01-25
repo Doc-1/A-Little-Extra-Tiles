@@ -19,14 +19,14 @@ import org.apache.commons.io.IOUtils;
 
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.common.blocks.BlockLTColored;
-import com.creativemd.littletiles.common.tiles.LittleTileBlockColored;
-import com.creativemd.littletiles.common.tiles.combine.BasicCombiner;
-import com.creativemd.littletiles.common.tiles.preview.LittlePreviews;
-import com.creativemd.littletiles.common.tiles.preview.LittleTilePreview;
-import com.creativemd.littletiles.common.tiles.vec.LittleTileBox;
-import com.creativemd.littletiles.common.tiles.vec.LittleTileVec;
-import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
+import com.creativemd.littletiles.common.block.BlockLTColored;
+import com.creativemd.littletiles.common.tile.LittleTileColored;
+import com.creativemd.littletiles.common.tile.combine.BasicCombiner;
+import com.creativemd.littletiles.common.tile.math.box.LittleBox;
+import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
+import com.creativemd.littletiles.common.tile.preview.LittlePreview;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.ltphoto.config.Config;
 import com.ltphoto.photo.ColorAccuracy;
 import com.ltphoto.photo.PhotoReader;
@@ -80,7 +80,7 @@ public class FontReader {
 				
 				if(((width*height)<maxPixelAmount)) {
 					LittleGridContext context = LittleGridContext.get(grid);
-					List<LittleTilePreview> tiles = new ArrayList<>();
+					List<LittlePreview> tiles = new ArrayList<>();
 					int expected = image.getWidth() * image.getHeight();
 					for (int x = 0; x < image.getWidth(); x++) {
 						for (int y = 0; y < image.getHeight(); y++) {
@@ -88,8 +88,8 @@ public class FontReader {
 							color = image.getRGB(x, image.getHeight() - y - 1);
 							
 							if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
-								LittleTileBlockColored tile = new LittleTileBlockColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
-								tile.box = new LittleTileBox(new LittleTileVec(x, y, 0));
+								LittleTileColored tile = new LittleTileColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
+								tile.box = new LittleBox(new LittleVec(x, y, 0));
 								tiles.add(tile.getPreviewTile());
 							}
 						}
@@ -99,10 +99,10 @@ public class FontReader {
 
 					ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
 					LittlePreviews previews = new LittlePreviews(context);
-					for (LittleTilePreview tile : tiles) {
+					for (LittlePreview tile : tiles) {
 						previews.addWithoutCheckingPreview(tile);
 					}
-					LittleTilePreview.savePreview(previews, stack); // save tiles to itemstacks
+					LittlePreview.savePreview(previews, stack); // save tiles to itemstacks
 					
 					return stack.getTagCompound();
 				}

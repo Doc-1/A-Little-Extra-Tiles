@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.creativemd.littletiles.common.tiles.vec.LittleTilePos;
-import com.creativemd.littletiles.common.tiles.vec.LittleTileVec;
-import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
+import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
+import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.ltphoto.tiles.SelectLittleTile;
 
 import net.minecraft.client.Minecraft;
@@ -26,8 +26,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TapeMeasure extends Item {
 	
-	public LittleTilePos firstPos;
-	public LittleTilePos secondPos;
+	public LittleAbsoluteVec firstPos;
+	public LittleAbsoluteVec secondPos;
 	
 	public EntityPlayer player;
 	public World world;
@@ -62,7 +62,7 @@ public class TapeMeasure extends Item {
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		LittleGridContext context = LittleGridContext.get(16);
 		RayTraceResult res = player.rayTrace(4.0, (float) 0.1);
-		LittleTileVec vec = new LittleTileVec(context, res);
+		LittleVec vec = new LittleVec(context, res);
 		
 		this.player = player;
 		this.world = worldIn;
@@ -70,11 +70,11 @@ public class TapeMeasure extends Item {
 		
 		if (player.isSneaking()) {
 			a = res.hitVec;
-			firstPos = new LittleTilePos(res, context);
+			firstPos = new LittleAbsoluteVec(res, context);
 			select = new SelectLittleTile(firstPos, context, facing);
 		} else {
 			b = res.hitVec;
-			secondPos = new LittleTilePos(res, context);
+			secondPos = new LittleAbsoluteVec(res, context);
 			select_2 = new SelectLittleTile(secondPos, context, facing);
 		}
 		

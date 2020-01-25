@@ -1,7 +1,7 @@
 package com.ltphoto.tiles;
 
-import com.creativemd.littletiles.common.tiles.vec.LittleTilePos;
-import com.creativemd.littletiles.common.utils.grid.LittleGridContext;
+import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
@@ -41,7 +41,7 @@ public class SelectLittleTile {
 		
 	}
 	
-	public SelectLittleTile(LittleTilePos corner, LittleGridContext con, EnumFacing side) {
+	public SelectLittleTile(LittleAbsoluteVec corner, LittleGridContext con, EnumFacing side) {
 		context = con;
 		gridOffSet = context.pixelSize;
 		facing = side;
