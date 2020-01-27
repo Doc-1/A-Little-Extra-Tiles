@@ -55,7 +55,7 @@ public class TapeMeasure extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add("THIS IS WIP!");
+		tooltip.add("THIS IS IN ALPHA \nDesign May Change");
 	}
 	
 	@Override

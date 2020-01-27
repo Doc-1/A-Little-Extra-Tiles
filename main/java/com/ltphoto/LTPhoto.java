@@ -45,13 +45,6 @@ import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.common.block.ItemBlockColored;
-import com.creativemd.littletiles.common.block.ItemBlockFlowingLava;
-import com.creativemd.littletiles.common.block.ItemBlockFlowingWater;
-import com.creativemd.littletiles.common.block.ItemBlockTransparentColored;
-import com.creativemd.littletiles.common.item.ItemBlockTiles;
-import com.creativemd.littletiles.common.item.ItemHammer;
-import com.creativemd.littletiles.common.item.ItemPremadeStructure;
 import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
 import com.ltphoto.config.Config;
 import com.ltphoto.config.IGCMLoader;
@@ -78,14 +71,14 @@ public class LTPhoto
     public static final String NAME = "LT Photo Converter";
     public static final String VERSION = "1.0";
     
-	public static Item tapeMessure;
+	public static Item tapeMeasure;
 	
 	
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
     	proxy.preInit(event);
     	
-    	tapeMessure = new TapeMeasure("tapemessure");
+    	tapeMeasure = new TapeMeasure("tapemeasure");
 
     	GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			
@@ -133,8 +126,9 @@ public class LTPhoto
     
     @SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(tapeMessure);
+		event.getRegistry().registerAll(tapeMeasure);
 	}
+    
     
     @EventHandler
     public void Init(FMLInitializationEvent event) {

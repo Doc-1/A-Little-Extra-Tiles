@@ -48,7 +48,7 @@ public class TapeRenderer {
 	public void render(RenderWorldLastEvent event) {
 		this.event = event;
 		EntityPlayer player = Minecraft.getMinecraft().player;
-		String item = "ltphoto:tapemessure";
+		String item = "ltphoto:tapemeasure";
 		String mainItem = player.getHeldItemMainhand().getItem().getRegistryName().toString();
 		TapeMeasure tape = new TapeMeasure();
 		if (item.equals(mainItem)) {
@@ -70,9 +70,16 @@ public class TapeRenderer {
 			double centerY_2 = tape.select_2.centerY;
 			double centerZ_2 = tape.select_2.centerZ;
 			
-			StringRenderer.drawString(tape.select.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			Vec3d middleZ = new Vec3d(tape.select.boxCorner_1.x, tape.select.boxCorner_1.y, ((centerZ_1 + centerZ_2)/2)
+					-((distence(centerZ_1, centerZ_2).length()/2D)*0.06));
+	
+			
+			StringRenderer.drawString(middleZ, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			//StringRenderer.drawString(tape.select_2.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			
+			String r = Double.toString(distence(centerZ_1, centerZ_2).length()/100D);
 			String t = Double.toString(radius(centerX_1, centerX_2));
-			player.sendStatusMessage(new TextComponentString(t), true);
+			player.sendStatusMessage(new TextComponentString(r), true);
 
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
