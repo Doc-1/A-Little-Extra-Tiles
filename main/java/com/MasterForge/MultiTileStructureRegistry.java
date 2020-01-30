@@ -8,6 +8,7 @@ import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.packet.LittleActionMessagePacket;
+import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.util.ingredient.LittleIngredients;
 import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
@@ -15,6 +16,7 @@ import com.creativemd.littletiles.common.util.ingredient.NotEnoughIngredientsExc
 import com.creativemd.littletiles.common.util.ingredient.StackIngredient;
 import com.creativemd.littletiles.common.util.ingredient.StackIngredientEntry;
 import com.creativemd.littletiles.common.util.tooltip.ActionMessage;
+import com.ltphoto.LTPhoto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,23 +31,67 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 
-public class MultiTileStructureRecipe {
+public class MultiTileStructureRegistry {
 	
 	private static HashMap<String, ItemStack> recipeDict = new HashMap<>();
+	private static HashMap<String, Integer> multiTileStructLimitDict = new HashMap<>();
 	private static HashMap<ItemStack, Integer> inventoryDict = new HashMap<>();
 	
 	/**
 	 * @param id
 	 * ID of the premade structure
 	 * @param ingredient
-	 * 
+	 * Item that will be used to craft the next Structure in the sequence
+	 * @param count
+	 * How many of said item to be used 
 	 */
 	public static void addRecipe(String id, Item ingredient, int count) {
 		recipeDict.put(id, new ItemStack(ingredient,count));
 	}
 	
+	/**
+	 * @param id
+	 * ID of the premade structure
+	 * @param ingredient
+	 * Block that will be used to craft the next Structure in the sequence
+	 * @param count
+	 * How many of said item to be used 
+	 */
 	public static void addRecipe(String id, Block ingredient, int count) {
 		recipeDict.put(id, new ItemStack(ingredient,count));
+	}
+	
+	/**
+	 * Structures should be labeled the same name Plus "_#" # will be the order it goes in
+	 * The first structure should be labeled as "Structure_1" This will the starting 
+	 * structure that will be built into the next Structure.
+	 * @param id
+	 * ID of the premade Structure minus the "_#"
+	 * @param modid
+	 * The ID of your (my) Mod
+	 * @param classStructure
+	 * The Class in which you want the last Premade Structure to use. Think of it as a Block Class
+	 */
+	public static void registerPremadeStructureType(String id, String modid, Class<? extends LittleStructurePremade> classStructure, int limit) {
+    	int i;
+		for(i=1;i<limit;i++) {
+    		LittleStructurePremade.registerPremadeStructureType(id+"_"+i, modid, MultiTileStructure.class);
+    		multiTileStructLimitDict.put(id+"_"+i, limit);
+    	}
+		LittleStructurePremade.registerPremadeStructureType(id+"_"+i, modid, classStructure);
+    	
+    }
+	
+	public static int findLimit(String id) {
+		Set set = multiTileStructLimitDict.entrySet();
+		Iterator iterator = set.iterator();
+		while(iterator.hasNext()) {
+			Map.Entry mentry = (Map.Entry)iterator.next();
+			if(mentry.getKey().equals(id)) {
+				return (int) mentry.getValue();
+			}
+		}
+		return 0;
 	}
 	
 	public static ItemStack findRecipe(String id) {
@@ -62,7 +108,7 @@ public class MultiTileStructureRecipe {
 	
 	public static boolean takeIngredients(EntityPlayer playerIn, LittleStructureType type) {
 		if (!playerIn.world.isRemote) {
-			ItemStack ingredient = MultiTileStructureRecipe.findRecipe(type.id);
+			ItemStack ingredient = MultiTileStructureRegistry.findRecipe(type.id);
 			
 			StackIngredient stacks = new StackIngredient();
 			stacks.add(new StackIngredientEntry(ingredient, ingredient.getCount()));

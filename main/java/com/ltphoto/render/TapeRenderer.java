@@ -1,7 +1,7 @@
 package com.ltphoto.render;
 
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
-import com.ltphoto.items.TapeMeasure;
+import com.ltphoto.items.ItemTapeMeasure;
 import com.ltphoto.render.string.StringRenderer;
 
 import net.minecraft.client.Minecraft;
@@ -50,9 +50,9 @@ public class TapeRenderer {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		String item = "ltphoto:tapemeasure";
 		String mainItem = player.getHeldItemMainhand().getItem().getRegistryName().toString();
-		TapeMeasure tape = new TapeMeasure();
+		ItemTapeMeasure tape = new ItemTapeMeasure();
 		if (item.equals(mainItem)) {
-			tape = (TapeMeasure) player.getHeldItemMainhand().getItem();
+			tape = (ItemTapeMeasure) player.getHeldItemMainhand().getItem();
 		}
 		
 		if (tape.a != null && tape.b != null) {
@@ -71,12 +71,14 @@ public class TapeRenderer {
 			double centerZ_2 = tape.select_2.centerZ;
 			
 			Vec3d middleZ = new Vec3d(tape.select.boxCorner_1.x, tape.select.boxCorner_1.y, ((centerZ_1 + centerZ_2)/2)
-					-((distence(centerZ_1, centerZ_2).length()/2D)*0.06));
-	
+					-((distence(centerZ_1, centerZ_2).length()/2D)*0.0655));
+			Vec3d middleX = new Vec3d(tape.select.boxCorner_2.x, tape.select.boxCorner_2.y, ((centerX_1 + centerX_2)/2)
+					-((distence(centerX_1, centerX_2).length()/2D)*0.0655));
 			
 			StringRenderer.drawString(middleZ, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
 			//StringRenderer.drawString(tape.select_2.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
-			
+			StringRenderer.drawString(middleZ, distence(centerX_1, centerX_2), event, 0.0F, 1.0F, 0F, 1.0F);
+
 			String r = Double.toString(distence(centerZ_1, centerZ_2).length()/100D);
 			String t = Double.toString(radius(centerX_1, centerX_2));
 			player.sendStatusMessage(new TextComponentString(r), true);

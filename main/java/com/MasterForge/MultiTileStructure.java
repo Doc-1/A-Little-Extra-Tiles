@@ -25,6 +25,8 @@ import com.creativemd.littletiles.common.tileentity.TileEntityLittleTilesTicking
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.PlacementMode;
 import com.creativemd.littletiles.common.util.vec.SurroundingBox;
+import com.ltphoto.LTPhoto;
+import com.ltphoto.structure.premade.LittleTypeWriter;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,15 +47,12 @@ import scala.reflect.internal.Trees.This;
 
 public class MultiTileStructure extends LittleStructurePremade {
 	
-	private int counter = 0;
-	private int seriesIndex = 6;
+	private int seriesIndex = MultiTileStructureRegistry.findLimit(type.id);
 	private String seriesName = type.id.toString().split("_")[0];
 
 	public MultiTileStructure(LittleStructureType type) {
 		super(type);
 	}
-	
-	
 	
 	@Override
 	protected void loadFromNBTExtra(NBTTagCompound nbt) {}
@@ -72,7 +71,7 @@ public class MultiTileStructure extends LittleStructurePremade {
 	@Override
 	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
 		
-		if(MultiTileStructureRecipe.takeIngredients(playerIn, type) && !playerIn.world.isRemote) {
+		if(MultiTileStructureRegistry.takeIngredients(playerIn, type) && !playerIn.world.isRemote) {
 			String next = nextSeries();
 			if(!next.isEmpty()) {
 				SurroundingBox box = new SurroundingBox(false).add(tiles.entrySet());
