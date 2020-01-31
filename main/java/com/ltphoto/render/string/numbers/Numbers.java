@@ -15,10 +15,12 @@ public class Numbers {
 	public BufferBuilder bufferbuilder;
 	public RenderWorldLastEvent event;
 	public int numOfVecs;
+	public Facing facing;
 	
-	public Numbers(BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
+	public Numbers(BufferBuilder bufferbuilder, RenderWorldLastEvent event, Facing facing) {
 		this.bufferbuilder = bufferbuilder;
 		this.event = event;
+		this.facing = facing;
 	}
 	
 	public ArrayList<Vec3d> line(double startX, double startY, double startZ) {
@@ -49,34 +51,34 @@ public class Numbers {
 		
 		switch (input) {
 		case '1':
-			One one = new One(start, Facing.UP, 1, bufferbuilder, event);
+			One one = new One(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '2':
-			Two two = new Two(start, Facing.UP, 1, bufferbuilder, event);
+			Two two = new Two(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '3':
-			Three three = new Three(start, Facing.UP, 1, bufferbuilder, event);
+			Three three = new Three(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '4':
-			Four four = new Four(start, Facing.UP, 1, bufferbuilder, event);
+			Four four = new Four(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '5':
-			Five five = new Five(start, Facing.UP, 1, bufferbuilder, event);
+			Five five = new Five(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '6':
-			Six six = new Six(start, Facing.UP, 1, bufferbuilder, event);
+			Six six = new Six(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '7':
-			Seven seven = new Seven(start, Facing.UP, 1, bufferbuilder, event);
+			Seven seven = new Seven(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '8':
-			Eight eight = new Eight(start, Facing.UP, 1, bufferbuilder, event);
+			Eight eight = new Eight(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '9':
-			Nine nine = new Nine(start, Facing.UP, 1, bufferbuilder, event);
+			Nine nine = new Nine(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case '0':
-			Zero zero = new Zero(start, Facing.UP, 1, bufferbuilder, event);
+			Zero zero = new Zero(start, this.facing, 1, bufferbuilder, event);
 			break;
 		default:
 			break;

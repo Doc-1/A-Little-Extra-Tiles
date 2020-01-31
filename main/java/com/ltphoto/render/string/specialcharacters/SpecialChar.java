@@ -15,10 +15,12 @@ public class SpecialChar {
 	public BufferBuilder bufferbuilder;
 	public RenderWorldLastEvent event;
 	public int numOfVecs;
+	public Facing facing;
 	
-	public SpecialChar(BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
+	public SpecialChar(BufferBuilder bufferbuilder, RenderWorldLastEvent event, Facing facing) {
 		this.bufferbuilder = bufferbuilder;
 		this.event = event;
+		this.facing = facing;
 	}
 	
 	public ArrayList<Vec3d> line(double startX, double startY, double startZ) {
@@ -49,7 +51,7 @@ public class SpecialChar {
 		
 		switch (input) {
 		case '/':
-			ForwardSlash forwardSlash = new ForwardSlash(start, Facing.UP, 1, bufferbuilder, event);
+			ForwardSlash forwardSlash = new ForwardSlash(start, this.facing, 1, bufferbuilder, event);
 			break;
 		
 		default:

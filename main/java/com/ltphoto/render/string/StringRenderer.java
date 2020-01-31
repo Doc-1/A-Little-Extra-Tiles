@@ -1,5 +1,6 @@
 package com.ltphoto.render.string;
 
+import com.ltphoto.render.string.DrawCharacter.Facing;
 import com.ltphoto.render.string.alphabet.Alphabet;
 import com.ltphoto.render.string.numbers.Numbers;
 import com.ltphoto.render.string.specialcharacters.SpecialChar;
@@ -13,7 +14,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class StringRenderer {
 	
-	public static void drawString(Vec3d start, String str, RenderWorldLastEvent event, float red, float green, float blue, float alpha) {
+	public static void drawString(Vec3d start, String str, Facing facing, RenderWorldLastEvent event, float red, float green, float blue, float alpha) {
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -33,20 +34,44 @@ public class StringRenderer {
 			double y = start.y;
 			double z = start.z;
 			
-			if (i != 0) {
-				z = start.z + 0.065;
+			
+			switch (facing) {
+			case NORTH:
+				
+				break;
+			case EAST:
+				
+				break;
+			case SOUTH:
+				
+				break;
+			case WEST:
+				if (i != 0) {
+					x = start.x + 0.065;
+				}
+				break;
+			case UP:
+				if (i != 0) {
+					z = start.z + 0.065;
+				}
+				break;
+			case DOWN:
+				
+				break;
+			default:
+				break;
 			}
 			
 			start = new Vec3d(x, y, z);
 			
 			if (c[i] >= 'A' && c[i] <= 'Z') {
-				Alphabet alphabet = new Alphabet(bufferbuilder, event);
+				Alphabet alphabet = new Alphabet(bufferbuilder, event, facing);
 				alphabet.character(c[i], start, red, green, blue, alpha);
 			} else if (c[i] >= '0' && c[i] <= '9') {
-				Numbers number = new Numbers(bufferbuilder, event);
+				Numbers number = new Numbers(bufferbuilder, event, facing);
 				number.character(c[i], start, red, green, blue, alpha);
 			} else {
-				SpecialChar specialChar = new SpecialChar(bufferbuilder, event);
+				SpecialChar specialChar = new SpecialChar(bufferbuilder, event, facing);
 				specialChar.character(c[i], start, red, green, blue, alpha);
 			}
 			

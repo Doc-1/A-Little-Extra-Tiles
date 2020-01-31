@@ -13,6 +13,7 @@ import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
 import com.creativemd.littletiles.common.container.SubContainerScrewdriver;
+import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
@@ -44,9 +45,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile{
 	public LittleAbsoluteVec firstPos;
 	public LittleAbsoluteVec secondPos;
 	
-	public EntityPlayer player;
-	public World world;
-	
 	public Vec3d a;
 	public Vec3d b;
 	
@@ -76,15 +74,14 @@ public class ItemTapeMeasure extends Item implements ILittleTile{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, PositionResult position, RayTraceResult result) {
-		LittleGridContext context = LittleGridContext.get(16);
+		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
 		LittleVec vec = new LittleVec(context, res);
 		
-		this.player = player;
-		this.world = world;
 		double cont = 1 / context.size;
 		
 		a = res.hitVec;
+		
 		firstPos = new LittleAbsoluteVec(res, context);
 		select = new SelectLittleTile(firstPos, context, position.facing);
 		
@@ -94,18 +91,17 @@ public class ItemTapeMeasure extends Item implements ILittleTile{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean onClickBlock(World world, EntityPlayer player, ItemStack stack, PositionResult position, RayTraceResult result) {
-		LittleGridContext context = LittleGridContext.get(16);
+		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
 		LittleVec vec = new LittleVec(context, res);
 		
-		this.player = player;
-		this.world = world;
 		double cont = 1 / context.size;
 		
 		b = res.hitVec;
+		
 		secondPos = new LittleAbsoluteVec(res, context);
 		select_2 = new SelectLittleTile(secondPos, context, position.facing);
-		
+
 		return false;
 	}
 	
@@ -122,7 +118,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public SubGuiConfigure getConfigureGUI(EntityPlayer player, ItemStack stack) {
-		return new SubGuiTapeMeasure(100, 100, stack);
+		return new SubGuiTapeMeasure(150, 200, stack);
 	}
 	
 	@Override

@@ -1,7 +1,9 @@
 package com.ltphoto.render;
 
+import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.ltphoto.items.ItemTapeMeasure;
+import com.ltphoto.render.string.DrawCharacter.Facing;
 import com.ltphoto.render.string.StringRenderer;
 
 import net.minecraft.client.Minecraft;
@@ -29,7 +31,7 @@ public class TapeRenderer {
 	}
 	
 	public String distence(double pos_1, double pos_2) {
-		LittleGridContext context = LittleGridContext.get(16);
+		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		
 		double contDecimal = 1D / context.size;
 		double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
@@ -38,7 +40,7 @@ public class TapeRenderer {
 		double numerator = context.size * Double.parseDouble("0." + dis[1]);
 		
 		if((int)(numerator)==0) {
-			return dis[0] + " BLOCK ";
+			return dis[0] + " BLOCK";
 		}else {
 			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
 		}
@@ -72,17 +74,19 @@ public class TapeRenderer {
 			
 			Vec3d middleZ = new Vec3d(tape.select.boxCorner_1.x, tape.select.boxCorner_1.y, ((centerZ_1 + centerZ_2)/2)
 					-((distence(centerZ_1, centerZ_2).length()/2D)*0.0655));
-			Vec3d middleX = new Vec3d(tape.select.boxCorner_2.x, tape.select.boxCorner_2.y, ((centerX_1 + centerX_2)/2)
-					-((distence(centerX_1, centerX_2).length()/2D)*0.0655));
+			Vec3d middleX = new Vec3d(((centerX_1 + centerX_2)/2)-((distence(centerX_1, centerX_2).length()/2D)
+					*0.0655),tape.select.boxCorner_1.y, tape.select.boxCorner_1.z-0.05);
 			
-			StringRenderer.drawString(middleZ, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			StringRenderer.drawString(middleZ, distence(centerZ_1, centerZ_2), Facing.UP ,event, 0.0F, 1.0F, 0F, 1.0F);
 			//StringRenderer.drawString(tape.select_2.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
-			StringRenderer.drawString(middleZ, distence(centerX_1, centerX_2), event, 0.0F, 1.0F, 0F, 1.0F);
+			StringRenderer.drawString(middleX, distence(centerX_1, centerX_2), Facing.WEST, event, 0.0F, 1.0F, 0F, 1.0F);
+			
+			//String r = Double.toString(distence(centerZ_1, centerZ_2).length()/100D);
+			//String t = Double.toString(radius(centerX_1, centerX_2));
+			//player.sendStatusMessage(new TextComponentString(r), true);
 
-			String r = Double.toString(distence(centerZ_1, centerZ_2).length()/100D);
-			String t = Double.toString(radius(centerX_1, centerX_2));
-			player.sendStatusMessage(new TextComponentString(r), true);
-
+			player.sendStatusMessage(new TextComponentString("X: " + distence(centerX_1, centerX_2)+ " Y: " + distence(centerY_1, centerY_2) + " Z: " + distence(centerZ_1, centerZ_2)), true);
+			
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			GlStateManager.glLineWidth(2.0F);

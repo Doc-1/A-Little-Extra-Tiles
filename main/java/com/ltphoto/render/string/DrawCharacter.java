@@ -23,6 +23,8 @@ public class DrawCharacter {
 	public float blue;
 	public float alpha = 1.0F;
 	
+	public int count;
+	
 	public BufferBuilder bufferbuilder;
 	public RenderWorldLastEvent event;
 	public EntityPlayer player = Minecraft.getMinecraft().player;
@@ -60,9 +62,9 @@ public class DrawCharacter {
 			break;
 		case WEST:
 			for (int i = 0; i < vecs.size(); i++) {
-				pos_1.add(vecs.get(i).x);
+				pos_1.add(vecs.get(i).z);
 				pos_2.add(vecs.get(i).y);
-				pos_3.add(vecs.get(i).z);
+				pos_3.add(vecs.get(i).x*-1);
 			}
 			break;
 		case UP:

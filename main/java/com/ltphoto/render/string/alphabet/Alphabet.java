@@ -13,10 +13,12 @@ public class Alphabet {
 	public BufferBuilder bufferbuilder;
 	public RenderWorldLastEvent event;
 	public int numOfVecs;
+	public Facing facing;
 	
-	public Alphabet(BufferBuilder bufferbuilder, RenderWorldLastEvent event) {
+	public Alphabet(BufferBuilder bufferbuilder, RenderWorldLastEvent event, Facing facing) {
 		this.bufferbuilder = bufferbuilder;
 		this.event = event;
+		this.facing = facing;
 	}
 	
 	public void setBuffer(BufferBuilder bufferbuilder) {
@@ -40,18 +42,18 @@ public class Alphabet {
 		
 		switch (input) {
 		case 'A':
-			A a = new A(start, Facing.UP, 1, bufferbuilder, event);
+			A a = new A(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'B':
-			B b = new B(start, Facing.UP, 1, bufferbuilder, event);
+			B b = new B(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'C':
-			C c = new C(start, Facing.UP, 1, bufferbuilder, event);
+			C c = new C(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'D':
 			break;
 		case 'E':
-			E e = new E(start, Facing.UP, 1, bufferbuilder, event);
+			E e = new E(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'F':
 			break;
@@ -60,22 +62,22 @@ public class Alphabet {
 		case 'H':
 			break;
 		case 'I':
-			I i = new I(start, Facing.UP, 1, bufferbuilder, event);
+			I i = new I(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'J':
 			break;
 		case 'K':
-			K k = new K(start, Facing.UP, 1, bufferbuilder, event);
+			K k = new K(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'L':
-			L l = new L(start, Facing.UP, 1, bufferbuilder, event);
+			L l = new L(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'M':
 			break;
 		case 'N':
 			break;
 		case 'O':
-			O o = new O(start, Facing.UP, 1, bufferbuilder, event);
+			O o = new O(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'Q':
 			break;
@@ -84,7 +86,7 @@ public class Alphabet {
 		case 'S':
 			break;
 		case 'T':
-			T t = new T(start, Facing.UP, 1, bufferbuilder, event);
+			T t = new T(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'U':
 			break;
