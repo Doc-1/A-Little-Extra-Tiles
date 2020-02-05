@@ -63,7 +63,7 @@ public class SubGuiBlock extends SubGui {
 		Color color = ColorUtils.IntToRGBA(preview.getColor());
 		selector = new GuiStack("preview", 20, 26, 112, getPlayer(), LittleSubGuiUtils.getCollector(getPlayer()), true);
 		
-		selector.setSelectedForce(preview.getBlockStack()); 
+		selector.setSelectedForce(preview.getBlockStack());
 		controls.add(selector);
 		
 		GuiComboBox contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());

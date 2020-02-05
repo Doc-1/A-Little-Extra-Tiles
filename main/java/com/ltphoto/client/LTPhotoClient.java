@@ -1,7 +1,7 @@
 package com.ltphoto.client;
 
-import com.MasterForge.MultiTileStructure;
-import com.MasterForge.MultiTileTicking;
+import com.MasterForge.MultiTile.MultiTileStructure;
+import com.MasterForge.MultiTile.MultiTileTicking;
 import com.ltphoto.CommonProxy;
 import com.ltphoto.render.TapeRenderer;
 import com.ltphoto.render.string.StringRenderer;

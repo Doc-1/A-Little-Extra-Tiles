@@ -1,4 +1,4 @@
-package com.MasterForge;
+package com.MasterForge.MultiTile;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -31,8 +31,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 
-public class MultiTileStructureRegistry {
-	
+public abstract class MultiTileStructureRegistry {
+
 	private static HashMap<String, ItemStack> recipeDict = new HashMap<>();
 	private static HashMap<String, Integer> multiTileStructLimitDict = new HashMap<>();
 	private static HashMap<ItemStack, Integer> inventoryDict = new HashMap<>();
@@ -72,7 +72,7 @@ public class MultiTileStructureRegistry {
 	 * @param classStructure
 	 * The Class in which you want the last Premade Structure to use. Think of it as a Block Class
 	 */
-	public static void registerPremadeStructureType(String id, String modid, Class<? extends LittleStructurePremade> classStructure, int limit) {
+/*	public static void registerPremadeStructureType(String id, String modid, Class<? extends LittleStructurePremade> classStructure, int limit) {
     	int i;
 		for(i=1;i<limit;i++) {
     		LittleStructurePremade.registerPremadeStructureType(id+"_"+i, modid, MultiTileStructure.class);
@@ -80,7 +80,7 @@ public class MultiTileStructureRegistry {
     	}
 		LittleStructurePremade.registerPremadeStructureType(id+"_"+i, modid, classStructure);
     	
-    }
+    }*/
 	
 	public static int findLimit(String id) {
 		Set set = multiTileStructLimitDict.entrySet();

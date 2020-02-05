@@ -41,8 +41,8 @@ import javax.annotation.Nonnull;
 
 import org.lwjgl.opengl.GL11;
 
-import com.MasterForge.MultiTileStructure;
-import com.MasterForge.MultiTileStructureRegistry;
+import com.MasterForge.MultiTile.MultiTileStructure;
+import com.MasterForge.MultiTile.MultiTileStructureRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
@@ -53,7 +53,10 @@ import com.creativemd.littletiles.client.gui.SubGuiRecipeAdvancedSelection;
 import com.creativemd.littletiles.common.container.SubContainerRecipeAdvanced;
 import com.creativemd.littletiles.common.item.ItemRecipeAdvanced;
 import com.creativemd.littletiles.common.structure.LittleStructure;
+import com.creativemd.littletiles.common.structure.attribute.LittleStructureAttribute;
 import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
+import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
+import com.creativemd.littletiles.common.structure.type.LittleBed;
 import com.ltphoto.config.Config;
 import com.ltphoto.config.IGCMLoader;
 import com.ltphoto.container.SubContainerBlock;
@@ -150,10 +153,16 @@ public class LTPhoto
     public void Init(FMLInitializationEvent event) {
     	LittleStructurePremade.registerPremadeStructureType("photoimporter", LTPhoto.MODID, LittlePhotoImporter.class);
     	LittleStructurePremade.registerPremadeStructureType("typewriter", LTPhoto.MODID, LittleTypeWriter.class);
-
     	
-    	MultiTileStructureRegistry.registerPremadeStructureType("clayForge", LTPhoto.MODID, LittlePhotoImporter.class,6); 
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_1", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_2", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_3", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_4", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_5", LTPhoto.MODID, MultiTileStructure.class);
+    	LittleStructurePremade.registerPremadeStructureType("clayForge_6", LTPhoto.MODID, MultiTileStructure.class, LittleStructureAttribute.TICKING);
+    	//LittleStructurePremade.registerPremadeStructureType("clayForge_6", LTPhoto.MODID, MultiTileStructure.class);
 
+    	//MultiTileStructureRegistry.registerPremadeStructureType("clayForge", LTPhoto.MODID, LittlePhotoImporter.class,6); 
     	MultiTileStructureRegistry.addRecipe("clayForge_1", Items.CLAY_BALL, 8);
     	MultiTileStructureRegistry.addRecipe("clayForge_2", Items.CLAY_BALL, 5);
     	MultiTileStructureRegistry.addRecipe("clayForge_3", Items.CLAY_BALL, 5);

@@ -1,5 +1,5 @@
 
-package com.MasterForge;
+package com.MasterForge.MultiTile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ import scala.reflect.internal.Trees.This;
 
 public class MultiTileStructure extends LittleStructurePremade {
 	
-	private int seriesIndex = MultiTileStructureRegistry.findLimit(type.id);
+	private int seriesIndex = 6;
 	private String seriesName = type.id.toString().split("_")[0];
 
 	public MultiTileStructure(LittleStructureType type) {
@@ -68,12 +68,20 @@ public class MultiTileStructure extends LittleStructurePremade {
 		return "";
 	}
 	
+	
+	@Override
+	public void tick() {
+		for(int i=0;i<=200;i++) {
+			System.out.println(i);
+		}
+	}
+	
 	@Override
 	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
-		
-		if(MultiTileStructureRegistry.takeIngredients(playerIn, type) && !playerIn.world.isRemote) {
-			String next = nextSeries();
-			if(!next.isEmpty()) {
+		System.out.println(this.getAttribute());
+		String next = nextSeries();
+		if(!next.isEmpty()) {
+			if(MultiTileStructureRegistry.takeIngredients(playerIn, type) && !playerIn.world.isRemote) {
 				SurroundingBox box = new SurroundingBox(false).add(tiles.entrySet());
 				long minX = box.getMinX();
 				long minY = box.getMinY();
