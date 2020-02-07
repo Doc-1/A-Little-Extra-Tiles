@@ -13,7 +13,6 @@ import com.creativemd.littletiles.common.action.block.LittleActionPlaceStack;
 import com.creativemd.littletiles.common.structure.connection.IStructureChildConnector;
 import com.creativemd.littletiles.common.structure.exception.MissingTileEntity;
 import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
-import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
@@ -44,22 +43,31 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import scala.reflect.internal.Trees.This;
 
-public class MultiTileStructure extends LittleStructurePremade {
-	
+public class MultiTileClayForge extends LittleStructurePremade {
+
 	private int seriesIndex = 13;
 	private String seriesName = type.id.toString().split("_")[0];
+	private int tick = 0;
+	private boolean hasFuel = false;
+	private String test;
 
-	public MultiTileStructure(LittleStructureType type) {
+	public MultiTileClayForge(LittleStructureType type) {
 		super(type);
 	}
 	
 	@Override
-	protected void loadFromNBTExtra(NBTTagCompound nbt) {}
+	protected void loadFromNBTExtra(NBTTagCompound nbt) {
+		tick = nbt.getInteger("tick");
+	}
 	
 	@Override
-	protected void writeToNBTExtra(NBTTagCompound nbt) {}
+	protected void writeToNBTExtra(NBTTagCompound nbt) {
+		nbt.setInteger("tick", tick);
+	}
 	
 	private String nextSeries() {
 		int seriesAt = Integer.parseInt(type.id.toString().split("_")[1]);
@@ -70,45 +78,41 @@ public class MultiTileStructure extends LittleStructurePremade {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
-		
-		System.out.println(this.getAttribute());
-		String next = nextSeries();
-		if(!next.isEmpty()) {
-			if(MultiTileStructureRegistry.takeIngredients(playerIn, type) && !playerIn.world.isRemote) {
-				SurroundingBox box = new SurroundingBox(false).add(tiles.entrySet());
-				long minX = box.getMinX();
-				long minY = box.getMinY();
-				long minZ = box.getMinZ();
-				LittleGridContext context = box.getContext();
-				BlockPos min = new BlockPos(context.toBlockOffset(minX), context.toBlockOffset(minY), context.toBlockOffset(minZ));
-				LittleVec minVec = new LittleVec((int) (minX - (long) min.getX() * (long) context.size), (int) (minY - (long) min.getY() * (long) context.size), (int) (minZ - (long) min.getZ() * (long) context.size));
-				ItemStack stack = getPremadeStack(next); // Change this line to support different states
-				LittlePreviews previews = LittlePreviews.getPreview(stack, true);
-				LittleVec previewMinVec = previews.getMinVec();
-				
-				for (LittlePreview preview : previews) {
-					preview.box.sub(previewMinVec);
-					preview.box.add(minVec);
-				}
-				
-				previews.convertToSmallest();
-				
-				List<PlacePreview> placePreviews = new ArrayList<>();
-				previews.getPlacePreviews(placePreviews, null, true, LittleVec.ZERO);
-				
-				HashMap<BlockPos, PlacePreviews> splitted = LittleActionPlaceStack.getSplittedTiles(previews.context, placePreviews, min);
-				//Test if the structure can be placed.
-				if (LittleActionPlaceStack.canPlaceTiles(null, worldIn, splitted, PlacementMode.overwrite.getCoordsToCheck(splitted, min), PlacementMode.overwrite, (LittleTile x) -> !x.isChildOfStructure(this), false)) {
-					// Remove existing structure
-					this.removeStructure();
-					// Places new structure
-					LittleActionPlaceStack.placeTilesWithoutPlayer(worldIn, previews.context, splitted, previews.getStructure(), PlacementMode.normal, min, null, null, null, null);
-				} else {
-					playerIn.sendStatusMessage(new TextComponentString("Not enough space!"), true);
-				}
+	public void tick() {
+		tick++;
+		System.out.println(tick +" "+this.getMainTile().getBlockPos());
+		if(tick >= 20) {
+			tick = 0;
+			SurroundingBox box = new SurroundingBox(false).add(tiles.entrySet());
+			long minX = box.getMinX();
+			long minY = box.getMinY();
+			long minZ = box.getMinZ();
+			LittleGridContext context = box.getContext();
+			BlockPos min = new BlockPos(context.toBlockOffset(minX), context.toBlockOffset(minY), context.toBlockOffset(minZ));
+			LittleVec minVec = new LittleVec((int) (minX - (long) min.getX() * (long) context.size), (int) (minY - (long) min.getY() * (long) context.size), (int) (minZ - (long) min.getZ() * (long) context.size));
+			ItemStack stack = getPremadeStack(nextSeries()); // Change this line to support different states
+			LittlePreviews previews = LittlePreviews.getPreview(stack, true);
+			LittleVec previewMinVec = previews.getMinVec();
+			
+			for (LittlePreview preview : previews) {
+				preview.box.sub(previewMinVec);
+				preview.box.add(minVec);
 			}
+			
+			previews.convertToSmallest();
+			
+			List<PlacePreview> placePreviews = new ArrayList<>();
+			previews.getPlacePreviews(placePreviews, null, true, LittleVec.ZERO);
+			
+			HashMap<BlockPos, PlacePreviews> splitted = LittleActionPlaceStack.getSplittedTiles(previews.context, placePreviews, min);
+			
+			this.removeStructure();
+			// Places new structure
+
+			LittleActionPlaceStack.placeTilesWithoutPlayer(this.getWorld(), previews.context, splitted, previews.getStructure(), PlacementMode.normal, min, null, null, null, null);
+		
+			//System.out.println("10 seconds "+this.getMainTile().getBlockPos());
 		}
-		return true;
 	}
+	
 }
