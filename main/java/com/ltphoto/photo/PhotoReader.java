@@ -32,9 +32,11 @@ import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.font.FontReader;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.items.ItemStackHandler;
 
 
 public class PhotoReader {
@@ -72,6 +74,74 @@ public class PhotoReader {
         return resized;
     }
 	
+	public static int getPixelWidth(String input, boolean uploadOption) {
+		InputStream in = null;
+		File file = null;
+		BufferedImage image = null;
+
+		try{
+			if(isBlock) {
+				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
+				image = ImageIO.read(in);
+				isBlock  = false;
+			}else if(uploadOption) {
+			 	in = load(input);
+			 	image = ImageIO.read(in);
+			}else {
+				file = new File(input);
+				image = ImageIO.read(file);
+			}
+		}catch(IOException e) {
+			return 0;
+		}
+		return image.getWidth();
+	}
+	
+	public static boolean imageExists(String input, boolean uploadOption) {
+		InputStream in = null;
+		File file = null;
+		BufferedImage image = null;
+		try{
+			if(isBlock) {
+				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
+				image = ImageIO.read(in);
+				isBlock  = false;
+			}else if(uploadOption) {
+			 	in = load(input);
+			 	image = ImageIO.read(in);
+			}else {
+				file = new File(input);
+				image = ImageIO.read(file);
+			}
+		}catch(IOException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public static int getPixelLength(String input, boolean uploadOption) {
+		InputStream in = null;
+		File file = null;
+		BufferedImage image = null;
+
+		try{
+			if(isBlock) {
+				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
+				image = ImageIO.read(in);
+				isBlock  = false;
+			}else if(uploadOption) {
+			 	in = load(input);
+			 	image = ImageIO.read(in);
+			}else {
+				file = new File(input);
+				image = ImageIO.read(file);
+			}
+		}catch(IOException e) {
+			return 0;
+		}
+		return image.getHeight();	
+	}
+	
 	/**
 	 * @param input
 	 * The path that the player gives from the SubGuiPhotoImport
@@ -91,68 +161,68 @@ public class PhotoReader {
 		int maxPixelAmount = Config.getMaxPixelAmount();
 		
 		try {
-			try {
-				if(isBlock) {
-					in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-					image = ImageIO.read(in);
-					isBlock  = false;
-				}else if(uploadOption) {
-				 	in = load(input);
-				 	image = ImageIO.read(in);
-				}else {
-					file = new File(input);
-					image = ImageIO.read(file);
+			
+			if(isBlock) {
+				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
+				image = ImageIO.read(in);
+				isBlock  = false;
+			}else if(uploadOption) {
+			 	in = load(input);
+			 	image = ImageIO.read(in);
+			}else {
+				file = new File(input);
+				image = ImageIO.read(file);
+			}
+			
+			if(isRescale) {
+				if(!(scaleX < 1) || !(scaleY < 1)) {
+					image = resize(image, scaleX, scaleY);
 				}
+				isRescale = false;
+			}
+			
+			if (image != null) {
+				int width = image.getWidth();
+				int height = image.getHeight();
 				
-				if(isRescale) {
-					if(!(scaleX < 1) || !(scaleY < 1)) {
-						image = resize(image, scaleX, scaleY);
-					}
-					isRescale = false;
-				}
-				
-				if (image != null) {
-					int width = image.getWidth();
-					int height = image.getHeight();
-					
-					if(((width*height)<maxPixelAmount)) {
-						LittleGridContext context = LittleGridContext.get(grid);
-						List<LittlePreview> tiles = new ArrayList<>();
-						int expected = image.getWidth() * image.getHeight();
-						for (int x = 0; x < image.getWidth(); x++) {
-							for (int y = 0; y < image.getHeight(); y++) {
-								
-								if(Config.isColorAccuracy()) {
-									roundedImage = new ColorAccuracy(image, x, image.getHeight() - y - 1);
-									color = roundedImage.roundRGB();
-								}else {
-									color = image.getRGB(x, image.getHeight() - y - 1);
-								}
-								
-								if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
-									LittleTileColored tile = new LittleTileColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
-									tile.box = new LittleBox(new LittleVec(x, y, 0));
-									tiles.add(tile.getPreviewTile());
-								}
+				if(((width*height)<maxPixelAmount)) {
+					LittleGridContext context = LittleGridContext.get(grid);
+					List<LittlePreview> tiles = new ArrayList<>();
+					int expected = image.getWidth() * image.getHeight();
+					for (int x = 0; x < image.getWidth(); x++) {
+						for (int y = 0; y < image.getHeight(); y++) {
+							
+							if(Config.isColorAccuracy()) {
+								roundedImage = new ColorAccuracy(image, x, image.getHeight() - y - 1);
+								color = roundedImage.roundRGB();
+							}else {
+								color = image.getRGB(x, image.getHeight() - y - 1);
+							}
+							
+							if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
+								LittleTileColored tile = new LittleTileColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
+								tile.box = new LittleBox(new LittleVec(x, y, 0));
+								tiles.add(tile.getPreviewTile());
 							}
 						}
-
-						BasicCombiner.combinePreviews(tiles); // minimize tiles used
-
-						ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
-						LittlePreviews previews = new LittlePreviews(context);
-						for (LittlePreview tile : tiles) {
-							previews.addWithoutCheckingPreview(tile);
-						}
-						LittlePreview.savePreview(previews, stack); // save tiles to itemstacks
-						
-						return stack.getTagCompound();
 					}
+
+					BasicCombiner.combinePreviews(tiles); // minimize tiles used
+
+					ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
+					LittlePreviews previews = new LittlePreviews(context);
+					for (LittlePreview tile : tiles) {
+						previews.addWithoutCheckingPreview(tile);
+					}
+					LittlePreview.savePreview(previews, stack); // save tiles to itemstacks
+					
+					return stack.getTagCompound();
 				}
-			} finally {
-				IOUtils.closeQuietly(in);
 			}
-		} catch (IOException e) {
+			} catch (IOException e) {
+				
+			} finally {
+				IOUtils.closeQuietly(in); 
 			
 		}
 		isBlock  = false;

@@ -30,6 +30,7 @@ import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.client.gui.handler.LittleGuiHandler;
+import com.ltphoto.LTPhoto;
 import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.font.FontReader;
@@ -48,18 +49,11 @@ import scala.actors.threadpool.Arrays;
 public class SubGuiTypeWriter extends SubGui {
 	
 	public GuiTextfield textfield;
-	public List<String> names;
+	public static List<String> names = LTPhoto.fontTypeNames;
 
 	public int BLACK = ColorUtils.BLACK;
 	
-	public List<String> getFonts() {
-		names = new ArrayList<>();
-		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-		for (int i = 0; i < fonts.length; i++) {
-			names.add(fonts[i]);
-		}
-		return names;
-	}
+	
 	
 	@Override
 	public void createControls() {
@@ -77,7 +71,6 @@ public class SubGuiTypeWriter extends SubGui {
 		GuiTextfield fontSize = new GuiTextfield("fontSize", "48", 128, 20, 20, 14);
 		controls.add(fontSize);
 		
-		getFonts();
 		GuiComboBox fontType = new GuiComboBox("fontType", 20, 0, 150, names);
 		int index = names.indexOf(fontType.caption);
 		fontType.select(names.get(index));

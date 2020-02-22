@@ -36,14 +36,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.common.Loader;
 
 import java.awt.Color;
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import org.lwjgl.opengl.GL11;
 
-import com.MasterForge.MultiTile.MultiTileClayForge;
-import com.MasterForge.MultiTile.MultiTileStructure;
-import com.MasterForge.MultiTile.MultiTileStructureRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
@@ -59,6 +59,8 @@ import com.creativemd.littletiles.common.structure.premade.LittleStructurePremad
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
 import com.creativemd.littletiles.common.structure.type.LittleBed;
 import com.creativemd.littletiles.common.structure.type.door.LittleAxisDoor;
+import com.ltphoto.server.LTPhotoServer;
+import com.ltphoto.CommonProxy;
 import com.ltphoto.config.Config;
 import com.ltphoto.config.IGCMLoader;
 import com.ltphoto.container.SubContainerBlock;
@@ -68,7 +70,6 @@ import com.ltphoto.gui.SubGuiBlock;
 import com.ltphoto.gui.SubGuiPhotoImport;
 import com.ltphoto.gui.SubGuiTypeWriter;
 import com.ltphoto.items.ItemTapeMeasure;
-import com.ltphoto.server.LTPhotoServer;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
 import com.ltphoto.structure.premade.LittleTypeWriter;
 
@@ -84,6 +85,8 @@ public class LTPhoto
     public static final String NAME = "LT Photo Converter";
     public static final String VERSION = "1.0";
     
+	public static List<String> fontTypeNames;
+    
 	public static Item tapeMeasure;
 	
 	
@@ -93,6 +96,7 @@ public class LTPhoto
     	
     	tapeMeasure = new ItemTapeMeasure("tapemeasure");
 
+    	getFonts();
     	GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			
 			@Override
@@ -155,38 +159,6 @@ public class LTPhoto
     public void Init(FMLInitializationEvent event) {
     	LittleStructurePremade.registerPremadeStructureType("photoimporter", LTPhoto.MODID, LittlePhotoImporter.class);
     	LittleStructurePremade.registerPremadeStructureType("typewriter", LTPhoto.MODID, LittleTypeWriter.class);
-    	
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_1", LTPhoto.MODID, MultiTileStructure.class);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_2", LTPhoto.MODID, MultiTileStructure.class);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_3", LTPhoto.MODID, MultiTileStructure.class);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_4", LTPhoto.MODID, MultiTileStructure.class);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_5", LTPhoto.MODID, MultiTileStructure.class);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_6", LTPhoto.MODID, MultiTileStructure.class);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_7", LTPhoto.MODID, MultiTileStructure.class);
-
-    	//LittleStructurePremade.registerPremadeStructureType("clayForge_7", LTPhoto.MODID, MultiTileClayForge.class, LittleStructureAttribute.PREMADE | LittleStructureAttribute.TICKING);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_8", LTPhoto.MODID, MultiTileClayForge.class, LittleStructureAttribute.PREMADE | LittleStructureAttribute.TICKING);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_9", LTPhoto.MODID, MultiTileClayForge.class, LittleStructureAttribute.PREMADE | LittleStructureAttribute.TICKING);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_10", LTPhoto.MODID, MultiTileClayForge.class, LittleStructureAttribute.PREMADE | LittleStructureAttribute.TICKING);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_11", LTPhoto.MODID, MultiTileClayForge.class, LittleStructureAttribute.PREMADE | LittleStructureAttribute.TICKING);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_12", LTPhoto.MODID, MultiTileClayForge.class, LittleStructureAttribute.PREMADE | LittleStructureAttribute.TICKING);
-    	LittleStructurePremade.registerPremadeStructureType("clayForge_13", LTPhoto.MODID, MultiTileStructure.class);
-
-    	
-    	
-    	//LittleStructurePremade.registerPremadeStructureType("clayForge_6", LTPhoto.MODID, MultiTileClayForge.class, LittleStructureAttribute.PREMADE | LittleStructureAttribute.TICKING );
-
-
-    	//MultiTileStructureRegistry.registerPremadeStructureType("clayForge", LTPhoto.MODID, LittlePhotoImporter.class,6); 
-    	MultiTileStructureRegistry.addRecipe("clayForge_1", Items.CLAY_BALL, 8);
-    	MultiTileStructureRegistry.addRecipe("clayForge_2", Items.CLAY_BALL, 5);
-    	MultiTileStructureRegistry.addRecipe("clayForge_3", Items.CLAY_BALL, 5);
-    	MultiTileStructureRegistry.addRecipe("clayForge_4", Items.CLAY_BALL, 5);
-    	MultiTileStructureRegistry.addRecipe("clayForge_5", Items.FLINT, 1);
-    	MultiTileStructureRegistry.addRecipe("clayForge_6", Blocks.IRON_ORE, 1);
-    	MultiTileStructureRegistry.addRecipe("clayForge_7", Items.STICK, 64);
-
-
 
     	GameRegistry.addShapedRecipe(new ResourceLocation("craft_photo_importer"), new ResourceLocation("ltphoto"),
     			LittleStructurePremade.getPremadeStack("photoimporter"), new Object[]{
@@ -215,4 +187,14 @@ public class LTPhoto
     public void PostInit(FMLPostInitializationEvent event) {
     	proxy.postInit(event);
     }
+    
+    public static List<String> getFonts() {
+		fontTypeNames = new ArrayList<>();
+		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		for (int i = 0; i < fonts.length; i++) {
+			fontTypeNames.add(fonts[i]);
+		}
+		return fontTypeNames;
+	}
+    
 }

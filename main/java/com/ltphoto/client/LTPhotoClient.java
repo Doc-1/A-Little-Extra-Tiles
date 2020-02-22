@@ -1,8 +1,9 @@
 package com.ltphoto.client;
 
-import com.MasterForge.MultiTile.MultiTileStructure;
-import com.MasterForge.MultiTile.MultiTileTicking;
+import java.awt.GraphicsEnvironment;
+
 import com.ltphoto.CommonProxy;
+import com.ltphoto.gui.SubGuiTypeWriter;
 import com.ltphoto.render.TapeRenderer;
 import com.ltphoto.render.string.StringRenderer;
 
@@ -17,7 +18,7 @@ public class LTPhotoClient extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
-		MinecraftForge.EVENT_BUS.register(new TapeRenderer());
+		MinecraftForge.EVENT_BUS.register(new TapeRenderer());		
 
 	}
 }
