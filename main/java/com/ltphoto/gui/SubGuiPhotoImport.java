@@ -16,33 +16,37 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
+import com.creativemd.creativecore.common.gui.premade.SubGuiEmpty;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.handler.LittleGuiHandler;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.ltphoto.config.Config;
 import com.ltphoto.container.SubContainerPhotoImport;
+import com.ltphoto.gui.controls.Layer;
 import com.ltphoto.photo.PhotoReader;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class SubGuiPhotoImport extends SubGui {
 	
 	public GuiTextfield file;
 	public GuiCheckBox useFile = null;
 	public GuiCheckBox useURL = null;
-	public GuiCheckBox isRescale = null;
+	public GuiCheckBox keepAspect = null;
 	public GuiTextfield imgHeight = null;
 	public GuiTextfield imgWidth = null;
 	
-	public float aspectRatio = 0;
+	public double aspectRatio = 0;
 	
 	@Override
 	public void createControls() {
@@ -50,35 +54,33 @@ public class SubGuiPhotoImport extends SubGui {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				
-				if(super.onKeyPressed(character, key) && !imgWidth.text.isEmpty()) {
-					imgHeight.text =String.valueOf((int)(aspectRatio*Float.parseFloat(imgWidth.text)));
+				if(super.onKeyPressed(character, key) && !imgWidth.text.isEmpty() && keepAspect.value) {
+					imgHeight.text =String.valueOf((int)(aspectRatio*Double.parseDouble(imgWidth.text)));
 				}
 				return false;
 			}
 		});
 		imgWidth.enabled = false;
-		imgWidth.setCustomTooltip("X Scale Of Image");
+		imgWidth.setCustomTooltip("Width Of Image");
 		imgWidth.setNumbersOnly();
 		controls.add(imgWidth);
 		
 		imgHeight = (new GuiTextfield("imgHeight", "0", 145, 60, 20, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
-				
-				if(super.onKeyPressed(character, key) && !imgHeight.text.isEmpty()) {
-					System.out.println(aspectRatio);
-					imgWidth.text = String.valueOf((int)(Float.parseFloat(imgHeight.text)/aspectRatio));
+				if(super.onKeyPressed(character, key) && !imgHeight.text.isEmpty() && keepAspect.value) {
+					imgWidth.text = String.valueOf((int)(Double.parseDouble(imgHeight.text)/aspectRatio));
 				}
 				return false;
 			}
 		});
 		imgHeight.enabled = false;
-		imgHeight.setCustomTooltip("Y Scale Of Image");
+		imgHeight.setCustomTooltip("Height Of Image");
 		imgHeight.setNumbersOnly();
 		controls.add(imgHeight);
 		
-		isRescale = new GuiCheckBox("isRescale", translate("Lock Dimensions?     X      Y"), 8, 45, false);
-		controls.add(isRescale);
+		keepAspect = new GuiCheckBox("keepAspect", translate("Lock Dimensions?     X      Y"), 8, 45, false);
+		controls.add(keepAspect);
 		
 		GuiComboBox contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
@@ -95,6 +97,7 @@ public class SubGuiPhotoImport extends SubGui {
 						imgHeight.enabled = true;
 						imgWidth.enabled = true;
 						aspectRatio = Float.parseFloat(imgHeight.text)/Float.parseFloat(imgWidth.text);
+						System.out.println(aspectRatio);
 					}else {
 						imgHeight.text = "0";
 						imgWidth.text = "0";
@@ -128,6 +131,7 @@ public class SubGuiPhotoImport extends SubGui {
 				return true;
 			}
 		});
+		
 		if(!Config.isAllowURL()) {
 			useURL.enabled = false;
 		}
@@ -160,15 +164,19 @@ public class SubGuiPhotoImport extends SubGui {
 			}
 		});
 		
+		//controls.add(new SubGuiErrorMessage.GuiTestButton("test", this.gui, 20,20));
+		
 		controls.add(new GuiButton("Print", 50, 60) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				if(isRescale.value) {
-					int resizeX = Integer.parseInt(imgWidth.text);
-					int resizeY = Integer.parseInt(imgHeight.text);
-					PhotoReader.setScale(resizeX, resizeY);
-				}
+				
+				//openButtonDialogDialog("You have exceded Pixel Limit\n Please Lower pixel count", "Okay", "No", "Okay, Stop reminding me");
+				Layer.addLayer(getGui(), new SubGuiErrorMessage());
+				/*
+				int resizeX = Integer.parseInt(imgWidth.text);
+				int resizeY = Integer.parseInt(imgHeight.text);
+				PhotoReader.setScale(resizeX, resizeY);
 				
 				GuiComboBox contextBox = (GuiComboBox) get("grid");
 				int grid = Integer.parseInt(contextBox.caption);
@@ -177,7 +185,7 @@ public class SubGuiPhotoImport extends SubGui {
 					sendPacketToServer(nbt);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}*/
 			}
 		});
 		
@@ -188,9 +196,8 @@ public class SubGuiPhotoImport extends SubGui {
 				closeGui();
 				GuiHandler.openGui("block",  new NBTTagCompound(), getPlayer());
 			}
-
 		});
-		
-		
 	}
 }
+
+

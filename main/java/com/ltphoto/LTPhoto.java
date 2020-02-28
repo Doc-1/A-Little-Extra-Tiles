@@ -64,9 +64,11 @@ import com.ltphoto.CommonProxy;
 import com.ltphoto.config.Config;
 import com.ltphoto.config.IGCMLoader;
 import com.ltphoto.container.SubContainerBlock;
+import com.ltphoto.container.SubContainerError;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.container.SubContainerTypeWriter;
 import com.ltphoto.gui.SubGuiBlock;
+import com.ltphoto.gui.SubGuiErrorMessage;
 import com.ltphoto.gui.SubGuiPhotoImport;
 import com.ltphoto.gui.SubGuiTypeWriter;
 import com.ltphoto.items.ItemTapeMeasure;
@@ -111,6 +113,7 @@ public class LTPhoto
 			}
 		});
     	
+    	
     	GuiHandler.registerGuiHandler("photo-import", new CustomGuiHandler() {
 			
 			@Override
@@ -138,6 +141,8 @@ public class LTPhoto
 				return new SubContainerTypeWriter(player);
 			}
 		});
+    	
+    	
     }
     
     
