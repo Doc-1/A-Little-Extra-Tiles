@@ -55,7 +55,11 @@ public class DrawCharacter {
 			
 			break;
 		case EAST:
-			
+			for (int i = 0; i < vecs.size(); i++) {
+				pos_1.add(vecs.get(i).z);
+				pos_2.add(vecs.get(i).y);
+				pos_3.add(vecs.get(i).x*-1);
+			}
 			break;
 		case SOUTH:
 			

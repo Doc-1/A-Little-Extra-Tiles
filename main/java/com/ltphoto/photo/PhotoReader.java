@@ -49,7 +49,6 @@ public class PhotoReader {
 	private static InputStream load(String url) throws IOException {
 		long requestTime = System.currentTimeMillis();
 		URLConnection connection = new URL(url).openConnection();
-		System.out.println(connection.getURL().toString());
 		connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
 		return connection.getInputStream();
 	}

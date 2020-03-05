@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.IGuiCreator;
+import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.SubGuiChisel;
 import com.creativemd.littletiles.client.gui.SubGuiScrewdriver;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
@@ -63,12 +64,16 @@ public class ItemTapeMeasure extends Item implements ILittleTile{
 		setUnlocalizedName(name);
 		setRegistryName(name);
 		setMaxStackSize(1);
+		setCreativeTab(LittleTiles.littleTab);
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add("THIS IS IN ALPHA Design May Change");
+		tooltip.add("THIS IS IN ALPHA!\n"
+				+ "Design Will Change.\n"
+				+ "Press C to change  \n"
+				+ "grid size.");
 	}
 	
 	@Override
@@ -118,7 +123,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public SubGuiConfigure getConfigureGUI(EntityPlayer player, ItemStack stack) {
-		return new SubGuiTapeMeasure(150, 200, stack);
+		return new SubGuiTapeMeasure(stack);
 	}
 	
 	@Override

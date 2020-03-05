@@ -1,5 +1,6 @@
 package com.ltphoto;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -74,6 +75,7 @@ import com.ltphoto.gui.SubGuiTypeWriter;
 import com.ltphoto.items.ItemTapeMeasure;
 import com.ltphoto.structure.premade.LittlePhotoImporter;
 import com.ltphoto.structure.premade.LittleTypeWriter;
+import com.alet.blocks.BasicBlock;
 
 @Mod(modid = LTPhoto.MODID, name = LTPhoto.NAME, version = LTPhoto.VERSION)
 @Mod.EventBusSubscriber
@@ -90,14 +92,32 @@ public class LTPhoto
 	public static List<String> fontTypeNames;
     
 	public static Item tapeMeasure;
+	public static BasicBlock smoothOakPlank;
+	public static BasicBlock smoothDarkOakPlank;
+	public static BasicBlock smoothSprucePlank;
+	public static BasicBlock smoothJunglePlank;
+	public static BasicBlock smoothBirchPlank;
+	public static BasicBlock smoothAcaciaPlank;
 	
-	
+	public static BasicBlock smoothBrick;
+	public static BasicBlock smoothGroutBrick;
+
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
     	proxy.preInit(event);
     	
     	tapeMeasure = new ItemTapeMeasure("tapemeasure");
+    	smoothOakPlank = new BasicBlock("smoothoakplank");
+    	smoothDarkOakPlank = new BasicBlock("smoothdarkoakplank");
+    	smoothSprucePlank = new BasicBlock("smoothspruceplank");
+    	smoothJunglePlank = new BasicBlock("smoothjungleplank");
+    	smoothBirchPlank = new BasicBlock("smoothbirchplank");
+    	smoothAcaciaPlank = new BasicBlock("smoothacaciaplank");
+    	
+    	smoothBrick = new BasicBlock("smoothbrick");
+    	smoothGroutBrick = new BasicBlock("smoothgroutbrick");
 
+   
     	getFonts();
     	GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			
@@ -145,18 +165,24 @@ public class LTPhoto
     	
     }
     
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event){
+    	event.getRegistry().registerAll(smoothGroutBrick);
+    }
     
     @SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(tapeMeasure);
+		event.getRegistry().registerAll(tapeMeasure,new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()));
 	}
     
     @SubscribeEvent
 	public static void registerRenders(ModelRegistryEvent event) {
 		registerRender(tapeMeasure);
+		registerRender(Item.getItemFromBlock(smoothGroutBrick));
 	}
 	
-	private static void registerRender(Item item) {
+	public static void registerRender(Item item) {
 		ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation( item.getRegistryName(), "inventory"));
 	}
     

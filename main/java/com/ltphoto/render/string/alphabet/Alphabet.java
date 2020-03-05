@@ -95,10 +95,13 @@ public class Alphabet {
 		case 'W':
 			break;
 		case 'X':
+			X x = new X(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'Y':
+			Y y = new Y(start, this.facing, 1, bufferbuilder, event);
 			break;
 		case 'Z':
+			Z z = new Z(start, this.facing, 1, bufferbuilder, event);
 			break;
 		default:
 		

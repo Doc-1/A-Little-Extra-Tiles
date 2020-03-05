@@ -20,7 +20,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class TapeRenderer {
 	
 	public static RenderWorldLastEvent event;
-	
+	public static ItemTapeMeasure tape = new ItemTapeMeasure();
+
 	public double radius(double pos_1, double pos_2) {
 		LittleGridContext context = LittleGridContext.get(16);
 		
@@ -28,6 +29,11 @@ public class TapeRenderer {
 		double distence = (((Math.abs(pos_1 - pos_2)) + contDecimal) * context.size) - 1D;
 		
 		return (distence/context.size) * 10D;
+	}
+	
+	public static void clear() {
+		tape.a = null;
+		tape.b = null;
 	}
 	
 	public String distence(double pos_1, double pos_2) {
@@ -41,6 +47,8 @@ public class TapeRenderer {
 		
 		if((int)(numerator)==0) {
 			return dis[0] + " BLOCK";
+		}else if(Integer.parseInt(dis[0])==0){
+			return (int) (numerator) + "/" + denominator + " TILE";
 		}else {
 			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
 		}
@@ -51,11 +59,9 @@ public class TapeRenderer {
 		this.event = event;
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		String item = "ltphoto:tapemeasure";
+		
 		String mainItem = player.getHeldItemMainhand().getItem().getRegistryName().toString();
-		ItemTapeMeasure tape = new ItemTapeMeasure();
-		if (item.equals(mainItem)) {
-			tape = (ItemTapeMeasure) player.getHeldItemMainhand().getItem();
-		}
+		
 		
 		if (tape.a != null && tape.b != null) {
 			//player.sendStatusMessage(new TextComponentString(t), true);
@@ -72,15 +78,24 @@ public class TapeRenderer {
 			double centerY_2 = tape.select_2.centerY;
 			double centerZ_2 = tape.select_2.centerZ;
 			
-			Vec3d middleZ = new Vec3d(tape.select.boxCorner_1.x, tape.select.boxCorner_1.y, ((centerZ_1 + centerZ_2)/2)
-					-((distence(centerZ_1, centerZ_2).length()/2D)*0.0655));
-			Vec3d middleX = new Vec3d(((centerX_1 + centerX_2)/2)-((distence(centerX_1, centerX_2).length()/2D)
-					*0.0655),tape.select.boxCorner_1.y, tape.select.boxCorner_1.z-0.05);
 			
-			StringRenderer.drawString(middleZ, distence(centerZ_1, centerZ_2), Facing.UP ,event, 0.0F, 1.0F, 0F, 1.0F);
+			Vec3d middleZ = new Vec3d(tape.select.boxCorner_1.x, 
+					tape.select.boxCorner_1.y, 
+					((centerZ_1 + centerZ_2)/2)-(1/2D*0.0655));
+			
+			Vec3d middleX = new Vec3d(((centerX_1 + centerX_2)/2)-(1/2D)*0.0655,
+					tape.select.boxCorner_1.y, 
+					tape.select.boxCorner_1.z-0.05);
+			
+			Vec3d middleY = new Vec3d(tape.select.boxCorner_1.x, 
+					((centerY_1 + centerY_2)/2)-(1/2D)*0.0655, 
+					tape.select.boxCorner_2.z);
+			
+			StringRenderer.drawString(middleZ, "Z", Facing.UP ,event, 0.0F, 1.0F, 0F, 1.0F);
 			//StringRenderer.drawString(tape.select_2.boxCorner_1, distence(centerZ_1, centerZ_2), event, 0.0F, 1.0F, 0F, 1.0F);
-			StringRenderer.drawString(middleX, distence(centerX_1, centerX_2), Facing.WEST, event, 0.0F, 1.0F, 0F, 1.0F);
-			
+			StringRenderer.drawString(middleX, "X", Facing.WEST, event, 0.0F, 1.0F, 0F, 1.0F);
+			StringRenderer.drawString(middleY, "Y", Facing.EAST, event, 0.0F, 1.0F, 0F, 1.0F);
+
 			//String r = Double.toString(distence(centerZ_1, centerZ_2).length()/100D);
 			//String t = Double.toString(radius(centerX_1, centerX_2));
 			//player.sendStatusMessage(new TextComponentString(r), true);
@@ -235,6 +250,8 @@ public class TapeRenderer {
 			GlStateManager.depthMask(true);
 			GlStateManager.enableTexture2D();
 			GlStateManager.disableBlend();
+		}else if (item.equals(mainItem)) {
+			tape = (ItemTapeMeasure) player.getHeldItemMainhand().getItem();
 		}
 	}
 	

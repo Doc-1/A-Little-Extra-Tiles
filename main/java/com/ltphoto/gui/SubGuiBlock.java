@@ -43,7 +43,6 @@ import net.minecraft.nbt.NBTTagCompound;
 public class SubGuiBlock extends SubGui {
 	
 	public GuiTextfield textfield;
-	public GuiCheckBox isRescale = null;
 	
 	public ItemStack stack = new ItemStack(Blocks.STONE);
 	
@@ -70,18 +69,14 @@ public class SubGuiBlock extends SubGui {
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
 		controls.add(contextBox);
 		
-		GuiTextfield xScale = new GuiTextfield("xScale", "64", 115, 60, 20, 14);
+		GuiTextfield xScale = new GuiTextfield("xScale", "16", 115, 60, 20, 14);
 		controls.add(xScale);
 		
-		GuiTextfield yScale = new GuiTextfield("yScale", "64", 145, 60, 20, 14);
-		controls.add(yScale);
-
-		isRescale = new GuiCheckBox("isRescale", translate("Resize Image?         X      Y"), 8, 43, false);
-		controls.add(isRescale);
-		
+		GuiTextfield yScale = new GuiTextfield("yScale", "16", 145, 60, 20, 14);
+		controls.add(yScale);		
 		
 		//Controls for choosing the facing of the block to print
-		controls.add(up = new GuiCheckBox("up", translate("Up"), 20, -5, false) {
+		controls.add(up = new GuiCheckBox("up", translate("Up"), 20, -2, false) {
 			
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
@@ -99,7 +94,7 @@ public class SubGuiBlock extends SubGui {
 			}
 		});
 		
-		controls.add(down = new GuiCheckBox("down", translate("Down"), 45, -5, false) {
+		controls.add(down = new GuiCheckBox("down", translate("Down"), 45, -2, false) {
 			
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
@@ -117,7 +112,7 @@ public class SubGuiBlock extends SubGui {
 			}
 		});
 		
-		controls.add(north = new GuiCheckBox("north", translate("N"), 20, 8, true) {
+		controls.add(north = new GuiCheckBox("north", translate("N"), 20, 10, true) {
 			
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
@@ -135,7 +130,7 @@ public class SubGuiBlock extends SubGui {
 			}
 		});
 		
-		controls.add(east = new GuiCheckBox("east", translate("E"), 45, 8, false) {
+		controls.add(east = new GuiCheckBox("east", translate("E"), 45, 10, false) {
 			
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
@@ -153,7 +148,7 @@ public class SubGuiBlock extends SubGui {
 			}
 		});
 		
-		controls.add(south = new GuiCheckBox("south", translate("S"), 70, 8, false) {
+		controls.add(south = new GuiCheckBox("south", translate("S"), 70, 10, false) {
 			
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
@@ -171,7 +166,7 @@ public class SubGuiBlock extends SubGui {
 			}
 		});
 		
-		controls.add(west = new GuiCheckBox("west", translate("W"), 95, 8, false) {
+		controls.add(west = new GuiCheckBox("west", translate("W"), 95, 10, false) {
 			
 			@Override
 			public boolean mousePressed(int posX, int posY, int button) {
@@ -191,7 +186,7 @@ public class SubGuiBlock extends SubGui {
 		});
 		//End
 		
-		controls.add(new GuiButton("Print", 50, 60) {
+		controls.add(new GuiButton("Print", 10, 60) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
@@ -201,13 +196,11 @@ public class SubGuiBlock extends SubGui {
 				GuiComboBox contextBox = (GuiComboBox) get("grid");
 				int grid = Integer.parseInt(contextBox.caption);
 				
-				if(isRescale.value) {
-					GuiTextfield yScale = (GuiTextfield) get("yScale");
-					int resizeY = Integer.parseInt(yScale.text);
-					GuiTextfield xScale = (GuiTextfield) get("xScale");
-					int resizeX = Integer.parseInt(xScale.text);
-					PhotoReader.setScale(resizeX, resizeY);
-				}
+				GuiTextfield yScale = (GuiTextfield) get("yScale");
+				int resizeY = Integer.parseInt(yScale.text);
+				GuiTextfield xScale = (GuiTextfield) get("xScale");
+				int resizeX = Integer.parseInt(xScale.text);
+				PhotoReader.setScale(resizeX, resizeY);
 				
 				try {
 					NBTTagCompound nbt = PhotoReader.photoToNBT(path, false, grid);

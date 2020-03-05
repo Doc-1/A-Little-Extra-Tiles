@@ -45,12 +45,17 @@ public class SubGuiPhotoImport extends SubGui {
 	public GuiCheckBox keepAspect = null;
 	public GuiTextfield imgHeight = null;
 	public GuiTextfield imgWidth = null;
+	public GuiButton autoScale = null;
 	
 	public double aspectRatio = 0;
 	
+	public SubGuiPhotoImport() {
+		super(176,190);
+	}
+	
 	@Override
 	public void createControls() {
-		imgWidth = (new GuiTextfield("imgWidth", "0", 115, 60, 20, 14) {
+		imgWidth = (new GuiTextfield("imgWidth", "0", 93, 85, 30, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				
@@ -65,7 +70,7 @@ public class SubGuiPhotoImport extends SubGui {
 		imgWidth.setNumbersOnly();
 		controls.add(imgWidth);
 		
-		imgHeight = (new GuiTextfield("imgHeight", "0", 145, 60, 20, 14) {
+		imgHeight = (new GuiTextfield("imgHeight", "0", 135, 85, 30, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				if(super.onKeyPressed(character, key) && !imgHeight.text.isEmpty() && keepAspect.value) {
@@ -79,8 +84,31 @@ public class SubGuiPhotoImport extends SubGui {
 		imgHeight.setNumbersOnly();
 		controls.add(imgHeight);
 		
-		keepAspect = new GuiCheckBox("keepAspect", translate("Lock Dimensions?     X      Y"), 8, 45, false);
+		keepAspect = new GuiCheckBox("keepAspect", translate("Keep Aspect Ratio?"), 8, 47, false);
 		controls.add(keepAspect);
+		
+		autoScale = (new GuiButton("autoScale", "Auto Scale Image?", 10, 61, 90) {
+			@Override
+			public void onClicked(int x, int y, int button) {
+				
+				int x1 = (int) (Config.getMaxPixelAmount()*aspectRatio);
+				int x2 = (int) Math.sqrt(x1);
+				int y1 = (int) (x2/aspectRatio);
+				
+				if(Integer.parseInt(imgWidth.text) > Integer.parseInt(imgHeight.text)) {
+					imgHeight.text = String.valueOf(x2);
+					imgWidth.text = String.valueOf(y1);
+				}else if (Integer.parseInt(imgWidth.text) < Integer.parseInt(imgHeight.text)) {
+					imgHeight.text = String.valueOf(y1);
+					imgWidth.text = String.valueOf(x2);
+				}else {
+					imgHeight.text = String.valueOf(x2);
+					imgWidth.text = String.valueOf(x2);
+				}
+			}
+		});
+		autoScale.enabled = false;
+		controls.add(autoScale);
 		
 		GuiComboBox contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
@@ -96,6 +124,7 @@ public class SubGuiPhotoImport extends SubGui {
 						imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
 						imgHeight.enabled = true;
 						imgWidth.enabled = true;
+						autoScale.enabled = true;
 						aspectRatio = Float.parseFloat(imgHeight.text)/Float.parseFloat(imgWidth.text);
 						System.out.println(aspectRatio);
 					}else {
@@ -103,6 +132,7 @@ public class SubGuiPhotoImport extends SubGui {
 						imgWidth.text = "0";
 						imgHeight.enabled = false;
 						imgWidth.enabled = false;
+						autoScale.enabled = false;
 					}
 				}
 				return true;
@@ -116,6 +146,20 @@ public class SubGuiPhotoImport extends SubGui {
 				useFile.value = true;
 				useURL.value = false;
 				raiseEvent(new GuiControlChangedEvent(this));
+				if(PhotoReader.imageExists(file.text, useURL.value)) {
+					imgHeight.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
+					imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgHeight.enabled = true;
+					imgWidth.enabled = true;
+					autoScale.enabled = true;
+					aspectRatio = Float.parseFloat(imgHeight.text)/Float.parseFloat(imgWidth.text);
+				}else {
+					imgHeight.text = "0";
+					imgWidth.text = "0";
+					imgHeight.enabled = false;
+					imgWidth.enabled = false;
+					autoScale.enabled = false;
+				}
 				return true;
 			}
 		});
@@ -128,6 +172,20 @@ public class SubGuiPhotoImport extends SubGui {
 				useFile.value = false;
 				useURL.value = true;
 				raiseEvent(new GuiControlChangedEvent(this));
+				if(PhotoReader.imageExists(file.text, useURL.value)) {
+					imgHeight.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
+					imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgHeight.enabled = true;
+					imgWidth.enabled = true;
+					autoScale.enabled = true;
+					aspectRatio = Float.parseFloat(imgHeight.text)/Float.parseFloat(imgWidth.text);
+				}else {
+					imgHeight.text = "0";
+					imgWidth.text = "0";
+					imgHeight.enabled = false;
+					imgWidth.enabled = false;
+					autoScale.enabled = false;
+				}
 				return true;
 			}
 		});
@@ -136,7 +194,7 @@ public class SubGuiPhotoImport extends SubGui {
 			useURL.enabled = false;
 		}
 		
-		controls.add(new GuiButton("Paste", 10, 60) {
+		GuiButton paste = (new GuiButton("Paste", 10, 85) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
@@ -154,40 +212,43 @@ public class SubGuiPhotoImport extends SubGui {
 					imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
 					imgHeight.enabled = true;
 					imgWidth.enabled = true;
+					autoScale.enabled = true;
 					aspectRatio = Float.parseFloat(imgHeight.text)/Float.parseFloat(imgWidth.text);
 				}else {
 					imgHeight.text = "0";
 					imgWidth.text = "0";
+					autoScale.enabled = false;
 					imgHeight.enabled = false;
 					imgWidth.enabled = false;
 				}
 			}
 		});
-		
-		//controls.add(new SubGuiErrorMessage.GuiTestButton("test", this.gui, 20,20));
-		
-		controls.add(new GuiButton("Print", 50, 60) {
+		controls.add(paste);
+				
+		GuiButton print = (new GuiButton("Print", 50, 85) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				
-				//openButtonDialogDialog("You have exceded Pixel Limit\n Please Lower pixel count", "Okay", "No", "Okay, Stop reminding me");
-				Layer.addLayer(getGui(), new SubGuiErrorMessage());
-				/*
 				int resizeX = Integer.parseInt(imgWidth.text);
 				int resizeY = Integer.parseInt(imgHeight.text);
-				PhotoReader.setScale(resizeX, resizeY);
 				
-				GuiComboBox contextBox = (GuiComboBox) get("grid");
-				int grid = Integer.parseInt(contextBox.caption);
-				try {
-					NBTTagCompound nbt = PhotoReader.photoToNBT(file.text, useURL.value, grid);
-					sendPacketToServer(nbt);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
+				if(resizeX*resizeY > Config.getMaxPixelAmount()) {
+					Layer.addLayer(getGui(), new SubGuiErrorMessage(resizeX*resizeY));
+				}else {
+					PhotoReader.setScale(resizeX, resizeY);
+					
+					GuiComboBox contextBox = (GuiComboBox) get("grid");
+					int grid = Integer.parseInt(contextBox.caption);
+					try {
+						NBTTagCompound nbt = PhotoReader.photoToNBT(file.text, useURL.value, grid);
+						sendPacketToServer(nbt);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		});
+		controls.add(print);
 		
 		controls.add(new GuiButton("-->", 145, 0) {
 			

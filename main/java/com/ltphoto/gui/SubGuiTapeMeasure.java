@@ -2,6 +2,7 @@ package com.ltphoto.gui;
 
 import java.util.ArrayList;
 
+import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
@@ -14,6 +15,7 @@ import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.shape.DragShape;
+import com.ltphoto.render.TapeRenderer;
 
 import net.minecraft.item.ItemStack;
 
@@ -21,8 +23,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 	
 	public GuiComboBox contextBox;
 	
-	public SubGuiTapeMeasure(int width, int height, ItemStack stack) {
-		super(width, height, stack);
+	public SubGuiTapeMeasure(ItemStack stack) {
+		super(141, 100, stack);
 	}
 
 	@Override
@@ -33,16 +35,20 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 	@Override
 	public void createControls() {
 
-		
-		GuiStackSelectorAll selector = new GuiStackSelectorAll("preview", 0, 75, 112, getPlayer(), LittleSubGuiUtils.getCollector(getPlayer()), true);
-		controls.add(selector);
-		
 		contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
 		controls.add(contextBox);
 		
-		GuiComboBox box = new GuiComboBox("shape", 0, 96, 134, new ArrayList<>(DragShape.keys()));
+		controls.add(new GuiButton("Clear", 0, 0, 40) {
+			@Override
+			public void onClicked(int x, int y, int button) {
+				TapeRenderer.clear();
+			}
+		});
+		
+		GuiComboBox box = new GuiComboBox("shape", 0, 40, 100, new ArrayList<>(DragShape.keys()));
 		box.select(ItemLittleChisel.getShape(stack).key);
+		box.setCustomTooltip("Does nothing yet.");
 		controls.add(box);
 		
 		
