@@ -1,3 +1,11 @@
 item.LTPremade.photoimporter.name=Photo Importer
 item.LTPremade.typewriter.name=Typewriter
 item.tapemeasure.name=Tape Measure
+tile.smoothbrick.name=Borderless Brick
+tile.smoothgroutbrick.name=Borderless Brick Grout
+tile.smoothoakplank.name=Borderless Oak Planks
+tile.smoothdarkoakplank.name=Borderless Dark Oak Planks
+tile.smoothbirchplank.name=Borderless Birch Planks
+tile.smoothjungleplank.name=Borderless Jungle Planks
+tile.smoothspruceplank.name=Borderless Spruce Planks
+tile.smoothacaciaplank.name=Borderless Acacia Planks

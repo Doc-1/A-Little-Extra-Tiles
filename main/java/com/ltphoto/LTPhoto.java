@@ -168,18 +168,34 @@ public class LTPhoto
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event){
-    	event.getRegistry().registerAll(smoothGroutBrick);
+    	event.getRegistry().registerAll(smoothGroutBrick,smoothBrick,smoothOakPlank,smoothDarkOakPlank,smoothAcaciaPlank,
+    			smoothSprucePlank,smoothJunglePlank,smoothBirchPlank);
     }
     
     @SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(tapeMeasure,new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()));
+		event.getRegistry().registerAll(tapeMeasure,
+				new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()),
+				new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()),
+				new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()),
+				new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()),
+				new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()),
+				new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()),
+				new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()),
+				new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
 	}
     
     @SubscribeEvent
 	public static void registerRenders(ModelRegistryEvent event) {
 		registerRender(tapeMeasure);
 		registerRender(Item.getItemFromBlock(smoothGroutBrick));
+		registerRender(Item.getItemFromBlock(smoothBrick));
+		registerRender(Item.getItemFromBlock(smoothOakPlank));
+		registerRender(Item.getItemFromBlock(smoothDarkOakPlank));
+		registerRender(Item.getItemFromBlock(smoothAcaciaPlank));
+		registerRender(Item.getItemFromBlock(smoothSprucePlank));
+		registerRender(Item.getItemFromBlock(smoothJunglePlank));
+		registerRender(Item.getItemFromBlock(smoothBirchPlank));
 	}
 	
 	public static void registerRender(Item item) {

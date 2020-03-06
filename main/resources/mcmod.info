@@ -1,14 +1,14 @@
 [
 {
   "modid": "ltphoto",
-  "name": "LT Photo Importer",
+  "name": "A Little Extra Tiles",
   "description": "",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
+  "version": "${}",
+  "mc_version": "${}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["_Doc"],
+  "credits": "Thank you TeamCreative for all of your help!",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
