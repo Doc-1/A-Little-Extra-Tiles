@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "littletiles:premade",
+    "data": 0,
+    "structure": "typewriter"
+  },
+  "pattern": [
+    "XXX",
+    "XZX",
+    "XYX"
+  ],
+  "type": "littletiles:crafting_shaped_premade",
+  "key": {
+    "X": {
+      "item": "minecraft:iron_ingot"
+    },
+    "Y": {
+      "item": "littletiles:recipeadvanced",
+      "data": 0
+    },
+    "Z": {
+      "item": "minecraft:glass_pane"
+    }
+  }
+}

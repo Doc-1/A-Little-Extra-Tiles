@@ -1,65 +1,41 @@
 package com.ltphoto.gui;
 
-import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.Color;
 
-import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
-import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
-import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.common.config.SpecialServerConfig;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
-import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
-import com.creativemd.littletiles.client.gui.handler.LittleGuiHandler;
 import com.ltphoto.LTPhoto;
-import com.ltphoto.config.Config;
-import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.font.FontReader;
-import com.ltphoto.photo.PhotoReader;
-import com.ltphoto.structure.premade.LittlePhotoImporter;
-import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
-import scala.actors.threadpool.Arrays;
 
 public class SubGuiTypeWriter extends SubGui {
 	
 	public GuiTextfield textfield;
 	public static List<String> names = LTPhoto.fontTypeNames;
-
+	
 	public int BLACK = ColorUtils.BLACK;
-	
-	
 	
 	@Override
 	public void createControls() {
 		
 		Color color = ColorUtils.IntToRGBA(BLACK);
-		controls.add(new GuiColorPicker("picker", 0, 40, color, SpecialServerConfig.isTransparencyEnabled(getPlayer()), SpecialServerConfig.getMinimumTransparency(getPlayer())));
+		controls.add(new GuiColorPicker("picker", 0, 40, color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
 		
 		GuiComboBox contextBox = new GuiComboBox("grid", 155, 20, 15, LittleGridContext.getNames());
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
@@ -103,7 +79,7 @@ public class SubGuiTypeWriter extends SubGui {
 				
 				GuiTextfield contextField = (GuiTextfield) get("fontSize");
 				int fontSize = Integer.parseInt(contextField.text);
-					
+				
 				GuiComboBox contextBox = (GuiComboBox) get("fontType");
 				String font = contextBox.caption;
 				
