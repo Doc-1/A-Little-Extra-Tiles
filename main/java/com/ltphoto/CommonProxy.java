@@ -2,8 +2,6 @@ package com.ltphoto;
 
 import java.io.File;
 
-import com.ltphoto.config.Config;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;

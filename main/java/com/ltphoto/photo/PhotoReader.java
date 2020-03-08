@@ -1,6 +1,5 @@
 package com.ltphoto.photo;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -19,7 +18,6 @@ import org.apache.commons.io.IOUtils;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.common.block.BlockLTColored;
-import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
 import com.creativemd.littletiles.common.tile.LittleTileColored;
 import com.creativemd.littletiles.common.tile.combine.BasicCombiner;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
@@ -27,17 +25,10 @@ import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
-import com.google.common.base.Charsets;
-import com.ltphoto.config.Config;
-import com.ltphoto.container.SubContainerPhotoImport;
-import com.ltphoto.font.FontReader;
+import com.ltphoto.LTPhoto;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.items.ItemStackHandler;
-
 
 public class PhotoReader {
 	
@@ -52,45 +43,42 @@ public class PhotoReader {
 		connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
 		return connection.getInputStream();
 	}
-
-	/**
-	 * 
-	 * @param img
-	 * Image from a website or directory
+	
+	/** @param img
+	 *            Image from a website or directory
 	 * @param height
-	 * height of the photo
+	 *            height of the photo
 	 * @param width
-	 * width of the photo
+	 *            width of the photo
 	 * @return
-	 * New resized photo
-	 */
+	 *         New resized photo */
 	private static BufferedImage resize(BufferedImage img, int height, int width) {
-        Image tmp = img.getScaledInstance(width, height, Image.SCALE_FAST);
-        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-        Graphics2D g2d = resized.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-        return resized;
-    }
+		Image tmp = img.getScaledInstance(width, height, Image.SCALE_FAST);
+		BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = resized.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+		return resized;
+	}
 	
 	public static int getPixelWidth(String input, boolean uploadOption) {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
-
-		try{
-			if(isBlock) {
+		
+		try {
+			if (isBlock) {
 				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
 				image = ImageIO.read(in);
-				isBlock  = false;
-			}else if(uploadOption) {
-			 	in = load(input);
-			 	image = ImageIO.read(in);
-			}else {
+				isBlock = false;
+			} else if (uploadOption) {
+				in = load(input);
+				image = ImageIO.read(in);
+			} else {
 				file = new File(input);
 				image = ImageIO.read(file);
 			}
-		}catch(IOException e) {
+		} catch (IOException e) {
 			return 0;
 		}
 		return image.getWidth();
@@ -100,19 +88,19 @@ public class PhotoReader {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
-		try{
-			if(isBlock) {
+		try {
+			if (isBlock) {
 				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
 				image = ImageIO.read(in);
-				isBlock  = false;
-			}else if(uploadOption) {
-			 	in = load(input);
-			 	image = ImageIO.read(in);
-			}else {
+				isBlock = false;
+			} else if (uploadOption) {
+				in = load(input);
+				image = ImageIO.read(in);
+			} else {
 				file = new File(input);
 				image = ImageIO.read(file);
 			}
-		}catch(IOException e) {
+		} catch (IOException e) {
 			return false;
 		}
 		return true;
@@ -122,59 +110,57 @@ public class PhotoReader {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
-
-		try{
-			if(isBlock) {
+		
+		try {
+			if (isBlock) {
 				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
 				image = ImageIO.read(in);
-				isBlock  = false;
-			}else if(uploadOption) {
-			 	in = load(input);
-			 	image = ImageIO.read(in);
-			}else {
+				isBlock = false;
+			} else if (uploadOption) {
+				in = load(input);
+				image = ImageIO.read(in);
+			} else {
 				file = new File(input);
 				image = ImageIO.read(file);
 			}
-		}catch(IOException e) {
+		} catch (IOException e) {
 			return 0;
 		}
-		return image.getHeight();	
+		return image.getHeight();
 	}
 	
-	/**
-	 * @param input
-	 * The path that the player gives from the SubGuiPhotoImport
+	/** @param input
+	 *            The path that the player gives from the SubGuiPhotoImport
 	 * @param uploadOption
-	 * True or False if using URL
+	 *            True or False if using URL
 	 * @param grid
-	 * The context or grid size of the tile.
-	 * @return 
-	 * Returns the NBT data for the structure
-	 */
+	 *            The context or grid size of the tile.
+	 * @return
+	 *         Returns the NBT data for the structure */
 	public static NBTTagCompound photoToNBT(String input, boolean uploadOption, int grid) throws IOException {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
 		int color = 0;
 		ColorAccuracy roundedImage = new ColorAccuracy();
-		int maxPixelAmount = Config.getMaxPixelAmount();
+		int maxPixelAmount = LTPhoto.CONFIG.getMaxPixelAmount();
 		
 		try {
 			
-			if(isBlock) {
+			if (isBlock) {
 				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
 				image = ImageIO.read(in);
-				isBlock  = false;
-			}else if(uploadOption) {
-			 	in = load(input);
-			 	image = ImageIO.read(in);
-			}else {
+				isBlock = false;
+			} else if (uploadOption) {
+				in = load(input);
+				image = ImageIO.read(in);
+			} else {
 				file = new File(input);
 				image = ImageIO.read(file);
 			}
 			
-			if(isRescale) {
-				if(!(scaleX < 1) || !(scaleY < 1)) {
+			if (isRescale) {
+				if (!(scaleX < 1) || !(scaleY < 1)) {
 					image = resize(image, scaleX, scaleY);
 				}
 				isRescale = false;
@@ -184,17 +170,17 @@ public class PhotoReader {
 				int width = image.getWidth();
 				int height = image.getHeight();
 				
-				if(((width*height)<maxPixelAmount)) {
+				if (((width * height) < maxPixelAmount)) {
 					LittleGridContext context = LittleGridContext.get(grid);
 					List<LittlePreview> tiles = new ArrayList<>();
 					int expected = image.getWidth() * image.getHeight();
 					for (int x = 0; x < image.getWidth(); x++) {
 						for (int y = 0; y < image.getHeight(); y++) {
 							
-							if(Config.isColorAccuracy()) {
+							if (LTPhoto.CONFIG.isColorAccuracy()) {
 								roundedImage = new ColorAccuracy(image, x, image.getHeight() - y - 1);
 								color = roundedImage.roundRGB();
-							}else {
+							} else {
 								color = image.getRGB(x, image.getHeight() - y - 1);
 							}
 							
@@ -205,9 +191,9 @@ public class PhotoReader {
 							}
 						}
 					}
-
+					
 					BasicCombiner.combinePreviews(tiles); // minimize tiles used
-
+					
 					ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
 					LittlePreviews previews = new LittlePreviews(context);
 					for (LittlePreview tile : tiles) {
@@ -218,18 +204,17 @@ public class PhotoReader {
 					return stack.getTagCompound();
 				}
 			}
-			} catch (IOException e) {
-				
-			} finally {
-				IOUtils.closeQuietly(in); 
+		} catch (IOException e) {
+			
+		} finally {
+			IOUtils.closeQuietly(in);
 			
 		}
-		isBlock  = false;
+		isBlock = false;
 		isRescale = false;
 		return null;
 	}
 	
-
 	public static void setScale(int x, int y) {
 		isRescale = true;
 		scaleX = x;
@@ -237,8 +222,7 @@ public class PhotoReader {
 	}
 	
 	public static void printBlock() {
-		isBlock  = true;
+		isBlock = true;
 	}
 	
-
 }

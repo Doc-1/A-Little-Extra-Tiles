@@ -1,43 +1,30 @@
 package com.ltphoto.gui;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.lwjgl.util.Color;
-import com.ltphoto.photo.AtlasSpriteToPath;
-import com.ltphoto.photo.PhotoReader;
+
 import com.creativemd.creativecore.common.gui.container.SubGui;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiAvatarLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
-import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
 import com.creativemd.creativecore.common.gui.event.container.SlotChangeEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
-import com.creativemd.littletiles.common.config.SpecialServerConfig;
+import com.creativemd.littletiles.client.gui.LittleSubGuiUtils;
 import com.creativemd.littletiles.common.item.ItemLittleChisel;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
-import com.creativemd.littletiles.client.gui.LittleSubGuiUtils;
+import com.ltphoto.photo.AtlasSpriteToPath;
+import com.ltphoto.photo.PhotoReader;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class SubGuiBlock extends SubGui {
@@ -47,7 +34,7 @@ public class SubGuiBlock extends SubGui {
 	public ItemStack stack = new ItemStack(Blocks.STONE);
 	
 	private String facing;
-
+	
 	private GuiCheckBox up = null;
 	private GuiCheckBox down = null;
 	private GuiCheckBox north = null;
@@ -55,7 +42,7 @@ public class SubGuiBlock extends SubGui {
 	private GuiCheckBox south = null;
 	private GuiCheckBox west = null;
 	private GuiStack selector = null;
-
+	
 	@Override
 	public void createControls() {
 		LittlePreview preview = ItemLittleChisel.getPreview(stack);
@@ -73,7 +60,7 @@ public class SubGuiBlock extends SubGui {
 		controls.add(xScale);
 		
 		GuiTextfield yScale = new GuiTextfield("yScale", "16", 145, 60, 20, 14);
-		controls.add(yScale);		
+		controls.add(yScale);
 		
 		//Controls for choosing the facing of the block to print
 		controls.add(up = new GuiCheckBox("up", translate("Up"), 20, -2, false) {
@@ -177,7 +164,7 @@ public class SubGuiBlock extends SubGui {
 				east.value = false;
 				south.value = false;
 				west.value = true;
-
+				
 				selector.setEnumFacing("west");
 				
 				raiseEvent(new GuiControlChangedEvent(this));
@@ -209,7 +196,7 @@ public class SubGuiBlock extends SubGui {
 					e.printStackTrace();
 				}
 			}
-
+			
 		});
 		
 		controls.add(new GuiButton("<--", 145, 0) {
@@ -217,14 +204,13 @@ public class SubGuiBlock extends SubGui {
 			@Override
 			public void onClicked(int x, int y, int button) {
 				closeGui();
-				GuiHandler.openGui("photo-import",  new NBTTagCompound(), getPlayer());
+				GuiHandler.openGui("photo-import", new NBTTagCompound(), getPlayer());
 				
 			}
-
+			
 		});
 	}
 	
-
 	@CustomEventSubscribe
 	public void onSlotChange(SlotChangeEvent event) {
 		

@@ -9,3 +9,8 @@ tile.smoothbirchplank.name=Borderless Birch Planks
 tile.smoothjungleplank.name=Borderless Jungle Planks
 tile.smoothspruceplank.name=Borderless Spruce Planks
 tile.smoothacaciaplank.name=Borderless Acacia Planks
+
+config.ltphoto.allowURL.comment=If disabled users cannot print via a URL link.
+config.ltphoto.maxPixelAmount.comment=This will set the max number of pixels a photo can have when printing.
+config.ltphoto.maxPixelText.comment=This will set the max number of pixels a text can have when printing.
+config.ltphoto.colorAccuracy.comment=This will change how many colors the printer has access to. Zero is all available colors.
