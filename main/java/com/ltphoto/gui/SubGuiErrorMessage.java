@@ -16,7 +16,9 @@ public class SubGuiErrorMessage extends SubGui {
 	
 	@Override
 	public void createControls() {
-		controls.add(new GuiTextBox("text", "Your Image is " + pixelSize + " pixels large. It must be at most " + LTPhoto.CONFIG.getMaxPixelAmount() + " pixels. You can click on \"Auto Scale Image?\" to scale it down to a valid" + " size.\n\nTo change the limit open IGCM and select LTPhoto then increase the Pixel Limit. Be Warned," + " as the image size increases so does the time it takes. Large photos can even freeze your game for " + "tens of minutes.", 0, 0, 294));
+		controls.add(new GuiTextBox("text", "Your Image is " + pixelSize + " pixels large. It must be at most "
+				+ LTPhoto.CONFIG.getMaxPixelAmount() + " pixels. You can click on \"Auto Scale Image?\" to scale"
+						+ " it down to a valid" + " size.\n\nTo change the limit go to config folder and open ltphoto.json and change maxPixelAmount. Be Warned," + " as the image size increases so does the time it takes. Large photos can even freeze your game for " + "tens of minutes.", 0, 0, 294));
 		
 		controls.add(new GuiButton("Okay", 0, 77, 40) {
 			@Override

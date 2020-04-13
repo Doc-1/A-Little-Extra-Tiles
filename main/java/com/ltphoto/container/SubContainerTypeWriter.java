@@ -22,7 +22,7 @@ public class SubContainerTypeWriter extends SubContainer {
 	@Override
 	public void createControls() {
 		addSlotToContainer(new Slot(slot, 0, 0, 0));
-		addPlayerSlotsToContainer(player);
+		addPlayerSlotsToContainer(player,7,110);
 	}
 	
 	@Override
