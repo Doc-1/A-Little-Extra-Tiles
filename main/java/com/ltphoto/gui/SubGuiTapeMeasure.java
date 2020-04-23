@@ -15,7 +15,7 @@ import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.shape.DragShape;
-import com.ltphoto.render.TapeRenderer;
+import com.ltphoto.render.tapemeasure.TapeRenderer;
 
 import net.minecraft.item.ItemStack;
 

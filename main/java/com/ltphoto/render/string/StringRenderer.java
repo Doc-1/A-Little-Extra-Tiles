@@ -1,9 +1,11 @@
 package com.ltphoto.render.string;
 
+import com.ltphoto.items.ItemTapeMeasure;
 import com.ltphoto.render.string.DrawCharacter.Facing;
 import com.ltphoto.render.string.alphabet.Alphabet;
 import com.ltphoto.render.string.numbers.Numbers;
 import com.ltphoto.render.string.specialcharacters.SpecialChar;
+import com.ltphoto.render.tapemeasure.TapeRenderer;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,7 +16,40 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class StringRenderer {
 	
-	public static void drawString(Vec3d start, String str, Facing facing, RenderWorldLastEvent event, float red, float green, float blue, float alpha) {
+	public enum Middle {
+		X,
+		Y,
+		Z
+	}
+	
+	
+	public static void drawString(Middle middle, ItemTapeMeasure tape, String str, Facing facing, float red, float green, float blue, float alpha) {
+		Vec3d start = new Vec3d(0,0,0);
+		
+		switch (middle) {
+		case X:
+			start = new Vec3d(tape.select.boxCorner_1.x, 
+					((tape.select.centerY + tape.select_2.centerY)/2)-(1/2D)*0.0655, 
+					tape.select.boxCorner_2.z);
+			break;
+		case Y:
+			start = new Vec3d(((tape.select.centerX + tape.select_2.centerX)/2)-(1/2D)*0.0655,
+					tape.select.boxCorner_1.y, 
+					tape.select.boxCorner_1.z-0.05);
+			break;
+		case Z:
+			start = new Vec3d(tape.select.boxCorner_1.x, 
+					tape.select.boxCorner_1.y, 
+					((tape.select.centerZ + tape.select_2.centerZ)/2)-(1/2D*0.0655));
+			break;
+		default:
+			break;
+		}
+		drawString(start, str, facing, red, green, blue, alpha);
+	}
+		
+		
+	public static void drawString(Vec3d start, String str, Facing facing, float red, float green, float blue, float alpha) {
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -65,13 +100,13 @@ public class StringRenderer {
 			start = new Vec3d(x, y, z);
 			
 			if (c[i] >= 'A' && c[i] <= 'Z') {
-				Alphabet alphabet = new Alphabet(bufferbuilder, event, facing);
+				Alphabet alphabet = new Alphabet(bufferbuilder, TapeRenderer.event, facing);
 				alphabet.character(c[i], start, red, green, blue, alpha);
 			} else if (c[i] >= '0' && c[i] <= '9') {
-				Numbers number = new Numbers(bufferbuilder, event, facing);
+				Numbers number = new Numbers(bufferbuilder, TapeRenderer.event, facing);
 				number.character(c[i], start, red, green, blue, alpha);
 			} else {
-				SpecialChar specialChar = new SpecialChar(bufferbuilder, event, facing);
+				SpecialChar specialChar = new SpecialChar(bufferbuilder, TapeRenderer.event, facing);
 				specialChar.character(c[i], start, red, green, blue, alpha);
 			}
 			

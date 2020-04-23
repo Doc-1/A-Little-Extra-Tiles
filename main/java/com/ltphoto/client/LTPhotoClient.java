@@ -4,8 +4,8 @@ import java.awt.GraphicsEnvironment;
 
 import com.ltphoto.CommonProxy;
 import com.ltphoto.gui.SubGuiTypeWriter;
-import com.ltphoto.render.TapeRenderer;
 import com.ltphoto.render.string.StringRenderer;
+import com.ltphoto.render.tapemeasure.TapeRenderer;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
