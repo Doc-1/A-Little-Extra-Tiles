@@ -1,6 +1,9 @@
 package com.ltphoto.items;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -30,15 +33,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTapeMeasure extends Item implements ILittleTile {
-	
-	public LittleAbsoluteVec firstPos;
-	public LittleAbsoluteVec secondPos;
-	
-	public Vec3d a;
-	public Vec3d b;
-	
-	public SelectLittleTile select = new SelectLittleTile();
-	public SelectLittleTile select_2 = new SelectLittleTile();
+
+	public static List<SelectLittleTile> selection = new ArrayList<>();
+
 	
 	public double differenceX;
 	public double differenceZ;
@@ -70,10 +67,9 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		
 		double cont = 1 / context.size;
 		
-		a = res.hitVec;
 		
-		firstPos = new LittleAbsoluteVec(res, context);
-		select = new SelectLittleTile(firstPos, context, position.facing);
+		LittleAbsoluteVec firstPos = new LittleAbsoluteVec(res, context);
+		selection.add(0, new SelectLittleTile(firstPos, context, position.facing));
 		
 		return false;
 	}
@@ -87,10 +83,9 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		
 		double cont = 1 / context.size;
 		
-		b = res.hitVec;
 		
-		secondPos = new LittleAbsoluteVec(res, context);
-		select_2 = new SelectLittleTile(secondPos, context, position.facing);
+		LittleAbsoluteVec secondPos = new LittleAbsoluteVec(res, context);
+		selection.add(1, new SelectLittleTile(secondPos, context, position.facing));
 		
 		return false;
 	}

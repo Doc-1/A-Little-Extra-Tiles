@@ -1,6 +1,7 @@
 package com.ltphoto.gui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
@@ -15,6 +16,7 @@ import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.shape.DragShape;
+import com.ltphoto.items.ItemTapeMeasure;
 import com.ltphoto.render.tapemeasure.TapeRenderer;
 
 import net.minecraft.item.ItemStack;
@@ -52,6 +54,14 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		controls.add(box);
 		
 		
+		List<String> test = new ArrayList<>();
+		test.add("1");
+		test.add("2");
+
+		GuiComboBox box2 = new GuiComboBox("selection", 0, 40, 100, test);
+		box.select(1);
+		box.setCustomTooltip("Does nothing yet.");
+		controls.add(box2);
 	}
 
 }

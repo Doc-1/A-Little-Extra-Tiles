@@ -14,6 +14,8 @@ import com.ltphoto.render.string.DrawCharacter.Facing;
 import com.ltphoto.render.string.StringRenderer;
 import com.ltphoto.render.string.StringRenderer.Middle;
 import com.ltphoto.render.tapemeasure.shape.Box;
+import com.ltphoto.render.tapemeasure.shape.Circle;
+import com.ltphoto.render.tapemeasure.shape.Line;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -33,8 +35,8 @@ public class TapeRenderer {
 	public static ItemTapeMeasure tape = new ItemTapeMeasure();
 
 	public static void clear() {
-		tape.a = null;
-		tape.b = null;
+		tape.firstPos = null;
+		tape.secondPos = null;
 	}
 	
 	public double radius(double pos_1, double pos_2) {
@@ -76,7 +78,6 @@ public class TapeRenderer {
 		
 		for(int i = 0; i < inventory.size(); i++) {
 			stack = inventory.get(i);
-
 			if(stack.toString().equals(ingredient.toString())) 
 				break;
 			else {
@@ -85,7 +86,7 @@ public class TapeRenderer {
 			}
 		}		
 		
-		if (tape.a != null && tape.b != null) {
+		if (tape.firstPos != null && tape.secondPos != null) {
 			//player.sendStatusMessage(new TextComponentString(t), true);
 			
 			double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
@@ -102,15 +103,16 @@ public class TapeRenderer {
 			
 			player.sendStatusMessage(new TextComponentString("X: " + distence(centerX_1, centerX_2)+ " Y: " + distence(centerY_1, centerY_2) + " Z: " + distence(centerZ_1, centerZ_2)), true);
 			
-			
-			
 			StringRenderer.drawString(Middle.Z, tape, "Z", Facing.UP ,0.0F, 1.0F, 0F, 1.0F);
 			StringRenderer.drawString(Middle.X, tape, "X", Facing.WEST, 0.0F, 1.0F, 0F, 1.0F);
 			StringRenderer.drawString(Middle.Y, tape, "Y", Facing.EAST, 0.0F, 1.0F, 0F, 1.0F);
 			
-			//drawLine(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
-			Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape);
-			//drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
+			//Line.drawLine(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
+			//Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape);
+			//Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape);
+
+			//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
+			//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
 
 			GlStateManager.enableDepth();
 			GlStateManager.depthMask(true);
