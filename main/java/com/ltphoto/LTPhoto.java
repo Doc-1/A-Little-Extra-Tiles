@@ -10,7 +10,7 @@ import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
-import com.creativemd.littletiles.common.structure.premade.LittleStructurePremade;
+import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
 import com.ltphoto.container.SubContainerBlock;
 import com.ltphoto.container.SubContainerPhotoImport;
 import com.ltphoto.container.SubContainerTypeWriter;
