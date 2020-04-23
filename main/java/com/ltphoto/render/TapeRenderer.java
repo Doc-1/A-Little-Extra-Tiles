@@ -1,7 +1,14 @@
 package com.ltphoto.render;
 
+import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
+import com.creativemd.littletiles.common.util.ingredient.LittleIngredients;
+import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
+import com.creativemd.littletiles.common.util.ingredient.NotEnoughIngredientsException;
+import com.creativemd.littletiles.common.util.ingredient.StackIngredient;
+import com.creativemd.littletiles.common.util.ingredient.StackIngredientEntry;
+import com.ltphoto.LTPhoto;
 import com.ltphoto.items.ItemTapeMeasure;
 import com.ltphoto.render.string.DrawCharacter.Facing;
 import com.ltphoto.render.string.StringRenderer;
@@ -12,6 +19,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -58,10 +66,21 @@ public class TapeRenderer {
 	public void render(RenderWorldLastEvent event) {
 		this.event = event;
 		EntityPlayer player = Minecraft.getMinecraft().player;
-		String item = "ltphoto:tapemeasure";
 		
-		String mainItem = player.getHeldItemMainhand().getItem().getRegistryName().toString();
+		ItemStack stack = ItemStack.EMPTY;
+		ItemStack ingredient = new ItemStack(LTPhoto.tapeMeasure, 1);
+		LittleInventory inventory = new LittleInventory(player);
 		
+		for(int i = 0; i < inventory.size(); i++) {
+			stack = inventory.get(i);
+
+			if(stack.toString().equals(ingredient.toString())) 
+				break;
+			else {
+				stack = ItemStack.EMPTY;
+				break;
+			}
+		}		
 		
 		if (tape.a != null && tape.b != null) {
 			//player.sendStatusMessage(new TextComponentString(t), true);
@@ -250,8 +269,8 @@ public class TapeRenderer {
 			GlStateManager.depthMask(true);
 			GlStateManager.enableTexture2D();
 			GlStateManager.disableBlend();
-		}else if (item.equals(mainItem)) {
-			tape = (ItemTapeMeasure) player.getHeldItemMainhand().getItem();
+		}else if(!stack.isEmpty()){
+			tape = (ItemTapeMeasure) stack.getItem();
 		}
 	}
 	
