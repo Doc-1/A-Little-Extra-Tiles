@@ -34,15 +34,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTapeMeasure extends Item implements ILittleTile {
 
-	public static List<SelectLittleTile> selection = new ArrayList<>();
-
-	
-	public double differenceX;
-	public double differenceZ;
-	public double differenceY;
+	public static List<SelectLittleTile> selection = new ArrayList<>(20);
+	public static int selectedMeasurement = 0;
 	
 	public ItemTapeMeasure() {
-		
+		if(selection.size() == 0)
+			for (int i = 0; i < 20; i++) {
+				selection.add(null);
+			}
 	}
 	
 	public ItemTapeMeasure(String name) {
@@ -69,7 +68,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		
 		
 		LittleAbsoluteVec firstPos = new LittleAbsoluteVec(res, context);
-		selection.add(0, new SelectLittleTile(firstPos, context, position.facing));
+		selection.set(selectedMeasurement, new SelectLittleTile(firstPos, context, position.facing));
 		
 		return false;
 	}
@@ -85,7 +84,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		
 		
 		LittleAbsoluteVec secondPos = new LittleAbsoluteVec(res, context);
-		selection.add(1, new SelectLittleTile(secondPos, context, position.facing));
+		selection.set(selectedMeasurement+1, new SelectLittleTile(secondPos, context, position.facing));
 		
 		return false;
 	}
