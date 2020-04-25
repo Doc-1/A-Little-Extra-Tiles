@@ -18,6 +18,7 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
 import com.ltphoto.gui.SubGuiTapeMeasure;
+import com.ltphoto.render.tapemeasure.Measurement;
 import com.ltphoto.tiles.SelectLittleTile;
 
 import net.minecraft.block.state.IBlockState;
@@ -34,14 +35,22 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTapeMeasure extends Item implements ILittleTile {
 
-	public static List<SelectLittleTile> selection = new ArrayList<>(20);
-	public static int selectedMeasurement = 0;
+	public static List<Measurement> measure = new ArrayList<>();
+	public static int index = 0;
+	public static int index2 = 0;
+	
+	public static void clear() {
+		measure = new ArrayList<>();
+		for(int i=0;i<=50;i++)
+			measure.add(null);
+	}
 	
 	public ItemTapeMeasure() {
-		if(selection.size() == 0)
-			for (int i = 0; i < 20; i++) {
-				selection.add(null);
-			}
+		setMax(50);
+	}
+	
+	public ItemTapeMeasure(int maxMeasurements) {
+		
 	}
 	
 	public ItemTapeMeasure(String name) {
@@ -49,6 +58,15 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		setRegistryName(name);
 		setMaxStackSize(1);
 		setCreativeTab(LittleTiles.littleTab);
+	}
+	
+	public static void setMax(int maxMeasurements) {
+		for(int i=0;i<=maxMeasurements;i++)
+			measure.add(null);
+	}
+	
+	public static int getMax() {
+		return measure.size();
 	}
 	
 	@Override
@@ -66,10 +84,11 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		
 		double cont = 1 / context.size;
 		
-		
 		LittleAbsoluteVec firstPos = new LittleAbsoluteVec(res, context);
-		selection.set(selectedMeasurement, new SelectLittleTile(firstPos, context, position.facing));
-		
+
+		measure.set(index, new Measurement(firstPos, context, position.facing));
+		System.out.println("right "+(index));
+
 		return false;
 	}
 	
@@ -82,10 +101,10 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		
 		double cont = 1 / context.size;
 		
-		
 		LittleAbsoluteVec secondPos = new LittleAbsoluteVec(res, context);
-		selection.set(selectedMeasurement+1, new SelectLittleTile(secondPos, context, position.facing));
 		
+		measure.set(index+1, new Measurement(secondPos, context, position.facing));
+		System.out.println("Left "+(index+1));
 		return false;
 	}
 	

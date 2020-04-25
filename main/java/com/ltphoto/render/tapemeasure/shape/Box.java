@@ -61,12 +61,17 @@ public class Box {
 	
 	public static void drawBox(double centerX_1, double centerX_2, double centerY_1, double centerY_2, double centerZ_1, double centerZ_2, ItemTapeMeasure tape) {
 		
+		int selcMeas = tape.selectedMeasurement;
+		
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		GlStateManager.glLineWidth(2.0F);
 		GlStateManager.disableTexture2D();
 		GlStateManager.depthMask(false);
 		GlStateManager.disableDepth();
+		
+		
+		
 		if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
 			drawBoundingBox(tape.select.corner_6, tape.select_2.corner_2, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);
 			drawBoundingBox(tape.select.corner_1, tape.select.corner_5, (float) 1.0, (float) 0.0, (float) 0.0, (float) 1.0);

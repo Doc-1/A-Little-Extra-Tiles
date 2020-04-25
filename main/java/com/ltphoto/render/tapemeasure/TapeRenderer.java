@@ -2,6 +2,7 @@ package com.ltphoto.render.tapemeasure;
 
 import java.util.ArrayList;
 
+import com.creativemd.littletiles.client.render.overlay.PreviewRenderer;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -35,10 +36,7 @@ public class TapeRenderer {
 	
 	public static RenderWorldLastEvent event;
 	public static ItemTapeMeasure tape = new ItemTapeMeasure();
-
-	public static void clear() {
-		tape.selection = new ArrayList<>();
-	}
+	public static int counter = 0;
 	
 	public double radius(double pos_1, double pos_2) {
 		LittleGridContext context = LittleGridContext.get(16);
@@ -85,47 +83,74 @@ public class TapeRenderer {
 				stack = ItemStack.EMPTY;
 				break;
 			}
-		}		
+		}			
+		//player.sendStatusMessage(new TextComponentString(t), true);
 		
-		int selcMes = tape.selectedMeasurement;
 		
 		
-		if (tape.selection.get(selcMes) != null && tape.selection.get(selcMes+1) != null){
-			System.out.println(tape.selection.size());
-			//player.sendStatusMessage(new TextComponentString(t), true);
-			double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
-			double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
-			double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
-			
-			double centerX_1 = tape.selection.get(selcMes).centerX;
-			double centerY_1 = tape.selection.get(selcMes).centerY;
-			double centerZ_1 = tape.selection.get(selcMes).centerZ;
-			
-			double centerX_2 = tape.selection.get(selcMes+1).centerX;
-			double centerY_2 = tape.selection.get(selcMes+1).centerY;
-			double centerZ_2 = tape.selection.get(selcMes+1).centerZ;
-			
-			player.sendStatusMessage(new TextComponentString("X: " + distence(centerX_1, centerX_2)+ " Y: " + distence(centerY_1, centerY_2) + " Z: " + distence(centerZ_1, centerZ_2)), true);
-			/*
-			StringRenderer.drawString(Middle.Z, tape, "Z", Facing.UP ,0.0F, 1.0F, 0F, 1.0F);
-			StringRenderer.drawString(Middle.X, tape, "X", Facing.WEST, 0.0F, 1.0F, 0F, 1.0F);
-			StringRenderer.drawString(Middle.Y, tape, "Y", Facing.EAST, 0.0F, 1.0F, 0F, 1.0F);
-			
-			//Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape);
-			//Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape);
 
-			//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
-			//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
-			 */
-			Line.drawLine(centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		
+		for(int i=0;i<tape.measure.size();i+=2) {
+			if(tape.measure.get(i) != null && tape.measure.get(i+1) != null) {
+				//System.out.println(i);
+				double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+				double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+				double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
 
-			GlStateManager.enableDepth();
-			GlStateManager.depthMask(true);
-			GlStateManager.enableTexture2D();
-			GlStateManager.disableBlend();
-			
-		}else if(!stack.isEmpty()){
-			tape = (ItemTapeMeasure) stack.getItem();
+				double centerX_1 = tape.measure.get(i).centerX;
+				double centerY_1 = tape.measure.get(i).centerY;
+				double centerZ_1 = tape.measure.get(i).centerZ;
+				
+				double centerX_2 = tape.measure.get(i+1).centerX;
+				double centerY_2 = tape.measure.get(i+1).centerY;
+				double centerZ_2 = tape.measure.get(i+1).centerZ;
+				
+				GlStateManager.enableBlend();
+				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+				GlStateManager.glLineWidth(2.0F);
+				GlStateManager.disableTexture2D();
+				GlStateManager.depthMask(false);
+				GlStateManager.disableDepth();
+				
+				player.sendStatusMessage(new TextComponentString("X: " + distence(centerX_1, centerX_2)+ " Y: " + distence(centerY_1, centerY_2) + " Z: " + distence(centerZ_1, centerZ_2)), true);
+				bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+				
+
+				Line.drawLine(bufferbuilder, centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
+				
+				
+				
+				//System.out.println(bufferbuilder.getVertexCount());
+
+				tessellator.draw();
+				//System.out.println(bufferbuilder.getVertexCount());
+				bufferbuilder.reset();
+
+
+				GlStateManager.enableDepth();
+				GlStateManager.depthMask(true);
+				GlStateManager.enableTexture2D();
+				GlStateManager.disableBlend();	
+			}
 		}
+
+		/*
+		StringRenderer.drawString(Middle.Z, tape, "Z", Facing.UP ,0.0F, 1.0F, 0F, 1.0F);
+		StringRenderer.drawString(Middle.X, tape, "X", Facing.WEST, 0.0F, 1.0F, 0F, 1.0F);
+		StringRenderer.drawString(Middle.Y, tape, "Y", Facing.EAST, 0.0F, 1.0F, 0F, 1.0F);
+		*/
+		//Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape);
+		//Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape);
+
+		//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
+		//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
+		
+					
+		
+		if(!stack.isEmpty())
+			tape = (ItemTapeMeasure) stack.getItem();
+		
 	}
 }

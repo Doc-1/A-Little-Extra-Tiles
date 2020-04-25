@@ -19,6 +19,7 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.shape.DragShape;
 import com.ltphoto.items.ItemTapeMeasure;
+import com.ltphoto.render.tapemeasure.Measurement.Shape;
 import com.ltphoto.render.tapemeasure.TapeRenderer;
 
 import net.minecraft.init.SoundEvents;
@@ -47,11 +48,25 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		controls.add(new GuiButton("Clear", 0, 0, 40) {
 			@Override
 			public void onClicked(int x, int y, int button) {
-				TapeRenderer.clear();
+				ItemTapeMeasure.clear();
 			}
 		});
 		
-		GuiComboBox box = new GuiComboBox("shape", 0, 40, 100, new ArrayList<>(DragShape.keys()));
+		GuiComboBox box = (new GuiComboBox("shape", 0, 40, 100, new ArrayList<>(DragShape.keys())) {
+			@Override
+			protected GuiComboBoxExtension createBox() {
+				return (new GuiComboBoxExtension(name + "extension", this, posX, posY + height, width - getContentOffset() * 2, 100, lines) {
+					@Override
+					public boolean mousePressed(int x, int y, int button) {
+						super.mousePressed(x, y, button);
+						ItemTapeMeasure.measure.get(ItemTapeMeasure.index).setShapeType(selected);
+						System.out.println(selected+" "+ItemTapeMeasure.measure.size()
+							+ItemTapeMeasure.measure.get(ItemTapeMeasure.index).shapeType);
+						return true;
+					}
+				});
+			}
+		});
 		box.select(ItemLittleChisel.getShape(stack).key);
 		box.setCustomTooltip("Does nothing yet.");
 		controls.add(box);
@@ -71,13 +86,28 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 					@Override
 					public boolean mousePressed(int x, int y, int button) {
 						super.mousePressed(x, y, button);
-						ItemTapeMeasure.selectedMeasurement = selected;
+						
+						ItemTapeMeasure.index2 = selected;
+						//(Integer.parseInt(get(selected)))
+						ItemTapeMeasure.index = Integer.parseInt(get(selected))+(selected-1);
+						//System.out.println(Integer.parseInt(get(selected))+(selected-1));
+						//System.out.println(selected);
+						//System.out.println(selected-1);
+						
 						return true;
+						/*
+					 	1 0-1
+					 	2 2-3
+					 	3 4-5
+					 	4 6-7
+					 	5 8-9
+						*/
 					}
 				});
 			}
 		});
-		box2.select(ItemTapeMeasure.selectedMeasurement);
+		
+		box2.select(ItemTapeMeasure.index2);
 		controls.add(box2);
 	}
 
