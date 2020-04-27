@@ -1,10 +1,10 @@
 [
 {
-  "modid": "ltphoto",
+  "modid": "alet",
   "name": "A Little Extra Tiles",
   "description": "",
-  "version": "${}",
-  "mc_version": "${}",
+  "version": "1.0.10",
+  "mc_version": "${mc_version}",
   "url": "",
   "updateUrl": "",
   "authorList": ["_Doc"],
