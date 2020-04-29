@@ -47,22 +47,13 @@ public class TapeRenderer {
 		return (distence/context.size);
 	}
 	
-	public String distence(double pos_1, double pos_2) {
+	public static double distence(double pos_1, double pos_2) {
 		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		
 		double contDecimal = 1D / context.size;
 		double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
-		int denominator = context.size;
-		String[] dis = String.valueOf(distence).split("\\.");
-		double numerator = context.size * Double.parseDouble("0." + dis[1]);
 		
-		if((int)(numerator)==0) {
-			return dis[0] + " BLOCK";
-		}else if(Integer.parseInt(dis[0])==0){
-			return (int) (numerator) + "/" + denominator + " TILE";
-		}else {
-			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
-		}
+		return distence;
 	} 
 	
 	@SuppressWarnings("unused")
@@ -111,15 +102,19 @@ public class TapeRenderer {
 				GlStateManager.depthMask(false);
 				GlStateManager.disableDepth();
 				
-				player.sendStatusMessage(new TextComponentString("X: " + distence(centerX_1, centerX_2)+ " Y: " + distence(centerY_1, centerY_2) + " Z: " + distence(centerZ_1, centerZ_2)), true);
 				bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
 				
 				switch (tape.measure.get(i).shapeType) {
 				case Box:
+					player.sendStatusMessage(new TextComponentString("X: " + distence(centerX_1, centerX_2)+ " Y: " + distence(centerY_1, centerY_2) + " Z: " + distence(centerZ_1, centerZ_2)), true);
 					Box.drawBox(centerX_1, centerX_2, centerY_1, centerY_2, centerZ_1, centerZ_2, tape, i);
 					break;
 				case Line:
+					player.sendStatusMessage(new TextComponentString(Line.distence(tape.measure.get(i).center, tape.measure.get(i+1).center)), true);
+
 					Line.drawLine(bufferbuilder, centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 1.0F, 1.0F, 1.0F);
+					StringRenderer.drawString(Middle.T, i, tape, Line.distence(tape.measure.get(i).center, tape.measure.get(i+1).center), Facing.UP, 0.0F, 1.0F, 0F, 1.0F);
+
 					break;
 				case Circle:
 					Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);				
@@ -128,9 +123,9 @@ public class TapeRenderer {
 					break;
 				}
 				
-				StringRenderer.drawString(Middle.Z, i, tape, distence(centerZ_1, centerZ_2), Facing.UP ,0.0F, 1.0F, 0F, 1.0F);
-				StringRenderer.drawString(Middle.X, i, tape, distence(centerX_1, centerX_2), Facing.WEST, 0.0F, 1.0F, 0F, 1.0F);
-				StringRenderer.drawString(Middle.Y, i, tape, distence(centerY_1, centerY_2), Facing.UP, 0.0F, 1.0F, 0F, 1.0F);
+				//StringRenderer.drawString(Middle.Z, i, tape, distence(centerZ_1, centerZ_2), Facing.UP ,0.0F, 1.0F, 0F, 1.0F);
+				//StringRenderer.drawString(Middle.X, i, tape, distence(centerX_1, centerX_2), Facing.WEST, 0.0F, 1.0F, 0F, 1.0F);
+				//StringRenderer.drawString(Middle.Y, i, tape, distence(centerY_1, centerY_2), Facing.UP, 0.0F, 1.0F, 0F, 1.0F);
 				
 				//StringRenderer.drawString(Middle.Y, i, tape, "Y", Facing.EAST, 0.0F, 1.0F, 0F, 1.0F);
 

@@ -80,7 +80,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
-		LittleVec vec = new LittleVec(context, res);
 		
 		double cont = 1 / context.size;
 		
@@ -97,7 +96,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	public boolean onClickBlock(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
-		LittleVec vec = new LittleVec(context, res);
 		
 		double cont = 1 / context.size;
 		

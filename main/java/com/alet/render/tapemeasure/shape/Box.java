@@ -2,6 +2,8 @@ package com.alet.render.tapemeasure.shape;
 
 import com.alet.items.ItemTapeMeasure;
 import com.alet.render.tapemeasure.TapeRenderer;
+import com.creativemd.littletiles.common.item.ItemMultiTiles;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -56,6 +58,23 @@ public class Box {
 		drawBoundingBox(bufferbuilder, minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001, maxX + 0.001 - d0, maxY - d1 + 0.001, maxZ - d2 + 0.001, red, green, blue, alpha);
 	}
 	
+	public static String distence(double pos_1, double pos_2) {
+		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
+		
+		double contDecimal = 1D / context.size;
+		double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
+		int denominator = context.size;
+		String[] dis = String.valueOf(distence).split("\\.");
+		double numerator = context.size * Double.parseDouble("0." + dis[1]);
+		
+		if((int)(numerator)==0) {
+			return dis[0] + " BLOCK";
+		}else if(Integer.parseInt(dis[0])==0){
+			return (int) (numerator) + "/" + denominator + " TILE";
+		}else {
+			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
+		}
+	} 
 	
 	public static void drawBox(double centerX_1, double centerX_2, double centerY_1, double centerY_2, double centerZ_1, double centerZ_2, ItemTapeMeasure tape, int index) {
 		

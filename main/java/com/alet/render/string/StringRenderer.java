@@ -19,7 +19,7 @@ public class StringRenderer {
 	public enum Middle {
 		X,
 		Y,
-		Z
+		Z, T
 	}
 	
 	
@@ -40,8 +40,12 @@ public class StringRenderer {
 		case Z:
 			start = new Vec3d(tape.measure.get(index).boxCorner_1.x, 
 					tape.measure.get(index).boxCorner_1.y, 
-					((tape.measure.get(index).centerZ + tape.measure.get(index).centerZ+1)/2)-(1/2D*0.0655));
+					((tape.measure.get(index).centerZ + tape.measure.get(index+1).centerZ)/2)-(1/2D*0.0655));
 			break;
+		case T:
+			start = new Vec3d(((tape.measure.get(index).centerX + tape.measure.get(index+1).centerX)/2)-(1/2D)*0.0655, 
+					((tape.measure.get(index).centerY + tape.measure.get(index+1).centerY)/2)-(1/2D)*0.0655, 
+					((tape.measure.get(index).centerZ + tape.measure.get(index+1).centerZ)/2)-(1/2D*0.0655));
 		default:
 			break;
 		}
