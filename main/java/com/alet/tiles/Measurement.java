@@ -1,9 +1,8 @@
-package com.alet.render.tapemeasure;
+package com.alet.tiles;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.tiles.SelectLittleTile;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 

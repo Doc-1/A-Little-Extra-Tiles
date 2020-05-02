@@ -55,7 +55,6 @@ public class Line {
 			distence = yDist;
 		else if(zDist>=xDist&&zDist>=yDist) 
 			distence = zDist;
-		System.out.println(" X: " + xDist+" Y: " + yDist + " Z: " + zDist);
 		int denominator = context.size;
 		String[] dis = String.valueOf(distence).split("\\.");
 		double numerator = context.size * Double.parseDouble("0." + dis[1]);

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alet.items.ItemTapeMeasure;
 import com.alet.render.tapemeasure.TapeRenderer;
-import com.alet.render.tapemeasure.Measurement.Shape;
+import com.alet.tiles.Measurement.Shape;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
@@ -58,7 +58,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		controls.add(new GuiButton("Clear", 0, 0, 40) {
 			@Override
 			public void onClicked(int x, int y, int button) {
-				ItemTapeMeasure.clear();
+				ItemTapeMeasure.clear(stack);
 			}
 		});
 		
