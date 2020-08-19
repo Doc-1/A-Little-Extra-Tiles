@@ -1,12 +1,15 @@
 package com.alet.structure.premade;
 
-import com.creativemd.littletiles.client.gui.handler.LittleGuiHandler;
+import javax.annotation.Nullable;
+
+import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
+import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
 import com.creativemd.littletiles.common.tile.LittleTile;
+import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,8 +20,8 @@ import net.minecraft.world.World;
 
 public class LittlePhotoImporter extends LittleStructurePremade {
 	
-	public LittlePhotoImporter(LittleStructureType type) {
-		super(type);
+	public LittlePhotoImporter(LittleStructureType type, IStructureTileList mainBlock) {
+		super(type, mainBlock);
 	}
 	
 	@Override
@@ -28,10 +31,9 @@ public class LittlePhotoImporter extends LittleStructurePremade {
 	protected void writeToNBTExtra(NBTTagCompound nbt) {}
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
-		if (!worldIn.isRemote) {
-			LittleGuiHandler.openGui("photo-import", new NBTTagCompound(), playerIn, getMainTile());
-		}
+	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+		if (!worldIn.isRemote)
+			LittleStructureGuiHandler.openGui("photo-import", new NBTTagCompound(), playerIn, this);
 		return true;
 	}
 	

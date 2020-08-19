@@ -19,6 +19,8 @@ import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
+import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
+import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
 
 import net.minecraft.block.Block;
@@ -70,7 +72,6 @@ public class ALET {
 	public void PreInit(FMLPreInitializationEvent event) {
 		proxy.preInit(event);
 		
-		
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
 		smoothOakPlank = new BasicBlock("smoothoakplank");
 		smoothDarkOakPlank = new BasicBlock("smoothdarkoakplank");
@@ -97,30 +98,30 @@ public class ALET {
 			}
 		});
 		
-		GuiHandler.registerGuiHandler("photo-import", new CustomGuiHandler() {
+		GuiHandler.registerGuiHandler("photo-import", new LittleStructureGuiHandler() {
 			
 			@Override
 			@SideOnly(Side.CLIENT)
-			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
 				return new SubGuiPhotoImport();
 			}
 			
 			@Override
-			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
 				return new SubContainerPhotoImport(player);
 			}
 		});
 		
-		GuiHandler.registerGuiHandler("type-writter", new CustomGuiHandler() {
+		GuiHandler.registerGuiHandler("type-writter", new LittleStructureGuiHandler() {
 			
 			@Override
 			@SideOnly(Side.CLIENT)
-			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
 				return new SubGuiTypeWriter();
 			}
 			
 			@Override
-			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
 				return new SubContainerTypeWriter(player);
 			}
 		});
@@ -134,7 +135,9 @@ public class ALET {
 	
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
+		event.getRegistry().registerAll(tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()),
+		        new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()),
+		        new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
 	}
 	
 	@SubscribeEvent
@@ -157,7 +160,7 @@ public class ALET {
 	@EventHandler
 	public void Init(FMLInitializationEvent event) {
 		CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
-
+		
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
 	}

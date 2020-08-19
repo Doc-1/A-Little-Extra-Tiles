@@ -186,7 +186,7 @@ public class PhotoReader {
 							
 							if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
 								LittleTileColored tile = new LittleTileColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
-								tile.box = new LittleBox(new LittleVec(x, y, 0));
+								tile.setBox(new LittleBox(new LittleVec(x, y, 0)));
 								tiles.add(tile.getPreviewTile());
 							}
 						}
