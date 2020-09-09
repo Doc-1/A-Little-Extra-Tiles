@@ -61,28 +61,6 @@ public class PhotoReader {
 		return resized;
 	}
 	
-	public static int getPixelWidth(String input, boolean uploadOption) {
-		InputStream in = null;
-		File file = null;
-		BufferedImage image = null;
-		
-		try {
-			if (isBlock) {
-				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-				image = ImageIO.read(in);
-				isBlock = false;
-			} else if (uploadOption) {
-				in = load(input);
-				image = ImageIO.read(in);
-			} else {
-				file = new File(input);
-				image = ImageIO.read(file);
-			}
-		} catch (IOException e) {
-			return 0;
-		}
-		return image.getWidth();
-	}
 	
 	public static boolean imageExists(String input, boolean uploadOption) {
 		InputStream in = null;
@@ -104,6 +82,29 @@ public class PhotoReader {
 			return false;
 		}
 		return true;
+	}
+
+	public static int getPixelWidth(String input, boolean uploadOption) {
+		InputStream in = null;
+		File file = null;
+		BufferedImage image = null;
+		
+		try {
+			if (isBlock) {
+				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
+				image = ImageIO.read(in);
+				isBlock = false;
+			} else if (uploadOption) {
+				in = load(input);
+				image = ImageIO.read(in);
+			} else {
+				file = new File(input);
+				image = ImageIO.read(file);
+			}
+		} catch (IOException e) {
+			return 0;
+		}
+		return image.getWidth();
 	}
 	
 	public static int getPixelLength(String input, boolean uploadOption) {
@@ -161,7 +162,7 @@ public class PhotoReader {
 			
 			if (isRescale) {
 				if (!(scaleX < 1) || !(scaleY < 1)) {
-					image = resize(image, scaleX, scaleY);
+					image = resize(image, scaleY, scaleX);
 				}
 				isRescale = false;
 			}

@@ -36,12 +36,34 @@ public class SelectLittleTile {
 	public Vec3d boxCorner_2;
 
 	private double gridOffSet;
-	private LittleGridContext context;
+	public LittleGridContext context;
 
 	public SelectLittleTile() {
 
 	}
+	
+	public SelectLittleTile(Vec3d center, LittleGridContext con, EnumFacing side) {
+		context = con;
+		gridOffSet = context.pixelSize;
+		facing = side;
 
+		boxMinX = center.x;
+		boxMinY = center.y;
+		boxMinZ = center.z;
+
+		boxMaxX = boxMinX + gridOffSet;
+		boxMaxY = boxMinY + gridOffSet;
+		boxMaxZ = boxMinZ + gridOffSet;
+
+		adjustSelectPos();
+
+		boxCorner_1 = new Vec3d(boxMaxX, boxMaxY, boxMaxZ);
+		boxCorner_2 = new Vec3d(boxMinX, boxMinY, boxMinZ);
+
+		getCenter();
+		getCorners();
+	}
+	
 	public SelectLittleTile(LittleAbsoluteVec corner, LittleGridContext con, EnumFacing side) {
 		context = con;
 		gridOffSet = context.pixelSize;

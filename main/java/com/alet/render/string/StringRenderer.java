@@ -21,7 +21,7 @@ public class StringRenderer {
 		Y,
 		Z, T
 	}
-	
+	/*
 	
 	public static void drawString(Middle middle, int index, ItemTapeMeasure tape, String str, Facing facing, float red, float green, float blue, float alpha) {
 		Vec3d start = new Vec3d(0,0,0);
@@ -51,7 +51,7 @@ public class StringRenderer {
 		}
 		drawString(start, str, facing, red, green, blue, alpha);
 	}
-		
+		*/
 		
 	public static void drawString(Vec3d start, String str, Facing facing, float red, float green, float blue, float alpha) {
 		

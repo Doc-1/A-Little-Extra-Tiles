@@ -24,6 +24,7 @@ import com.creativemd.littletiles.common.util.shape.DragShape;
 
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class SubGuiTapeMeasure extends SubGuiConfigure{
 	
@@ -37,22 +38,26 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 
 	@Override
 	public void saveConfiguration() {
-		ItemMultiTiles.currentContext =  LittleGridContext.get(Integer.parseInt(contextBox.caption));
-		System.out.println(shapeBox.index+" "+ItemTapeMeasure.measure.size());
 		//ItemTapeMeasure.measure.get(ItemTapeMeasure.index).setShapeType(1);
-
-		ItemTapeMeasure.index2 = indexBox.index;
-		//(Integer.parseInt(get(selected)))
-		ItemTapeMeasure.index = (indexBox.index)+(indexBox.index);
+		NBTTagCompound nbt = stack.getTagCompound();
+		int index = indexBox.index;
+		int context = contextBox.index;
+		nbt.setInteger("index", index);
+		nbt.setInteger("context"+(index*2), context);
+		stack.setTagCompound(nbt);
 		
-		System.out.println(ItemTapeMeasure.index); 
+		//(Integer.parseInt(get(selected)))
 	}
 
 	@Override
 	public void createControls() {
-
+		NBTTagCompound nbt = stack.getTagCompound();
+		int index = nbt.getInteger("index");
+		int context = nbt.getInteger("context"+(index*2));
+		System.out.println("da "+context);
 		contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
-		contextBox.select(ItemMultiTiles.currentContext.size + "");
+		contextBox.select(nbt.getInteger("context"+(index*2)));
+		contextBox.index = context;
 		controls.add(contextBox);
 		
 		controls.add(new GuiButton("Clear", 0, 0, 40) {
@@ -63,20 +68,18 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		});
 		
 		shapeBox = new GuiComboBox("shape", 0, 40, 100, new ArrayList<>(DragShape.keys()));
-		System.out.println();
-		shapeBox.select(0);
+		shapeBox.select(4);
 		shapeBox.setCustomTooltip("Does nothing yet.");
 		controls.add(shapeBox);
 		
-		
-		List<String> test = new ArrayList<>();
+		List<String> indexMax = new ArrayList<>();
 		for(int i=1;i<=10;i++) {
-			test.add(String.valueOf(i));
+			indexMax.add(String.valueOf(i));
 		}
 		
-
-		indexBox = new GuiComboBox("selection", 0, 80, 20, test);
-		indexBox.select(ItemTapeMeasure.index2);
+		indexBox = new GuiComboBox("selection", 0, 80, 20, indexMax);
+		indexBox.select(index);
+		indexBox.index = index;
 		controls.add(indexBox);
 	}
 	

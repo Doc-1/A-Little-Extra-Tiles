@@ -1,5 +1,6 @@
 package com.alet.items;
 
+import java.awt.Event;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.alet.gui.SubGuiTapeMeasure;
 import com.alet.tiles.Measurement;
 import com.alet.tiles.SelectLittleTile;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.client.event.HoldLeftClick;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
@@ -31,19 +33,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTapeMeasure extends Item implements ILittleTile {
 
-	public static List<Measurement> measure = new ArrayList<>();
-	public static int index = 0;
-	public static int index2 = 0;
+	public static String shape = "";
 	
 	public static void clear(ItemStack stack) {
-		measure = new ArrayList<>();
-		for(int i=0;i<=50;i++)
-			measure.add(null);
 		writeNBTData(stack, new NBTTagCompound());
 	}
 	
@@ -64,24 +62,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	public void readNBTData(ItemStack stack) {
 		NBTTagCompound nbt = stack.getTagCompound();
-		/*
-		for(int i=0;i<=getMax();i++) {
-			System.out.println(nbt.getDouble("x"+i));
-			System.out.println(nbt.getDouble("y"+i));
-			System.out.println(nbt.getDouble("z"+i));
-		}
-		*/
-		System.out.println("new");
-
-		
-		
-		System.out.println(nbt.getDouble("x0"));
-		System.out.println(nbt.getDouble("y0"));
-		System.out.println(nbt.getDouble("z0"));
-		
-		System.out.println(nbt.getDouble("x1"));
-		System.out.println(nbt.getDouble("y1"));
-		System.out.println(nbt.getDouble("z1"));
 	}
 	
 	public NBTTagCompound getNBTData(ItemStack stack) {
@@ -93,12 +73,11 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	}
 	
 	public static void setMax(int maxMeasurements) {
-		for(int i=0;i<=maxMeasurements;i++)
-			measure.add(null);
+		
 	}
 	
 	public static int getMax() {
-		return measure.size();
+		return 50;
 	}
 	
 	@Override
@@ -110,55 +89,59 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
-		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
-		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
-		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
+		int index = 0;
+		int contextSize = 16;
+		List<String> list = LittleGridContext.getNames();
 		NBTTagCompound nbt = new NBTTagCompound();
-		Measurement mes = new Measurement(pos, context, position.facing);
-
-		double cont = 1 / context.size;
-		
 		if(stack.hasTagCompound()) {
 			nbt = getNBTData(stack);
+			index = nbt.getInteger("index");
+			contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(index*2))));
 		}
-		nbt.setDouble("x"+index, mes.centerX);
-		nbt.setDouble("y"+index, mes.centerY);
-		nbt.setDouble("z"+index, mes.centerZ);
-
-		measure.set(index, new Measurement(pos, context, position.facing));
-		//System.out.println("right "+(index));
+		
+		LittleGridContext context = LittleGridContext.get(contextSize);
+		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
+		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
+		
+		nbt.setString("x"+(index*2), Double.toString(pos.getPosX()));
+		nbt.setString("y"+(index*2), Double.toString(pos.getPosY()));
+		nbt.setString("z"+(index*2), Double.toString(pos.getPosZ()));
+		System.out.println(nbt.getString("x"+(index*2))+ " "+ nbt.getString("y"+(index*2)) + " " + nbt.getString("z"+(index*2)));
+		nbt.setString("facing"+(index*2), position.facing.getName());
 		writeNBTData(stack, nbt);
 		readNBTData(stack);
 		return false;
 	}
 	
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean onClickBlock(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
-		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
-		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
-		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
+		int index = 0;
+		int contextSize = 16;
+		List<String> list = LittleGridContext.getNames();
 		NBTTagCompound nbt = new NBTTagCompound();
-		Measurement mes = new Measurement(pos, context, position.facing);
-		
-		double cont = 1 / context.size;
-		
-		
 		if(stack.hasTagCompound()) {
 			nbt = getNBTData(stack);
+			index = nbt.getInteger("index");
+			contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(index*2))));
 		}
-		nbt.setDouble("x"+(index+1), mes.centerX);
-		nbt.setDouble("y"+(index+1), mes.centerY);
-		nbt.setDouble("z"+(index+1), mes.centerZ);
+		LittleGridContext context = LittleGridContext.get(contextSize);
+		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
+		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
+
+
+		nbt.setString("x"+((index*2)+1), Double.toString(pos.getPosX()));
+		nbt.setString("y"+((index*2)+1), Double.toString(pos.getPosY()));
+		nbt.setString("z"+((index*2)+1), Double.toString(pos.getPosZ()));
+		nbt.setString("facing"+((index*2)+1), position.facing.getName());
+
 		
-		measure.set(index+1, new Measurement(pos, context, position.facing));
-		//System.out.println("Left "+(index+1));
-		//writeNBTData(stack, index+1);
-		//readNBTData(stack);
 		writeNBTData(stack, nbt);
 		readNBTData(stack);
 		return false;
 	}
+	
 	
 	@Override
 	public float getDestroySpeed(ItemStack stack, IBlockState state) {

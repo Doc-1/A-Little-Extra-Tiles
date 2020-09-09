@@ -4,6 +4,7 @@ import java.awt.GraphicsEnvironment;
 
 import com.alet.CommonProxy;
 import com.alet.gui.SubGuiTypeWriter;
+import com.alet.items.ItemTapeMeasure;
 import com.alet.render.string.StringRenderer;
 import com.alet.render.tapemeasure.MeasurementRender;
 import com.alet.render.tapemeasure.TapeRenderer;
@@ -20,6 +21,7 @@ public class ALETClient extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
 		MinecraftForge.EVENT_BUS.register(new TapeRenderer());		
-		MinecraftForge.EVENT_BUS.register(new MeasurementRender());		
+		MinecraftForge.EVENT_BUS.register(new MeasurementRender());
+		MinecraftForge.EVENT_BUS.register(new ItemTapeMeasure());		
 	}
 }

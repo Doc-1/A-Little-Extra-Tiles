@@ -1,12 +1,19 @@
 package com.alet.render.tapemeasure;
 
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+
 import com.alet.ALET;
+import com.alet.render.tapemeasure.shape.Box;
 import com.alet.render.tapemeasure.shape.Line;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +23,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class MeasurementRender {
 	
-	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void render(RenderGameOverlayEvent.Post event) {
 		
@@ -30,34 +36,58 @@ public class MeasurementRender {
 			stack = inventory.get(i);
 			if(stack.toString().equals(ingredient.toString())) 
 				break;
-			else {
-				stack = ItemStack.EMPTY;
-				break;
-			}
 		}
-		if(stack.hasTagCompound())
-			if(!stack.getTagCompound().hasNoTags()) {
-				NBTTagCompound nbt = stack.getTagCompound();
-				Minecraft mc = Minecraft.getMinecraft();
-				ScaledResolution res = new ScaledResolution(mc);
-				FontRenderer fontRender = mc.fontRenderer;
-				fontRender.FONT_HEIGHT = 1;
-				int width = res.getScaledWidth();
-				int height = res.getScaledHeight();
-				mc.entityRenderer.setupOverlayRendering();
-				int x = width-150;
-				int y = height/12;
-				int color = 0xFFFFFF;
-				String distence1 = Line.distence(new Vec3d(nbt.getDouble("x0"),nbt.getDouble("y0"),nbt.getDouble("z0")), 
-						new Vec3d(nbt.getDouble("x1"),nbt.getDouble("y1"),nbt.getDouble("z1")));
+		if(!stack.isEmpty()) {
+			NBTTagCompound nbt = stack.getTagCompound();
+			Minecraft mc = Minecraft.getMinecraft();
+			ScaledResolution res = new ScaledResolution(mc);
+			FontRenderer fontRender = mc.fontRenderer;
+
+			
+			int width = res.getScaledWidth();
+			int height = res.getScaledHeight();
+			mc.entityRenderer.setupOverlayRendering();
+			int x = 10;
+			int y = 119;
+			int color = 0xFFFFFF;
+			List<String> list = LittleGridContext.getNames();
+
+			
+			GlStateManager.pushMatrix();
+			
+			GlStateManager.disableCull();
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glColor4f(0f, 0f, 0f, 0.12f);
+			GL11.glRecti(3, 66 , 190, 300);
+			GL11.glFlush();
+			GlStateManager.enableCull();
+			
+			GL11.glScalef(0.58F, 0.58F, 0.0F);
+			
+			try {
+				String distence1 = Box.distence(new Vec3d(Double.parseDouble(nbt.getString("x0")), Double.parseDouble(nbt.getString("y0")), 
+						Double.parseDouble(nbt.getString("z0"))), new Vec3d(Double.parseDouble(nbt.getString("x1")), 
+						Double.parseDouble(nbt.getString("y1")), Double.parseDouble(nbt.getString("z1"))), 
+						Integer.parseInt(list.get(nbt.getInteger("context0"))));
+				
 				fontRender.drawStringWithShadow("Measurement 1: ", x, y, color);
 				fontRender.drawStringWithShadow(distence1, x, y+10, 0xFF0000);
 				
-				String distence2 = Line.distence(new Vec3d(nbt.getDouble("x2"),nbt.getDouble("y2"),nbt.getDouble("z2")), 
-						new Vec3d(nbt.getDouble("x3"),nbt.getDouble("y3"),nbt.getDouble("z3")));
+				String distence2 = Line.distence(new Vec3d(Double.parseDouble(nbt.getString("x2")), Double.parseDouble(nbt.getString("y2")), 
+						Double.parseDouble(nbt.getString("z2"))), new Vec3d(Double.parseDouble(nbt.getString("x3")), 
+						Double.parseDouble(nbt.getString("y3")), Double.parseDouble(nbt.getString("z3"))),
+						Integer.parseInt(list.get(nbt.getInteger("context0"))));
 				fontRender.drawStringWithShadow("Measurement 2: ", x, y+20, color);
 				fontRender.drawStringWithShadow(distence2, x, y+30, 0x00FF00);
-			}		
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			GlStateManager.popMatrix();
+		}		
 	}
 
+	public void getDrawDistence(NBTTagCompound nbt, FontRenderer font) {
+		
+	}
+	
 }

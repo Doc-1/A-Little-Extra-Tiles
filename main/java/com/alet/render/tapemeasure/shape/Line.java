@@ -28,26 +28,33 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class Line {
 
-	public static void drawLine(BufferBuilder bufferbuilder, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha) {
+	public static void drawLine(BufferBuilder bufferbuilder, SelectLittleTile tilePosMin, SelectLittleTile tilePosMax, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 
 		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * TapeRenderer.event.getPartialTicks();
 		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * TapeRenderer.event.getPartialTicks();
 		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * TapeRenderer.event.getPartialTicks();
 		
-		//System.out.println("da");
+		double minX = tilePosMin.centerX;
+		double minY = tilePosMin.centerY;
+		double minZ = tilePosMin.centerZ;
+
+		double maxX = tilePosMax.centerX;
+		double maxY = tilePosMax.centerY;
+		double maxZ = tilePosMax.centerZ;
 		
 		bufferbuilder.pos(minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
 		bufferbuilder.pos(maxX - d0 - 0.001, maxY - d1 - 0.001, maxZ - d2 - 0.001).color(red, green, blue, 1.0F).endVertex();
 		bufferbuilder.pos(minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
 	}
 	
-	public static String distence(Vec3d pos, Vec3d pos2) {
-		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
+	public static String distence(Vec3d pos, Vec3d pos2, int contextSize) {
+		LittleGridContext context = LittleGridContext.get(contextSize);
 
-		double xDist = TapeRenderer.distence(pos.x, pos2.x);
-		double yDist = TapeRenderer.distence(pos.y, pos2.y);
-		double zDist = TapeRenderer.distence(pos.z, pos2.z);
+		double xDist = TapeRenderer.distence(pos.x, pos2.x, contextSize);
+		double yDist = TapeRenderer.distence(pos.y, pos2.y, contextSize);
+		double zDist = TapeRenderer.distence(pos.z, pos2.z, contextSize);
+		
 		double distence = 0.0;
 		if(xDist>=yDist&&xDist>=zDist) 
 			distence = xDist;

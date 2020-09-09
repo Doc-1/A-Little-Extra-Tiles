@@ -104,10 +104,9 @@ public class SubGuiPhotoImport extends SubGui {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				if (super.onKeyPressed(character, key)) {
-					//C:\Users\keven\Desktop\med.png
 					if (PhotoReader.imageExists(file.text, useURL.value)) {
-						imgHeight.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-						imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+						imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+						imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
 						imgHeight.enabled = true;
 						imgWidth.enabled = true;
 						autoScale.enabled = true;
@@ -133,8 +132,8 @@ public class SubGuiPhotoImport extends SubGui {
 				useURL.value = false;
 				raiseEvent(new GuiControlChangedEvent(this));
 				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-					imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
 					imgHeight.enabled = true;
 					imgWidth.enabled = true;
 					autoScale.enabled = true;
@@ -159,8 +158,8 @@ public class SubGuiPhotoImport extends SubGui {
 				useURL.value = true;
 				raiseEvent(new GuiControlChangedEvent(this));
 				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-					imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
 					imgHeight.enabled = true;
 					imgWidth.enabled = true;
 					autoScale.enabled = true;
@@ -195,8 +194,8 @@ public class SubGuiPhotoImport extends SubGui {
 				}
 				
 				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-					imgWidth.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgHeight.text = Integer.toString(PhotoReader.getPixelLength (file.text, useURL.value));
+					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
 					imgHeight.enabled = true;
 					imgWidth.enabled = true;
 					autoScale.enabled = true;
