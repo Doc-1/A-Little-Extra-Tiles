@@ -5,6 +5,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import com.alet.ALET;
+import com.alet.items.ItemTapeMeasure;
 import com.alet.render.tapemeasure.shape.Box;
 import com.alet.render.tapemeasure.shape.Line;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -22,7 +23,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class MeasurementRender {
-	
+
 	@SubscribeEvent
 	public void render(RenderGameOverlayEvent.Post event) {
 		
@@ -33,9 +34,10 @@ public class MeasurementRender {
 		LittleInventory inventory = new LittleInventory(player);
 		
 		for(int i = 0; i < inventory.size(); i++) {
-			stack = inventory.get(i);
-			if(stack.toString().equals(ingredient.toString())) 
+			if(inventory.get(i).getItem() instanceof ItemTapeMeasure) {
+				stack = inventory.get(i);
 				break;
+			}
 		}
 		if(!stack.isEmpty()) {
 			NBTTagCompound nbt = stack.getTagCompound();
@@ -57,12 +59,13 @@ public class MeasurementRender {
 			
 			GlStateManager.disableCull();
 			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glColor4f(0f, 0f, 0f, 0.12f);
+			GL11.glPushAttrib(GL11.GL_4_BYTES);
+			GL11.glColor4d(0d, 0d, 0d, 0.12d);
 			GL11.glRecti(3, 66 , 190, 300);
+			GL11.glPopAttrib();
+			GL11.glScalef(0.58F, 0.58F, 0.0F);
 			GL11.glFlush();
 			GlStateManager.enableCull();
-			
-			GL11.glScalef(0.58F, 0.58F, 0.0F);
 			
 			try {
 				String distence1 = Box.distence(new Vec3d(Double.parseDouble(nbt.getString("x0")), Double.parseDouble(nbt.getString("y0")), 

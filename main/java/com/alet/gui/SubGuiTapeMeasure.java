@@ -51,10 +51,14 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 
 	@Override
 	public void createControls() {
-		NBTTagCompound nbt = stack.getTagCompound();
+		NBTTagCompound nbt;
+		if(stack.hasTagCompound()) 
+			nbt = stack.getTagCompound();
+		else
+			nbt = new NBTTagCompound();
+		
 		int index = nbt.getInteger("index");
 		int context = nbt.getInteger("context"+(index*2));
-		System.out.println("da "+context);
 		contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(nbt.getInteger("context"+(index*2)));
 		contextBox.index = context;
@@ -63,7 +67,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		controls.add(new GuiButton("Clear", 0, 0, 40) {
 			@Override
 			public void onClicked(int x, int y, int button) {
-				ItemTapeMeasure.clear(stack);
+				ItemTapeMeasure thisTapeMeasure = (ItemTapeMeasure) stack.getItem();
+				thisTapeMeasure.clear(stack);
 			}
 		});
 		

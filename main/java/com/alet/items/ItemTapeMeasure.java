@@ -41,7 +41,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 
 	public static String shape = "";
 	
-	public static void clear(ItemStack stack) {
+	public void clear(ItemStack stack) {
 		writeNBTData(stack, new NBTTagCompound());
 	}
 	
@@ -49,15 +49,12 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		setMax(50);
 	}
 	
-	public ItemTapeMeasure(int maxMeasurements) {
-		
-	}
-	
 	public ItemTapeMeasure(String name) {
 		setUnlocalizedName(name);
 		setRegistryName(name);
 		setMaxStackSize(1);
 		setCreativeTab(LittleTiles.littleTab);
+		
 	}
 	
 	public void readNBTData(ItemStack stack) {
@@ -68,7 +65,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		return stack.getTagCompound();
 	}
 	
-	public static void writeNBTData(ItemStack stack, NBTTagCompound nbt) {
+	public void writeNBTData(ItemStack stack, NBTTagCompound nbt) {
 		stack.setTagCompound(nbt);
 	}
 	
