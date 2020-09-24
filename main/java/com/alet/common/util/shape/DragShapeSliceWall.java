@@ -1,4 +1,4 @@
-package com.creativemd.littletiles.common.util.shape;
+package com.alet.common.util.shape;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import com.creativemd.littletiles.common.tile.math.box.LittleBoxes;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
+import com.creativemd.littletiles.common.util.shape.DragShape;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

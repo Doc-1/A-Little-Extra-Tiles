@@ -22,6 +22,7 @@ import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
+import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -47,7 +48,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ALET {
 	
 	@SidedProxy(clientSide = "com.alet.client.ALETClient", serverSide = "com.alet.server.ALETServer")
-	public static CommonProxy proxy;
+	public static LittleTilesServer proxy;
 	
 	public static final String MODID = "alet";
 	public static final String NAME = "A Little Extra Tiles";
@@ -70,7 +71,7 @@ public class ALET {
 	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent event) {
-		proxy.preInit(event);
+		proxy.loadSidePre();
 		
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
 		smoothOakPlank = new BasicBlock("smoothoakplank");
@@ -167,7 +168,7 @@ public class ALET {
 	
 	@EventHandler
 	public void PostInit(FMLPostInitializationEvent event) {
-		proxy.postInit(event);
+		proxy.loadSidePost();
 	}
 	
 	public static List<String> getFonts() {

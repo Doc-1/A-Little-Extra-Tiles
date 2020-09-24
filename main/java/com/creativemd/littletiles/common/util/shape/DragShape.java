@@ -5,6 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.alet.common.util.shape.DragShapeOddBox;
+import com.alet.common.util.shape.DragShapeSliceWall;
+import com.alet.common.util.shape.DragShapeTriangle;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.utils.math.Rotation;

@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.util.Color;
 
+import com.alet.common.util.shape.DragShapeOddBox;
 import com.creativemd.creativecore.client.rendering.RenderBox;
 import com.creativemd.creativecore.client.rendering.model.CreativeBakedModel;
 import com.creativemd.creativecore.client.rendering.model.ICreativeRendered;
@@ -45,7 +46,6 @@ import com.creativemd.littletiles.common.util.place.MarkMode;
 import com.creativemd.littletiles.common.util.place.PlacementMode;
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
 import com.creativemd.littletiles.common.util.shape.DragShape;
-import com.creativemd.littletiles.common.util.shape.DragShapeOddBox;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
