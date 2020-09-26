@@ -101,8 +101,8 @@ public class OverlayRenderer {
 			
 			@Override
 			protected void positionControl(GuiControl control, int width, int height) {
-				control.posX = control.width- 10;
-				control.posY = 25;
+				control.posX = control.width;
+				control.posY = control.height;
 			}
 		};
 		

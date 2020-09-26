@@ -44,23 +44,7 @@ public class TapeRenderer {
 	public static int counter = 0;
 	public static boolean inInv = false;
 	
-	public double radius(double pos_1, double pos_2) {
-		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
-		
-		double contDecimal = (1D / context.size);
-		double distence = (((Math.abs(pos_1 - pos_2)) + contDecimal) * context.size) - 1D;
-		
-		return (distence/context.size);
-	}
-	
-	public static double distence(double pos_1, double pos_2, int contextSize) {
-		LittleGridContext context = LittleGridContext.get(contextSize);
-		
-		double contDecimal = 1D / context.size;
-		double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
-		
-		return distence;
-	} 
+	 
 	
 	@SubscribeEvent
 	public void render(RenderWorldLastEvent event) {
@@ -84,58 +68,54 @@ public class TapeRenderer {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		try {
-			if(!stack.isEmpty()) {
-				if(stack.hasTagCompound()) 
-					for(int i=0;i<4;i+=2) { 
-						double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
-						double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
-						double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
-				
-						EnumFacing facingMin = EnumFacing.byName(nbt.getString("facing"+i));
-						EnumFacing facingMax = EnumFacing.byName(nbt.getString("facing"+(i+1)));
-						
-						List<String> list = LittleGridContext.getNames();
-						int contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+i)));
-						
-						SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+i)), Double.parseDouble(nbt.getString("y"+i)),
-								Double.parseDouble(nbt.getString("z"+i))),LittleGridContext.get(contextSize), facingMin);
-						
-						SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+(i+1))), Double.parseDouble(nbt.getString("y"+(i+1))),
-								Double.parseDouble(nbt.getString("z"+(i+1)))),LittleGridContext.get(contextSize), facingMax);
-						
-						GlStateManager.enableBlend();
-						GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-						GlStateManager.glLineWidth(2.0F);
-						GlStateManager.disableTexture2D();
-						GlStateManager.depthMask(false);
-						GlStateManager.disableDepth();
-						
-						bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
-				
-						if(i==0) {
-							Box.drawBox(tilePosMin, tilePosMax, nbt, contextSize, i);
-				
-						//	Box.drawBox(centerX_1, centerY_1, centerZ_1, contextSize, 1.0F, 0.0F, 0.0F, 1.0F);
-						//	Box.drawBox(centerX_2, centerY_2, centerZ_2, contextSize, 1.0F, 0.0F, 0.0F, 1.0F);
-						//	Line.drawLine(bufferbuilder, centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 0.0F, 0.0F, 1.0F);
-						}
-						if(i==2) {
-							Box.drawBox(tilePosMin, contextSize, 0.0F, 1.0F, 0.0F, 1.0F);
-							Box.drawBox(tilePosMax, contextSize, 0.0F, 1.0F, 0.0F, 1.0F);
-							Line.drawLine(bufferbuilder, tilePosMin, tilePosMax, 0.0F, 1.0F, 0.0F, 1.0F);
-				
-							
-						}
-						
-				
-						tessellator.draw();
-				
-						GlStateManager.enableDepth();
-						GlStateManager.depthMask(true);
-						GlStateManager.enableTexture2D();
-						GlStateManager.disableBlend();	
+			if(stack.hasTagCompound()) {
+				for(int i=0;i<6;i+=2) { 
+					double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+					double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+					double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
+			
+					EnumFacing facingMin = EnumFacing.byName(nbt.getString("facing"+i));
+					EnumFacing facingMax = EnumFacing.byName(nbt.getString("facing"+(i+1)));
 					
+					List<String> list = LittleGridContext.getNames();
+					int contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+i)));
+					
+					SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+i)), Double.parseDouble(nbt.getString("y"+i)),
+							Double.parseDouble(nbt.getString("z"+i))),LittleGridContext.get(contextSize), facingMin);
+					
+					SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+(i+1))), Double.parseDouble(nbt.getString("y"+(i+1))),
+							Double.parseDouble(nbt.getString("z"+(i+1)))),LittleGridContext.get(contextSize), facingMax);
+					
+					GlStateManager.enableBlend();
+					GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+					GlStateManager.glLineWidth(2.0F);
+					GlStateManager.disableTexture2D();
+					GlStateManager.depthMask(false);
+					GlStateManager.disableDepth();
+					
+					bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
+			
+					if(i==0) {
+						Box.drawBox(tilePosMin, tilePosMax, 1.0F, 0.0F, 0.0F, 1.0F);
+					//	Box.drawBox(centerX_1, centerY_1, centerZ_1, contextSize, 1.0F, 0.0F, 0.0F, 1.0F);
+					//	Box.drawBox(centerX_2, centerY_2, centerZ_2, contextSize, 1.0F, 0.0F, 0.0F, 1.0F);
+					//	Line.drawLine(bufferbuilder, centerX_1, centerY_1, centerZ_1, centerX_2, centerY_2, centerZ_2, 1.0F, 0.0F, 0.0F, 1.0F);
 					}
+					if(i==2) {
+						Box.drawBox(tilePosMin, contextSize, 0.0F, 1.0F, 0.0F, 1.0F);
+						Box.drawBox(tilePosMax, contextSize, 0.0F, 1.0F, 0.0F, 1.0F);
+						Line.drawLine(bufferbuilder, tilePosMin, tilePosMax, 0.0F, 1.0F, 0.0F, 1.0F);
+					}
+					if(i==4) {
+						Box.drawBox(tilePosMin, tilePosMax, 0.0F, 0.0F, 1.0F, 1.0F);
+					}
+					tessellator.draw();
+			
+					GlStateManager.enableDepth();
+					GlStateManager.depthMask(true);
+					GlStateManager.enableTexture2D();
+					GlStateManager.disableBlend();	
+				}
 			}
 		} catch (Exception e) {
 			// TODO: handle exception

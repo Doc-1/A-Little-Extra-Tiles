@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -99,10 +100,11 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		LittleGridContext context = LittleGridContext.get(contextSize);
 		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
 		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
-		
-		nbt.setString("x"+(index*2), Double.toString(pos.getPosX()));
-		nbt.setString("y"+(index*2), Double.toString(pos.getPosY()));
-		nbt.setString("z"+(index*2), Double.toString(pos.getPosZ()));
+
+		double[] posOffsetted = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
+		nbt.setString("x"+(index*2), Double.toString(posOffsetted[0]));
+		nbt.setString("y"+(index*2), Double.toString(posOffsetted[1]));
+		nbt.setString("z"+(index*2), Double.toString(posOffsetted[2]));
 		System.out.println(nbt.getString("x"+(index*2))+ " "+ nbt.getString("y"+(index*2)) + " " + nbt.getString("z"+(index*2)));
 		nbt.setString("facing"+(index*2), position.facing.getName());
 		writeNBTData(stack, nbt);
@@ -127,10 +129,11 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
 		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
 
+		double[] posOffsetted = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
 
-		nbt.setString("x"+((index*2)+1), Double.toString(pos.getPosX()));
-		nbt.setString("y"+((index*2)+1), Double.toString(pos.getPosY()));
-		nbt.setString("z"+((index*2)+1), Double.toString(pos.getPosZ()));
+		nbt.setString("x"+((index*2)+1), Double.toString(posOffsetted[0]));
+		nbt.setString("y"+((index*2)+1), Double.toString(posOffsetted[1]));
+		nbt.setString("z"+((index*2)+1), Double.toString(posOffsetted[2]));
 		nbt.setString("facing"+((index*2)+1), position.facing.getName());
 
 		
@@ -139,6 +142,25 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		return false;
 	}
 	
+	private double[] facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
+		double offset = 1D/contextSize;
+		switch (facing) {
+		case UP:
+			y -= offset;
+			break;
+		case EAST:
+			x -= offset;
+			break;
+		case SOUTH:
+			z -= offset;
+			break;
+		default:
+			break;
+		}
+		double[] arr = {x, y, z};
+		System.out.println(arr[1]);
+		return arr;
+	}
 	
 	@Override
 	public float getDestroySpeed(ItemStack stack, IBlockState state) {

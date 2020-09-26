@@ -5,9 +5,11 @@ import org.lwjgl.util.Color;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
+import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.action.LittleAction;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -31,7 +33,8 @@ public class GuiAxisIndicatorAletControl extends GuiControl {
 		GlStateManager.rotate(pitch, -1.0F, 0.0F, 0.0F);
 		GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
 		GlStateManager.scale(-1.0F, -1.0F, -1.0F);
-		{
+		
+		if (!Minecraft.getMinecraft().gameSettings.showDebugInfo){
 			{
 				float direction = pitch % 180;
 				
@@ -100,8 +103,8 @@ public class GuiAxisIndicatorAletControl extends GuiControl {
 				
 				GlStateManager.popMatrix();
 			}
-			OpenGlHelper.renderDirections(GuiScreen.isCtrlKeyDown() ? 50 : 30);
 			
+			OpenGlHelper.renderDirections(40);
 		}
 	}
 	

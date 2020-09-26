@@ -55,8 +55,6 @@ public class SelectLittleTile {
 		boxMaxY = boxMinY + gridOffSet;
 		boxMaxZ = boxMinZ + gridOffSet;
 
-		adjustSelectPos();
-
 		boxCorner_1 = new Vec3d(boxMaxX, boxMaxY, boxMaxZ);
 		boxCorner_2 = new Vec3d(boxMinX, boxMinY, boxMinZ);
 
@@ -77,33 +75,11 @@ public class SelectLittleTile {
 		boxMaxX = boxMinX + gridOffSet;
 		boxMaxZ = boxMinZ + gridOffSet;
 
-		adjustSelectPos();
-
 		boxCorner_1 = new Vec3d(boxMaxX, boxMaxY, boxMaxZ);
 		boxCorner_2 = new Vec3d(boxMinX, boxMinY, boxMinZ);
 
 		getCenter();
 		getCorners();
-	}
-
-	private void adjustSelectPos() {
-		String side = facing.toString();
-		switch (facing) {
-		case UP:
-			boxMinY -= gridOffSet;
-			boxMaxY -= gridOffSet;
-			break;
-		case EAST:
-			boxMinX -= gridOffSet;
-			boxMaxX -= gridOffSet;
-			break;
-		case SOUTH:
-			boxMinZ -= gridOffSet;
-			boxMaxZ -= gridOffSet;
-			break;
-		default:
-			break;
-		}
 	}
 
 	public void getCorners() {

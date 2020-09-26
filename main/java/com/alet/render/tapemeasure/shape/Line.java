@@ -26,7 +26,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-public class Line {
+public class Line extends Shapes{
+
+	public Line(Vec3d p, Vec3d p2, int contextSz) {
+		super(p, p2, contextSz);
+	}
 
 	public static void drawLine(BufferBuilder bufferbuilder, SelectLittleTile tilePosMin, SelectLittleTile tilePosMax, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
@@ -47,13 +51,14 @@ public class Line {
 		bufferbuilder.pos(maxX - d0 - 0.001, maxY - d1 - 0.001, maxZ - d2 - 0.001).color(red, green, blue, 1.0F).endVertex();
 		bufferbuilder.pos(minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001).color(red, green, blue, 0.0F).endVertex();
 	}
-	
-	public static String distence(Vec3d pos, Vec3d pos2, int contextSize) {
+
+	@Override
+	protected String writeDistance(Vec3d pos, Vec3d pos2, int contextSize) {
 		LittleGridContext context = LittleGridContext.get(contextSize);
 
-		double xDist = TapeRenderer.distence(pos.x, pos2.x, contextSize);
-		double yDist = TapeRenderer.distence(pos.y, pos2.y, contextSize);
-		double zDist = TapeRenderer.distence(pos.z, pos2.z, contextSize);
+		double xDist = getDistence(pos.x, pos2.x, contextSize);
+		double yDist = getDistence(pos.y, pos2.y, contextSize);
+		double zDist = getDistence(pos.z, pos2.z, contextSize);
 		
 		double distence = 0.0;
 		if(xDist>=yDist&&xDist>=zDist) 
@@ -66,20 +71,14 @@ public class Line {
 		String[] dis = String.valueOf(distence).split("\\.");
 		double numerator = context.size * Double.parseDouble("0." + dis[1]);
 		
-		if((int)(numerator)==0) {
+		if((int)(numerator)==0) 
 			return dis[0] + " BLOCK";
-		}else if(Integer.parseInt(dis[0])==0){
+		else if(Integer.parseInt(dis[0])==0)
 			return (int) (numerator) + "/" + denominator + " TILE";
-		}else {
-			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
-		}
+		else 
+			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";	
 	}
 	
-	private static double cleanDouble(double doub) {
-		String clean = String.format("%.2f", doub);
-		doub = Double.parseDouble(clean);
-		return doub;
-	}
 	
 	
 	/*

@@ -10,11 +10,15 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.Vec3d;
 
-public class Circle {
+public class Circle extends Shapes{
 	
-	/*Experiment*/
-	public static void drawCircle(double minX, double minY, double minZ, double radius, float red, float green, float blue, float alpha) {
+	public Circle(Vec3d p, Vec3d p2, int contextSz) {
+		super(p, p2, contextSz);
+	}
+
+	public static void drawCircle(Vec3d pos, Vec3d pos2, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		//radius = context.toVanillaGrid(radius);
@@ -25,23 +29,24 @@ public class Circle {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		
-		int pointsToDraw = (int) Math.max(50, radius*20);
-		
+		//int pointsToDraw = (int) Math.max(50, radius*20);
+		/*
 		double anglePerPoint = (Math.PI/pointsToDraw)*2;
 		for(int i = 0; i < pointsToDraw; i++) {
 			double angle = anglePerPoint * i;
 			double x = Math.sin(angle)*radius;
 			double y = Math.cos(angle)*radius;
-			bufferbuilder.pos((x + minX) - d0 -0.001, (y + minY) - d1, minZ - d2).color(red, green, blue, alpha).endVertex();
+			bufferbuilder.pos((x + pos.x) - d0 -0.001, (y + pos.y) - d1, pos.z - d2).color(red, green, blue, alpha).endVertex();
+		}*/
+	}
 
-		}
+	@Override
+	protected String writeDistance(Vec3d pos, Vec3d pos2, int contextSize) {
+		return null;
 	}
+
 	
-	private static double cleanDouble(double doub) {
-		String clean = String.format("%.4f", doub);
-		doub = Double.parseDouble(clean);
-		return doub;
-	}
+	
 }
 
 
