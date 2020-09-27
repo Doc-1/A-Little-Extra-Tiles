@@ -24,8 +24,9 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 public class Box extends Shapes{
 	
 
-	public Box(Vec3d p, Vec3d p2, int contextSz) {
-		super(p, p2, contextSz);
+	public Box(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
+		super(x1, y1, z1, x2, y2, z2, contextSize);
+		calculateDistance();
 	}
 
 	public static String xString = "";
@@ -224,7 +225,7 @@ public class Box extends Shapes{
 	}
 
 	@Override
-	protected String writeDistance(Vec3d pos, Vec3d pos2, int contextSize) {
+	protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {
 		double xDistence = getDistence(pos.x, pos2.x, contextSize);
 		double yDistence = getDistence(pos.y, pos2.y, contextSize);
 		double zDistence = getDistence(pos.z, pos2.z, contextSize);
@@ -268,8 +269,6 @@ public class Box extends Shapes{
 		xString = xStr;
 		yString = yStr;
 		zString = zStr;
-		
-		return "X: " + xStr + " Y: " + yStr + " Z: " + zStr;
 	}
 	
 }

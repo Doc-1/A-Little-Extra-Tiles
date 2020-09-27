@@ -28,13 +28,19 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class Line extends Shapes{
 
-	public Line(Vec3d p, Vec3d p2, int contextSz) {
-		super(p, p2, contextSz);
+	public Line(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
+		super(x1, y1, z1, x2, y2, z2, contextSize);
+		calculateDistance();
 	}
 
-	public static void drawLine(BufferBuilder bufferbuilder, SelectLittleTile tilePosMin, SelectLittleTile tilePosMax, float red, float green, float blue, float alpha) {
+	public static String distance = "";
+	
+	public static void drawLine(SelectLittleTile tilePosMin, SelectLittleTile tilePosMax, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		
 		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * TapeRenderer.event.getPartialTicks();
 		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * TapeRenderer.event.getPartialTicks();
 		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * TapeRenderer.event.getPartialTicks();
@@ -53,30 +59,30 @@ public class Line extends Shapes{
 	}
 
 	@Override
-	protected String writeDistance(Vec3d pos, Vec3d pos2, int contextSize) {
+	protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {
 		LittleGridContext context = LittleGridContext.get(contextSize);
 
 		double xDist = getDistence(pos.x, pos2.x, contextSize);
 		double yDist = getDistence(pos.y, pos2.y, contextSize);
 		double zDist = getDistence(pos.z, pos2.z, contextSize);
 		
-		double distence = 0.0;
+		double dist = 0.0;
 		if(xDist>=yDist&&xDist>=zDist) 
-			distence = xDist;
+			dist = xDist;
 		else if(yDist>=xDist&&yDist>=zDist)
-			distence = yDist;
+			dist = yDist;
 		else if(zDist>=xDist&&zDist>=yDist) 
-			distence = zDist;
+			dist = zDist;
 		int denominator = context.size;
-		String[] dis = String.valueOf(distence).split("\\.");
-		double numerator = context.size * Double.parseDouble("0." + dis[1]);
+		String[] distArr = String.valueOf(dist).split("\\.");
+		double numerator = context.size * Double.parseDouble("0." + distArr[1]);
 		
 		if((int)(numerator)==0) 
-			return dis[0] + " BLOCK";
-		else if(Integer.parseInt(dis[0])==0)
-			return (int) (numerator) + "/" + denominator + " TILE";
+			distance = distArr[0] + " BLOCK";
+		else if(Integer.parseInt(distArr[0])==0)
+			distance =  (int) (numerator) + "/" + denominator + " TILE";
 		else 
-			return dis[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";	
+			distance =  distArr[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
 	}
 	
 	

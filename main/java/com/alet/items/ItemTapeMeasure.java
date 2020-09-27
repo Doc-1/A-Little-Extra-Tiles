@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -44,6 +46,32 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	public void clear(ItemStack stack) {
 		writeNBTData(stack, new NBTTagCompound());
+	}
+	
+	/***
+	 * 
+	 * @param stack 
+	 * The TapeMeasure the player is using
+	 * @param index 
+	 * What index the player is selected in the GUI
+	 */
+	public void clear(ItemStack stack, int index) {
+	    NBTTagCompound nbt = stack.getTagCompound();
+
+		List<Integer> allIndexes = new ArrayList<Integer>();
+		List<String> allMatches = new ArrayList<String>();
+	    Matcher m = Pattern.compile("[a-zA-Z]+"+index).matcher(nbt.toString());
+	    while (m.find()) {
+	      allMatches.add(m.group());
+	    }
+	    m = Pattern.compile("[a-zA-Z]+"+(index+1)).matcher(nbt.toString());
+	    while (m.find()) {
+	      allMatches.add(m.group());
+	    }
+	    for (String string : allMatches) {
+	    	nbt.removeTag(string);
+		}
+	 
 	}
 	
 	public ItemTapeMeasure() {
@@ -88,7 +116,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	@SideOnly(Side.CLIENT)
 	public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		int index = 0;
-		int contextSize = 16;
+		int contextSize = 1;
 		List<String> list = LittleGridContext.getNames();
 		NBTTagCompound nbt = new NBTTagCompound();
 		if(stack.hasTagCompound()) {
@@ -117,7 +145,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	@SideOnly(Side.CLIENT)
 	public boolean onClickBlock(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		int index = 0;
-		int contextSize = 16;
+		int contextSize = 1;
 		List<String> list = LittleGridContext.getNames();
 		NBTTagCompound nbt = new NBTTagCompound();
 		if(stack.hasTagCompound()) {

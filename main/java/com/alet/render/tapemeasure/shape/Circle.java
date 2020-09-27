@@ -41,8 +41,7 @@ public class Circle extends Shapes{
 	}
 
 	@Override
-	protected String writeDistance(Vec3d pos, Vec3d pos2, int contextSize) {
-		return null;
+	protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {
 	}
 
 	

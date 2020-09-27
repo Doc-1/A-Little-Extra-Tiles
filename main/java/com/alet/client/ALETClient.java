@@ -9,10 +9,12 @@ import com.alet.items.ItemTapeMeasure;
 import com.alet.render.string.StringRenderer;
 import com.alet.render.tapemeasure.GuiDisplayMeasurements;
 import com.alet.render.tapemeasure.TapeRenderer;
+import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.render.overlay.OverlayControl;
 import com.creativemd.littletiles.client.render.overlay.OverlayRenderer.OverlayPositionType;
 import com.creativemd.littletiles.server.LittleTilesServer;
+
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -30,13 +32,11 @@ public class ALETClient extends LittleTilesServer {
 		MinecraftForge.EVENT_BUS.register(new ItemTapeMeasure());
 	}
 	
-	
 	@Override
 	public void loadSidePost() {
 		super.loadSidePost();
-		LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis", 20, 20), OverlayPositionType.RIGHT_CORNOR).setShouldRender(() -> TapeRenderer.inInv));
-		LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display", 0, 0), OverlayPositionType.RIGHT_CORNOR).setShouldRender(() -> TapeRenderer.inInv));
-		
+		LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
+		LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
 	}
 	
 }

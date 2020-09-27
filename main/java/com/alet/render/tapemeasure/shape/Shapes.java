@@ -12,11 +12,15 @@ public abstract class Shapes {
 	Vec3d pos;
 	Vec3d pos2;
 	int contextSize;
-
+	
 	public Shapes(Vec3d p, Vec3d p2, int contextSz) {
 		pos = p;
 		pos2 = p2;
 		contextSize = contextSz;
+	}
+	
+	public Shapes(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
+		this(new Vec3d(x1, y1, z1), new Vec3d(x2, y2, z2), contextSize);
 	}
 	
 	public static double getDistence(double pos_1, double pos_2, int contextSize) {
@@ -34,9 +38,9 @@ public abstract class Shapes {
 		return doub;
 	}
 	
-	protected abstract String writeDistance(Vec3d pos, Vec3d pos2, int contextSize);
+	protected abstract void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize);
 	
-	public String writeDistance() {
-		return writeDistance(pos, pos2, contextSize);
+	public void calculateDistance() {
+		calculateDistance(pos, pos2, contextSize);
 	}
 }

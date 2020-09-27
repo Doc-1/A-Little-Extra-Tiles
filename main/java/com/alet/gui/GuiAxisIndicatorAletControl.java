@@ -4,8 +4,10 @@ import org.lwjgl.util.Color;
 
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
+import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.SubGui;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.action.LittleAction;
 
@@ -17,8 +19,10 @@ import net.minecraft.entity.Entity;
 
 public class GuiAxisIndicatorAletControl extends GuiControl {
 	
-	public GuiAxisIndicatorAletControl(String name, int x, int y) {
-		super(name, x, y, 30, 30);
+	public static Style transparentStyle = new Style("Transparent", new ColoredDisplayStyle(0, 0, 0, 40), new ColoredDisplayStyle(90, 90, 90, 60), new ColoredDisplayStyle(90, 90, 90, 50), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100));
+	
+	public GuiAxisIndicatorAletControl(String name) {
+		super(name, 0, 0, 0, 0);
 	}
 	
 	@Override
@@ -26,6 +30,9 @@ public class GuiAxisIndicatorAletControl extends GuiControl {
 		
 		GlStateManager.translate(width / 2D, height / 2D, 0);
 		
+		posX = 50;
+		posY = 40;
+
 		float partialTicks = mc.getRenderPartialTicks();
 		Entity entity = this.mc.getRenderViewEntity();
 		float pitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
