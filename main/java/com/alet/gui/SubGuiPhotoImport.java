@@ -44,11 +44,10 @@ public class SubGuiPhotoImport extends SubGui {
 		imgWidth = (new GuiTextfield("imgWidth", "0", 93, 85, 30, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
-				
-				if (super.onKeyPressed(character, key) && !imgWidth.text.isEmpty() && keepAspect.value) {
+				if (!imgWidth.text.isEmpty() && keepAspect.value) {
 					imgHeight.text = String.valueOf((int) (aspectRatio * Double.parseDouble(imgWidth.text)));
 				}
-				return false;
+				return super.onKeyPressed(character, key);
 			}
 		});
 		imgWidth.enabled = false;
@@ -59,10 +58,10 @@ public class SubGuiPhotoImport extends SubGui {
 		imgHeight = (new GuiTextfield("imgHeight", "0", 135, 85, 30, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
-				if (super.onKeyPressed(character, key) && !imgHeight.text.isEmpty() && keepAspect.value) {
+				if (!imgHeight.text.isEmpty() && keepAspect.value) {
 					imgWidth.text = String.valueOf((int) (Double.parseDouble(imgHeight.text) / aspectRatio));
 				}
-				return false;
+				return super.onKeyPressed(character, key);
 			}
 		});
 		imgHeight.enabled = false;
@@ -103,24 +102,23 @@ public class SubGuiPhotoImport extends SubGui {
 		controls.add(file = new GuiTextfield("file", "", 10, 26, 150, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
-				if (super.onKeyPressed(character, key)) {
-					if (PhotoReader.imageExists(file.text, useURL.value)) {
-						imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
-						imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-						imgHeight.enabled = true;
-						imgWidth.enabled = true;
-						autoScale.enabled = true;
-						aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
-						System.out.println(aspectRatio);
-					} else {
-						imgHeight.text = "0";
-						imgWidth.text = "0";
-						imgHeight.enabled = false;
-						imgWidth.enabled = false;
-						autoScale.enabled = false;
-					}
+				if (PhotoReader.imageExists(file.text, useURL.value)) {
+					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
+					imgHeight.enabled = true;
+					imgWidth.enabled = true;
+					autoScale.enabled = true;
+					aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
+					System.out.println(aspectRatio);
+				} else {
+					imgHeight.text = "0";
+					imgWidth.text = "0";
+					imgHeight.enabled = false;
+					imgWidth.enabled = false;
+					autoScale.enabled = false;
 				}
-				return true;
+				
+				return super.onKeyPressed(character, key);
 			}
 		});
 		

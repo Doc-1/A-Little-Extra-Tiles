@@ -10,7 +10,7 @@ public abstract class GuiOverlayControl extends GuiControl{
 	private GuiParent parent;
 	
 	public GuiOverlayControl(String name, int x, int y, GuiParent par) {
-		super(name, x, y);
+		super(name, x, y, 0, 0);
 		parent = par;
 	}
 

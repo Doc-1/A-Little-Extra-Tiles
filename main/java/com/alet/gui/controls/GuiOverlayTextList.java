@@ -1,4 +1,4 @@
-package com.alet.gui.controls.overlay;
+package com.alet.gui.controls;
 
 import java.util.ArrayList;
 import java.util.Iterator;

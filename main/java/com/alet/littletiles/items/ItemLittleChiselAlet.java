@@ -1,4 +1,4 @@
-package com.creativemd.littletiles.common.item;
+package com.alet.littletiles.items;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.util.Color;
 
-import com.alet.common.util.shape.DragShapeOddBox;
+import com.alet.littletiles.gui.SubGuiChiselAlet;
 import com.creativemd.creativecore.client.rendering.RenderBox;
 import com.creativemd.creativecore.client.rendering.model.CreativeBakedModel;
 import com.creativemd.creativecore.client.rendering.model.ICreativeRendered;
@@ -28,6 +28,8 @@ import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.block.BlockTile;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
+import com.creativemd.littletiles.common.item.ItemLittleGrabber;
+import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.packet.LittleBlockPacket;
 import com.creativemd.littletiles.common.packet.LittleBlockPacket.BlockPacketAction;
 import com.creativemd.littletiles.common.packet.LittleVanillaBlockPacket;
@@ -76,9 +78,9 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemLittleChisel extends Item implements ICreativeRendered, ILittleTile {
+public class ItemLittleChiselAlet extends Item implements ICreativeRendered, ILittleTile {
 	
-	public ItemLittleChisel() {
+	public ItemLittleChiselAlet() {
 		setCreativeTab(LittleTiles.littleTab);
 		hasSubtypes = true;
 		setMaxStackSize(1);
@@ -229,7 +231,7 @@ public class ItemLittleChisel extends Item implements ICreativeRendered, ILittle
 	
 	@Override
 	public LittleAbsolutePreviews getLittlePreview(ItemStack stack, boolean allowLowResolution, boolean marked) {
-		PlacementPosition min = ItemLittleChisel.min;
+		PlacementPosition min = ItemLittleChiselAlet.min;
 		if (min == null)
 			min = lastMax;
 		if (min != null) {
@@ -237,7 +239,7 @@ public class ItemLittleChisel extends Item implements ICreativeRendered, ILittle
 				lastMax = min.copy();
 			
 			min.forceContext(lastMax);
-
+			
 			LittleGridContext context = getPositionContext(stack);
 			if (context.size < min.getContext().size)
 				context = min.getContext();
@@ -245,15 +247,10 @@ public class ItemLittleChisel extends Item implements ICreativeRendered, ILittle
 			if (lastMax == null)
 				lastMax = min.copy();
 			
-			
 			LittleBoxes boxes = null;
 			if (cachedPos == null || !cachedPos.equals(lastMax) || !cachedSettings.equals(stack.getTagCompound()) || cachedLow != allowLowResolution) {
 				
 				DragShape shape = getShape(stack);
-				if(shape.key == "odd box") {
-					DragShapeOddBox.minPos = min;
-					DragShapeOddBox.maxPos = lastMax;
-				}
 				LittleBox newBox = new LittleBox(new LittleBox(min.getRelative(offset).getVec(context)), new LittleBox(lastMax.getRelative(offset).getVec(context)));
 				boxes = shape.getBoxes(new LittleBoxes(offset.getPos(), context), newBox.getMinVec(), newBox.getMaxVec(), getPlayer(), stack.getTagCompound(), allowLowResolution, min, lastMax);
 				cachedPos = lastMax.copy();
@@ -328,14 +325,14 @@ public class ItemLittleChisel extends Item implements ICreativeRendered, ILittle
 	
 	@Override
 	public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
-		if (ItemLittleChisel.min == null) {
-			ItemLittleChisel.min = getPosition(position, result, currentMode);
+		if (ItemLittleChiselAlet.min == null) {
+			ItemLittleChiselAlet.min = getPosition(position, result, currentMode);
 		} else if (LittleAction.isUsingSecondMode(player)) {
-			ItemLittleChisel.min = null;
-			ItemLittleChisel.lastMax = null;
-			ItemLittleChisel.cachedPos = null;
-			ItemLittleChisel.cachedSettings = null;
-			ItemLittleChisel.cachedShape = null;
+			ItemLittleChiselAlet.min = null;
+			ItemLittleChiselAlet.lastMax = null;
+			ItemLittleChiselAlet.cachedPos = null;
+			ItemLittleChiselAlet.cachedSettings = null;
+			ItemLittleChiselAlet.cachedShape = null;
 			PreviewRenderer.marked = null;
 			
 		} else
@@ -360,7 +357,7 @@ public class ItemLittleChisel extends Item implements ICreativeRendered, ILittle
 	@Override
 	@SideOnly(Side.CLIENT)
 	public SubGuiConfigure getConfigureGUI(EntityPlayer player, ItemStack stack) {
-		return new SubGuiChisel(stack);
+		return new SubGuiChiselAlet(stack);
 	}
 	
 	@Override

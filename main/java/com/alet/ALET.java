@@ -12,6 +12,7 @@ import com.alet.gui.SubGuiBlock;
 import com.alet.gui.SubGuiPhotoImport;
 import com.alet.gui.SubGuiTypeWriter;
 import com.alet.items.ItemTapeMeasure;
+import com.alet.littletiles.items.ItemLittleChiselAlet;
 import com.alet.structure.premade.LittlePhotoImporter;
 import com.alet.structure.premade.LittleTypeWriter;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
@@ -19,6 +20,7 @@ import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
+import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
@@ -59,6 +61,7 @@ public class ALET {
 	public static List<String> fontTypeNames;
 	
 	public static Item tapeMeasure;
+
 	public static BasicBlock smoothOakPlank;
 	public static BasicBlock smoothDarkOakPlank;
 	public static BasicBlock smoothSprucePlank;
@@ -73,6 +76,8 @@ public class ALET {
 	public void PreInit(FMLPreInitializationEvent event) {
 		proxy.loadSidePre();
 		
+		LittleTiles.chisel = new ItemLittleChiselAlet().setUnlocalizedName("LTChisel").setRegistryName("littletiles", "chisel");
+
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
 		smoothOakPlank = new BasicBlock("smoothoakplank");
 		smoothDarkOakPlank = new BasicBlock("smoothdarkoakplank");
@@ -139,6 +144,7 @@ public class ALET {
 		event.getRegistry().registerAll(tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()),
 		        new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()),
 		        new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
+		
 	}
 	
 	@SubscribeEvent

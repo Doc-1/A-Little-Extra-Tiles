@@ -14,8 +14,10 @@ import com.alet.gui.SubGuiTapeMeasure;
 import com.alet.tiles.Measurement;
 import com.alet.tiles.SelectLittleTile;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.event.HoldLeftClick;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
+import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
@@ -26,6 +28,7 @@ import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -36,14 +39,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTapeMeasure extends Item implements ILittleTile {
 
 	public static String shape = "";
-	
+
 	public void clear(ItemStack stack) {
 		writeNBTData(stack, new NBTTagCompound());
 	}
@@ -60,18 +66,27 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 
 		List<Integer> allIndexes = new ArrayList<Integer>();
 		List<String> allMatches = new ArrayList<String>();
-	    Matcher m = Pattern.compile("[a-zA-Z]+"+index).matcher(nbt.toString());
-	    while (m.find()) {
-	      allMatches.add(m.group());
+		index *= 2;
+	    System.out.println(index);
+	    System.out.println(nbt.toString());
+
+	    Matcher m1 = Pattern.compile("[a-zA-Z]+"+(index+1)).matcher(nbt.toString());
+	    while (m1.find()) {
+	      allMatches.add(m1.group());
 	    }
-	    m = Pattern.compile("[a-zA-Z]+"+(index+1)).matcher(nbt.toString());
-	    while (m.find()) {
-	      allMatches.add(m.group());
+	    
+	    Matcher m2 = Pattern.compile("[a-zA-Z]+"+(index)).matcher(nbt.toString());
+	    while (m2.find()) {
+	      allMatches.add(m2.group());
 	    }
-	    for (String string : allMatches) {
-	    	nbt.removeTag(string);
+	  
+	    for (String key : allMatches) {
+	    	if(!key.contains("context"))
+	    		if(!key.contains("color"))
+	    			nbt.removeTag(key);
+	    	
 		}
-	 
+
 	}
 	
 	public ItemTapeMeasure() {
@@ -114,7 +129,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
+	public boolean onRightClick(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		int index = 0;
 		int contextSize = 1;
 		List<String> list = LittleGridContext.getNames();
@@ -126,7 +141,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		}
 		
 		LittleGridContext context = LittleGridContext.get(contextSize);
-		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
+		RayTraceResult res = plr.rayTrace(6.0, (float) 0.1);
 		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
 
 		double[] posOffsetted = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
@@ -141,9 +156,10 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	}
 	
 	
+	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean onClickBlock(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
+	public boolean onClickBlock(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		int index = 0;
 		int contextSize = 1;
 		List<String> list = LittleGridContext.getNames();
@@ -154,7 +170,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 			contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(index*2))));
 		}
 		LittleGridContext context = LittleGridContext.get(contextSize);
-		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
+		RayTraceResult res = plr.rayTrace(6.0, (float) 0.1);
 		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
 
 		double[] posOffsetted = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
@@ -170,7 +186,16 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		return false;
 	}
 	
-	private double[] facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent 
+	public boolean onClearKeyPress(RenderWorldLastEvent event) {
+		if(LittleTilesClient.configureAdvanced.isPressed()) {
+			
+		}
+		return false;
+	}
+	
+	public static double[] facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
 		double offset = 1D/contextSize;
 		switch (facing) {
 		case UP:
@@ -186,7 +211,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 			break;
 		}
 		double[] arr = {x, y, z};
-		System.out.println(arr[1]);
 		return arr;
 	}
 	
@@ -204,6 +228,13 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	@SideOnly(Side.CLIENT)
 	public SubGuiConfigure getConfigureGUI(EntityPlayer player, ItemStack stack) {
 		return new SubGuiTapeMeasure(stack);
+	}
+	
+	@Override
+	public SubGuiConfigure getConfigureGUIAdvanced(EntityPlayer player, ItemStack stack) {
+		if(stack.getItem() instanceof ItemTapeMeasure && stack.hasTagCompound()) 
+			clear(player.getHeldItemMainhand(), player.getHeldItemMainhand().getTagCompound().getInteger("index"));
+		return null;
 	}
 	
 	@Override

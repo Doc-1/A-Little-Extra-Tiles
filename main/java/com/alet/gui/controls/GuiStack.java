@@ -1,4 +1,4 @@
-package com.alet.gui;
+package com.alet.gui.controls;
 
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;

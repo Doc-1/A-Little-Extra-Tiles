@@ -1,6 +1,7 @@
-package com.alet.render.tapemeasure;
+package com.alet.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,11 +9,12 @@ import java.util.regex.Pattern;
 import org.lwjgl.opengl.GL11;
 
 import com.alet.ALET;
-import com.alet.gui.controls.overlay.GuiOverlayTextList;
+import com.alet.gui.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.render.tapemeasure.shape.Box;
 import com.alet.render.tapemeasure.shape.Circle;
 import com.alet.render.tapemeasure.shape.Line;
+import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.Rect;
@@ -21,6 +23,7 @@ import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
 
@@ -31,6 +34,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -83,23 +87,30 @@ public class GuiDisplayMeasurements extends GuiControl{
 		    List<Integer> allIndexes = new ArrayList<Integer>();
 			
 			if(stack.hasTagCompound()) {
-				String nbtStr = nbt.toString();
+				String nbtStr = (stack.hasTagCompound()) ? nbt.toString() : "";
 
 				List<String> allMatches = new ArrayList<String>();
-			    Matcher m = Pattern.compile("x\\d+").matcher(nbtStr);
+			    Matcher m = Pattern.compile("context\\d+").matcher(nbtStr);
 			    while (m.find()) {
 			      allMatches.add(m.group());
 			    }
 			    for (String string : allMatches) {
-			    	int x = Integer.parseInt(string.split("x")[1]);
-			    	if(x % 2 != 0) {
-				    	allIndexes.add(x);
-			    	}
+			    	int x = Integer.parseInt(string.split("context")[1]);
+				    allIndexes.add(x);
 				}
+			    Collections.sort(allIndexes);
 			    for(int index : allIndexes) {
-			    	if(nbt.hasKey("x"+(index-1))) {
-			    		int index1 = index-1;
-			    		int index2 = index;
+		    		int index1 = index;
+		    		int index2 = index+1;
+
+		    		if((nbt.hasKey("x"+index1) || nbt.hasKey("x"+index2)) || (nbt.hasKey("x"+index1) && nbt.hasKey("x"+index2))) { 
+			    		
+			    		String contextSize = "context"+index1;
+			    		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
+			    		
+			    		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
+						LittleAbsoluteVec pos = new LittleAbsoluteVec(res, LittleGridContext.get(Integer.parseInt(list.get(nbt.getInteger(contextSize)))));
+						double[] posEdit = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), Integer.parseInt(list.get(nbt.getInteger(contextSize))), res.sideHit);
 			    		
 			    		String xKey1 = "x"+index1;
 			    		String yKey1 = "y"+index1;
@@ -109,17 +120,26 @@ public class GuiDisplayMeasurements extends GuiControl{
 			    		String yKey2 = "y"+index2;
 			    		String zKey2 = "z"+index2;
 			    		
-			    		double x1 = Double.parseDouble(nbt.getString(xKey1));
-			    		double y1 = Double.parseDouble(nbt.getString(yKey1));
-			    		double z1 = Double.parseDouble(nbt.getString(zKey1));
-
-			    		double x2 = Double.parseDouble(nbt.getString(xKey2));
-			    		double y2 = Double.parseDouble(nbt.getString(yKey2));
-			    		double z2 = Double.parseDouble(nbt.getString(zKey2));
-
-			    		String contextSize = "context"+index1;
-			    		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
-
+						double x1 = posEdit[0];
+						double y1 = posEdit[1];
+						double z1 = posEdit[2];
+						
+						double x2 = posEdit[0];
+						double y2 = posEdit[1];
+						double z2 = posEdit[2];
+						//System.out.println(x1);
+						if(nbt.hasKey("x"+index1)) {
+							x1 = Double.parseDouble(nbt.getString(xKey1));
+				    		y1 = Double.parseDouble(nbt.getString(yKey1));
+				    		z1 = Double.parseDouble(nbt.getString(zKey1));
+						}
+							
+						if(nbt.hasKey("x"+index2)) {
+				    		x2 = Double.parseDouble(nbt.getString(xKey2));
+				    		y2 = Double.parseDouble(nbt.getString(yKey2));
+				    		z2 = Double.parseDouble(nbt.getString(zKey2));
+						}
+	
 			    		if(nbt.getInteger("shape"+index1) == 0) {
 				    		Box box = new Box(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
 				    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
@@ -130,10 +150,8 @@ public class GuiDisplayMeasurements extends GuiControl{
 			    			Line line = new Line(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
 				    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
 				    		textList.addText("Line: " +line.distance, color);
-			    		}
-
-			    			
-			    	}
+			    		}		
+		    		}
 			    }
 			}
 			

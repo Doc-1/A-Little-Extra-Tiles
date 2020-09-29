@@ -59,9 +59,10 @@ public class SubGuiTypeWriter extends SubGui {
 		controls.add(fontType);
 		
 		search = (new GuiTextfield("search", "", 20, 0, 150, 14) {
+			 
 			@Override
 			public boolean onKeyPressed(char character, int key) {
-				if (super.onKeyPressed(character, key)) {
+				
 					List<String> foundFonts = new ArrayList<>();
 					for (int i = 0; i < names.size(); i++) {
 						if (names.get(i).toLowerCase().contains(search.text.toLowerCase()))
@@ -72,10 +73,12 @@ public class SubGuiTypeWriter extends SubGui {
 						int index = names.indexOf(foundFonts.get(0));
 						fontType.select(names.get(index));
 					}
-				}
-				return false;
+				
+				return super.onKeyPressed(character, key);
 			}
+				
 		});
+		
 		search.setCustomTooltip("Search For Font");
 		controls.add(search);
 		

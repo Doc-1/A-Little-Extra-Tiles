@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.lwjgl.util.Color;
 
+import com.alet.gui.controls.GuiStack;
 import com.alet.photo.AtlasSpriteToPath;
 import com.alet.photo.PhotoReader;
 import com.creativemd.creativecore.common.gui.container.SubGui;

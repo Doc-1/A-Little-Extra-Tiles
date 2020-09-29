@@ -1,41 +1,20 @@
 package com.alet.gui;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.gui.controls.GuiPanelWithBackground;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.render.tapemeasure.TapeRenderer;
-import com.alet.tiles.Measurement.Shape;
-import com.creativemd.creativecore.client.avatar.Avatar;
-import com.creativemd.creativecore.common.gui.GuiControl;
-import com.creativemd.creativecore.common.gui.GuiRenderHelper;
-import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
-import com.creativemd.creativecore.common.gui.client.style.Style;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiAvatarLabel;
+import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
+import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
+import com.alet.littletiles.gui.controls.GuiColoredSteppedSliderAlet;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
-import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
-import com.creativemd.creativecore.common.utils.mc.ColorUtils;
-import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.client.gui.LittleSubGuiUtils;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
-import com.creativemd.littletiles.common.item.ItemLittleChisel;
-import com.creativemd.littletiles.common.item.ItemMultiTiles;
-import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
-import com.creativemd.littletiles.common.util.shape.DragShape;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -44,7 +23,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 	public GuiComboBox contextBox;
 	public GuiComboBox shapeBox;
 	public GuiComboBox indexBox;
-	public GuiColorPicker colorPicker;
+	public GuiColorPickerAlet colorPicker;
 	public GuiPanelWithBackground colorDisp;
 	
 	public int selectedIndex = 0;
@@ -59,11 +38,15 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		int context = contextBox.index;
 		int shape = shapeBox.index;
 		
-		int r = (int) colorPicker.sliderR.value;
-		int g = (int) colorPicker.sliderG.value;
-		int b = (int) colorPicker.sliderB.value;
+		GuiColoredSteppedSliderAlet sliderR = (GuiColoredSteppedSliderAlet) colorPicker.get("r");
+		GuiColoredSteppedSliderAlet sliderG = (GuiColoredSteppedSliderAlet) colorPicker.get("g");
+		GuiColoredSteppedSliderAlet sliderB = (GuiColoredSteppedSliderAlet) colorPicker.get("b");
 
-		int color = ColorUtils.RGBAToInt(r, g, b, 0);
+		int r = (int) sliderR.value;
+		int g = (int) sliderG.value;
+		int b = (int) sliderB.value;
+
+		int color = ColorUtilsAlet.RGBAToInt(r, g, b, 0);
 		nbt.setInteger("index", index);
 		nbt.setInteger("context"+(index*2), context);
 		nbt.setInteger("shape"+(index*2), shape);
@@ -75,12 +58,16 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		NBTTagCompound nbt = stack.getTagCompound();
 		int context = contextBox.index;
 		int shape = shapeBox.index;
-		
-		int r = (int) colorPicker.sliderR.value;
-		int g = (int) colorPicker.sliderG.value;
-		int b = (int) colorPicker.sliderB.value;
 
-		int color = ColorUtils.RGBAToInt(r, g, b, 0);
+		GuiColoredSteppedSliderAlet sliderR = (GuiColoredSteppedSliderAlet) colorPicker.get("r");
+		GuiColoredSteppedSliderAlet sliderG = (GuiColoredSteppedSliderAlet) colorPicker.get("g");
+		GuiColoredSteppedSliderAlet sliderB = (GuiColoredSteppedSliderAlet) colorPicker.get("b");
+		
+		int r = (int) sliderR.value;
+		int g = (int) sliderG.value;
+		int b = (int) sliderB.value;
+
+		int color = ColorUtilsAlet.RGBAToInt(r, g, b, 0);
 		nbt.setInteger("index", index);
 		nbt.setInteger("context"+(index*2), context);
 		nbt.setInteger("shape"+(index*2), shape);
@@ -99,7 +86,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		int measurementIndex = nbt.getInteger("index");
 		
 		int context = (nbt.hasKey("context"+(measurementIndex*2))) ? nbt.getInteger("context"+(measurementIndex*2)) : 0;
-		int color = (nbt.hasKey("color"+(measurementIndex*2))) ? nbt.getInteger("color"+(measurementIndex*2)) : ColorUtils.WHITE;
+		int color = (nbt.hasKey("color"+(measurementIndex*2))) ? nbt.getInteger("color"+(measurementIndex*2)) : ColorUtilsAlet.WHITE;
 		
 		contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(nbt.getInteger("context"+(measurementIndex*2)));
@@ -115,7 +102,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 			public void onClicked(int x, int y, int button) {
 				ItemTapeMeasure thisTapeMeasure = (ItemTapeMeasure) stack.getItem();
 				if(GuiScreen.isShiftKeyDown()) 
-					thisTapeMeasure.clear(stack, measurementIndex*2);
+					thisTapeMeasure.clear(stack, indexBox.index);
 				else
 					thisTapeMeasure.clear(stack);
 
@@ -133,11 +120,11 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		shapeBox.index = nbt.getInteger("shape"+(measurementIndex*2));
 		controls.add(shapeBox);
 		
-		colorPicker = (new GuiColorPicker("picker", 35, 45, ColorUtils.IntToRGBA(color), false, 255) {
+		colorPicker = (new GuiColorPickerAlet("picker", 35, 45, ColorUtilsAlet.IntToRGBA(color), false, 255) {
 			@Override
 			public void onColorChanged() {
 				super.onColorChanged();
-				colorDisp.setColor(ColorUtils.RGBAToInt(color));
+				colorDisp.setColor(ColorUtilsAlet.RGBAToInt(color));
 			}
 		});
 		controls.add(colorPicker);
@@ -169,22 +156,25 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 	private void updateControls(NBTTagCompound nbt, int index) {
 		int shape = (nbt.hasKey("shape"+(index*2))) ? nbt.getInteger("shape"+(index*2)) : 0;
 		int context = (nbt.hasKey("context"+(index*2))) ? nbt.getInteger("context"+(index*2)) : 0;
-		int color = (nbt.hasKey("color"+(index*2))) ? nbt.getInteger("color"+(index*2)) : ColorUtils.WHITE;
+		int color = (nbt.hasKey("color"+(index*2))) ? nbt.getInteger("color"+(index*2)) : ColorUtilsAlet.WHITE;
 
 		colorDisp.setColor(color);
+
+		GuiColoredSteppedSliderAlet sliderR = (GuiColoredSteppedSliderAlet) colorPicker.get("r");
+		GuiColoredSteppedSliderAlet sliderG = (GuiColoredSteppedSliderAlet) colorPicker.get("g");
+		GuiColoredSteppedSliderAlet sliderB = (GuiColoredSteppedSliderAlet) colorPicker.get("b");
 		
-		colorPicker.color = ColorUtils.IntToRGBA(color);
-		colorPicker.sliderR.value = ColorUtils.IntToRGBA(color).getRed();
-		colorPicker.sliderG.value = ColorUtils.IntToRGBA(color).getGreen();
-		colorPicker.sliderB.value = ColorUtils.IntToRGBA(color).getBlue();
+		colorPicker.color = ColorUtilsAlet.IntToRGBA(color);
+		
+		sliderR.value = ColorUtilsAlet.IntToRGBA(color).getRed();
+		sliderG.value = ColorUtilsAlet.IntToRGBA(color).getGreen();
+		sliderB.value = ColorUtilsAlet.IntToRGBA(color).getBlue();
 
 		contextBox.select(context);
 		contextBox.index = context;
 		
 		shapeBox.select(shape);
 		shapeBox.index = shape;
+		
 	}
-
-	
-	
 }

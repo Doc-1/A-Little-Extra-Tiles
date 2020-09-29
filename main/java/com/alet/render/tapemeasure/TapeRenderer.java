@@ -38,6 +38,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -55,6 +56,9 @@ public class TapeRenderer {
 	public void render(RenderWorldLastEvent event) {
 		this.event = event;
 		EntityPlayer player = Minecraft.getMinecraft().player;
+
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		
 		ItemStack stack = ItemStack.EMPTY;
 		ItemStack ingredient = new ItemStack(ALET.tapeMeasure, 1);
@@ -68,101 +72,143 @@ public class TapeRenderer {
 				break;
 			}
 		}
-		//player.sendStatusMessage(new TextComponentString(t), true);
-		NBTTagCompound nbt = stack.getTagCompound();
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
 
-		if(!stack.isEmpty())
-			if(stack.hasTagCompound()) {
-				double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
-				double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
-				double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
-				List<String> list = LittleGridContext.getNames();
-
-				List<Integer> allIndexes = new ArrayList<Integer>();
-				String nbtStr = nbt.toString();
-
-			    List<String> allMatches = new ArrayList<String>();
-			    Matcher m = Pattern.compile("x\\d+").matcher(nbtStr);
-			    while (m.find()) {
-			      allMatches.add(m.group());
-			    }
-			    for (String string : allMatches) {
-			    	int x = Integer.parseInt(string.split("x")[1]);
-			    	if(x % 2 != 0) {
-				    	allIndexes.add(x);
-			    	}
-				}
-			    GlStateManager.enableBlend();
-				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-				GlStateManager.glLineWidth(2.0F);
-				GlStateManager.disableTexture2D();
-				GlStateManager.depthMask(false);
-				GlStateManager.disableDepth();
-				
-				bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
-			    
-			    for(int index : allIndexes) {
-			    	if(nbt.hasKey("x"+(index-1)) && nbt.hasKey("x"+index)) {
-			    		
-			    		int index1 = index-1;
-			    		int index2 = index;
-			    		
-			    		EnumFacing facingMin = EnumFacing.byName(nbt.getString("facing"+index1));
-						EnumFacing facingMax = EnumFacing.byName(nbt.getString("facing"+index2));
-						
-						int contextSize = (nbt.hasKey("context"+index1)) ? Integer.parseInt(list.get(nbt.getInteger("context"+index1))) : Integer.parseInt(list.get(0));
-						
-						SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index1)), Double.parseDouble(nbt.getString("y"+index1)),
-								Double.parseDouble(nbt.getString("z"+index1))),LittleGridContext.get(contextSize), facingMin);
-						
-						SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index2)), Double.parseDouble(nbt.getString("y"+index2)),
-								Double.parseDouble(nbt.getString("z"+index2))),LittleGridContext.get(contextSize), facingMax);
-						
-			    		String xKey1 = "x"+index1;
-			    		String yKey1 = "y"+index1;
-			    		String zKey1 = "z"+index1;
-			    		
-			    		String xKey2 = "x"+index2;
-			    		String yKey2 = "y"+index2;
-			    		String zKey2 = "z"+index2;
-			    		
-			    		double x1 = Double.parseDouble(nbt.getString(xKey1));
-			    		double y1 = Double.parseDouble(nbt.getString(yKey1));
-			    		double z1 = Double.parseDouble(nbt.getString(zKey1));
-
-			    		double x2 = Double.parseDouble(nbt.getString(xKey2));
-			    		double y2 = Double.parseDouble(nbt.getString(yKey2));
-			    		double z2 = Double.parseDouble(nbt.getString(zKey2));
-
-			    		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
-			    		Color colour = ColorUtils.IntToRGBA(color);
-			    		float r = colour.getRed()/255F;
-			    		float g = colour.getGreen()/255F;
-			    		float b = colour.getBlue()/255F;
-			    		//System.out.println(nbt.getDouble("x1") + ", " + nbt.getDouble(y1) + ", " + nbt.getDouble(z1) + ", " + nbt.getDouble(x2) + ", " 
-			    		//		+ nbt.getDouble(y2) + ", " + nbt.getDouble(z2));
-			    		if(nbt.getInteger("shape"+index1) == 0) {
-							Box.drawBox(tilePosMin, tilePosMax, r, g, b, 1.0F);
-			    		}else if(nbt.getInteger("shape"+index1) == 1) {
-							Line.drawLine(tilePosMin, tilePosMax, r, g, b, 1.0F);
-							Box.drawBox(tilePosMin, contextSize, r, g, b, 1.0F);
-							Box.drawBox(tilePosMax, contextSize,r, g, b, 1.0F);
-			    		}
-			    	}
-			    }
-				
-				tessellator.draw();
+		NBTTagCompound nbt = (stack.hasTagCompound()) ? stack.getTagCompound() : new NBTTagCompound();
 		
-				GlStateManager.enableDepth();
-				GlStateManager.depthMask(true);
-				GlStateManager.enableTexture2D();
-				GlStateManager.disableBlend();	
-			}
-			
+		List<String> list = LittleGridContext.getNames();
+	    List<String> allMatches = new ArrayList<String>();
+		List<Integer> allIndexes = new ArrayList<Integer>();
+		
+		if(nbt.hasNoTags() || !nbt.hasKey("context0")) {
+			System.out.println("t");
+			nbt.setInteger("context0", 0);
+			stack.setTagCompound(nbt);
 		}
+		
+		String nbtStr = (stack.hasTagCompound()) ? nbt.toString() : "";
+	    Matcher m = Pattern.compile("context\\d+").matcher(nbtStr);
+	    while (m.find()) {
+	      allMatches.add(m.group());
+	    }
+	    for (String string : allMatches) {
+	    	int x = Integer.parseInt(string.split("context")[1]);
+		    allIndexes.add(x);
+		}
+	    
+	    GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.glLineWidth(2.0F);
+		GlStateManager.disableTexture2D();
+		GlStateManager.depthMask(false);
+		GlStateManager.disableDepth();
+		bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
+		
+	    for(int index : allIndexes) {
+    		int index1 = index;
+    		int index2 = index+1;
 
+			int contextSize = (nbt.hasKey("context"+index1)) ? Integer.parseInt(list.get(nbt.getInteger("context"+index1))) : Integer.parseInt(list.get(0));
+		
+			//Sets Color
+			int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
+    		Color colour = ColorUtils.IntToRGBA(color);
+    		float r = colour.getRed()/255F;
+    		float g = colour.getGreen()/255F;
+    		float b = colour.getBlue()/255F;
+    		//******
+    		
+			EnumFacing facingMin = (nbt.hasKey("facing"+index1)) ? EnumFacing.byName(nbt.getString("facing"+index1)) : EnumFacing.UP;
+			EnumFacing facingMax = (nbt.hasKey("facing"+index2)) ? EnumFacing.byName(nbt.getString("facing"+index2)) : EnumFacing.UP;
+			
+			boolean[] canRender = {false, false};
+			
+			double[] posEdit = tempPos(nbt);
+			int tempIndex = nbt.getInteger("index")*2;
+			int tempContextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(tempIndex))));
+			RayTraceResult res = player.rayTrace(5.0, (float) 0.1);
+			
+			SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]),LittleGridContext.get(tempContextSize), res.sideHit);
+			SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]),LittleGridContext.get(tempContextSize), res.sideHit);
+			
+			if(nbt.hasKey("x"+index1)) {
+				tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index1)), Double.parseDouble(nbt.getString("y"+index1)),
+					Double.parseDouble(nbt.getString("z"+index1))),LittleGridContext.get(contextSize), facingMin);
+				canRender[0] = true;
+			}
+			if(nbt.hasKey("x"+index2)) {
+				tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index2)), Double.parseDouble(nbt.getString("y"+index2)),
+					Double.parseDouble(nbt.getString("z"+index2))),LittleGridContext.get(contextSize), facingMax);
+				canRender[1] = true;
+			}
+			//System.out.println(canRender[0] + " " + canRender[1]);
+			
+			if(player.getHeldItemMainhand().equals(stack))
+				drawCursor(nbt);
+			
+			
+			if(canRender[0] == true && canRender[1] == false || canRender[0] == false && canRender[1] == true) {
+				if(res.typeOfHit == RayTraceResult.Type.BLOCK) {
+					if(nbt.getInteger("shape"+index1) == 0) {
+						Box.drawBox(tilePosMin, tilePosMax, r, g, b, 1.0F);
+		    		}else if(nbt.getInteger("shape"+index1) == 1) {
+						Line.drawLine(tilePosMin, tilePosMax, r, g, b, 1.0F);
+						Box.drawBox(tilePosMin, contextSize, r, g, b, 1.0F);
+						Box.drawBox(tilePosMax, contextSize,r, g, b, 1.0F);
+		    		}
+				}
+			}else if(canRender[0] == true && canRender[1] == true){
+				if(nbt.getInteger("shape"+index1) == 0) {
+					Box.drawBox(tilePosMin, tilePosMax, r, g, b, 1.0F);
+	    		}else if(nbt.getInteger("shape"+index1) == 1) {
+					Line.drawLine(tilePosMin, tilePosMax, r, g, b, 1.0F);
+					Box.drawBox(tilePosMin, contextSize, r, g, b, 1.0F);
+					Box.drawBox(tilePosMax, contextSize,r, g, b, 1.0F);
+	    		}
+			}
+    	}
+	    
+		tessellator.draw();
+
+		GlStateManager.enableDepth();
+		GlStateManager.depthMask(true);
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();	
+	}
+
+	public double[] tempPos(NBTTagCompound nbt) {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		List<String> list = LittleGridContext.getNames();
+
+		int tempIndex = nbt.getInteger("index")*2;
+		int tempContextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(tempIndex))));
+		
+		RayTraceResult res = player.rayTrace(5.0, (float) 0.1);
+		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, LittleGridContext.get(tempContextSize));
+		double[] posEdit = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), tempContextSize, res.sideHit);
+		return posEdit;
+	}
+	
+	public void drawCursor(NBTTagCompound nbt) {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		List<String> list = LittleGridContext.getNames();
+
+		int index = nbt.getInteger("index")*2;
+		int contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(index))));
+		
+		RayTraceResult res = player.rayTrace(5.0, (float) 0.1);
+		double[] posEdit = tempPos(nbt);
+		
+		SelectLittleTile tilePosCursor = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]),LittleGridContext.get(contextSize), res.sideHit);
+		int color = (nbt.hasKey("color"+index)) ? nbt.getInteger("color"+index) : ColorUtils.WHITE;
+		Color colour = ColorUtils.IntToRGBA(color);
+		float r = colour.getRed()/255F;
+		float g = colour.getGreen()/255F;
+		float b = colour.getBlue()/255F;
+		
+		if(res.typeOfHit == RayTraceResult.Type.BLOCK) {
+			Box.drawBox(tilePosCursor, contextSize, r, g, b, 1.0F);	
+		}
+	}
 	/*
 	 * 
 					if(i==0) {
