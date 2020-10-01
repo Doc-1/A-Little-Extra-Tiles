@@ -8,7 +8,9 @@ import java.util.regex.Pattern;
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
+import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.items.ItemTapeMeasure;
+import com.alet.items.ItemTapeMeasure.PosData;
 import com.alet.render.string.StringRenderer;
 import com.alet.render.string.DrawCharacter.Facing;
 import com.alet.render.string.StringRenderer.Middle;
@@ -42,29 +44,39 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TapeRenderer {
 	
-	public static RenderWorldLastEvent event;
 	public static int counter = 0;
 	public static boolean inInv = false;
-	
-	 
+	public static Minecraft mc = Minecraft.getMinecraft();
+	public static EntityPlayer player;
+	public static Tessellator tessellator = Tessellator.getInstance();
+	public static BufferBuilder bufferbuilder = tessellator.getBuffer();
 	
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void render(RenderWorldLastEvent event) {
-		this.event = event;
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		player = mc.player;
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		List<String> list = LittleGridContext.getNames();
+	    List<String> allMatches = new ArrayList<String>();
+		List<Integer> allIndexes = new ArrayList<Integer>();
 		
 		ItemStack stack = ItemStack.EMPTY;
 		ItemStack ingredient = new ItemStack(ALET.tapeMeasure, 1);
 		LittleInventory inventory = new LittleInventory(player);
+		
+		//Sees if the tape measure is in player's inventory
 		inInv = false;
-
 		for(int i = 0; i < inventory.size(); i++) {
 			if(inventory.get(i).getItem() instanceof ItemTapeMeasure) {
 				stack = inventory.get(i);
@@ -72,15 +84,10 @@ public class TapeRenderer {
 				break;
 			}
 		}
-
 		NBTTagCompound nbt = (stack.hasTagCompound()) ? stack.getTagCompound() : new NBTTagCompound();
-		
-		List<String> list = LittleGridContext.getNames();
-	    List<String> allMatches = new ArrayList<String>();
-		List<Integer> allIndexes = new ArrayList<Integer>();
-		
+
+		//Makes sure it has at least one context. Without a context it will not render anything.
 		if(nbt.hasNoTags() || !nbt.hasKey("context0")) {
-			System.out.println("t");
 			nbt.setInteger("context0", 0);
 			stack.setTagCompound(nbt);
 		}
@@ -102,71 +109,53 @@ public class TapeRenderer {
 		GlStateManager.depthMask(false);
 		GlStateManager.disableDepth();
 		bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
-		
-	    for(int index : allIndexes) {
-    		int index1 = index;
-    		int index2 = index+1;
+		PosData data = ItemTapeMeasure.data;
+		if(data != null) {
+		    for(int index : allIndexes) {
+	    		int index1 = index;
+	    		int index2 = index+1;
+	    		int selectedIndex = (nbt.hasKey("index")) ? nbt.getInteger("index")*2 : 0;
+				int contextSize = (nbt.hasKey("context"+index1)) ? Integer.parseInt(list.get(nbt.getInteger("context"+index1))) : Integer.parseInt(list.get(0));
+	    		int selectedContextSize = (nbt.hasKey("context"+selectedIndex)) ? Integer.parseInt(list.get(nbt.getInteger("context"+selectedIndex))) : Integer.parseInt(list.get(0));
+	
+				//Gets Color
+				int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
+	    		Color colour = ColorUtils.IntToRGBA(color);
+	    		float r = colour.getRed()/255F;
+	    		float g = colour.getGreen()/255F;
+	    		float b = colour.getBlue()/255F;
+	    		//*********
+	    		
+				EnumFacing facingMin = (nbt.hasKey("facing"+index1)) ? EnumFacing.byName(nbt.getString("facing"+index1)) : EnumFacing.UP;
+				EnumFacing facingMax = (nbt.hasKey("facing"+index2)) ? EnumFacing.byName(nbt.getString("facing"+index2)) : EnumFacing.UP;
+								
+				double[] posEdit = ItemTapeMeasure.facingOffset(data.result.hitVec.x, data.result.hitVec.y, data.result.hitVec.z, contextSize, data.result.sideHit);
+				SelectLittleTile tilePosMin = data.tilePosCursor;
+				SelectLittleTile tilePosMax = data.tilePosCursor;
 
-			int contextSize = (nbt.hasKey("context"+index1)) ? Integer.parseInt(list.get(nbt.getInteger("context"+index1))) : Integer.parseInt(list.get(0));
-		
-			//Sets Color
-			int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
-    		Color colour = ColorUtils.IntToRGBA(color);
-    		float r = colour.getRed()/255F;
-    		float g = colour.getGreen()/255F;
-    		float b = colour.getBlue()/255F;
-    		//******
-    		
-			EnumFacing facingMin = (nbt.hasKey("facing"+index1)) ? EnumFacing.byName(nbt.getString("facing"+index1)) : EnumFacing.UP;
-			EnumFacing facingMax = (nbt.hasKey("facing"+index2)) ? EnumFacing.byName(nbt.getString("facing"+index2)) : EnumFacing.UP;
-			
-			boolean[] canRender = {false, false};
-			
-			double[] posEdit = tempPos(nbt);
-			int tempIndex = nbt.getInteger("index")*2;
-			int tempContextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(tempIndex))));
-			RayTraceResult res = player.rayTrace(5.0, (float) 0.1);
-			
-			SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]),LittleGridContext.get(tempContextSize), res.sideHit);
-			SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]),LittleGridContext.get(tempContextSize), res.sideHit);
-			
-			if(nbt.hasKey("x"+index1)) {
-				tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index1)), Double.parseDouble(nbt.getString("y"+index1)),
-					Double.parseDouble(nbt.getString("z"+index1))),LittleGridContext.get(contextSize), facingMin);
-				canRender[0] = true;
-			}
-			if(nbt.hasKey("x"+index2)) {
-				tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index2)), Double.parseDouble(nbt.getString("y"+index2)),
-					Double.parseDouble(nbt.getString("z"+index2))),LittleGridContext.get(contextSize), facingMax);
-				canRender[1] = true;
-			}
-			//System.out.println(canRender[0] + " " + canRender[1]);
-			
-			if(player.getHeldItemMainhand().equals(stack))
-				drawCursor(nbt);
-			
-			
-			if(canRender[0] == true && canRender[1] == false || canRender[0] == false && canRender[1] == true) {
-				if(res.typeOfHit == RayTraceResult.Type.BLOCK) {
+				boolean[] shouldRender = {false, false};
+				if(nbt.hasKey("x"+index1)) { //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+					tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index1)), Double.parseDouble(nbt.getString("y"+index1)),
+						Double.parseDouble(nbt.getString("z"+index1))),LittleGridContext.get(contextSize), data.result.sideHit);
+					shouldRender[0] = true;
+				}
+				
+				if(nbt.hasKey("x"+index2)) { //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+					tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index2)), Double.parseDouble(nbt.getString("y"+index2)),
+						Double.parseDouble(nbt.getString("z"+index2))),LittleGridContext.get(contextSize), data.result.sideHit);
+					shouldRender[1] = true;
+				}
+				
+				if(shouldRender[0] || shouldRender[1])
 					if(nbt.getInteger("shape"+index1) == 0) {
 						Box.drawBox(tilePosMin, tilePosMax, r, g, b, 1.0F);
-		    		}else if(nbt.getInteger("shape"+index1) == 1) {
+					}else if(nbt.getInteger("shape"+index1) == 1) {
 						Line.drawLine(tilePosMin, tilePosMax, r, g, b, 1.0F);
 						Box.drawBox(tilePosMin, contextSize, r, g, b, 1.0F);
 						Box.drawBox(tilePosMax, contextSize,r, g, b, 1.0F);
-		    		}
-				}
-			}else if(canRender[0] == true && canRender[1] == true){
-				if(nbt.getInteger("shape"+index1) == 0) {
-					Box.drawBox(tilePosMin, tilePosMax, r, g, b, 1.0F);
-	    		}else if(nbt.getInteger("shape"+index1) == 1) {
-					Line.drawLine(tilePosMin, tilePosMax, r, g, b, 1.0F);
-					Box.drawBox(tilePosMin, contextSize, r, g, b, 1.0F);
-					Box.drawBox(tilePosMax, contextSize,r, g, b, 1.0F);
-	    		}
-			}
-    	}
-	    
+					}
+		    }
+		}
 		tessellator.draw();
 
 		GlStateManager.enableDepth();
@@ -174,41 +163,54 @@ public class TapeRenderer {
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();	
 	}
-
-	public double[] tempPos(NBTTagCompound nbt) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		List<String> list = LittleGridContext.getNames();
-
-		int tempIndex = nbt.getInteger("index")*2;
-		int tempContextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(tempIndex))));
-		
-		RayTraceResult res = player.rayTrace(5.0, (float) 0.1);
-		LittleAbsoluteVec pos = new LittleAbsoluteVec(res, LittleGridContext.get(tempContextSize));
-		double[] posEdit = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), tempContextSize, res.sideHit);
-		return posEdit;
-	}
 	
-	public void drawCursor(NBTTagCompound nbt) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		List<String> list = LittleGridContext.getNames();
-
-		int index = nbt.getInteger("index")*2;
-		int contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(index))));
-		
-		RayTraceResult res = player.rayTrace(5.0, (float) 0.1);
-		double[] posEdit = tempPos(nbt);
-		
-		SelectLittleTile tilePosCursor = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]),LittleGridContext.get(contextSize), res.sideHit);
-		int color = (nbt.hasKey("color"+index)) ? nbt.getInteger("color"+index) : ColorUtils.WHITE;
+	public static void renderCursor(NBTTagCompound nbt, int index1, int contextSize, SelectLittleTile tilePosCursor) {
+		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
 		Color colour = ColorUtils.IntToRGBA(color);
 		float r = colour.getRed()/255F;
 		float g = colour.getGreen()/255F;
 		float b = colour.getBlue()/255F;
+
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.glLineWidth(2.0F);
+		GlStateManager.disableTexture2D();
+		GlStateManager.depthMask(false);
+		GlStateManager.disableDepth();
+		bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
 		
-		if(res.typeOfHit == RayTraceResult.Type.BLOCK) {
-			Box.drawBox(tilePosCursor, contextSize, r, g, b, 1.0F);	
-		}
+		Box.drawBox(tilePosCursor, contextSize, r, g, b, 1.0F);
+		
+		tessellator.draw();
+
+		GlStateManager.enableDepth();
+		GlStateManager.depthMask(true);
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();	
 	}
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/*
 	 * 
 					if(i==0) {
@@ -297,4 +299,4 @@ public class TapeRenderer {
 		//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
 		//Circle.drawCircle(centerX_1, centerY_1, centerZ_1, radius(centerX_1, centerX_2), 1.0F, 1.0F, 1.0F, 1.0F);
 		
-}
+

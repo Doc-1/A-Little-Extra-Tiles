@@ -30,7 +30,6 @@ public class DragShapeTriangle extends DragShape {
 		super("triangle");
 	}
 	
-
 	@Override
 	public LittleBoxes getBoxes(LittleBoxes boxes, LittleVec min, LittleVec max, EntityPlayer player, NBTTagCompound nbt, boolean preview, LittleAbsoluteVec originalMin, LittleAbsoluteVec originalMax) {
 		LittleBox box = new LittleBox(min, max);
@@ -57,20 +56,21 @@ public class DragShapeTriangle extends DragShape {
 		int xm = x;
 		int ym = y;
 		
-		if (direction == 1) {
+		if (direction == 1 ^ direction == 3) {
 			w = (originalMaxVec.z - originalMinVec.z)/2;
 			wm = originalMaxVec.z - originalMinVec.z;
 			h = originalMaxVec.x - originalMinVec.x;
+			
 			x = originalMinVec.z;
 			y = originalMinVec.x;
 			xm = x;
 			ym = y;
-		}
-		if (direction == 3) {
-			w = (originalMaxVec.y - originalMinVec.y)/2;
-			wm = originalMaxVec.y - originalMinVec.y;
+		}else if (direction == 2) {
+			w = (originalMaxVec.x - originalMinVec.x)/2;
+			wm = originalMaxVec.x - originalMinVec.x;
 			h = originalMaxVec.z - originalMinVec.z;
-			x = originalMinVec.y;
+			
+			x = originalMinVec.x;
 			y = originalMinVec.z;
 			xm = x;
 			ym = y;
@@ -209,7 +209,86 @@ public class DragShapeTriangle extends DragShape {
 				
 				
 				break;
+			case 2:
+				line_1 = new LittleBox(x, box.minY, y , x + 1, box.maxY, y  + 1);
+				line_2 = new LittleBox(xm+(w*2),box.minY,ym ,xm +1+(w*2),box.maxY,ym+1);
+				//Moves line_2 over if the box is even
+				if(Math.abs(wm) % 2 == 1)
+					if(wm<0) 
+						line_2.add(-1, 0, 0);
+					else if(wm>0) 
+						line_2.add(1, 0, 0);
+				
+				//Placed inside a try catch, cause I am lazy and don't want oldLine_1 and oldLine_2 being null crash the game
+				try {
+					//Distance between the two sloped lines.
+					int dis = Math.abs(oldLine_1.maxX-oldLine_2.maxX)-1;
+					int index = boxes.size()-2;
+					
+					//Checks if the previous box does not have the same relative Y value.
+					if(line_1.maxZ != oldLine_1.maxZ) {
+						//Changes the which corner you want to modify. Min or Max
+						if(wm<0) { //if min > max
+							if(i > thickness+1 && (dis >= (thickness)*2) && hollow) { //Prevents overlap as well as whether to extend by thickness or distance between the two sloped lines.
+								boxes.set(index, editBox(oldLine_1, -thickness, 0, 0, 0, 0, 0));
+								boxes.set(index+1, editBox(oldLine_2, 0, 0, 0, thickness, 0, 0));
+							}else {
+								boxes.set(index, editBox(oldLine_1, -dis, 0, 0, 0, 0, 0));
+							}
+						}else { //if min < max
+							if(i > thickness+1 && (dis >= (thickness)*2) && hollow) {
+								boxes.set(index, editBox(oldLine_1, 0, 0, 0, thickness, 0, 0));
+								boxes.set(index+1, editBox(oldLine_2, -thickness, 0, 0, 0, 0, 0));
+							}else {
+								boxes.set(index, editBox(oldLine_1, 0, 0, 0, dis, 0, 0));
+							}
+						}
+					}
+				} catch (NullPointerException e) {}
+				flip = (originalMin.getPosZ()-originalMax.getPosZ())*16 > 0;
+				break;
+			/**************************************************************************************************************************************************************/
 			case 3:
+				line_1 = new LittleBox(y, box.minY, x, y + 1, box.maxY, x  + 1);
+				line_2 = new LittleBox(ym, box.minY, xm+(w*2), ym + 1, box.maxY, xm  + 1+(w*2));
+				//Moves line_2 over if the box is even
+				if(Math.abs(wm) % 2 == 1)
+					if(wm<0) 
+						line_2.add(0, 0, -1);
+					else if(wm>0) 
+						line_2.add(0, 0, 1);
+				
+				//Placed inside a try catch, cause I am lazy and don't want oldLine_1 and oldLine_2 being null crash the game
+				try {
+					//Distance between the two sloped lines.
+					int dis = Math.abs(oldLine_1.maxZ-oldLine_2.maxZ)-1;
+					int index = boxes.size()-2;
+					
+					//Checks if the previous box does not have the same relative Y value.
+					if(line_1.maxX != oldLine_1.maxX) {
+						//Changes the which corner you want to modify. Min or Max
+						if(wm<0) { //if min > max
+							if(i > thickness+1 && (dis >= (thickness)*2) && hollow) { //Prevents overlap as well as whether to extend by thickness or distance between the two sloped lines.
+								boxes.set(index, editBox(oldLine_1, 0, 0, -thickness, 0, 0, 0));
+								boxes.set(index+1, editBox(oldLine_2, 0, 0, 0, 0, 0, thickness));
+							}else {
+								boxes.set(index, editBox(oldLine_1, 0, 0, -dis, 0, 0, 0));
+							}
+						}else { //if min < max
+							if(i > thickness+1 && (dis >= (thickness)*2) && hollow) {
+								boxes.set(index, editBox(oldLine_1, 0, 0, 0, 0, 0, thickness));
+								boxes.set(index+1, editBox(oldLine_2, 0, 0, -thickness, 0, 0, 0));
+							}else {
+								boxes.set(index, editBox(oldLine_1, 0, 0, 0, 0, 0, dis));
+							}
+						}
+					}
+				} catch (NullPointerException e) {}
+				flip = (originalMin.getPosX()-originalMax.getPosX())*16 < 0;
+				
+				
+				break;
+			case 33:
 				line_1 = new LittleBox(box.minX, y, x,  box.maxX, y + 1, x + 1);
 				line_2 = new LittleBox(box.minX, ym, xm+(w*2), box.maxX, ym + 1 , xm+(w*2) + 1);
 
@@ -247,7 +326,8 @@ public class DragShapeTriangle extends DragShape {
 					}
 				} catch (NullPointerException e) {}
 				break;
-			/**************************************************************************************************************************************************************/
+			
+			
 			case 4:
 				System.out.println("67ujnht9o87654");
 				line_1 = new LittleBox(box.minX, x , y , box.maxX, x + 1, y  + 1);
@@ -433,9 +513,9 @@ public class DragShapeTriangle extends DragShape {
 		
 
 		LittleBox.combineBoxesBlocks(boxes);
-		if (flip && direction == 0) {
+		if (flip && (direction == 0 ^ direction == 2)) {
 			boxes.flip(Axis.Z, new LittleAbsoluteBox(boxes.pos, box, boxes.context));
-		}else if (flip && direction == 1) {
+		}else if (flip && (direction == 1 ^ direction == 3)) {
 			boxes.flip(Axis.X, new LittleAbsoluteBox(boxes.pos, box, boxes.context));
 		}
 		

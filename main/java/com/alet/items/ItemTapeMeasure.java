@@ -10,9 +10,18 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.util.Color;
+
+import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.gui.SubGuiTapeMeasure;
+import com.alet.render.tapemeasure.TapeRenderer;
+import com.alet.render.tapemeasure.shape.Box;
+import com.alet.render.tapemeasure.shape.Line;
 import com.alet.tiles.Measurement;
 import com.alet.tiles.SelectLittleTile;
+import com.creativemd.creativecore.client.key.ExtendedKeyBinding;
+import com.creativemd.creativecore.common.utils.math.Rotation;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.event.HoldLeftClick;
@@ -29,12 +38,17 @@ import com.creativemd.littletiles.common.util.place.PlacementPosition;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -47,9 +61,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTapeMeasure extends Item implements ILittleTile {
-
-	public static String shape = "";
-
+	
+	public static PosData data;
+	
 	public void clear(ItemStack stack) {
 		writeNBTData(stack, new NBTTagCompound());
 	}
@@ -81,9 +95,8 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	    }
 	  
 	    for (String key : allMatches) {
-	    	if(!key.contains("context"))
-	    		if(!key.contains("color"))
-	    			nbt.removeTag(key);
+	    	if(!key.contains("context") && !key.contains("color") && !key.contains("shape"))
+	    		nbt.removeTag(key);
 	    	
 		}
 
@@ -148,8 +161,8 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		nbt.setString("x"+(index*2), Double.toString(posOffsetted[0]));
 		nbt.setString("y"+(index*2), Double.toString(posOffsetted[1]));
 		nbt.setString("z"+(index*2), Double.toString(posOffsetted[2]));
-		System.out.println(nbt.getString("x"+(index*2))+ " "+ nbt.getString("y"+(index*2)) + " " + nbt.getString("z"+(index*2)));
 		nbt.setString("facing"+(index*2), position.facing.getName());
+		
 		writeNBTData(stack, nbt);
 		readNBTData(stack);
 		return false;
@@ -179,20 +192,57 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		nbt.setString("y"+((index*2)+1), Double.toString(posOffsetted[1]));
 		nbt.setString("z"+((index*2)+1), Double.toString(posOffsetted[2]));
 		nbt.setString("facing"+((index*2)+1), position.facing.getName());
-
 		
 		writeNBTData(stack, nbt);
 		readNBTData(stack);
 		return false;
 	}
 	
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent 
-	public boolean onClearKeyPress(RenderWorldLastEvent event) {
-		if(LittleTilesClient.configureAdvanced.isPressed()) {
-			
+	@Override
+	public void onDeselect(EntityPlayer player, ItemStack stack) {
+		System.out.println();
+	}
+	
+	public class PosData {
+		public SelectLittleTile tilePosMin;
+		public SelectLittleTile tilePosMax;
+		public SelectLittleTile tilePosCursor;
+		public RayTraceResult result;
+		
+		public PosData(SelectLittleTile posMin, SelectLittleTile posMax, SelectLittleTile posCursor, RayTraceResult res) {
+			tilePosMin = posMin;
+			tilePosMax = posMax;
+			tilePosCursor = posCursor;
+			result = res;
 		}
-		return false;
+	}
+	
+	@Override
+	public void tickPreview(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
+		NBTTagCompound nbt = stack.getTagCompound();
+		List<String> list = LittleGridContext.getNames();
+
+		int index = nbt.getInteger("index")*2;
+		int index1 = index;
+		int index2 = index+1;
+		int contextSize = (nbt.hasKey("context"+index1)) ? Integer.parseInt(list.get(nbt.getInteger("context"+index1))) : Integer.parseInt(list.get(0));
+		
+		LittleAbsoluteVec pos = new LittleAbsoluteVec(result, LittleGridContext.get(contextSize));
+		double[] posEdit = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, result.sideHit);
+		
+		SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize), result.sideHit);
+		SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize), result.sideHit);
+		SelectLittleTile tilePosCursor = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize), result.sideHit);
+		data = new PosData(tilePosMin, tilePosMax, tilePosCursor, result);
+		
+		TapeRenderer.renderCursor(nbt, index1, contextSize, tilePosCursor);
+	}
+
+	public void onKeyPress(int pressedKey, EntityPlayer player, ItemStack stack) {
+		System.out.println(pressedKey);
+		if(pressedKey == TapeMeasureKeyEventHandler.CLEAR) {
+			clear(stack, stack.getTagCompound().getInteger("index"));
+		}
 	}
 	
 	public static double[] facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
@@ -215,6 +265,16 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	}
 	
 	@Override
+	public void rotateLittlePreview(EntityPlayer player, ItemStack stack, Rotation rotation) {
+		
+	}
+	
+	@Override
+	public void flipLittlePreview(EntityPlayer player, ItemStack stack, Axis axis) {
+
+	}
+	
+	@Override
 	public float getDestroySpeed(ItemStack stack, IBlockState state) {
 		return 0F;
 	}
@@ -232,8 +292,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	@Override
 	public SubGuiConfigure getConfigureGUIAdvanced(EntityPlayer player, ItemStack stack) {
-		if(stack.getItem() instanceof ItemTapeMeasure && stack.hasTagCompound()) 
-			clear(player.getHeldItemMainhand(), player.getHeldItemMainhand().getTagCompound().getInteger("index"));
+		
 		return null;
 	}
 	
@@ -244,8 +303,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	@Override
 	public boolean hasLittlePreview(ItemStack stack) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 	@Override

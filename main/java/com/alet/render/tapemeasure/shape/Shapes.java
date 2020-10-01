@@ -5,6 +5,7 @@ import com.creativemd.creativecore.common.gui.Rect;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
 
 public abstract class Shapes {
@@ -12,7 +13,8 @@ public abstract class Shapes {
 	Vec3d pos;
 	Vec3d pos2;
 	int contextSize;
-	
+	public static Minecraft mc = Minecraft.getMinecraft();
+
 	public Shapes(Vec3d p, Vec3d p2, int contextSz) {
 		pos = p;
 		pos2 = p2;

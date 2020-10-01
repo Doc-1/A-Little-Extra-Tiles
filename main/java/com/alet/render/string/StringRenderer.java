@@ -54,7 +54,7 @@ public class StringRenderer {
 		*/
 		
 	public static void drawString(Vec3d start, String str, Facing facing, float red, float green, float blue, float alpha) {
-		
+		/*
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		
@@ -107,6 +107,6 @@ public class StringRenderer {
 			}
 			
 		}
-		
+		*/
 	}
 }

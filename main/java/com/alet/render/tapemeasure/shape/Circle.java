@@ -14,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class Circle extends Shapes{
 	
+	
 	public Circle(Vec3d p, Vec3d p2, int contextSz) {
 		super(p, p2, contextSz);
 	}
@@ -22,9 +23,9 @@ public class Circle extends Shapes{
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
 		//radius = context.toVanillaGrid(radius);
-		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * TapeRenderer.event.getPartialTicks();
-		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * TapeRenderer.event.getPartialTicks();
-		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * TapeRenderer.event.getPartialTicks();
+		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * mc.getRenderPartialTicks();
+		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * mc.getRenderPartialTicks();
+		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * mc.getRenderPartialTicks();
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();

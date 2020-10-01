@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import com.alet.ALET;
 import com.alet.gui.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
+import com.alet.items.ItemTapeMeasure.PosData;
 import com.alet.render.tapemeasure.shape.Box;
 import com.alet.render.tapemeasure.shape.Circle;
 import com.alet.render.tapemeasure.shape.Line;
@@ -42,22 +43,21 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class GuiDisplayMeasurements extends GuiControl{
 	
 	public static Style transparentStyle = new Style("Transparent", new ColoredDisplayStyle(0, 0, 0, 40), new ColoredDisplayStyle(90, 90, 90, 60), new ColoredDisplayStyle(90, 90, 90, 50), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100));
-
+	public static EntityPlayer player;
+	
 	public GuiDisplayMeasurements(String name) {
 		super(name, 0, 0, 0, 0);
 	}
 	
-	
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		player = Minecraft.getMinecraft().player;
+		posX = 0;
+		posY = 70;
 		
 		ItemStack stack = ItemStack.EMPTY;
 		ItemStack ingredient = new ItemStack(ALET.tapeMeasure, 1);
 		LittleInventory inventory = new LittleInventory(player);
-		
-		posX = 0;
-		posY = 70;
 		
 		for(int i = 0; i < inventory.size(); i++) {
 			if(inventory.get(i).getItem() instanceof ItemTapeMeasure) {
@@ -72,9 +72,9 @@ public class GuiDisplayMeasurements extends GuiControl{
 
 			GuiOverlayTextList textList = new GuiOverlayTextList("measurement", 45, -92, 140, getParent());
 			textList.setStyle(transparentStyle);
-			/*
-			 * GL Settings for Text
-			 */
+			
+			//GL Settings for Text
+			 
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(-40, -height+84, 50);
 			GlStateManager.disableCull();
@@ -99,68 +99,64 @@ public class GuiDisplayMeasurements extends GuiControl{
 				    allIndexes.add(x);
 				}
 			    Collections.sort(allIndexes);
-			    for(int index : allIndexes) {
-		    		int index1 = index;
-		    		int index2 = index+1;
-
-		    		if((nbt.hasKey("x"+index1) || nbt.hasKey("x"+index2)) || (nbt.hasKey("x"+index1) && nbt.hasKey("x"+index2))) { 
-			    		
-			    		String contextSize = "context"+index1;
-			    		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
-			    		
-			    		RayTraceResult res = player.rayTrace(6.0, (float) 0.1);
-						LittleAbsoluteVec pos = new LittleAbsoluteVec(res, LittleGridContext.get(Integer.parseInt(list.get(nbt.getInteger(contextSize)))));
-						double[] posEdit = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), Integer.parseInt(list.get(nbt.getInteger(contextSize))), res.sideHit);
-			    		
-			    		String xKey1 = "x"+index1;
-			    		String yKey1 = "y"+index1;
-			    		String zKey1 = "z"+index1;
-			    		
-			    		String xKey2 = "x"+index2;
-			    		String yKey2 = "y"+index2;
-			    		String zKey2 = "z"+index2;
-			    		
-						double x1 = posEdit[0];
-						double y1 = posEdit[1];
-						double z1 = posEdit[2];
-						
-						double x2 = posEdit[0];
-						double y2 = posEdit[1];
-						double z2 = posEdit[2];
-						//System.out.println(x1);
-						if(nbt.hasKey("x"+index1)) {
-							x1 = Double.parseDouble(nbt.getString(xKey1));
-				    		y1 = Double.parseDouble(nbt.getString(yKey1));
-				    		z1 = Double.parseDouble(nbt.getString(zKey1));
-						}
-							
-						if(nbt.hasKey("x"+index2)) {
-				    		x2 = Double.parseDouble(nbt.getString(xKey2));
-				    		y2 = Double.parseDouble(nbt.getString(yKey2));
-				    		z2 = Double.parseDouble(nbt.getString(zKey2));
-						}
+			    
+				PosData data = ItemTapeMeasure.data;
+				if(data != null) {
+				    for(int index : allIndexes) {
+			    		int index1 = index;
+			    		int index2 = index+1;
 	
-			    		if(nbt.getInteger("shape"+index1) == 0) {
-				    		Box box = new Box(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
-				    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
-				    		textList.addText("X: " + box.xString, color);
-				    		textList.addText("Y: " + box.yString, color);
-				    		textList.addText("Z: " + box.zString, color);
-			    		}else if(nbt.getInteger("shape"+index1) == 1) {
-			    			Line line = new Line(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
-				    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
-				    		textList.addText("Line: " +line.distance, color);
-			    		}		
-		    		}
+			    		if((nbt.hasKey("x"+index1) || nbt.hasKey("x"+index2)) || (nbt.hasKey("x"+index1) && nbt.hasKey("x"+index2))) { 
+				    		
+				    		String contextSize = "context"+index1;
+				    		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
+				    		
+							LittleAbsoluteVec pos = new LittleAbsoluteVec(data.result, LittleGridContext.get(Integer.parseInt(list.get(nbt.getInteger(contextSize)))));
+							double[] posEdit = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), Integer.parseInt(list.get(nbt.getInteger(contextSize))), data.result.sideHit);
+				    		
+				    		String xKey1 = "x"+index1;
+				    		String yKey1 = "y"+index1;
+				    		String zKey1 = "z"+index1;
+				    		
+				    		String xKey2 = "x"+index2;
+				    		String yKey2 = "y"+index2;
+				    		String zKey2 = "z"+index2;
+				    		
+							double x1 = posEdit[0];
+							double y1 = posEdit[1];
+							double z1 = posEdit[2];
+							
+							double x2 = posEdit[0];
+							double y2 = posEdit[1];
+							double z2 = posEdit[2];
+	
+							if(nbt.hasKey("x"+index1)) {
+								x1 = Double.parseDouble(nbt.getString(xKey1));
+					    		y1 = Double.parseDouble(nbt.getString(yKey1));
+					    		z1 = Double.parseDouble(nbt.getString(zKey1));
+							}
+								
+							if(nbt.hasKey("x"+index2)) {
+					    		x2 = Double.parseDouble(nbt.getString(xKey2));
+					    		y2 = Double.parseDouble(nbt.getString(yKey2));
+					    		z2 = Double.parseDouble(nbt.getString(zKey2));
+							}
+		
+				    		if(nbt.getInteger("shape"+index1) == 0) {
+					    		Box box = new Box(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
+					    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
+					    		textList.addText("X: " + box.xString, color);
+					    		textList.addText("Y: " + box.yString, color);
+					    		textList.addText("Z: " + box.zString, color);
+				    		}else if(nbt.getInteger("shape"+index1) == 1) {
+				    			Line line = new Line(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
+					    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
+					    		textList.addText("Line: " +line.distance, color);
+				    		}		
+			    		}
+				    }
 			    }
 			}
-			
-			try {
-				
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			
 			
 			textList.renderControl(helper, 0, getRect());
 			GlStateManager.popMatrix();
