@@ -16,6 +16,7 @@ import com.alet.gui.SubGuiTypeWriter;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.items.ItemColorTubeAlet;
 import com.alet.littletiles.items.ItemLittleChiselAlet;
+import com.alet.littletiles.items.ItemLittleGrabberAlet;
 import com.alet.structure.premade.LittlePhotoImporter;
 import com.alet.structure.premade.LittleTypeWriter;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
@@ -25,7 +26,9 @@ import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
+import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.item.ItemColorTube;
+import com.creativemd.littletiles.common.item.ItemLittleGrabber;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
 import com.creativemd.littletiles.server.LittleTilesServer;
@@ -36,6 +39,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -85,6 +89,8 @@ public class ALET {
 		
 		LittleTiles.chisel = new ItemLittleChiselAlet().setUnlocalizedName("LTChisel").setRegistryName("littletiles", "chisel");
 		LittleTiles.colorTube = new ItemColorTubeAlet().setUnlocalizedName("LTColorTube").setRegistryName("littletiles", "colorTube");
+		LittleTiles.grabber = new ItemLittleGrabberAlet().setUnlocalizedName("LTGrabber").setRegistryName("littletiles", "grabber");
+		
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
 		smoothOakPlank = new BasicBlock("smoothoakplank");
 		smoothDarkOakPlank = new BasicBlock("smoothdarkoakplank");
@@ -139,6 +145,21 @@ public class ALET {
 			}
 		});
 		
+		GuiHandler.registerGuiHandler("grabberAlet", new CustomGuiHandler() {
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+				ItemStack stack = player.getHeldItemMainhand();
+				return ItemLittleGrabberAlet.getMode(stack).getGui(player, stack, ((ILittleTile) stack.getItem()).getPositionContext(stack));
+			}
+			
+			@Override
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+				ItemStack stack = player.getHeldItemMainhand();
+				return ItemLittleGrabberAlet.getMode(stack).getContainer(player, stack);
+			}
+		});
 	}
 	
 	@SubscribeEvent

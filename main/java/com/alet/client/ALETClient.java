@@ -19,6 +19,8 @@ import com.creativemd.littletiles.client.render.overlay.OverlayControl;
 import com.creativemd.littletiles.client.render.overlay.OverlayRenderer.OverlayPositionType;
 import com.creativemd.littletiles.common.util.shape.DragShape;
 import com.creativemd.littletiles.common.util.shape.DragShapeBox;
+import com.creativemd.littletiles.common.util.shape.SelectShape;
+import com.creativemd.littletiles.common.util.shape.SelectShape.DragSelectShape;
 import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.client.settings.KeyBinding;
@@ -34,19 +36,20 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ALETClient extends LittleTilesServer {
 
 	public static final DragShape triangle = new DragShapeTriangle();
+	public static final DragSelectShape triangleSelect = new DragSelectShape(triangle);
+
 	public static KeyBinding clearMeasurment;
 
 	@Override
 	public void loadSidePre() {
-
+		DragShape.registerDragShape(triangle);
+		SelectShape.registerShape(triangleSelect);
 	}
 	
 	@Override
 	public void loadSidePost() {
 		clearMeasurment = new KeyBinding("Clear Measurement", net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL, KeyModifier.ALT, Keyboard.KEY_C, "key.categories.littletiles");
 		ClientRegistry.registerKeyBinding(clearMeasurment);
-		
-		DragShape.registerDragShape(triangle);
 		
 		MinecraftForge.EVENT_BUS.register(new TapeRenderer());		
 		MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());

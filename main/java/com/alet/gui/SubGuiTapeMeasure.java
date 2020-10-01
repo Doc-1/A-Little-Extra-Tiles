@@ -165,10 +165,10 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		GuiColoredSteppedSliderAlet sliderB = (GuiColoredSteppedSliderAlet) colorPicker.get("b");
 		
 		colorPicker.color = ColorUtilsAlet.IntToRGBA(color);
-		
 		sliderR.value = ColorUtilsAlet.IntToRGBA(color).getRed();
 		sliderG.value = ColorUtilsAlet.IntToRGBA(color).getGreen();
 		sliderB.value = ColorUtilsAlet.IntToRGBA(color).getBlue();
+		colorPicker.updateShadeSlider();
 
 		contextBox.select(context);
 		contextBox.index = context;
