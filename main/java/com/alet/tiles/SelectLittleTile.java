@@ -8,8 +8,6 @@ import net.minecraft.util.math.Vec3d;
 
 public class SelectLittleTile {
 
-	public EnumFacing facing;
-
 	public double boxMinX;
 	public double boxMinY;
 	public double boxMinZ;
@@ -42,10 +40,9 @@ public class SelectLittleTile {
 
 	}
 	
-	public SelectLittleTile(Vec3d center, LittleGridContext con, EnumFacing side) {
+	public SelectLittleTile(Vec3d center, LittleGridContext con) {
 		context = con;
 		gridOffSet = context.pixelSize;
-		facing = side;
 
 		boxMinX = center.x;
 		boxMinY = center.y;
@@ -65,7 +62,6 @@ public class SelectLittleTile {
 	public SelectLittleTile(LittleAbsoluteVec corner, LittleGridContext con, EnumFacing side) {
 		context = con;
 		gridOffSet = context.pixelSize;
-		facing = side;
 
 		boxMinY = corner.getPosY();
 		boxMinX = corner.getPosX();

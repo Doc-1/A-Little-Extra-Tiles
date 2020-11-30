@@ -13,6 +13,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALET;
 import com.alet.font.FontReader;
+import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
@@ -54,6 +55,7 @@ public class SubGuiTypeWriter extends SubGui {
 		controls.add(input);
 		
 		GuiComboBox fontType = new GuiComboBox("fontType", 20, 19, 150, names);
+		
 		int index = names.indexOf(fontType.caption);
 		fontType.select(names.get(index));
 		controls.add(fontType);

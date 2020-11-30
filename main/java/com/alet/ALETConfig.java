@@ -13,12 +13,14 @@ public class ALETConfig {
 	//CLIENT Only read from Client. Server doesn't need to know about it
 	//SERVER Only read from Server. Client doesn't need to know about it
 	//UNIVERSAL Server will push it's config to Client
-	
 	@CreativeConfig(type = ConfigSynchronization.CLIENT)
 	public static Client client = new Client();
 	
 	//@CreativeConfig(type = ConfigSynchronization.SERVER)
 	//public static Server server = new Server();
+	
+	@CreativeConfig
+	public static Recipe recipe = new Recipe();
 	
 	@CreativeConfig(type = ConfigSynchronization.UNIVERSAL)
 	public static Universal universal = new Universal();
@@ -49,6 +51,19 @@ public class ALETConfig {
 		@CreativeConfig
 		public List<String> measurementDisplay = Arrays.asList("Mmm", "Mcm", "Min");
 	}
+	
+	public static class Recipe {
+		@CreativeConfig
+		@CreativeConfig.IntRange(min = 0, max = 239)
+		public int colorAccuracy = 0;
+		@CreativeConfig
+		public List<String> measurementName = Arrays.asList("mm", "cm", "in");
+		@CreativeConfig
+		public List<String> measurementEquation = Arrays.asList("M", "M/10", "M*(1/25.4)");
+		@CreativeConfig
+		public List<String> measurementDisplay = Arrays.asList("Mmm", "Mcm", "Min");
+	}
+	
 	public boolean isAllowURL() {
 		return universal.allowURL;
 	}

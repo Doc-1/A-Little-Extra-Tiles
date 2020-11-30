@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.alet.CommonProxy;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
+import com.alet.common.util.shape.DragShapeSliceWall;
 import com.alet.common.util.shape.DragShapeTriangle;
 import com.alet.gui.GuiAxisIndicatorAletControl;
 import com.alet.gui.GuiDisplayMeasurements;
@@ -36,6 +37,8 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ALETClient extends LittleTilesServer {
 
 	public static final DragShape triangle = new DragShapeTriangle();
+	public static final DragShape SliceWall = new DragShapeSliceWall();
+
 	public static final DragSelectShape triangleSelect = new DragSelectShape(triangle);
 
 	public static KeyBinding clearMeasurment;
@@ -43,6 +46,8 @@ public class ALETClient extends LittleTilesServer {
 	@Override
 	public void loadSidePre() {
 		DragShape.registerDragShape(triangle);
+		//DragShape.registerDragShape(SliceWall);
+
 		SelectShape.registerShape(triangleSelect);
 	}
 	

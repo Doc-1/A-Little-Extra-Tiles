@@ -10,10 +10,13 @@ import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
+import net.minecraft.util.text.TextFormatting;
+
 public class GuiOverlayTextList extends GuiOverlayControl {
 	
 	public ArrayList<String> text = new ArrayList<String>();
 	public ArrayList<Integer> color = new ArrayList<Integer>();
+	
 	
 	public GuiOverlayTextList(String name, int x, int y, int width, GuiParent parent) {
 		super(name, x, y, width, font.FONT_HEIGHT);
@@ -40,6 +43,7 @@ public class GuiOverlayTextList extends GuiOverlayControl {
 		}
 		height = y + getContentOffset() * 2;
 	}
+	
 	
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {

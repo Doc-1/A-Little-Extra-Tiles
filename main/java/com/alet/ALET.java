@@ -7,6 +7,7 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 
 import com.alet.blocks.BasicBlock;
+import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.container.SubContainerBlock;
 import com.alet.container.SubContainerPhotoImport;
 import com.alet.container.SubContainerTypeWriter;
@@ -19,11 +20,13 @@ import com.alet.littletiles.items.ItemLittleChiselAlet;
 import com.alet.littletiles.items.ItemLittleGrabberAlet;
 import com.alet.structure.premade.LittlePhotoImporter;
 import com.alet.structure.premade.LittleTypeWriter;
+import com.alet.structure.premade.Testing;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
+import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.api.ILittleTile;
@@ -86,6 +89,7 @@ public class ALET {
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent event) {
 		proxy.loadSidePre();
+
 		
 		LittleTiles.chisel = new ItemLittleChiselAlet().setUnlocalizedName("LTChisel").setRegistryName("littletiles", "chisel");
 		LittleTiles.colorTube = new ItemColorTubeAlet().setUnlocalizedName("LTColorTube").setRegistryName("littletiles", "colorTube");
@@ -194,6 +198,7 @@ public class ALET {
 	
 	@EventHandler
 	public void Init(FMLInitializationEvent event) {
+		CreativeCorePacket.registerPacket(PacketUpdateNBT.class);
 		CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
 		
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);

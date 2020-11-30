@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.util.Color;
 
+import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.gui.SubGuiTapeMeasure;
 import com.alet.render.tapemeasure.TapeRenderer;
@@ -20,6 +21,7 @@ import com.alet.render.tapemeasure.shape.Line;
 import com.alet.tiles.Measurement;
 import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.client.key.ExtendedKeyBinding;
+import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
@@ -36,6 +38,7 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -47,6 +50,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.server.SPacketEntityEquipment;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
@@ -57,6 +62,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -141,7 +147,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
 	public boolean onRightClick(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		int index = 0;
 		int contextSize = 1;
@@ -164,14 +169,12 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		nbt.setString("facing"+(index*2), position.facing.getName());
 		
 		writeNBTData(stack, nbt);
-		readNBTData(stack);
+		PacketHandler.sendPacketToServer(new PacketUpdateNBT(nbt));
+		
 		return false;
 	}
 	
-	
-	
 	@Override
-	@SideOnly(Side.CLIENT)
 	public boolean onClickBlock(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		int index = 0;
 		int contextSize = 1;
@@ -194,13 +197,15 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		nbt.setString("facing"+((index*2)+1), position.facing.getName());
 		
 		writeNBTData(stack, nbt);
-		readNBTData(stack);
+		
+		PacketHandler.sendPacketToServer(new PacketUpdateNBT(nbt));
+		
 		return false;
 	}
 	
 	@Override
 	public void onDeselect(EntityPlayer player, ItemStack stack) {
-		System.out.println();
+		
 	}
 	
 	public class PosData {
@@ -222,24 +227,26 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		NBTTagCompound nbt = stack.getTagCompound();
 		List<String> list = LittleGridContext.getNames();
 
-		int index = nbt.getInteger("index")*2;
-		int index1 = index;
-		int index2 = index+1;
-		int contextSize = (nbt.hasKey("context"+index1)) ? Integer.parseInt(list.get(nbt.getInteger("context"+index1))) : Integer.parseInt(list.get(0));
-		
-		LittleAbsoluteVec pos = new LittleAbsoluteVec(result, LittleGridContext.get(contextSize));
-		double[] posEdit = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, result.sideHit);
-		
-		SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize), result.sideHit);
-		SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize), result.sideHit);
-		SelectLittleTile tilePosCursor = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize), result.sideHit);
-		data = new PosData(tilePosMin, tilePosMax, tilePosCursor, result);
-		
-		TapeRenderer.renderCursor(nbt, index1, contextSize, tilePosCursor);
+		if(nbt.hasKey("index")) {
+			int index = nbt.getInteger("index")*2;
+			int index1 = index;
+			int index2 = index+1;
+			int contextSize = (nbt.hasKey("context"+index1)) ? Integer.parseInt(list.get(nbt.getInteger("context"+index1))) : Integer.parseInt(list.get(0));
+			
+			LittleAbsoluteVec pos = new LittleAbsoluteVec(result, LittleGridContext.get(contextSize));
+			double[] posEdit = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, result.sideHit);
+			
+			SelectLittleTile tilePosMin = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize));
+			SelectLittleTile tilePosMax = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize));
+			SelectLittleTile tilePosCursor = new SelectLittleTile(new Vec3d(posEdit[0], posEdit[1], posEdit[2]), LittleGridContext.get(contextSize));
+			data = new PosData(tilePosMin, tilePosMax, tilePosCursor, result);
+			
+			TapeRenderer.renderCursor(nbt, index1, contextSize, tilePosCursor);
+		}
 	}
 
+	
 	public void onKeyPress(int pressedKey, EntityPlayer player, ItemStack stack) {
-		System.out.println(pressedKey);
 		if(pressedKey == TapeMeasureKeyEventHandler.CLEAR) {
 			clear(stack, stack.getTagCompound().getInteger("index"));
 		}
@@ -266,12 +273,30 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	@Override
 	public void rotateLittlePreview(EntityPlayer player, ItemStack stack, Rotation rotation) {
-		
+		NBTTagCompound nbt = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
+		if(nbt.hasKey("index")) {
+			int index = nbt.getInteger("index");
+	
+			if(rotation == Rotation.Z_CLOCKWISE) 
+				index--;
+			if(rotation == Rotation.Z_COUNTER_CLOCKWISE) 
+				index++;
+			
+			if(index > 9) 
+				index = 0;
+			else if(index < 0) 
+				index = 9;
+			
+			nbt.setInteger("index", index);
+			
+			stack.setTagCompound(nbt);
+			
+		}
 	}
 	
 	@Override
-	public void flipLittlePreview(EntityPlayer player, ItemStack stack, Axis axis) {
-
+	public void flipLittlePreview(EntityPlayer player, ItemStack stack, Axis axis) { 
+		
 	}
 	
 	@Override

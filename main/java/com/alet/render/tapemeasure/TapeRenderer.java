@@ -9,6 +9,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALET;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
+import com.alet.gui.GuiDisplayMeasurements;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.items.ItemTapeMeasure.PosData;
 import com.alet.render.string.StringRenderer;
@@ -23,6 +24,8 @@ import com.creativemd.littletiles.client.render.overlay.PreviewRenderer;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
+import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
+import com.creativemd.littletiles.common.tile.math.vec.LittleVecContext;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.ingredient.LittleIngredients;
 import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
@@ -39,6 +42,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -62,7 +66,7 @@ public class TapeRenderer {
 	public static Tessellator tessellator = Tessellator.getInstance();
 	public static BufferBuilder bufferbuilder = tessellator.getBuffer();
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	@SideOnly(Side.CLIENT)
 	public void render(RenderWorldLastEvent event) {
 		player = mc.player;
@@ -111,6 +115,7 @@ public class TapeRenderer {
 		bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
 		PosData data = ItemTapeMeasure.data;
 		if(data != null) {
+			List<AxisAlignedBB> boxes = new ArrayList<AxisAlignedBB>();
 		    for(int index : allIndexes) {
 	    		int index1 = index;
 	    		int index2 = index+1;
@@ -136,15 +141,16 @@ public class TapeRenderer {
 				boolean[] shouldRender = {false, false};
 				if(nbt.hasKey("x"+index1)) { //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
 					tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index1)), Double.parseDouble(nbt.getString("y"+index1)),
-						Double.parseDouble(nbt.getString("z"+index1))),LittleGridContext.get(contextSize), data.result.sideHit);
+						Double.parseDouble(nbt.getString("z"+index1))),LittleGridContext.get(contextSize));
 					shouldRender[0] = true;
 				}
 				
 				if(nbt.hasKey("x"+index2)) { //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
 					tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x"+index2)), Double.parseDouble(nbt.getString("y"+index2)),
-						Double.parseDouble(nbt.getString("z"+index2))),LittleGridContext.get(contextSize), data.result.sideHit);
+						Double.parseDouble(nbt.getString("z"+index2))),LittleGridContext.get(contextSize));
 					shouldRender[1] = true;
 				}
+				
 				
 				if(shouldRender[0] || shouldRender[1])
 					if(nbt.getInteger("shape"+index1) == 0) {
@@ -156,6 +162,7 @@ public class TapeRenderer {
 					}
 		    }
 		}
+		
 		tessellator.draw();
 
 		GlStateManager.enableDepth();
@@ -163,6 +170,75 @@ public class TapeRenderer {
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();	
 	}
+	/***
+	 * 
+	 * @param playerPos
+	 * @param playerLookVector
+	 * @param boxes
+	 * Your list of things that player hovers over.
+	 * @param maxDistance
+	 * @return
+	 */
+	public static AxisAlignedBB getBox(Vec3d playerPos, Vec3d playerLookVector, List<AxisAlignedBB> boxes, double maxDistance) {
+	    double resultDistance = maxDistance;
+	    AxisAlignedBB result = null;
+	    AxisAlignedBB box = null;
+	    Vec3d startPos = null;
+	    Vec3d endPos = null;
+	    double distance = 0;
+	    
+	    for(int i = 0,m=boxes.size();i<m;i++) {
+	    	box = boxes.get(i);
+        	endPos = playerPos.addVector(playerLookVector.x * maxDistance, playerLookVector.y * maxDistance, playerLookVector.z * maxDistance);
+        	endPos = new Vec3d(endPos.x, endPos.y, endPos.z);
+        	startPos = new Vec3d(playerPos.x, playerPos.y, playerPos.z);
+	        distance = startPos.distanceTo(endPos);
+	    }
+	    for(double j = 0; j < distance; j += 0.25) {
+        	double x3 = startPos.x + (j/distance) * (endPos.x - startPos.x); 
+        	double y3 = startPos.y + (j/distance) * (endPos.y - startPos.y);
+        	double z3 = startPos.z + (j/distance) * (endPos.z - startPos.z); 
+        	Vec3d pointPos = getAccurateVec(x3, y3, z3);
+			LittleGridContext context = LittleGridContext.get(4);
+	        SelectLittleTile t = new SelectLittleTile(pointPos, context);
+	        
+			//Box.drawBox(t, context.size, 1.0F, 1.0F, 1.0F, 1.0F);
+
+	        if(contains(box, pointPos)) {
+	            result = box;
+	            resultDistance = distance;
+	            break;
+	        }
+	    }
+        	//box[-1555.25, 4.0, 81.0 -> -1553.75, 4.5, 81.75]
+	        //(-1555.5, 4.5, 81.5)
+	    return result;
+	}
+	
+	public static Vec3d getAccurateVec(double x, double y, double z) {
+		LittleGridContext context = LittleGridContext.get(4);
+		
+		x = context.toGridAccurate(x);
+		y = context.toGridAccurate(y);
+		z = context.toGridAccurate(z);
+		
+		BlockPos pos = new BlockPos((int) Math.floor(context.toVanillaGrid(x)), (int) Math.floor(context.toVanillaGrid(y)), (int) Math.floor(context.toVanillaGrid(z)));
+		LittleVecContext contextVec = new LittleVecContext(new LittleVec((int) (x - context.toGridAccurate(pos.getX())), (int) (y - context.toGridAccurate(pos.getY())), (int) (z - context.toGridAccurate(pos.getZ()))), context);
+		
+		return new Vec3d(pos.getX() + contextVec.getPosX(), pos.getY() + contextVec.getPosY(), pos.getZ() + contextVec.getPosZ());
+	}
+	
+	/**
+     * Returns if the supplied Vec3D is completely inside the bounding box
+     */
+    public static boolean contains(AxisAlignedBB box, Vec3d vec) {
+        if (vec.x >= box.minX && vec.x <= box.maxX) {
+            if (vec.y >= box.minY && vec.y <= box.maxY) {
+                return vec.z >= box.minZ && vec.z <= box.maxZ;
+            }
+        }
+        return false;
+    }
 	
 	public static void renderCursor(NBTTagCompound nbt, int index1, int contextSize, SelectLittleTile tilePosCursor) {
 		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
