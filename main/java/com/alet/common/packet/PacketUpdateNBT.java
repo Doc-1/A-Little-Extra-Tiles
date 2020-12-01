@@ -21,7 +21,9 @@ public class PacketUpdateNBT extends CreativeCorePacket{
 	
 	private NBTTagCompound nbt;
 
-	public PacketUpdateNBT(NBTTagCompound nbt) {
+	public PacketUpdateNBT() {
+		ItemStack mainHand = Minecraft.getMinecraft().player.getHeldItemMainhand();
+		NBTTagCompound nbt = mainHand.hasTagCompound() ? mainHand.getTagCompound() : new NBTTagCompound();
 		this.nbt = nbt;
 	}
 	
@@ -41,7 +43,7 @@ public class PacketUpdateNBT extends CreativeCorePacket{
 
 	@Override
 	public void executeServer(EntityPlayer player) {
-		if (nbt.hasNoTags()) {
+		if(!nbt.hasNoTags()) {
             ItemStack mainHand = player.getHeldItemMainhand();
             mainHand.setTagCompound(nbt);
         }

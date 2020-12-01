@@ -155,6 +155,10 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		if(stack.hasTagCompound()) {
 			nbt = getNBTData(stack);
 			index = nbt.getInteger("index");
+			
+			if(!nbt.hasKey("context"+(index*2))) 
+				nbt.setInteger("context"+(index*2), 0);
+			
 			contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(index*2))));
 		}
 		
@@ -169,7 +173,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		nbt.setString("facing"+(index*2), position.facing.getName());
 		
 		writeNBTData(stack, nbt);
-		PacketHandler.sendPacketToServer(new PacketUpdateNBT(nbt));
+		PacketHandler.sendPacketToServer(new PacketUpdateNBT());
 		
 		return false;
 	}
@@ -183,6 +187,10 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		if(stack.hasTagCompound()) {
 			nbt = getNBTData(stack);
 			index = nbt.getInteger("index");
+
+			if(!nbt.hasKey("context"+(index*2))) 
+				nbt.setInteger("context"+(index*2), 0);
+			
 			contextSize = Integer.parseInt(list.get(nbt.getInteger("context"+(index*2))));
 		}
 		LittleGridContext context = LittleGridContext.get(contextSize);
@@ -197,8 +205,8 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		nbt.setString("facing"+((index*2)+1), position.facing.getName());
 		
 		writeNBTData(stack, nbt);
-		
-		PacketHandler.sendPacketToServer(new PacketUpdateNBT(nbt));
+
+		PacketHandler.sendPacketToServer(new PacketUpdateNBT());
 		
 		return false;
 	}

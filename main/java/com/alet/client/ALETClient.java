@@ -12,7 +12,6 @@ import com.alet.gui.GuiAxisIndicatorAletControl;
 import com.alet.gui.GuiDisplayMeasurements;
 import com.alet.gui.SubGuiTypeWriter;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.render.string.StringRenderer;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.client.LittleTilesClient;
