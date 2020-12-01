@@ -232,9 +232,9 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	@Override
 	public void tickPreview(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
-		NBTTagCompound nbt = stack.getTagCompound();
+		NBTTagCompound nbt = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
 		List<String> list = LittleGridContext.getNames();
-
+		
 		if(nbt.hasKey("index")) {
 			int index = nbt.getInteger("index")*2;
 			int index1 = index;

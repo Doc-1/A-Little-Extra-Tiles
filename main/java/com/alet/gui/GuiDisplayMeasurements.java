@@ -166,7 +166,10 @@ public class GuiDisplayMeasurements extends GuiControl{
 					    		textList.addText("Z: " + box.zString, color);
 				    		}else if(nbt.getInteger("shape"+index1) == 1) {
 				    			Line line = new Line(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
-					    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
+				    			if(((index/2)) == nbt.getInteger("index")) 
+						    		textList.addText(TextFormatting.UNDERLINE+"Measurment "+((index/2)+1), ColorUtils.WHITE);
+					    		else
+						    		textList.addText("Measurment "+((index/2)+1), ColorUtils.WHITE);
 					    		textList.addText("Line: " +line.distance, color);
 				    		}		
 			    		}
