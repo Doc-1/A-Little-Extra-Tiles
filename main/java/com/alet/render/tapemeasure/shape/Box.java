@@ -26,6 +26,10 @@ public class Box extends Shapes{
 	public Box(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
 		super(x1, y1, z1, x2, y2, z2, contextSize);
 		calculateDistance();
+		//double modifier = 1D/contextSize;
+		//xString = (Math.abs(pos.x - pos2.x)+modifier) + " mm";
+		//yString = (Math.abs(pos.y - pos2.y)+modifier) + " mm";
+		//zString = (Math.abs(pos.z - pos2.z)+modifier) + " mm";
 	}
 
 	public static String xString = "";

@@ -3,6 +3,7 @@ package com.alet.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.ALETConfig;
 import com.alet.gui.controls.GuiPanelWithBackground;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
@@ -87,6 +88,14 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		
 		int context = (nbt.hasKey("context"+(measurementIndex*2))) ? nbt.getInteger("context"+(measurementIndex*2)) : 0;
 		int color = (nbt.hasKey("color"+(measurementIndex*2))) ? nbt.getInteger("color"+(measurementIndex*2)) : ColorUtilsAlet.WHITE;
+		
+		/*
+		List<String> relativeMeasurement = new ArrayList<String>();
+		relativeMeasurement.add("tile");
+		relativeMeasurement.addAll(ALETConfig.client.measurementName);
+		GuiComboBox measurmentType = new GuiComboBox("measurmenttype", 100, 0, 25, relativeMeasurement);
+		controls.add(measurmentType);
+		*/
 		
 		contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(nbt.getInteger("context"+(measurementIndex*2)));

@@ -90,6 +90,7 @@ public class TapeRenderer {
 		//Makes sure it has at least one context. Without a context it will not render anything.
 		if(nbt.hasNoTags() || !nbt.hasKey("context0")) {
 			nbt.setInteger("context0", 0);
+			nbt.setInteger("index", 0);
 			stack.setTagCompound(nbt);
 		}
 		

@@ -116,7 +116,7 @@ public class GuiDisplayMeasurements extends GuiControl{
 			    		int index1 = index;
 			    		int index2 = index+1;
 	
-			    		if((nbt.hasKey("x"+index1) || nbt.hasKey("x"+index2)) || (nbt.hasKey("x"+index1) && nbt.hasKey("x"+index2))) { 
+			    		if((nbt.hasKey("x"+index1) || nbt.hasKey("x"+index2))) { 
 				    		
 				    		String contextSize = "context"+index1;
 				    		int color = (nbt.hasKey("color"+index1)) ? nbt.getInteger("color"+index1) : ColorUtils.WHITE;
@@ -164,6 +164,7 @@ public class GuiDisplayMeasurements extends GuiControl{
 					    		textList.addText("X: " + box.xString, color);
 					    		textList.addText("Y: " + box.yString, color);
 					    		textList.addText("Z: " + box.zString, color);
+					    		
 				    		}else if(nbt.getInteger("shape"+index1) == 1) {
 				    			Line line = new Line(x1, y1, z1, x2, y2, z2, Integer.parseInt(list.get(nbt.getInteger(contextSize))));
 				    			if(((index/2)) == nbt.getInteger("index")) 

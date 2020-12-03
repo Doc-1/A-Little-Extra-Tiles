@@ -43,10 +43,9 @@ public class DragShapeSliceWall extends DragShape {
 	public LittleBoxes getBoxes(LittleBoxes boxes, LittleVec min, LittleVec max, EntityPlayer player, NBTTagCompound nbt, boolean preview, LittleAbsoluteVec originalMin, LittleAbsoluteVec originalMax) {
 		LittleBox box = new LittleBox(min, max);
 		System.out.println(LittleSlice.values()[nbt.getInteger("slice")]);
-		LittleTransformableBox t = new LittleTransformableBox(min.x, min.y, min.z,
-				max.x, max.y, max.z, LittleSlice.values()[nbt.getInteger("slice")]);
+		
+		
 		//(one, two, minOne + endOne, minTwo + endTwo, minOne + startOne, minTwo + startTwo)
-		boxes.add(t);
 		
 		LittleBox.combineBoxesBlocks(boxes);
 		return boxes;

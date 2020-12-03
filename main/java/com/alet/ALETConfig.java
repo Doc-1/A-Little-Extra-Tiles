@@ -19,8 +19,8 @@ public class ALETConfig {
 	//@CreativeConfig(type = ConfigSynchronization.SERVER)
 	//public static Server server = new Server();
 	
-	@CreativeConfig
-	public static Recipe recipe = new Recipe();
+	//@CreativeConfig
+	//public static Recipe recipe = new Recipe();
 	
 	@CreativeConfig(type = ConfigSynchronization.UNIVERSAL)
 	public static Universal universal = new Universal();

@@ -31,6 +31,9 @@ public class Line extends Shapes{
 	public Line(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
 		super(x1, y1, z1, x2, y2, z2, contextSize);
 		calculateDistance();
+
+		//double modifier = 1D/contextSize;
+		//distance = (Math.floor((pos.distanceTo(pos2)+modifier)*contextSize))/contextSize+"";
 	}
 
 	public static String distance = "";
