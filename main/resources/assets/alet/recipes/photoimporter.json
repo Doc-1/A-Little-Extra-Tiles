@@ -5,9 +5,9 @@
     "structure": "photoimporter"
   },
   "pattern": [
-     " X ",
-     "XXX",
-     "XYX"
+    "XXX",
+    "XZX",
+    "XYX"
   ],
   "type": "littletiles:crafting_shaped_premade",
   "key": {
@@ -17,6 +17,9 @@
     "Y": {
       "item": "littletiles:recipeadvanced",
       "data": 0
+    },
+    "Z": {
+      "item": "minecraft:glass_pane"
     }
   }
 }

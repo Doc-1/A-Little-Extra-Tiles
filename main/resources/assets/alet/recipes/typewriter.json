@@ -5,9 +5,9 @@
     "structure": "typewriter"
   },
   "pattern": [
-    "XXX",
-    "XZX",
-    "XYX"
+     " X ",
+     "XXX",
+     "XYX"
   ],
   "type": "littletiles:crafting_shaped_premade",
   "key": {
@@ -17,9 +17,6 @@
     "Y": {
       "item": "littletiles:recipeadvanced",
       "data": 0
-    },
-    "Z": {
-      "item": "minecraft:glass_pane"
     }
   }
 }

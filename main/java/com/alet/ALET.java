@@ -1,9 +1,27 @@
 package com.alet;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.core.layout.HtmlLayout.FontSize;
 import org.lwjgl.input.Keyboard;
 
 import com.alet.blocks.BasicBlock;
@@ -37,6 +55,7 @@ import com.creativemd.littletiles.common.structure.type.premade.LittleStructureP
 import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,6 +63,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -90,7 +110,6 @@ public class ALET {
 	public void PreInit(FMLPreInitializationEvent event) {
 		proxy.loadSidePre();
 
-		
 		LittleTiles.chisel = new ItemLittleChiselAlet().setUnlocalizedName("LTChisel").setRegistryName("littletiles", "chisel");
 		LittleTiles.colorTube = new ItemColorTubeAlet().setUnlocalizedName("LTColorTube").setRegistryName("littletiles", "colorTube");
 		LittleTiles.grabber = new ItemLittleGrabberAlet().setUnlocalizedName("LTGrabber").setRegistryName("littletiles", "grabber");
@@ -212,7 +231,22 @@ public class ALET {
 	
 	public static List<String> getFonts() {
 		fontTypeNames = new ArrayList<>();
+
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		
+		File d = new File("./fonts");
+		if(!d.exists()) 
+			d.mkdir();
+		
+		try {
+			for (File file: d.listFiles()) 
+				ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));	
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+		}
+		
 		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+
 		for (int i = 0; i < fonts.length; i++) {
 			fontTypeNames.add(fonts[i]);
 		}

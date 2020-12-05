@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import com.alet.ALETConfig;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.alet.tiles.SelectLittleTile;
@@ -31,9 +32,6 @@ public class Line extends Shapes{
 	public Line(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
 		super(x1, y1, z1, x2, y2, z2, contextSize);
 		calculateDistance();
-
-		//double modifier = 1D/contextSize;
-		//distance = (Math.floor((pos.distanceTo(pos2)+modifier)*contextSize))/contextSize+"";
 	}
 
 	public static String distance = "";
@@ -80,12 +78,20 @@ public class Line extends Shapes{
 		String[] distArr = String.valueOf(dist).split("\\.");
 		double numerator = context.size * Double.parseDouble("0." + distArr[1]);
 		
-		if((int)(numerator)==0) 
-			distance = distArr[0] + " BLOCK";
-		else if(Integer.parseInt(distArr[0])==0)
-			distance =  (int) (numerator) + "/" + denominator + " TILE";
-		else 
-			distance =  distArr[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
+		if(ItemTapeMeasure.measurementType == 0) {
+			if((int)(numerator)==0) 
+				distance = distArr[0] + " BLOCK";
+			else if(Integer.parseInt(distArr[0])==0)
+				distance =  (int) (numerator) + "/" + denominator + " TILE";
+			else 
+				distance =  distArr[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
+		}else {
+			String measurementName = ALETConfig.client.measurementName.get(ItemTapeMeasure.measurementType-1);
+			double modifier = 1D/contextSize;
+			distance = cleanDouble(changeMesurmentType((Math.floor((pos.distanceTo(pos2)+modifier)*contextSize))/contextSize)) + " " + measurementName;
+		}
+		
+		
 	}
 	
 	

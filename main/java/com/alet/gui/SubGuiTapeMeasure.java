@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class SubGuiTapeMeasure extends SubGuiConfigure{
 	
+	public GuiComboBox measurmentTypeBox;
 	public GuiComboBox contextBox;
 	public GuiComboBox shapeBox;
 	public GuiComboBox indexBox;
@@ -43,6 +44,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		GuiColoredSteppedSliderAlet sliderG = (GuiColoredSteppedSliderAlet) colorPicker.get("g");
 		GuiColoredSteppedSliderAlet sliderB = (GuiColoredSteppedSliderAlet) colorPicker.get("b");
 
+		ItemTapeMeasure.measurementType = measurmentTypeBox.index;
+				
 		int r = (int) sliderR.value;
 		int g = (int) sliderG.value;
 		int b = (int) sliderB.value;
@@ -63,6 +66,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		GuiColoredSteppedSliderAlet sliderR = (GuiColoredSteppedSliderAlet) colorPicker.get("r");
 		GuiColoredSteppedSliderAlet sliderG = (GuiColoredSteppedSliderAlet) colorPicker.get("g");
 		GuiColoredSteppedSliderAlet sliderB = (GuiColoredSteppedSliderAlet) colorPicker.get("b");
+
+		ItemTapeMeasure.measurementType = measurmentTypeBox.index;
 		
 		int r = (int) sliderR.value;
 		int g = (int) sliderG.value;
@@ -89,13 +94,15 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		int context = (nbt.hasKey("context"+(measurementIndex*2))) ? nbt.getInteger("context"+(measurementIndex*2)) : 0;
 		int color = (nbt.hasKey("color"+(measurementIndex*2))) ? nbt.getInteger("color"+(measurementIndex*2)) : ColorUtilsAlet.WHITE;
 		
-		/*
+		
 		List<String> relativeMeasurement = new ArrayList<String>();
 		relativeMeasurement.add("tile");
 		relativeMeasurement.addAll(ALETConfig.client.measurementName);
-		GuiComboBox measurmentType = new GuiComboBox("measurmenttype", 100, 0, 25, relativeMeasurement);
-		controls.add(measurmentType);
-		*/
+		measurmentTypeBox = new GuiComboBox("measurmenttype", 85, 0, 25, relativeMeasurement);
+		measurmentTypeBox.select(ItemTapeMeasure.measurementType);
+		measurmentTypeBox.index = ItemTapeMeasure.measurementType;
+		controls.add(measurmentTypeBox);
+		
 		
 		contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(nbt.getInteger("context"+(measurementIndex*2)));

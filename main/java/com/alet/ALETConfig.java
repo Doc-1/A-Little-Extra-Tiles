@@ -32,8 +32,8 @@ public class ALETConfig {
 	public static class Universal {
 		@CreativeConfig
 		public boolean allowURL = true;
-		@CreativeConfig
-		public List<String> blockedSites = Arrays.asList("www.url.com", "www.url2.com");
+		//@CreativeConfig
+		//public List<String> blockedSites = Arrays.asList("www.url.com", "www.url2.com");
 		@CreativeConfig
 		public int maxPixelAmount = 9604;
 		@CreativeConfig
@@ -45,13 +45,12 @@ public class ALETConfig {
 		@CreativeConfig.IntRange(min = 0, max = 239)
 		public int colorAccuracy = 0;
 		@CreativeConfig
-		public List<String> measurementName = Arrays.asList("mm", "cm", "in");
+		public List<String> measurementName = Arrays.asList("m", "mm", "cm", "in");
 		@CreativeConfig
-		public List<String> measurementEquation = Arrays.asList("M", "M/10", "M*(1/25.4)");
-		@CreativeConfig
-		public List<String> measurementDisplay = Arrays.asList("Mmm", "Mcm", "Min");
+		public List<String> measurementEquation = Arrays.asList("M * 1", "M * 1000", "M * 100", "M * 39.3700787");
+		
 	}
-	
+	/*
 	public static class Recipe {
 		@CreativeConfig
 		@CreativeConfig.IntRange(min = 0, max = 239)
@@ -63,13 +62,13 @@ public class ALETConfig {
 		@CreativeConfig
 		public List<String> measurementDisplay = Arrays.asList("Mmm", "Mcm", "Min");
 	}
-	
+	*/
 	public boolean isAllowURL() {
 		return universal.allowURL;
 	}
 	
 	public List<String> getBlockedSites() {
-		return universal.blockedSites;
+		return null;
 	}
 	
 	public int getMaxPixelAmount() {

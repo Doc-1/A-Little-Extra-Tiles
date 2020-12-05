@@ -69,6 +69,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ItemTapeMeasure extends Item implements ILittleTile {
 	
 	public static PosData data;
+	public static int measurementType = 0;
 	
 	public void clear(ItemStack stack) {
 		writeNBTData(stack, new NBTTagCompound());

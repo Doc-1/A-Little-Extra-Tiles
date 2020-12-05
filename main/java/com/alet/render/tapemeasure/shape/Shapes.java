@@ -1,5 +1,14 @@
 package com.alet.render.tapemeasure.shape;
 
+import java.util.List;
+import java.util.Stack;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import com.alet.ALETConfig;
+import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.Rect;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -7,6 +16,7 @@ import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
+import scala.actors.threadpool.Arrays;
 
 public abstract class Shapes {
 
@@ -34,12 +44,96 @@ public abstract class Shapes {
 		return distence;
 	}
 	
-	private static double cleanDouble(double doub) {
-		String clean = String.format("%.2f", doub);
+	protected static double cleanDouble(double doub) {
+		String clean = String.format("%.3f", doub);
 		doub = Double.parseDouble(clean);
 		return doub;
 	}
 	
+	public static double changeMesurmentType(double toChange) {
+		int x = ItemTapeMeasure.measurementType;
+		if(x != 0) {
+			String s = ALETConfig.client.measurementEquation.get(x-1);
+			List<String> arg = Arrays.asList(s.split("M"));
+			if(arg.size() == 2) {
+				return evaluate(toChange + arg.get(1));
+			}
+		}
+		return 0;
+	}
+
+	/**
+     * Author: geeksforgeeks
+     * modified to take decimal
+     */
+	public static double evaluate(String expression) {
+        char[] tokens = expression.toCharArray();
+ 
+        Stack<Double> values = new Stack<Double>();
+        Stack<Character> ops = new Stack<Character>();
+ 
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i] == ' ')
+                continue;
+            if (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.') {
+                StringBuffer sbuf = new StringBuffer();
+                 
+                while (i < tokens.length && tokens[i] >= '0' && tokens[i] <= '9' || (i < tokens.length && tokens[i] == '.'))
+                    sbuf.append(tokens[i++]);
+                values.push(Double.parseDouble(sbuf.toString()));
+                i--;
+            } else if (tokens[i] == '(')
+                ops.push(tokens[i]);
+            else if (tokens[i] == ')') {
+                while (ops.peek() != '(')
+                  values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                ops.pop();
+            } else if (tokens[i] == '+' || tokens[i] == '-' || tokens[i] == '*' || tokens[i] == '/') {
+            	while (!ops.empty() && hasPrecedence(tokens[i], ops.peek()))
+            		values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                ops.push(tokens[i]);
+            }
+        }
+        while (!ops.empty())
+            values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+ 
+        return values.pop();
+    }
+	
+	/**
+     * Author: geeksforgeeks
+     */
+    public static boolean hasPrecedence(char op1, char op2) {
+        if (op2 == '(' || op2 == ')')
+            return false;
+        if ((op1 == '*' || op1 == '/') && 
+            (op2 == '+' || op2 == '-'))
+            return false;
+        else
+            return true;
+    }
+ 
+    /**
+     * Author: geeksforgeeks
+     */
+    public static double applyOp(char op, double b, double a) {
+        switch (op) {
+        case '+':
+            return a + b;
+        case '-':
+            return a - b;
+        case '*':
+            return a * b;
+        case '/':
+            if (b == 0)
+                throw new
+                UnsupportedOperationException(
+                      "Cannot divide by zero");
+            return a / b;
+        }
+        return 0;
+    }
+    
 	protected abstract void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize);
 	
 	public void calculateDistance() {

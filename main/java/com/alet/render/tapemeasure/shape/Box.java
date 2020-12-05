@@ -1,5 +1,6 @@
 package com.alet.render.tapemeasure.shape;
 
+import com.alet.ALETConfig;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.alet.tiles.Measurement;
@@ -26,10 +27,6 @@ public class Box extends Shapes{
 	public Box(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
 		super(x1, y1, z1, x2, y2, z2, contextSize);
 		calculateDistance();
-		//double modifier = 1D/contextSize;
-		//xString = (Math.abs(pos.x - pos2.x)+modifier) + " mm";
-		//yString = (Math.abs(pos.y - pos2.y)+modifier) + " mm";
-		//zString = (Math.abs(pos.z - pos2.z)+modifier) + " mm";
 	}
 
 	public static String xString = "";
@@ -244,34 +241,41 @@ public class Box extends Shapes{
 		String[] zDis = String.valueOf(zDistence).split("\\.");
 		double zNumerator = contextSize * Double.parseDouble("0." + zDis[1]);
 		
+		
 		String xStr = "";
 		String yStr = "";
 		String zStr = "";
 
-		if((int)(xNumerator)==0) 
-			xStr = xDis[0] + " BLOCK";
-		else if(Integer.parseInt(xDis[0])==0)
-			xStr = (int) (xNumerator) + "/" + denominator + " TILE";
-		else 
-			xStr = xDis[0] + " BLOCK " + (int) (xNumerator) + "/" + denominator + " TILE";
-		
-		if((int)(yNumerator)==0) 
-			yStr = yDis[0] + " BLOCK";
-		else if(Integer.parseInt(yDis[0])==0)
-			yStr = (int) (yNumerator) + "/" + denominator + " TILE";
-		else 
-			yStr = yDis[0] + " BLOCK " + (int) (yNumerator) + "/" + denominator + " TILE";
-		
-		if((int)(zNumerator)==0) 
-			zStr = zDis[0] + " BLOCK";
-		else if(Integer.parseInt(zDis[0])==0)
-			zStr = (int) (zNumerator) + "/" + denominator + " TILE";
-		else 
-			zStr = zDis[0] + " BLOCK " + (int) (zNumerator) + "/" + denominator + " TILE";
-		
-		xString = xStr;
-		yString = yStr;
-		zString = zStr;
+		if (ItemTapeMeasure.measurementType == 0) {
+			if((int)(xNumerator)==0) 
+				xStr = xDis[0] + " BLOCK";
+			else if(Integer.parseInt(xDis[0])==0)
+				xStr = (int) (xNumerator) + "/" + denominator + " TILE";
+			else 
+				xStr = xDis[0] + " BLOCK " + (int) (xNumerator) + "/" + denominator + " TILE";
+			
+			if((int)(yNumerator)==0) 
+				yStr = yDis[0] + " BLOCK";
+			else if(Integer.parseInt(yDis[0])==0)
+				yStr = (int) (yNumerator) + "/" + denominator + " TILE";
+			else 
+				yStr = yDis[0] + " BLOCK " + (int) (yNumerator) + "/" + denominator + " TILE";
+			
+			if((int)(zNumerator)==0) 
+				zStr = zDis[0] + " BLOCK";
+			else if(Integer.parseInt(zDis[0])==0)
+				zStr = (int) (zNumerator) + "/" + denominator + " TILE";
+			else 
+				zStr = zDis[0] + " BLOCK " + (int) (zNumerator) + "/" + denominator + " TILE";
+			
+			xString = xStr;
+			yString = yStr;
+			zString = zStr;
+		}else {
+			String measurementName = ALETConfig.client.measurementName.get(ItemTapeMeasure.measurementType-1);
+			xString = cleanDouble(changeMesurmentType((Math.abs(pos.x - pos2.x)+contDecimal))) + " " + measurementName;
+			yString = cleanDouble(changeMesurmentType((Math.abs(pos.y - pos2.y)+contDecimal))) + " " + measurementName;
+			zString = cleanDouble(changeMesurmentType((Math.abs(pos.z - pos2.z)+contDecimal))) + " " + measurementName;
+		}
 	}
-	
 }
