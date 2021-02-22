@@ -272,7 +272,7 @@ public class Box extends Shapes{
 			yString = yStr;
 			zString = zStr;
 		}else {
-			String measurementName = ALETConfig.client.measurementName.get(ItemTapeMeasure.measurementType-1);
+			String measurementName = ALETConfig.tapeMeasure.measurementName.get(ItemTapeMeasure.measurementType-1);
 			xString = cleanDouble(changeMesurmentType((Math.abs(pos.x - pos2.x)+contDecimal))) + " " + measurementName;
 			yString = cleanDouble(changeMesurmentType((Math.abs(pos.y - pos2.y)+contDecimal))) + " " + measurementName;
 			zString = cleanDouble(changeMesurmentType((Math.abs(pos.z - pos2.z)+contDecimal))) + " " + measurementName;

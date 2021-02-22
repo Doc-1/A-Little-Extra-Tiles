@@ -97,7 +97,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure{
 		
 		List<String> relativeMeasurement = new ArrayList<String>();
 		relativeMeasurement.add("tile");
-		relativeMeasurement.addAll(ALETConfig.client.measurementName);
+		relativeMeasurement.addAll(ALETConfig.tapeMeasure.measurementName);
 		measurmentTypeBox = new GuiComboBox("measurmenttype", 85, 0, 25, relativeMeasurement);
 		measurmentTypeBox.select(ItemTapeMeasure.measurementType);
 		measurmentTypeBox.index = ItemTapeMeasure.measurementType;

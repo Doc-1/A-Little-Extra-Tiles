@@ -86,7 +86,7 @@ public class Line extends Shapes{
 			else 
 				distance =  distArr[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
 		}else {
-			String measurementName = ALETConfig.client.measurementName.get(ItemTapeMeasure.measurementType-1);
+			String measurementName = ALETConfig.tapeMeasure.measurementName.get(ItemTapeMeasure.measurementType-1);
 			double modifier = 1D/contextSize;
 			distance = cleanDouble(changeMesurmentType((Math.floor((pos.distanceTo(pos2)+modifier)*contextSize))/contextSize)) + " " + measurementName;
 		}

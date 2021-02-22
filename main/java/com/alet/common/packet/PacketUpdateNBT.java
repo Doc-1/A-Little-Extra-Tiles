@@ -1,5 +1,6 @@
 package com.alet.common.packet;
 
+import com.alet.ALET;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 
 import io.netty.buffer.ByteBuf;
@@ -22,9 +23,14 @@ public class PacketUpdateNBT extends CreativeCorePacket{
 	private NBTTagCompound nbt;
 
 	public PacketUpdateNBT() {
-		ItemStack mainHand = Minecraft.getMinecraft().player.getHeldItemMainhand();
-		NBTTagCompound nbt = mainHand.hasTagCompound() ? mainHand.getTagCompound() : new NBTTagCompound();
-		this.nbt = nbt;
+		
+	}
+	
+	public PacketUpdateNBT(ItemStack mainHand) {
+		if(mainHand.getItem().equals(ALET.tapeMeasure)) {
+			NBTTagCompound nbt = mainHand.hasTagCompound() ? mainHand.getTagCompound() : new NBTTagCompound();
+			this.nbt = nbt;
+		}
 	}
 	
 	@Override
@@ -43,8 +49,8 @@ public class PacketUpdateNBT extends CreativeCorePacket{
 
 	@Override
 	public void executeServer(EntityPlayer player) {
-		if(!nbt.hasNoTags()) {
-            ItemStack mainHand = player.getHeldItemMainhand();
+		ItemStack mainHand = player.getHeldItemMainhand();
+		if(mainHand.getItem().equals(ALET.tapeMeasure) && !nbt.hasNoTags()) {
             mainHand.setTagCompound(nbt);
         }
 	}

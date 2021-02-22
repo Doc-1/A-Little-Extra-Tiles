@@ -16,7 +16,7 @@ import org.apache.commons.io.IOUtils;
 import com.alet.ALET;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.common.block.BlockLTColored;
+import com.creativemd.littletiles.common.block.BlockLittleDyeable;
 import com.creativemd.littletiles.common.tile.LittleTileColored;
 import com.creativemd.littletiles.common.tile.combine.BasicCombiner;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
@@ -82,7 +82,7 @@ public class FontReader {
 							color = image.getRGB(x, image.getHeight() - y - 1);
 							
 							if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
-								LittleTileColored tile = new LittleTileColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
+								LittleTileColored tile = new LittleTileColored(LittleTiles.dyeableBlock, BlockLittleDyeable.LittleDyeableType.CLEAN.getMetadata(), color);
 								tile.setBox(new LittleBox(new LittleVec(x, y, 0)));
 								tiles.add(tile.getPreviewTile());
 							}

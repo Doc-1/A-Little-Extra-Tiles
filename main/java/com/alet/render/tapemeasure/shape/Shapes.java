@@ -1,5 +1,6 @@
 package com.alet.render.tapemeasure.shape;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -16,7 +17,6 @@ import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
-import scala.actors.threadpool.Arrays;
 
 public abstract class Shapes {
 
@@ -53,7 +53,7 @@ public abstract class Shapes {
 	public static double changeMesurmentType(double toChange) {
 		int x = ItemTapeMeasure.measurementType;
 		if(x != 0) {
-			String s = ALETConfig.client.measurementEquation.get(x-1);
+			String s = ALETConfig.tapeMeasure.measurementEquation.get(x-1);
 			List<String> arg = Arrays.asList(s.split("M"));
 			if(arg.size() == 2) {
 				return evaluate(toChange + arg.get(1));

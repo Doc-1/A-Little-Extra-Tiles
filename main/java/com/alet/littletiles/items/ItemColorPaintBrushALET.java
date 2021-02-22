@@ -19,7 +19,7 @@ import com.creativemd.littletiles.common.action.block.LittleActionColorBoxes;
 import com.creativemd.littletiles.common.action.block.LittleActionColorBoxes.LittleActionColorBoxesFiltered;
 import com.creativemd.littletiles.common.api.IBoxSelector;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
-import com.creativemd.littletiles.common.item.ItemHammer;
+import com.creativemd.littletiles.common.item.ItemLittleHammer;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.packet.LittleBlockPacket;
 import com.creativemd.littletiles.common.packet.LittleBlockPacket.BlockPacketAction;
@@ -49,9 +49,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemColorTubeAlet extends Item implements IBoxSelector {
+public class ItemColorPaintBrushALET extends Item implements IBoxSelector {
 	
-	public ItemColorTubeAlet() {
+	public ItemColorPaintBrushALET() {
 		setCreativeTab(LittleTiles.littleTab);
 		hasSubtypes = true;
 		setMaxStackSize(1);
@@ -147,21 +147,24 @@ public class ItemColorTubeAlet extends Item implements IBoxSelector {
 	@SideOnly(Side.CLIENT)
 	public boolean onClickBlock(World world, ItemStack stack, EntityPlayer player, RayTraceResult result, LittleAbsoluteVec absoluteHit) {
 		SelectShape shape = getShape(stack);
-		if (LittleAction.isUsingSecondMode(player)) {
-			if (!world.isRemote)
-				return true;
-			TileEntity tileEntity = world.getTileEntity(result.getBlockPos());
-			if (tileEntity instanceof TileEntityLittleTiles)
-				PacketHandler.sendPacketToServer(new LittleBlockPacket(world, result.getBlockPos(), player, BlockPacketAction.COLOR_TUBE, new NBTTagCompound()));
-			else
-				PacketHandler.sendPacketToServer(new LittleVanillaBlockPacket(result.getBlockPos(), VanillaBlockAction.COLOR_TUBE));
-		} else if (shape.leftClick(player, stack.getTagCompound(), result, getContext(stack))) {
-			if (ItemHammer.isFiltered())
-				new LittleActionColorBoxesFiltered(shape.getBoxes(world, result.getBlockPos(), player, stack.getTagCompound(), result, getContext(stack)), getColor(stack), false, ItemHammer.getFilter()).execute();
-			else
-				new LittleActionColorBoxes(shape.getBoxes(world, result.getBlockPos(), player, stack.getTagCompound(), result, getContext(stack)), getColor(stack), false).execute();
-		}
-		return true;
+        if (LittleAction.isUsingSecondMode(player)) {
+            if (!world.isRemote)
+                return true;
+            TileEntity tileEntity = world.getTileEntity(result.getBlockPos());
+            if (tileEntity instanceof TileEntityLittleTiles)
+                PacketHandler.sendPacketToServer(new LittleBlockPacket(world, result.getBlockPos(), player, BlockPacketAction.COLOR_TUBE, new NBTTagCompound()));
+            else
+                PacketHandler.sendPacketToServer(new LittleVanillaBlockPacket(result.getBlockPos(), VanillaBlockAction.COLOR_TUBE));
+        } else if (shape.leftClick(player, stack.getTagCompound(), result, getContext(stack))) {
+            if (ItemLittleHammer.isFiltered())
+                new LittleActionColorBoxesFiltered(shape
+                    .getBoxes(world, result.getBlockPos(), player, stack.getTagCompound(), result, getContext(stack)), getColor(stack), false, ItemLittleHammer.getFilter())
+                        .execute();
+            else
+                new LittleActionColorBoxes(shape.getBoxes(world, result.getBlockPos(), player, stack.getTagCompound(), result, getContext(stack)), getColor(stack), false)
+                    .execute();
+        }
+        return true;
 	}
 	
 	@Override
@@ -186,11 +189,11 @@ public class ItemColorTubeAlet extends Item implements IBoxSelector {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public SubGuiConfigure getConfigureGUIAdvanced(EntityPlayer player, ItemStack stack) {
-		return new SubGuiGridSelector(stack, ItemMultiTiles.currentContext, ItemHammer.isFiltered(), ItemHammer.getFilter()) {
+		return new SubGuiGridSelector(stack, ItemMultiTiles.currentContext, ItemLittleHammer.isFiltered(), ItemLittleHammer.getFilter()) {
 			
 			@Override
 			public void saveConfiguration(LittleGridContext context, boolean activeFilter, TileSelector selector) {
-				ItemHammer.setFilter(activeFilter, selector);
+				ItemLittleHammer.setFilter(activeFilter, selector);
 				ItemMultiTiles.currentContext = context;
 			}
 		};

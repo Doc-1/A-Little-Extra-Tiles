@@ -182,7 +182,7 @@ public class SubGuiBlock extends SubGui {
 				PhotoReader.printBlock();
 				String path = texturePath.getPath();
 				GuiComboBox contextBox = (GuiComboBox) get("grid");
-				int grid = Integer.parseInt(contextBox.caption);
+				int grid = Integer.parseInt(contextBox.getCaption());
 				
 				GuiTextfield yScale = (GuiTextfield) get("yScale");
 				int resizeY = Integer.parseInt(yScale.text);

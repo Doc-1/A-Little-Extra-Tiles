@@ -174,7 +174,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		nbt.setString("facing"+(index*2), position.facing.getName());
 		
 		writeNBTData(stack, nbt);
-		PacketHandler.sendPacketToServer(new PacketUpdateNBT());
+		PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
 		
 		return false;
 	}
@@ -207,7 +207,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		
 		writeNBTData(stack, nbt);
 
-		PacketHandler.sendPacketToServer(new PacketUpdateNBT());
+		PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
 		
 		return false;
 	}

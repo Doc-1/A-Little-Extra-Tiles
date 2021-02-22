@@ -666,7 +666,7 @@ public class ItemLittleGrabberAlet extends Item implements ICreativeRendered, IL
 		@Override
 		@SideOnly(Side.CLIENT)
 		public List<RenderBox> getRenderingCubes(ItemStack stack) {
-			return LittlePreview.getCubes(stack);
+            return LittlePreview.getCubesForStackRendering(stack);
 		}
 		
 		@Override

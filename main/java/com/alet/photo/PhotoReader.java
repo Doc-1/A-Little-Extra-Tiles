@@ -3,6 +3,7 @@ package com.alet.photo;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import org.apache.commons.io.IOUtils;
 import com.alet.ALET;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.common.block.BlockLTColored;
+import com.creativemd.littletiles.common.block.BlockLittleDyeable;
 import com.creativemd.littletiles.common.tile.LittleTileColored;
 import com.creativemd.littletiles.common.tile.combine.BasicCombiner;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
@@ -171,40 +172,78 @@ public class PhotoReader {
 				int width = image.getWidth();
 				int height = image.getHeight();
 				
+				byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+			    boolean hasAlphaChannel = image.getAlphaRaster() != null;
+			    int[][] result = new int[height][width];
+			    
 				if (((width * height) < maxPixelAmount)) {
-					LittleGridContext context = LittleGridContext.get(grid);
-					List<LittlePreview> tiles = new ArrayList<>();
-					int expected = image.getWidth() * image.getHeight();
-					for (int x = 0; x < image.getWidth(); x++) {
-						for (int y = 0; y < image.getHeight(); y++) {
-							
-							if (ALET.CONFIG.isColorAccuracy()) {
-								roundedImage = new ColorAccuracy(image, x, image.getHeight() - y - 1);
-								color = roundedImage.roundRGB();
-							} else {
-								color = image.getRGB(x, image.getHeight() - y - 1);
-							}
-							
-							if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
-								LittleTileColored tile = new LittleTileColored(LittleTiles.coloredBlock, BlockLTColored.EnumType.clean.ordinal(), color);
-								tile.setBox(new LittleBox(new LittleVec(x, y, 0)));
-								tiles.add(tile.getPreviewTile());
-							}
+					
+				    if (hasAlphaChannel) {
+				    	final int pixelLength = 4;
+				    	for (int pixel = 0, row = height-1, col = 0; pixel + 3 < pixels.length; pixel += pixelLength) {
+				    		int argb = 0;
+			            	argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
+		            		argb += ((int) pixels[pixel + 1] & 0xff); // blue
+			            	argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
+		            		argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
+			            	result[row][col] = argb;
+			            	col++;
+			            	if (col == width) {
+			            		col = 0;
+			            		row--;
+			            	}
+				    	}
+				    } else {
+				    	final int pixelLength = 3;
+			    	  	for (int pixel = 0, row = height-1, col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
+			    	  		int argb = 0;
+			    	  		argb += -16777216; // 255 alpha
+			    	  		argb += ((int) pixels[pixel] & 0xff); // blue
+			            	argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
+			            	argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
+			            	result[row][col] = argb;
+			            	col++;
+			            	if (col == width) {
+			            		col = 0;
+			            		row--;
+			            	}
+			    	  	}
+				    }
+				}
+				 
+				LittleGridContext context = LittleGridContext.get(grid);
+				List<LittlePreview> tiles = new ArrayList<>();
+				LittleTileColored colorTile;
+				int expected = image.getWidth() * image.getHeight();
+				for(int row = 0; row < result.length; row++) 
+					for(int col = 0; col < result[row].length; col++) {
+						
+						if (ALET.CONFIG.isColorAccuracy()) {
+							color = ColorAccuracy.roundRGB(result[row][col]);
+						} else {
+							color = result[row][col];
+						}
+						
+						if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
+							colorTile = new LittleTileColored(LittleTiles.dyeableBlock, BlockLittleDyeable.LittleDyeableType.CLEAN.getMetadata(), color);
+							colorTile.setBox(new LittleBox(new LittleVec(col, row, 0)));
+							tiles.add(colorTile.getPreviewTile());
 						}
 					}
-					
-					BasicCombiner.combinePreviews(tiles); // minimize tiles used
-					
-					ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
-					LittlePreviews previews = new LittlePreviews(context);
-					for (LittlePreview tile : tiles) {
-						previews.addWithoutCheckingPreview(tile);
-					}
-					LittlePreview.savePreview(previews, stack); // save tiles to itemstacks
-					
-					return stack.getTagCompound();
+				
+				
+				//BasicCombiner.combinePreviews(tiles); // minimize tiles used
+				
+				ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
+				LittlePreviews previews = new LittlePreviews(context);
+				for (LittlePreview tile : tiles) {
+					previews.addWithoutCheckingPreview(tile);
 				}
+				LittlePreview.savePreview(previews, stack); // save tiles to itemstacks
+				
+				return stack.getTagCompound();
 			}
+			
 		} catch (IOException e) {
 			
 		} finally {
@@ -227,3 +266,7 @@ public class PhotoReader {
 	}
 	
 }
+
+/*
+ * 
+ */

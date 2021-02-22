@@ -16,6 +16,9 @@ public class ALETConfig {
 	@CreativeConfig(type = ConfigSynchronization.CLIENT)
 	public static Client client = new Client();
 	
+	@CreativeConfig(type = ConfigSynchronization.CLIENT)
+	public static TapeMeasure tapeMeasure = new TapeMeasure();
+	
 	//@CreativeConfig(type = ConfigSynchronization.SERVER)
 	//public static Server server = new Server();
 	
@@ -44,12 +47,15 @@ public class ALETConfig {
 		@CreativeConfig
 		@CreativeConfig.IntRange(min = 0, max = 239)
 		public int colorAccuracy = 0;
-		@CreativeConfig
-		public List<String> measurementName = Arrays.asList("m", "mm", "cm", "in");
-		@CreativeConfig
-		public List<String> measurementEquation = Arrays.asList("M * 1", "M * 1000", "M * 100", "M * 39.3700787");
-		
 	}
+	
+	public static class TapeMeasure {
+		@CreativeConfig
+		public List<String> measurementName = Arrays.asList("m", "mm", "cm", "in", "feet");
+		@CreativeConfig
+		public List<String> measurementEquation = Arrays.asList("M * 1", "M * 1000", "M * 100", "M * 39.3700787", "M * 3.28084");
+	}
+	
 	/*
 	public static class Recipe {
 		@CreativeConfig

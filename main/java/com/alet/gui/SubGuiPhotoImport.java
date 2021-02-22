@@ -8,6 +8,7 @@ import java.awt.datatransfer.Transferable;
 import java.io.IOException;
 
 import com.alet.ALET;
+import com.alet.gui.controls.GuiLongTextField;
 import com.alet.gui.controls.Layer;
 import com.alet.photo.PhotoReader;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -25,7 +26,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class SubGuiPhotoImport extends SubGui {
 	
-	public GuiTextfield file;
+	public GuiLongTextField file;
 	public GuiCheckBox useFile = null;
 	public GuiCheckBox useURL = null;
 	public GuiCheckBox keepAspect = null;
@@ -43,11 +44,17 @@ public class SubGuiPhotoImport extends SubGui {
 	public void createControls() {
 		imgWidth = (new GuiTextfield("imgWidth", "0", 93, 85, 30, 14) {
 			@Override
+			public void onTextChange() {
+				
+				super.onTextChange();
+			}
+			@Override
 			public boolean onKeyPressed(char character, int key) {
+				boolean result = super.onKeyPressed(character, key);
 				if (!imgWidth.text.isEmpty() && keepAspect.value) {
 					imgHeight.text = String.valueOf((int) (aspectRatio * Double.parseDouble(imgWidth.text)));
 				}
-				return super.onKeyPressed(character, key);
+				return result;
 			}
 		});
 		imgWidth.enabled = false;
@@ -57,11 +64,18 @@ public class SubGuiPhotoImport extends SubGui {
 		
 		imgHeight = (new GuiTextfield("imgHeight", "0", 135, 85, 30, 14) {
 			@Override
+			public void onTextChange() {
+				
+				super.onTextChange();
+			}
+			
+			@Override
 			public boolean onKeyPressed(char character, int key) {
+				boolean result = super.onKeyPressed(character, key);
 				if (!imgHeight.text.isEmpty() && keepAspect.value) {
 					imgWidth.text = String.valueOf((int) (Double.parseDouble(imgHeight.text) / aspectRatio));
 				}
-				return super.onKeyPressed(character, key);
+				return result;
 			}
 		});
 		imgHeight.enabled = false;
@@ -80,28 +94,37 @@ public class SubGuiPhotoImport extends SubGui {
 				int x2 = (int) Math.sqrt(x1);
 				int y1 = (int) (x2 / aspectRatio);
 				
-				if (Integer.parseInt(imgWidth.text) > Integer.parseInt(imgHeight.text)) {
-					imgHeight.text = String.valueOf(x2);
-					imgWidth.text = String.valueOf(y1);
-				} else if (Integer.parseInt(imgWidth.text) < Integer.parseInt(imgHeight.text)) {
-					imgHeight.text = String.valueOf(y1);
-					imgWidth.text = String.valueOf(x2);
-				} else {
-					imgHeight.text = String.valueOf(x2);
-					imgWidth.text = String.valueOf(x2);
+				int xa = Integer.parseInt(imgHeight.text);
+				int ya = Integer.parseInt(imgWidth.text);
+				System.out.println((xa * ya) + " " + x1);
+				if(xa * ya > x1) {
+					if (Integer.parseInt(imgWidth.text) > Integer.parseInt(imgHeight.text)) {
+						imgHeight.text = String.valueOf(x2);
+						imgWidth.text = String.valueOf(y1);
+					} else if (Integer.parseInt(imgWidth.text) < Integer.parseInt(imgHeight.text)) {
+						imgWidth.text = String.valueOf(y1);
+						imgHeight.text = String.valueOf(x2);
+					} else {
+						imgHeight.text = String.valueOf(x2);
+						imgWidth.text = String.valueOf(x2);
+					}
 				}
+				
+				
 			}
 		});
 		autoScale.enabled = false;
+		autoScale.setCustomTooltip("Shrinks Image down to max image size.");
 		controls.add(autoScale);
 		
 		GuiComboBox contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
 		controls.add(contextBox);
 		
-		controls.add(file = new GuiTextfield("file", "", 10, 26, 150, 14) {
+		controls.add(file = new GuiLongTextField("file", "", 10, 26, 150, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
+				boolean result = super.onKeyPressed(character, key);
 				if (PhotoReader.imageExists(file.text, useURL.value)) {
 					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
 					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
@@ -109,7 +132,6 @@ public class SubGuiPhotoImport extends SubGui {
 					imgWidth.enabled = true;
 					autoScale.enabled = true;
 					aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
-					System.out.println(aspectRatio);
 				} else {
 					imgHeight.text = "0";
 					imgWidth.text = "0";
@@ -117,10 +139,10 @@ public class SubGuiPhotoImport extends SubGui {
 					imgWidth.enabled = false;
 					autoScale.enabled = false;
 				}
-				
-				return super.onKeyPressed(character, key);
+				return result;
 			}
 		});
+		
 		
 		controls.add(useFile = new GuiCheckBox("useFile", translate("Use file path"), 40, -1, true) {
 			@Override
@@ -222,7 +244,7 @@ public class SubGuiPhotoImport extends SubGui {
 					PhotoReader.setScale(resizeX, resizeY);
 					
 					GuiComboBox contextBox = (GuiComboBox) get("grid");
-					int grid = Integer.parseInt(contextBox.caption);
+					int grid = Integer.parseInt(contextBox.getCaption());
 					try {
 						NBTTagCompound nbt = PhotoReader.photoToNBT(file.text, useURL.value, grid);
 						sendPacketToServer(nbt);

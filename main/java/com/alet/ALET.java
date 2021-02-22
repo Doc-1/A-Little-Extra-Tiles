@@ -4,8 +4,10 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,7 +35,7 @@ import com.alet.gui.SubGuiBlock;
 import com.alet.gui.SubGuiPhotoImport;
 import com.alet.gui.SubGuiTypeWriter;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.littletiles.items.ItemColorTubeAlet;
+import com.alet.littletiles.items.ItemColorPaintBrushALET;
 import com.alet.littletiles.items.ItemLittleChiselAlet;
 import com.alet.littletiles.items.ItemLittleGrabberAlet;
 import com.alet.structure.premade.LittlePhotoImporter;
@@ -48,7 +50,6 @@ import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.api.ILittleTile;
-import com.creativemd.littletiles.common.item.ItemColorTube;
 import com.creativemd.littletiles.common.item.ItemLittleGrabber;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
@@ -111,7 +112,7 @@ public class ALET {
 		proxy.loadSidePre();
 
 		LittleTiles.chisel = new ItemLittleChiselAlet().setUnlocalizedName("LTChisel").setRegistryName("littletiles", "chisel");
-		LittleTiles.colorTube = new ItemColorTubeAlet().setUnlocalizedName("LTColorTube").setRegistryName("littletiles", "colorTube");
+		LittleTiles.colorTube = new ItemColorPaintBrushALET().setUnlocalizedName("LTColorTube").setRegistryName("littletiles", "colorTube");
 		LittleTiles.grabber = new ItemLittleGrabberAlet().setUnlocalizedName("LTGrabber").setRegistryName("littletiles", "grabber");
 		
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
@@ -231,19 +232,42 @@ public class ALET {
 	
 	public static List<String> getFonts() {
 		fontTypeNames = new ArrayList<>();
-
+		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		
-		File d = new File("./fonts");
-		if(!d.exists()) 
-			d.mkdir();
-		
 		try {
-			for (File file: d.listFiles()) 
-				ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));	
+			File d = new File("./fonts");
+			if(!d.exists()) {
+				d.mkdir();
+				try {
+					String data = "Place any TrueTypeFont files in this folder to add them to the typewritter. \n"
+					+ "If you added any TrueTypeFont files while still in Minecraft you can run the commmand \n"
+					+ "/alet-updatefont to add the new fonts. Otherwise just launching Minecraft will gather \n"
+					+ "the new files.";
+					File f1 = new File("./fonts/README.txt");
+					if(!f1.exists()) 
+					   f1.createNewFile();
+					
+					BufferedWriter writer = new BufferedWriter(new FileWriter("./fonts/README.txt"));
+			    	writer.write(data);
+				    writer.close();
+			 	} catch(IOException e){
+		 			e.printStackTrace();
+		 		}
+			}
+			for (File file: d.listFiles()) {
+				String fileName = file.getName();
+		        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+		        	if(fileName.substring(fileName.lastIndexOf(".")+1).equals("ttf") || fileName.substring(fileName.lastIndexOf(".")+1).equals("otf"))
+						ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));		
+			}
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
+		
+		 
+		
+		
 		
 		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 

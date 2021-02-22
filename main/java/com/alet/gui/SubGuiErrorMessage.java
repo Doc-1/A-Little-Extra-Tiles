@@ -16,7 +16,7 @@ public class SubGuiErrorMessage extends SubGui {
 	
 	@Override
 	public void createControls() {
-		controls.add(new GuiTextBox("text", "Your Image is " + pixelSize + " pixels large. It must be at most "
+		controls.add(new GuiTextBox("text", "Your Image is " + (pixelSize +1) + " pixels large. It must be at most "
 				+ ALET.CONFIG.getMaxPixelAmount() + " pixels. You can click on \"Auto Scale Image?\" to scale"
 				+ " it down to a valid" + " size.\n\nTo change the limit and you are in single player"
 				+ " or owner of the server go to the config folder then open alet.json"

@@ -54,10 +54,10 @@ public class SubGuiTypeWriter extends SubGui {
 		input.setCustomTooltip("Text to Exported");
 		controls.add(input);
 		
-		GuiComboBox fontType = new GuiComboBox("fontType", 20, 19, 150, names);
+		GuiComboBox fontType = new GuiComboBox("fontType", 20, 19, 150, ALET.fontTypeNames);
 		
-		int index = names.indexOf(fontType.caption);
-		fontType.select(names.get(index));
+		int index = ALET.fontTypeNames.indexOf(fontType.getCaption());
+		fontType.select(ALET.fontTypeNames.get(index));
 		controls.add(fontType);
 		
 		search = (new GuiTextfield("search", "", 20, 0, 150, 14) {
@@ -66,14 +66,14 @@ public class SubGuiTypeWriter extends SubGui {
 			public boolean onKeyPressed(char character, int key) {
 				
 					List<String> foundFonts = new ArrayList<>();
-					for (int i = 0; i < names.size(); i++) {
-						if (names.get(i).toLowerCase().contains(search.text.toLowerCase()))
-							foundFonts.add(names.get(i));
+					for (int i = 0; i < ALET.fontTypeNames.size(); i++) {
+						if (ALET.fontTypeNames.get(i).toLowerCase().contains(search.text.toLowerCase()))
+							foundFonts.add(ALET.fontTypeNames.get(i));
 					}
 					if(!foundFonts.isEmpty()) {
 						fontType.lines = foundFonts;
-						int index = names.indexOf(foundFonts.get(0));
-						fontType.select(names.get(index));
+						int index = ALET.fontTypeNames.indexOf(foundFonts.get(0));
+						fontType.select(ALET.fontTypeNames.get(index));
 					}
 				
 				return super.onKeyPressed(character, key);
@@ -118,10 +118,10 @@ public class SubGuiTypeWriter extends SubGui {
 				int fontSize = Integer.parseInt(contextField.text);
 				
 				GuiComboBox contextBox = (GuiComboBox) get("fontType");
-				String font = contextBox.caption;
+				String font = contextBox.getCaption();
 				
 				GuiComboBox contextBox_2 = (GuiComboBox) get("grid");
-				int grid = Integer.parseInt(contextBox_2.caption);
+				int grid = Integer.parseInt(contextBox_2.getCaption());
 				
 				try {
 					NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color);

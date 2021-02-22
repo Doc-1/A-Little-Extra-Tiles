@@ -1,30 +1,24 @@
 package com.alet.photo;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import org.lwjgl.util.Color;
+
 import com.alet.ALET;
+import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 
 public class ColorAccuracy {
 	
-	private Color color;
-	private int colorAccuracy = ALET.CONFIG.getColorAccuracy();
+	private static int colorAccuracy = ALET.CONFIG.getColorAccuracy();
 	
-	public ColorAccuracy() {
-	}
-	
-	public ColorAccuracy(BufferedImage image, int x, int y) {
-		color = new Color(image.getRGB(x, y));
-	}
-	
-	public int roundRGB() {
+	public static int roundRGB(int colorInt) {
+		Color color = ColorUtilsAlet.IntToRGBA(colorInt);
 		int r = colorAccuracy * (Math.round(color.getRed() / colorAccuracy));
 		int g = colorAccuracy * (Math.round(color.getGreen() / colorAccuracy));
 		int b = colorAccuracy * (Math.round(color.getBlue() / colorAccuracy));
 		int a = color.getAlpha();
-		color = new Color(r, g, b, a);
 		
-		return color.getRGB();
+		return ColorUtilsAlet.RGBAToInt(r, g, b, a);
 	}
 	
 }
