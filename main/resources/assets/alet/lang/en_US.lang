@@ -14,3 +14,6 @@ config.alet.allowURL.comment=If disabled users cannot print via a URL link.
 config.alet.maxPixelAmount.comment=This will set the max number of pixels a photo can have when printing.
 config.alet.maxPixelText.comment=This will set the max number of pixels a text can have when printing.
 config.alet.colorAccuracy.comment=This will change how many colors the printer has access to. Zero is all available colors.
+
+
+structure.advanced_noclip.name=Advanced No-clip

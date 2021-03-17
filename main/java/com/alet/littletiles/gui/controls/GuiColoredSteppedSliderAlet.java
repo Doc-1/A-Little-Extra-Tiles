@@ -6,7 +6,6 @@ import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet.ColorPart;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiSteppedSlider;
 
 public class GuiColoredSteppedSliderAlet extends GuiSteppedSlider {

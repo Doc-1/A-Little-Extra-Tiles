@@ -10,11 +10,10 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiAvatarLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
-import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.LittleSubGuiUtils;
-import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
+import com.creativemd.littletiles.client.gui.SubGuiChisel;
 import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.item.ItemBlockTiles;
 import com.creativemd.littletiles.common.item.ItemLittleChisel;
@@ -23,15 +22,14 @@ import com.creativemd.littletiles.common.tile.math.box.LittleBox;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.shape.DragShape;
-import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-public class SubGuiChiselAlet extends SubGuiConfigure {
+public class SubGuiChiselAlet extends SubGuiChisel {
 	
 	public SubGuiChiselAlet(ItemStack stack) {
-		super(140, 180, stack);
+		super(stack);
 		this.stack = stack;
 	}
 	
@@ -62,24 +60,6 @@ public class SubGuiChiselAlet extends SubGuiConfigure {
 		controls.add(label);
 		
 		updateLabel();
-	}
-	
-	@CustomEventSubscribe
-	public void onComboBoxChange(GuiControlChangedEvent event) {
-		if (event.source.is("shape"))
-			onChange();
-		else if (event.source.is("picker", "preview"))
-			updateLabel();
-	}
-	
-	public void onChange() {
-		GuiComboBox box = (GuiComboBox) get("shape");
-		GuiScrollBox scroll = (GuiScrollBox) get("settings");
-		
-		DragShape shape = DragShape.getShape(box.getCaption());
-		scroll.controls.clear();
-		scroll.controls.addAll(shape.getCustomSettings(stack.getTagCompound(), getContext()));
-		scroll.refreshControls();
 	}
 	
 	public void updateLabel() {
@@ -128,4 +108,5 @@ public class SubGuiChiselAlet extends SubGuiConfigure {
 		
 		shape.saveCustomSettings(scroll, stack.getTagCompound(), getContext());
 	}
+	
 }

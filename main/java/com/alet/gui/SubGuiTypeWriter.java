@@ -13,8 +13,9 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALET;
 import com.alet.font.FontReader;
-import com.creativemd.creativecore.common.gui.GuiRenderHelper;
+import com.alet.gui.controls.GuiLongTextField;
 import com.creativemd.creativecore.common.gui.container.SubGui;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
@@ -30,13 +31,13 @@ public class SubGuiTypeWriter extends SubGui {
 	
 	public GuiTextfield input;
 	public GuiTextfield search;
-
+	
 	public static List<String> names = ALET.fontTypeNames;
 	
 	public int BLACK = ColorUtils.BLACK;
 	
 	public SubGuiTypeWriter() {
-		super(176, 190);
+		super(250, 190);
 	}
 	
 	@Override
@@ -50,7 +51,7 @@ public class SubGuiTypeWriter extends SubGui {
 		
 		controls.add(contextBox);
 		
-		input = new GuiTextfield("input", "", 20, 40, 100, 14);
+		input = new GuiLongTextField("input", "", 20, 40, 100, 14);
 		input.setCustomTooltip("Text to Exported");
 		controls.add(input);
 		
@@ -61,33 +62,34 @@ public class SubGuiTypeWriter extends SubGui {
 		controls.add(fontType);
 		
 		search = (new GuiTextfield("search", "", 20, 0, 150, 14) {
-			 
+			
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				
-					List<String> foundFonts = new ArrayList<>();
-					for (int i = 0; i < ALET.fontTypeNames.size(); i++) {
-						if (ALET.fontTypeNames.get(i).toLowerCase().contains(search.text.toLowerCase()))
-							foundFonts.add(ALET.fontTypeNames.get(i));
-					}
-					if(!foundFonts.isEmpty()) {
-						fontType.lines = foundFonts;
-						int index = ALET.fontTypeNames.indexOf(foundFonts.get(0));
-						fontType.select(ALET.fontTypeNames.get(index));
-					}
+				List<String> foundFonts = new ArrayList<>();
+				for (int i = 0; i < ALET.fontTypeNames.size(); i++) {
+					if (ALET.fontTypeNames.get(i).toLowerCase().contains(search.text.toLowerCase()))
+						foundFonts.add(ALET.fontTypeNames.get(i));
+				}
+				if (!foundFonts.isEmpty()) {
+					fontType.lines = foundFonts;
+					int index = ALET.fontTypeNames.indexOf(foundFonts.get(0));
+					fontType.select(ALET.fontTypeNames.get(index));
+				}
 				
 				return super.onKeyPressed(character, key);
 			}
-				
+			
 		});
 		
 		search.setCustomTooltip("Search For Font");
 		controls.add(search);
 		
+		controls.add(new GuiAnalogeSlider("rotation", 177, 0, 64, 20, 0, 0, 360));
+		
 		GuiTextfield fontSize = new GuiTextfield("fontSize", "48", 128, 40, 20, 14);
 		fontSize.setCustomTooltip("Font Size");
 		controls.add(fontSize);
-		
 		
 		controls.add(new GuiButton("Paste", 142, 82) {
 			
@@ -123,8 +125,10 @@ public class SubGuiTypeWriter extends SubGui {
 				GuiComboBox contextBox_2 = (GuiComboBox) get("grid");
 				int grid = Integer.parseInt(contextBox_2.getCaption());
 				
+				GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+				
 				try {
-					NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color);
+					NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color, rotation.value);
 					sendPacketToServer(nbt);
 				} catch (IOException e) {
 					e.printStackTrace();

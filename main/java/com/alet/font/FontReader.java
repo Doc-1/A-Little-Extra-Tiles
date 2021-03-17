@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +19,6 @@ import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.common.block.BlockLittleDyeable;
 import com.creativemd.littletiles.common.tile.LittleTileColored;
-import com.creativemd.littletiles.common.tile.combine.BasicCombiner;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
@@ -33,32 +33,53 @@ public class FontReader {
 	public static int fontSize;
 	public static String fontType;
 	
-	public static BufferedImage fontToPhoto(String text, String fontType, int fontSize, int fontColor) {
+	public static BufferedImage fontToPhoto(String text, String fontType, int fontSize, int fontColor, double rotation) {
 		if (text.equalsIgnoreCase("When Redstone?")) {
-			text = "In " + Math.random() * 100 + " months";
+			text = "Please read the FAQ in TeamCreative's Discord";
 		}
 		Color color = new Color(fontColor, true);
+		
 		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		
 		Graphics2D g2d = image.createGraphics();
+		
 		Font font = new Font(fontType, Font.PLAIN, fontSize);
 		g2d.setFont(font);
 		FontMetrics fm = g2d.getFontMetrics();
-		int width = fm.stringWidth(text) + 10;
-		int height = fm.getHeight();
+		int w = fm.stringWidth(text) + 10;
+		int h = fm.getHeight();
 		g2d.dispose();
 		
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		double rads = Math.toRadians(rotation);
+		double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
+		
+		int newWidth = (int) Math.floor(w * cos + h * sin);
+		int newHeight = (int) Math.floor(h * cos + w * sin);
+		
+		image = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+		
 		g2d = image.createGraphics();
+		AffineTransform at = new AffineTransform();
+		at.translate((newWidth - w) / 2, (newHeight - h) / 2);
+		
+		int x = w / 2;
+		int y = h / 2;
+		
+		at.rotate(rads, x, y);
+		
+		g2d.setTransform(at);
 		g2d.setFont(font);
 		fm = g2d.getFontMetrics();
 		g2d.setColor(color);
+		
 		g2d.drawString(text, 0, fm.getAscent());
+		
 		g2d.dispose();
 		
 		return image;
 	}
 	
-	public static NBTTagCompound photoToNBT(String input, String font, int grid, int fontSize, int fontColor) throws IOException {
+	public static NBTTagCompound photoToNBT(String input, String font, int grid, int fontSize, int fontColor, double rotation) throws IOException {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
@@ -66,7 +87,7 @@ public class FontReader {
 		int maxPixelAmount = ALET.CONFIG.getMaxPixelText();
 		
 		try {
-			image = fontToPhoto(input, font, fontSize, fontColor);
+			image = fontToPhoto(input, font, fontSize, fontColor, rotation);
 			
 			if (image != null) {
 				int width = image.getWidth();
@@ -88,8 +109,6 @@ public class FontReader {
 							}
 						}
 					}
-					
-					BasicCombiner.combinePreviews(tiles); // minimize tiles used
 					
 					ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
 					LittlePreviews previews = new LittlePreviews(context);

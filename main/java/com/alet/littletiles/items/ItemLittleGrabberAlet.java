@@ -2,8 +2,6 @@ package com.alet.littletiles.items;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -15,7 +13,6 @@ import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.creativemd.creativecore.client.avatar.AvatarItemStack;
 import com.creativemd.creativecore.client.rendering.RenderBox;
 import com.creativemd.creativecore.client.rendering.model.CreativeBakedModel;
-import com.creativemd.creativecore.client.rendering.model.ICreativeRendered;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAvatarLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiSteppedSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
@@ -26,17 +23,16 @@ import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.creativecore.common.utils.tooltip.TooltipUtils;
 import com.creativemd.creativecore.common.utils.type.Pair;
-
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.LittleSubGuiUtils;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
-import com.creativemd.littletiles.client.gui.configure.SubGuiModeSelector;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.action.block.LittleActionReplace;
 import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.block.BlockTile;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
 import com.creativemd.littletiles.common.item.ItemBlockTiles;
+import com.creativemd.littletiles.common.item.ItemLittleGrabber;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.packet.LittleBlockPacket;
 import com.creativemd.littletiles.common.packet.LittleBlockPacket.BlockPacketAction;
@@ -70,7 +66,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -78,14 +73,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemLittleGrabberAlet extends Item implements ICreativeRendered, ILittleTile {
+public class ItemLittleGrabberAlet extends ItemLittleGrabber {
 	
 	public ItemLittleGrabberAlet() {
 		setCreativeTab(LittleTiles.littleTab);
@@ -229,127 +223,6 @@ public class ItemLittleGrabberAlet extends Item implements ICreativeRendered, IL
 	@Override
 	public SubContainerConfigure getConfigureContainer(EntityPlayer player, ItemStack stack) {
 		return ItemLittleGrabberAlet.getMode(stack).getContainer(player, stack);
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public SubGuiConfigure getConfigureGUIAdvanced(EntityPlayer player, ItemStack stack) {
-		return new SubGuiModeSelector(stack, ItemMultiTiles.currentContext, ItemMultiTiles.currentMode) {
-			
-			@Override
-			public void saveConfiguration(LittleGridContext context, PlacementMode mode) {
-				ItemMultiTiles.currentContext = context;
-				ItemMultiTiles.currentMode = mode;
-			}
-			
-		};
-	}
-	
-	@Override
-	public LittleGridContext getPositionContext(ItemStack stack) {
-		return ItemMultiTiles.currentContext;
-	}
-	
-	public static GrabberMode getMode(String name) {
-		GrabberMode mode = GrabberMode.modes.get(name);
-		if (mode != null)
-			return mode;
-		return GrabberMode.defaultMode;
-	}
-	
-	public static GrabberMode getMode(ItemStack stack) {
-		if (!stack.hasTagCompound())
-			stack.setTagCompound(new NBTTagCompound());
-		
-		GrabberMode mode = GrabberMode.modes.get(stack.getTagCompound().getString("mode"));
-		if (mode != null)
-			return mode;
-		return GrabberMode.defaultMode;
-	}
-	
-	public static void setMode(ItemStack stack, GrabberMode mode) {
-		if (!stack.hasTagCompound())
-			stack.setTagCompound(new NBTTagCompound());
-		
-		stack.getTagCompound().setString("mode", mode.name);
-	}
-	
-	public static GrabberMode[] getModes() {
-		return GrabberMode.modes.values().toArray(new GrabberMode[0]);
-	}
-	
-	public static int indexOf(GrabberMode mode) {
-		GrabberMode[] modes = getModes();
-		for (int i = 0; i < modes.length; i++) {
-			if (modes[i] == mode)
-				return i;
-		}
-		return -1;
-	}
-	
-	public static abstract class GrabberMode {
-		
-		public static HashMap<String, GrabberMode> modes = new LinkedHashMap<>();
-		
-		public static PixelMode pixelMode = new PixelMode();
-		public static PlacePreviewMode placePreviewMode = new PlacePreviewMode();
-		public static ReplaceMode replaceMode = new ReplaceMode();
-		
-		public static GrabberMode defaultMode = pixelMode;
-		
-		public final String name;
-		public final String title;
-		
-		public GrabberMode(String name) {
-			this.name = name;
-			this.title = "grabber.mode." + name;
-			modes.put(name, this);
-		}
-		
-		public void addExtraInformation(NBTTagCompound nbt, List<String> tooltip) {
-			
-		}
-		
-		public String getLocalizedName() {
-			return I18n.translateToLocal(title);
-		}
-		
-		@SideOnly(Side.CLIENT)
-		public void onClickBlock(@Nullable World world, EntityPlayer player, ItemStack stack, @Nullable RayTraceResult result) {
-			
-		}
-		
-		@SideOnly(Side.CLIENT)
-		public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, RayTraceResult result) {
-			return true;
-		}
-		
-		@SideOnly(Side.CLIENT)
-		public abstract boolean onMouseWheelClickBlock(World world, EntityPlayer player, ItemStack stack, RayTraceResult result);
-		
-		@SideOnly(Side.CLIENT)
-		public abstract List<RenderBox> getRenderingCubes(ItemStack stack);
-		
-		@SideOnly(Side.CLIENT)
-		public abstract boolean renderBlockSeparately(ItemStack stack);
-		
-		@SideOnly(Side.CLIENT)
-		public abstract SubGuiGrabberAlet getGui(EntityPlayer player, ItemStack stack, LittleGridContext context);
-		
-		public abstract SubContainerConfigure getContainer(EntityPlayer player, ItemStack stack);
-		
-		public abstract LittlePreviews getPreviews(ItemStack stack);
-		
-		public abstract void setPreviews(LittlePreviews previews, ItemStack stack);
-		
-		public LittlePreview getSeparateRenderingPreview(ItemStack stack) {
-			return getPreviews(stack).get(0);
-		}
-		
-		public abstract void vanillaBlockAction(World world, ItemStack stack, BlockPos pos, IBlockState state);
-		
-		public abstract void littleBlockAction(World world, TileEntityLittleTiles te, LittleTile tile, ItemStack stack, BlockPos pos, NBTTagCompound nbt);
-		
 	}
 	
 	public static abstract class SimpleMode extends GrabberMode {
@@ -666,7 +539,7 @@ public class ItemLittleGrabberAlet extends Item implements ICreativeRendered, IL
 		@Override
 		@SideOnly(Side.CLIENT)
 		public List<RenderBox> getRenderingCubes(ItemStack stack) {
-            return LittlePreview.getCubesForStackRendering(stack);
+			return LittlePreview.getCubesForStackRendering(stack);
 		}
 		
 		@Override
@@ -682,7 +555,7 @@ public class ItemLittleGrabberAlet extends Item implements ICreativeRendered, IL
 				
 				@Override
 				public void saveConfiguration() {
-				
+					
 				}
 				
 			};
