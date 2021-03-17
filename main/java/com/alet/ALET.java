@@ -21,8 +21,7 @@ import com.alet.gui.SubGuiPhotoImport;
 import com.alet.gui.SubGuiTypeWriter;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.littletiles.common.structure.type.LittleFixedActivatorStructureALET;
-import com.alet.littletiles.common.structure.type.LittleFixedActivatorStructureALET.LittleFixedActivatorStructureParserALET;
+import com.alet.littletiles.common.structure.type.LittleLockALET;
 import com.alet.littletiles.common.structure.type.LittleNoClipStructureALET;
 import com.alet.littletiles.items.ItemLittleChiselAlet;
 import com.alet.littletiles.items.ItemLittleGrabberAlet;
@@ -42,7 +41,7 @@ import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.attribute.LittleStructureAttribute;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
-import com.creativemd.littletiles.common.structure.type.LittleStorage.LittleStorageType;
+import com.creativemd.littletiles.common.structure.signal.logic.SignalMode;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
 import com.creativemd.littletiles.server.LittleTilesServer;
 
@@ -173,9 +172,10 @@ public class ALET {
 				return ItemLittleGrabberAlet.getMode(stack).getContainer(player, stack);
 			}
 		});
+		
 		LittleStructureRegistry.registerStructureType("advanced_noclip", "simple", LittleNoClipStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleNoClipStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4);
-		//LittleStructureRegistry.registerStructureType("test", "simple", LittleFixedActivatorStructureALET.class, LittleStructureAttribute.NONE, LittleFixedActivatorStructureALET.LittleFixedActivatorStructureParserALET.class);
-		LittleStructureRegistry.registerStructureType(new LittleStorageType("adv_storage", "simple", LittleFixedActivatorStructureALET.class, LittleStructureAttribute.NONE).addInput("accessed", 1).addInput("filled", 16), LittleFixedActivatorStructureParserALET.class);
+		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleFixedActivatorStructureParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE);
+		//LittleStructureRegistry.registerStructureType(new LittleStorageTypeALET("adv_storage", "simple", LittleLockALET.class, LittleStructureAttribute.NONE).addInput("accessed", 1).addInput("filled", 16), LittleLockStructureParserALET.class);
 		proxy.loadSidePre();
 	}
 	
