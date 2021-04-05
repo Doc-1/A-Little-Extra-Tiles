@@ -7,9 +7,9 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import com.alet.client.gui.SubGuiTapeMeasure;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
-import com.alet.gui.SubGuiTapeMeasure;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.packet.PacketHandler;

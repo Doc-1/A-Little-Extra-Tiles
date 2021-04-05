@@ -27,7 +27,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -36,6 +38,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,7 +50,6 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
 	public boolean isShifting = false;
 	
 	public ItemJumpTool(String registryName) {
-		
 		this.premadeToPlace = "jump_rod";
 		this.premadeToRender = "jump_rod";
 		setUnlocalizedName(registryName);
@@ -104,33 +106,108 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
 	
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		isShifting = entityIn.isSneaking();
+		if (!worldIn.isRemote)
+			return;
+		EntityPlayer player = (EntityPlayer) entityIn;
+		if (player.isHandActive())
+			if (!isShifting) {
+				player.motionX = 0;
+				player.motionZ = 0;
+				player.motionY = 0;
+				player.fallDistance = 0;
+				renderParticles(worldIn, player);
+			} else {
+				player.motionX = 0;
+				player.motionZ = 0;
+				player.motionY = -0.1;
+				player.fallDistance = 0;
+				renderParticles(worldIn, player);
+			}
+		
+	}
+	
+	/*
+	@Override
+	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+		if (!entityLiving.world.isRemote)
+			return false;
+		System.out.println("swing");
+		Minecraft mc = Minecraft.getMinecraft();
+		
+		ParticleSettings settings = new ParticleSettings(0.0F, ColorUtils.RGBAToInt(127, 20, 239, 255), 20, 0, 4F, 3F, 0, LittleParticleTexture.dust_fade_out, false);
+		
+		mc.effectRenderer.addEffect(new LittleParticle(entityLiving.world, new Vector3d(entityLiving.posX, entityLiving.posY + entityLiving.getEyeHeight(), entityLiving.posZ), new Vector3d(entityLiving.getLookVec().x, entityLiving.getLookVec().y, entityLiving.getLookVec().z), settings));
+		System.out.println(entityLiving.rayTrace(10, mc.getRenderPartialTicks()).getBlockPos());
+		return super.onEntitySwing(entityLiving, stack);
+	}
+	*/
+	@Override
+	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
+		if (entityLiving instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) entityLiving;
+			if (!isShifting) {
+				double remove = Math.abs(player.rotationPitch / 180);
+				player.motionX = -MathHelper.sin((player.rotationYaw) / 180.0F * (float) Math.PI) * (1 - remove);
+				player.motionZ = MathHelper.cos((player.rotationYaw) / 180.0F * (float) Math.PI) * (1 - remove);
+				player.motionY = -MathHelper.sin((player.rotationPitch) / 180.0F * (float) Math.PI) * 0.7;
+			}
+			System.out.println(player.rotationPitch / 180);
+			player.addExhaustion(0.1f);
+			player.getCooldownTracker().setCooldown(player.getHeldItemMainhand().getItem(), 50);
+		}
+		entityLiving.setNoGravity(false);
+	}
+	
+	@Override
+	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+		if (entityLiving instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) entityLiving;
+			if (!isShifting) {
+				double remove = Math.abs(player.rotationPitch / 180);
+				player.motionX = -MathHelper.sin((player.rotationYaw) / 180.0F * (float) Math.PI) * (1 - remove);
+				player.motionZ = MathHelper.cos((player.rotationYaw) / 180.0F * (float) Math.PI) * (1 - remove);
+				player.motionY = -MathHelper.sin((player.rotationPitch) / 180.0F * (float) Math.PI) * 0.7;
+			}
+			
+			player.addExhaustion(0.1f);
+			player.getCooldownTracker().setCooldown(player.getHeldItemMainhand().getItem(), 50);
+		}
+		
+		entityLiving.setNoGravity(false);
+		return stack.isEmpty() ? ItemStack.EMPTY : stack;
+	}
+	
+	@Override
+	public int getMaxItemUseDuration(ItemStack stack) {
+		return 50;
+	}
+	
+	@Override
+	public EnumAction getItemUseAction(ItemStack stack) {
+		
+		return EnumAction.BOW;
 	}
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
-		EnumActionResult result = EnumActionResult.PASS;
-		player.addExhaustion(0.1f);
-		player.getCooldownTracker().setCooldown(player.getHeldItemMainhand().getItem(), 50);
-		player.motionY = 0.6D;
-		result = EnumActionResult.SUCCESS;
 		
-		if (!worldIn.isRemote)
-			renderParticles(worldIn, player);
+		isShifting = player.isSneaking();
+		player.setNoGravity(true);
+		player.setActiveHand(handIn);
 		
-		return ActionResult.newResult(result, player.getHeldItemMainhand());
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(handIn));
 	}
 	
 	@SideOnly(Side.CLIENT)
 	public void renderParticles(World worldIn, EntityPlayer player) {
+		if (!worldIn.isRemote)
+			return;
 		Minecraft mc = Minecraft.getMinecraft();
 		ParticleSettings settings = new ParticleSettings(0.0F, ColorUtils.RGBAToInt(127, 20, 239, 255), 40, 0, 1, 1, 0, LittleParticleTexture.dust_fade_out, false);
-		double rand = ((Math.random() * (0.5 - 0)) + 0);
-		double rand2 = ((Math.random() * (0.5 - 0)) + 0);
-		mc.effectRenderer.addEffect(new LittleParticle(worldIn, new Vector3d(player.posX, player.posY + 1, player.posZ + rand), new Vector3d(0D, -0.2D, 0D), settings));
-		mc.effectRenderer.addEffect(new LittleParticle(worldIn, new Vector3d(player.posX - rand, player.posY + 2 - rand2, player.posZ), new Vector3d(0D, -0.2D, 0D), settings));
-		mc.effectRenderer.addEffect(new LittleParticle(worldIn, new Vector3d(player.posX + rand2, player.posY + 2, player.posZ + rand), new Vector3d(0D, -0.2D, 0D), settings));
-		mc.effectRenderer.addEffect(new LittleParticle(worldIn, new Vector3d(player.posX - rand, player.posY + 2 + rand, player.posZ + rand2), new Vector3d(0D, -0.2D, 0D), settings));
+		double randX = ((Math.random() * (0.5 - -0.5)) + -0.5);
+		double randY = ((Math.random() * (0.5 - -0.5)) + -0.5);
+		double randZ = ((Math.random() * (0.5 - -0.5)) + -0.5);
+		mc.effectRenderer.addEffect(new LittleParticle(worldIn, new Vector3d(player.posX + randX, player.posY + randY + 1.5, player.posZ + randZ), new Vector3d(0D, -0.2D, 0D), settings));
 	}
 	
 	@Override

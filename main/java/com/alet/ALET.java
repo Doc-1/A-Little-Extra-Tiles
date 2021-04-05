@@ -12,23 +12,30 @@ import java.util.List;
 
 import com.alet.blocks.BasicBlock;
 import com.alet.client.ALETClient;
+import com.alet.client.gui.SubGuiBlock;
+import com.alet.client.gui.SubGuiPhotoImport;
+import com.alet.client.gui.SubGuiTypeWriter;
+import com.alet.client.sounds.SoundsHandler;
+import com.alet.common.packet.PacketGetServerCams;
+import com.alet.common.packet.PacketSendServerCams;
+import com.alet.common.packet.PacketSendSound;
 import com.alet.common.packet.PacketUpdateNBT;
+import com.alet.common.structure.type.LittleCamPlayer;
+import com.alet.common.structure.type.LittleLockALET;
+import com.alet.common.structure.type.LittleNoClipStructureALET;
+import com.alet.common.structure.type.LittleSoundPlayerALET;
+import com.alet.common.structure.type.LittleStateActivatorALET;
 import com.alet.container.SubContainerBlock;
 import com.alet.container.SubContainerPhotoImport;
 import com.alet.container.SubContainerTypeWriter;
-import com.alet.gui.SubGuiBlock;
-import com.alet.gui.SubGuiPhotoImport;
-import com.alet.gui.SubGuiTypeWriter;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.littletiles.common.structure.type.LittleLockALET;
-import com.alet.littletiles.common.structure.type.LittleNoClipStructureALET;
 import com.alet.littletiles.items.ItemLittleChiselAlet;
 import com.alet.littletiles.items.ItemLittleGrabberAlet;
 import com.alet.littletiles.items.ItemLittlePaintBrushALET;
-import com.alet.structure.premade.ItemStructurePremade;
 import com.alet.structure.premade.LittlePhotoImporter;
 import com.alet.structure.premade.LittleTypeWriter;
+import com.alet.structure.premade.PickupItemPremade;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -52,9 +59,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -79,6 +89,7 @@ public class ALET {
 	public static ALETConfig CONFIG;
 	
 	public static List<String> fontTypeNames;
+	public static List<String> sounds;
 	
 	public static Item tapeMeasure;
 	public static Item jumpRod;
@@ -100,7 +111,7 @@ public class ALET {
 		LittleTiles.colorTube = new ItemLittlePaintBrushALET().setUnlocalizedName("LTColorTube").setRegistryName("littletiles", "colorTube");
 		LittleTiles.grabber = new ItemLittleGrabberAlet().setUnlocalizedName("LTGrabber").setRegistryName("littletiles", "grabber");
 		
-		jumpRod = new ItemJumpTool("jumprod");
+		jumpRod = new ItemJumpTool("jump_rod");
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
 		smoothOakPlank = new BasicBlock("smoothoakplank");
 		smoothDarkOakPlank = new BasicBlock("smoothdarkoakplank");
@@ -173,9 +184,14 @@ public class ALET {
 			}
 		});
 		
-		LittleStructureRegistry.registerStructureType("advanced_noclip", "simple", LittleNoClipStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleNoClipStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4);
-		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleFixedActivatorStructureParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE);
-		//LittleStructureRegistry.registerStructureType(new LittleStorageTypeALET("adv_storage", "simple", LittleLockALET.class, LittleStructureAttribute.NONE).addInput("accessed", 1).addInput("filled", 16), LittleLockStructureParserALET.class);
+		LittleStructureRegistry.registerStructureType("advanced_noclip", "simple", LittleNoClipStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleNoClipStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
+		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE, true);
+		LittleStructureRegistry.registerStructureType("state_activator", "simple", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
+		LittleStructureRegistry.registerStructureType("sound_player", "simple", LittleSoundPlayerALET.class, LittleStructureAttribute.TICKING, LittleSoundPlayerALET.LittleSoundPlayerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
+		
+		if (Loader.isModLoaded("CMDCam"))
+			LittleStructureRegistry.registerStructureType("cam_player", "simple", LittleCamPlayer.class, LittleStructureAttribute.TICKING, LittleCamPlayer.LittleLockParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
+		
 		proxy.loadSidePre();
 	}
 	
@@ -210,11 +226,18 @@ public class ALET {
 	@EventHandler
 	public void Init(FMLInitializationEvent event) {
 		CreativeCorePacket.registerPacket(PacketUpdateNBT.class);
+		CreativeCorePacket.registerPacket(PacketSendSound.class);
+		CreativeCorePacket.registerPacket(PacketSendServerCams.class);
+		CreativeCorePacket.registerPacket(PacketGetServerCams.class);
 		CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
 		
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
-		LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, ItemStructurePremade.class);
+		LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class);
+		SoundsHandler.registerSounds();
+		sounds = new ArrayList<>();
+		for (ResourceLocation location : SoundEvent.REGISTRY.getKeys())
+			sounds.add(location.toString());
 	}
 	
 	@EventHandler
@@ -224,7 +247,6 @@ public class ALET {
 	
 	public static List<String> getFonts() {
 		fontTypeNames = new ArrayList<>();
-		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		
 		try {
@@ -256,9 +278,9 @@ public class ALET {
 		
 		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		
-		for (int i = 0; i < fonts.length; i++) {
+		for (int i = 0; i < fonts.length; i++)
 			fontTypeNames.add(fonts[i]);
-		}
+		
 		return fontTypeNames;
 	}
 	

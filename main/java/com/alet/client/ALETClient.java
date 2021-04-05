@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
+import com.alet.client.overlay.gui.GuiAxisIndicatorAletControl;
+import com.alet.client.overlay.gui.GuiDisplayMeasurements;
 import com.alet.common.command.UpdateFontsCommand;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.common.util.shape.DragShapeSliceWall;
 import com.alet.common.util.shape.DragShapeTriangle;
-import com.alet.gui.GuiAxisIndicatorAletControl;
-import com.alet.gui.GuiDisplayMeasurements;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;

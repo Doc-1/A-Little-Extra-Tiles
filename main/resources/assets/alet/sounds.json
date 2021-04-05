@@ -1,0 +1,1131 @@
+{
+    "block.note.harplow":
+    {
+        "category": "block",
+        "subtitle": "block.note.harplow",
+        "sounds": [{"name": "alet:block/note/harplow", "stream": false}]
+    },
+    "block.note.harplow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.harplow2",
+        "sounds": [{"name": "alet:block/note/harplow2", "stream": false}]
+    },
+    "block.note.harplow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.harplow3",
+        "sounds": [{"name": "alet:block/note/harplow3", "stream": false}]
+    },
+    "block.note.harplow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.harplow4",
+        "sounds": [{"name": "alet:block/note/harplow4", "stream": false}]
+    },
+    "block.note.harplow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.harplow5",
+        "sounds": [{"name": "alet:block/note/harplow5", "stream": false}]
+    },
+    "block.note.harphigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.harphigh",
+        "sounds": [{"name": "alet:block/note/harphigh", "stream": false}]
+    },
+    
+    "block.note.harphigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.harphigh2",
+        "sounds": [{"name": "alet:block/note/harphigh2", "stream": false}]
+    },
+    
+    "block.note.harphigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.harphigh3",
+        "sounds": [{"name": "alet:block/note/harphigh3", "stream": false}]
+    },
+    
+    "block.note.harphigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.harphigh4",
+        "sounds": [{"name": "alet:block/note/harphigh4", "stream": false}]
+    },
+    
+    "block.note.harphigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.harphigh5",
+        "sounds": [{"name": "alet:block/note/harphigh5", "stream": false}]
+    },
+    "block.note.banjolow":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjolow",
+        "sounds": [{"name": "alet:block/note/banjolow", "stream": false}]
+    },
+    "block.note.banjolow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjolow2",
+        "sounds": [{"name": "alet:block/note/banjolow2", "stream": false}]
+    },
+    "block.note.banjolow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjolow3",
+        "sounds": [{"name": "alet:block/note/banjolow3", "stream": false}]
+    },
+    "block.note.banjolow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjolow4",
+        "sounds": [{"name": "alet:block/note/banjolow4", "stream": false}]
+    },
+    "block.note.banjolow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjolow5",
+        "sounds": [{"name": "alet:block/note/banjolow5", "stream": false}]
+    },
+    "block.note.banjohigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjohigh",
+        "sounds": [{"name": "alet:block/note/banjohigh", "stream": false}]
+    },
+    
+    "block.note.banjohigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjohigh2",
+        "sounds": [{"name": "alet:block/note/banjohigh2", "stream": false}]
+    },
+    
+    "block.note.banjohigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjohigh3",
+        "sounds": [{"name": "alet:block/note/banjohigh3", "stream": false}]
+    },
+    
+    "block.note.banjohigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjohigh4",
+        "sounds": [{"name": "alet:block/note/banjohigh4", "stream": false}]
+    },
+    
+    "block.note.banjohigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjohigh5",
+        "sounds": [{"name": "alet:block/note/banjohigh5", "stream": false}]
+    },
+    "block.note.bdrumlow":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumlow",
+        "sounds": [{"name": "alet:block/note/bdrumlow", "stream": false}]
+    },
+    "block.note.bdrumlow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumlow2",
+        "sounds": [{"name": "alet:block/note/bdrumlow2", "stream": false}]
+    },
+    "block.note.bdrumlow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumlow3",
+        "sounds": [{"name": "alet:block/note/bdrumlow3", "stream": false}]
+    },
+    "block.note.bdrumlow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumlow4",
+        "sounds": [{"name": "alet:block/note/bdrumlow4", "stream": false}]
+    },
+    "block.note.bdrumlow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumlow5",
+        "sounds": [{"name": "alet:block/note/bdrumlow5", "stream": false}]
+    },
+    "block.note.bdrumhigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumhigh",
+        "sounds": [{"name": "alet:block/note/bdrumhigh", "stream": false}]
+    },
+    
+    "block.note.bdrumhigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumhigh2",
+        "sounds": [{"name": "alet:block/note/bdrumhigh2", "stream": false}]
+    },
+    
+    "block.note.bdrumhigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumhigh3",
+        "sounds": [{"name": "alet:block/note/bdrumhigh3", "stream": false}]
+    },
+    
+    "block.note.bdrumhigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumhigh4",
+        "sounds": [{"name": "alet:block/note/bdrumhigh4", "stream": false}]
+    },
+    
+    "block.note.bdrumhigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrumhigh5",
+        "sounds": [{"name": "alet:block/note/bdrumhigh5", "stream": false}]
+    },
+    "block.note.belllow":
+    {
+        "category": "block",
+        "subtitle": "block.note.belllow",
+        "sounds": [{"name": "alet:block/note/belllow", "stream": false}]
+    },
+    "block.note.belllow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.belllow2",
+        "sounds": [{"name": "alet:block/note/belllow2", "stream": false}]
+    },
+    "block.note.belllow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.belllow3",
+        "sounds": [{"name": "alet:block/note/belllow3", "stream": false}]
+    },
+    "block.note.belllow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.belllow4",
+        "sounds": [{"name": "alet:block/note/belllow4", "stream": false}]
+    },
+    "block.note.belllow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.belllow5",
+        "sounds": [{"name": "alet:block/note/belllow5", "stream": false}]
+    },
+    "block.note.bellhigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.bellhigh",
+        "sounds": [{"name": "alet:block/note/bellhigh", "stream": false}]
+    },
+    
+    "block.note.bellhigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.bellhigh2",
+        "sounds": [{"name": "alet:block/note/bellhigh2", "stream": false}]
+    },
+    
+    "block.note.bellhigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.bellhigh3",
+        "sounds": [{"name": "alet:block/note/bellhigh3", "stream": false}]
+    },
+    
+    "block.note.bellhigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.bellhigh4",
+        "sounds": [{"name": "alet:block/note/bellhigh4", "stream": false}]
+    },
+    
+    "block.note.bellhigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.bellhigh5",
+        "sounds": [{"name": "alet:block/note/bellhigh5", "stream": false}]
+    },
+    "block.note.bitlow":
+    {
+        "category": "block",
+        "subtitle": "block.note.bitlow",
+        "sounds": [{"name": "alet:block/note/bitlow", "stream": false}]
+    },
+    "block.note.bitlow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.bitlow2",
+        "sounds": [{"name": "alet:block/note/bitlow2", "stream": false}]
+    },
+    "block.note.bitlow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.bitlow3",
+        "sounds": [{"name": "alet:block/note/bitlow3", "stream": false}]
+    },
+    "block.note.bitlow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.bitlow4",
+        "sounds": [{"name": "alet:block/note/bitlow4", "stream": false}]
+    },
+    "block.note.bitlow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.bitlow5",
+        "sounds": [{"name": "alet:block/note/bitlow5", "stream": false}]
+    },
+    "block.note.bithigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.bithigh",
+        "sounds": [{"name": "alet:block/note/bithigh", "stream": false}]
+    },
+    
+    "block.note.bithigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.bithigh2",
+        "sounds": [{"name": "alet:block/note/bithigh2", "stream": false}]
+    },
+    
+    "block.note.bithigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.bithigh3",
+        "sounds": [{"name": "alet:block/note/bithigh3", "stream": false}]
+    },
+    
+    "block.note.bithigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.bithigh4",
+        "sounds": [{"name": "alet:block/note/bithigh4", "stream": false}]
+    },
+    
+    "block.note.bithigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.bithigh5",
+        "sounds": [{"name": "alet:block/note/bithigh5", "stream": false}]
+    },
+    "block.note.clicklow":
+    {
+        "category": "block",
+        "subtitle": "block.note.clicklow",
+        "sounds": [{"name": "alet:block/note/clicklow", "stream": false}]
+    },
+    "block.note.clicklow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.clicklow2",
+        "sounds": [{"name": "alet:block/note/clicklow2", "stream": false}]
+    },
+    "block.note.clicklow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.clicklow3",
+        "sounds": [{"name": "alet:block/note/clicklow3", "stream": false}]
+    },
+    "block.note.clicklow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.clicklow4",
+        "sounds": [{"name": "alet:block/note/clicklow4", "stream": false}]
+    },
+    "block.note.clicklow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.clicklow5",
+        "sounds": [{"name": "alet:block/note/clicklow5", "stream": false}]
+    },
+    "block.note.clickhigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.clickhigh",
+        "sounds": [{"name": "alet:block/note/clickhigh", "stream": false}]
+    },
+    
+    "block.note.clickhigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.clickhigh2",
+        "sounds": [{"name": "alet:block/note/clickhigh2", "stream": false}]
+    },
+    
+    "block.note.clickhigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.clickhigh3",
+        "sounds": [{"name": "alet:block/note/clickhigh3", "stream": false}]
+    },
+    
+    "block.note.clickhigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.clickhigh4",
+        "sounds": [{"name": "alet:block/note/clickhigh4", "stream": false}]
+    },
+    
+    "block.note.clickhigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.clickhigh5",
+        "sounds": [{"name": "alet:block/note/clickhigh5", "stream": false}]
+    },
+    "block.note.cow_belllow":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_belllow",
+        "sounds": [{"name": "alet:block/note/cow_belllow", "stream": false}]
+    },
+    "block.note.cow_belllow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_belllow2",
+        "sounds": [{"name": "alet:block/note/cow_belllow2", "stream": false}]
+    },
+    "block.note.cow_belllow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_belllow3",
+        "sounds": [{"name": "alet:block/note/cow_belllow3", "stream": false}]
+    },
+    "block.note.cow_belllow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_belllow4",
+        "sounds": [{"name": "alet:block/note/cow_belllow4", "stream": false}]
+    },
+    "block.note.cow_belllow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_belllow5",
+        "sounds": [{"name": "alet:block/note/cow_belllow5", "stream": false}]
+    },
+    "block.note.cow_bellhigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_bellhigh",
+        "sounds": [{"name": "alet:block/note/cow_bellhigh", "stream": false}]
+    },
+    
+    "block.note.cow_bellhigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_bellhigh2",
+        "sounds": [{"name": "alet:block/note/cow_bellhigh2", "stream": false}]
+    },
+    
+    "block.note.cow_bellhigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_bellhigh3",
+        "sounds": [{"name": "alet:block/note/cow_bellhigh3", "stream": false}]
+    },
+    
+    "block.note.cow_bellhigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_bellhigh4",
+        "sounds": [{"name": "alet:block/note/cow_bellhigh4", "stream": false}]
+    },
+    
+    "block.note.cow_bellhigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_bellhigh5",
+        "sounds": [{"name": "alet:block/note/cow_bellhigh5", "stream": false}]
+    },
+    "block.note.dbasslow":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasslow",
+        "sounds": [{"name": "alet:block/note/dbasslow", "stream": false}]
+    },
+    "block.note.dbasslow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasslow2",
+        "sounds": [{"name": "alet:block/note/dbasslow2", "stream": false}]
+    },
+    "block.note.dbasslow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasslow3",
+        "sounds": [{"name": "alet:block/note/dbasslow3", "stream": false}]
+    },
+    "block.note.dbasslow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasslow4",
+        "sounds": [{"name": "alet:block/note/dbasslow4", "stream": false}]
+    },
+    "block.note.dbasslow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasslow5",
+        "sounds": [{"name": "alet:block/note/dbasslow5", "stream": false}]
+    },
+    "block.note.dbasshigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasshigh",
+        "sounds": [{"name": "alet:block/note/dbasshigh", "stream": false}]
+    },
+    
+    "block.note.dbasshigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasshigh2",
+        "sounds": [{"name": "alet:block/note/dbasshigh2", "stream": false}]
+    },
+    
+    "block.note.dbasshigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasshigh3",
+        "sounds": [{"name": "alet:block/note/dbasshigh3", "stream": false}]
+    },
+    
+    "block.note.dbasshigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasshigh4",
+        "sounds": [{"name": "alet:block/note/dbasshigh4", "stream": false}]
+    },
+    
+    "block.note.dbasshigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbasshigh5",
+        "sounds": [{"name": "alet:block/note/dbasshigh5", "stream": false}]
+    },
+    "block.note.didgeridoolow":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoolow",
+        "sounds": [{"name": "alet:block/note/didgeridoolow", "stream": false}]
+    },
+    "block.note.didgeridoolow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoolow2",
+        "sounds": [{"name": "alet:block/note/didgeridoolow2", "stream": false}]
+    },
+    "block.note.didgeridoolow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoolow3",
+        "sounds": [{"name": "alet:block/note/didgeridoolow3", "stream": false}]
+    },
+    "block.note.didgeridoolow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoolow4",
+        "sounds": [{"name": "alet:block/note/didgeridoolow4", "stream": false}]
+    },
+    "block.note.didgeridoolow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoolow5",
+        "sounds": [{"name": "alet:block/note/didgeridoolow5", "stream": false}]
+    },
+    "block.note.didgeridoohigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoohigh",
+        "sounds": [{"name": "alet:block/note/didgeridoohigh", "stream": false}]
+    },
+    
+    "block.note.didgeridoohigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoohigh2",
+        "sounds": [{"name": "alet:block/note/didgeridoohigh2", "stream": false}]
+    },
+    
+    "block.note.didgeridoohigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoohigh3",
+        "sounds": [{"name": "alet:block/note/didgeridoohigh3", "stream": false}]
+    },
+    
+    "block.note.didgeridoohigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoohigh4",
+        "sounds": [{"name": "alet:block/note/didgeridoohigh4", "stream": false}]
+    },
+    
+    "block.note.didgeridoohigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoohigh5",
+        "sounds": [{"name": "alet:block/note/didgeridoohigh5", "stream": false}]
+    },"block.note.flutelow":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutelow",
+        "sounds": [{"name": "alet:block/note/flutelow", "stream": false}]
+    },
+    "block.note.flutelow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutelow2",
+        "sounds": [{"name": "alet:block/note/flutelow2", "stream": false}]
+    },
+    "block.note.flutelow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutelow3",
+        "sounds": [{"name": "alet:block/note/flutelow3", "stream": false}]
+    },
+    "block.note.flutelow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutelow4",
+        "sounds": [{"name": "alet:block/note/flutelow4", "stream": false}]
+    },
+    "block.note.flutelow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutelow5",
+        "sounds": [{"name": "alet:block/note/flutelow5", "stream": false}]
+    },
+    "block.note.flutehigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutehigh",
+        "sounds": [{"name": "alet:block/note/flutehigh", "stream": false}]
+    },
+    
+    "block.note.flutehigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutehigh2",
+        "sounds": [{"name": "alet:block/note/flutehigh2", "stream": false}]
+    },
+    
+    "block.note.flutehigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutehigh3",
+        "sounds": [{"name": "alet:block/note/flutehigh3", "stream": false}]
+    },
+    
+    "block.note.flutehigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutehigh4",
+        "sounds": [{"name": "alet:block/note/flutehigh4", "stream": false}]
+    },
+    
+    "block.note.flutehigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.flutehigh5",
+        "sounds": [{"name": "alet:block/note/flutehigh5", "stream": false}]
+    },"block.note.guitarlow":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarlow",
+        "sounds": [{"name": "alet:block/note/guitarlow", "stream": false}]
+    },
+    "block.note.guitarlow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarlow2",
+        "sounds": [{"name": "alet:block/note/guitarlow2", "stream": false}]
+    },
+    "block.note.guitarlow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarlow3",
+        "sounds": [{"name": "alet:block/note/guitarlow3", "stream": false}]
+    },
+    "block.note.guitarlow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarlow4",
+        "sounds": [{"name": "alet:block/note/guitarlow4", "stream": false}]
+    },
+    "block.note.guitarlow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarlow5",
+        "sounds": [{"name": "alet:block/note/guitarlow5", "stream": false}]
+    },
+    "block.note.guitarhigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarhigh",
+        "sounds": [{"name": "alet:block/note/guitarhigh", "stream": false}]
+    },
+    
+    "block.note.guitarhigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarhigh2",
+        "sounds": [{"name": "alet:block/note/guitarhigh2", "stream": false}]
+    },
+    
+    "block.note.guitarhigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarhigh3",
+        "sounds": [{"name": "alet:block/note/guitarhigh3", "stream": false}]
+    },
+    
+    "block.note.guitarhigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarhigh4",
+        "sounds": [{"name": "alet:block/note/guitarhigh4", "stream": false}]
+    },
+    
+    "block.note.guitarhigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitarhigh5",
+        "sounds": [{"name": "alet:block/note/guitarhigh5", "stream": false}]
+    },"block.note.icechimelow":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimelow",
+        "sounds": [{"name": "alet:block/note/icechimelow", "stream": false}]
+    },
+    "block.note.icechimelow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimelow2",
+        "sounds": [{"name": "alet:block/note/icechimelow2", "stream": false}]
+    },
+    "block.note.icechimelow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimelow3",
+        "sounds": [{"name": "alet:block/note/icechimelow3", "stream": false}]
+    },
+    "block.note.icechimelow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimelow4",
+        "sounds": [{"name": "alet:block/note/icechimelow4", "stream": false}]
+    },
+    "block.note.icechimelow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimelow5",
+        "sounds": [{"name": "alet:block/note/icechimelow5", "stream": false}]
+    },
+    "block.note.icechimehigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimehigh",
+        "sounds": [{"name": "alet:block/note/icechimehigh", "stream": false}]
+    },
+    
+    "block.note.icechimehigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimehigh2",
+        "sounds": [{"name": "alet:block/note/icechimehigh2", "stream": false}]
+    },
+    
+    "block.note.icechimehigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimehigh3",
+        "sounds": [{"name": "alet:block/note/icechimehigh3", "stream": false}]
+    },
+    
+    "block.note.icechimehigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimehigh4",
+        "sounds": [{"name": "alet:block/note/icechimehigh4", "stream": false}]
+    },
+    
+    "block.note.icechimehigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechimehigh5",
+        "sounds": [{"name": "alet:block/note/icechimehigh5", "stream": false}]
+    },"block.note.iron_xylophonelow":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonelow",
+        "sounds": [{"name": "alet:block/note/iron_xylophonelow", "stream": false}]
+    },
+    "block.note.iron_xylophonelow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonelow2",
+        "sounds": [{"name": "alet:block/note/iron_xylophonelow2", "stream": false}]
+    },
+    "block.note.iron_xylophonelow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonelow3",
+        "sounds": [{"name": "alet:block/note/iron_xylophonelow3", "stream": false}]
+    },
+    "block.note.iron_xylophonelow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonelow4",
+        "sounds": [{"name": "alet:block/note/iron_xylophonelow4", "stream": false}]
+    },
+    "block.note.iron_xylophonelow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonelow5",
+        "sounds": [{"name": "alet:block/note/iron_xylophonelow5", "stream": false}]
+    },
+    "block.note.iron_xylophonehigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonehigh",
+        "sounds": [{"name": "alet:block/note/iron_xylophonehigh", "stream": false}]
+    },
+    
+    "block.note.iron_xylophonehigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonehigh2",
+        "sounds": [{"name": "alet:block/note/iron_xylophonehigh2", "stream": false}]
+    },
+    
+    "block.note.iron_xylophonehigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonehigh3",
+        "sounds": [{"name": "alet:block/note/iron_xylophonehigh3", "stream": false}]
+    },
+    
+    "block.note.iron_xylophonehigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonehigh4",
+        "sounds": [{"name": "alet:block/note/iron_xylophonehigh4", "stream": false}]
+    },
+    
+    "block.note.iron_xylophonehigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophonehigh5",
+        "sounds": [{"name": "alet:block/note/iron_xylophonehigh5", "stream": false}]
+    },"block.note.plinglow":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinglow",
+        "sounds": [{"name": "alet:block/note/plinglow", "stream": false}]
+    },
+    "block.note.plinglow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinglow2",
+        "sounds": [{"name": "alet:block/note/plinglow2", "stream": false}]
+    },
+    "block.note.plinglow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinglow3",
+        "sounds": [{"name": "alet:block/note/plinglow3", "stream": false}]
+    },
+    "block.note.plinglow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinglow4",
+        "sounds": [{"name": "alet:block/note/plinglow4", "stream": false}]
+    },
+    "block.note.plinglow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinglow5",
+        "sounds": [{"name": "alet:block/note/plinglow5", "stream": false}]
+    },
+    "block.note.plinghigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinghigh",
+        "sounds": [{"name": "alet:block/note/plinghigh", "stream": false}]
+    },
+    
+    "block.note.plinghigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinghigh2",
+        "sounds": [{"name": "alet:block/note/plinghigh2", "stream": false}]
+    },
+    
+    "block.note.plinghigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinghigh3",
+        "sounds": [{"name": "alet:block/note/plinghigh3", "stream": false}]
+    },
+    
+    "block.note.plinghigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinghigh4",
+        "sounds": [{"name": "alet:block/note/plinghigh4", "stream": false}]
+    },
+    
+    "block.note.plinghigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.plinghigh5",
+        "sounds": [{"name": "alet:block/note/plinghigh5", "stream": false}]
+    },"block.note.sdrumlow":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumlow",
+        "sounds": [{"name": "alet:block/note/sdrumlow", "stream": false}]
+    },
+    "block.note.sdrumlow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumlow2",
+        "sounds": [{"name": "alet:block/note/sdrumlow2", "stream": false}]
+    },
+    "block.note.sdrumlow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumlow3",
+        "sounds": [{"name": "alet:block/note/sdrumlow3", "stream": false}]
+    },
+    "block.note.sdrumlow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumlow4",
+        "sounds": [{"name": "alet:block/note/sdrumlow4", "stream": false}]
+    },
+    "block.note.sdrumlow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumlow5",
+        "sounds": [{"name": "alet:block/note/sdrumlow5", "stream": false}]
+    },
+    "block.note.sdrumhigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumhigh",
+        "sounds": [{"name": "alet:block/note/sdrumhigh", "stream": false}]
+    },
+    
+    "block.note.sdrumhigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumhigh2",
+        "sounds": [{"name": "alet:block/note/sdrumhigh2", "stream": false}]
+    },
+    
+    "block.note.sdrumhigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumhigh3",
+        "sounds": [{"name": "alet:block/note/sdrumhigh3", "stream": false}]
+    },
+    
+    "block.note.sdrumhigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumhigh4",
+        "sounds": [{"name": "alet:block/note/sdrumhigh4", "stream": false}]
+    },
+    
+    "block.note.sdrumhigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrumhigh5",
+        "sounds": [{"name": "alet:block/note/sdrumhigh5", "stream": false}]
+    },"block.note.xylobonelow":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonelow",
+        "sounds": [{"name": "alet:block/note/xylobonelow", "stream": false}]
+    },
+    "block.note.xylobonelow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonelow2",
+        "sounds": [{"name": "alet:block/note/xylobonelow2", "stream": false}]
+    },
+    "block.note.xylobonelow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonelow3",
+        "sounds": [{"name": "alet:block/note/xylobonelow3", "stream": false}]
+    },
+    "block.note.xylobonelow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonelow4",
+        "sounds": [{"name": "alet:block/note/xylobonelow4", "stream": false}]
+    },
+    "block.note.xylobonelow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonelow5",
+        "sounds": [{"name": "alet:block/note/xylobonelow5", "stream": false}]
+    },
+    "block.note.xylobonehigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonehigh",
+        "sounds": [{"name": "alet:block/note/xylobonehigh", "stream": false}]
+    },
+    
+    "block.note.xylobonehigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonehigh2",
+        "sounds": [{"name": "alet:block/note/xylobonehigh2", "stream": false}]
+    },
+    
+    "block.note.xylobonehigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonehigh3",
+        "sounds": [{"name": "alet:block/note/xylobonehigh3", "stream": false}]
+    },
+    
+    "block.note.xylobonehigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobonehigh4",
+        "sounds": [{"name": "alet:block/note/xylobonehigh4", "stream": false}]
+    },
+    
+    "block.note.xylobonehigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.harphigh5",
+        "sounds": [{"name": "alet:block/note/harphigh5", "stream": false}]
+    },
+    
+    "block.note.banjo":
+    {
+        "category": "block",
+        "subtitle": "block.note.banjo",
+        "sounds": [{"name": "alet:block/note/banjo", "stream": false}]
+    },
+    
+    "block.note.bdrum":
+    {
+        "category": "block",
+        "subtitle": "block.note.bdrum",
+        "sounds": [{"name": "alet:block/note/bdrum", "stream": false}]
+    },
+    
+    "block.note.bell":
+    {
+        "category": "block",
+        "subtitle": "block.note.bell",
+        "sounds": [{"name": "alet:block/note/bell", "stream": false}]
+    },
+    
+    "block.note.bit":
+    {
+        "category": "block",
+        "subtitle": "block.note.bit",
+        "sounds": [{"name": "alet:block/note/bit", "stream": false}]
+    },
+    
+    "block.note.click":
+    {
+        "category": "block",
+        "subtitle": "block.note.click",
+        "sounds": [{"name": "alet:block/note/click", "stream": false}]
+    },
+    
+    "block.note.cow_bell":
+    {
+        "category": "block",
+        "subtitle": "block.note.cow_bell",
+        "sounds": [{"name": "alet:block/note/cow_bell", "stream": false}]
+    },
+    
+    "block.note.dbass":
+    {
+        "category": "block",
+        "subtitle": "block.note.dbass",
+        "sounds": [{"name": "alet:block/note/dbass", "stream": false}]
+    },
+    
+    "block.note.didgeridoo":
+    {
+        "category": "block",
+        "subtitle": "block.note.didgeridoo",
+        "sounds": [{"name": "alet:block/note/didgeridoo", "stream": false}]
+    },
+    
+    "block.note.flute":
+    {
+        "category": "block",
+        "subtitle": "block.note.flute",
+        "sounds": [{"name": "alet:block/note/flute", "stream": false}]
+    },
+    
+    "block.note.guitar":
+    {
+        "category": "block",
+        "subtitle": "block.note.guitar",
+        "sounds": [{"name": "alet:block/note/guitar", "stream": false}]
+    },
+    
+    "block.note.harp":
+    {
+        "category": "block",
+        "subtitle": "block.note.harp",
+        "sounds": [{"name": "alet:block/note/harp", "stream": false}]
+    },
+    
+    "block.note.icechime":
+    {
+        "category": "block",
+        "subtitle": "block.note.icechime",
+        "sounds": [{"name": "alet:block/note/icechime", "stream": false}]
+    },
+    
+    "block.note.iron_xylophone":
+    {
+        "category": "block",
+        "subtitle": "block.note.iron_xylophone",
+        "sounds": [{"name": "alet:block/note/iron_xylophone", "stream": false}]
+    },
+    
+    "block.note.pling":
+    {
+        "category": "block",
+        "subtitle": "block.note.pling",
+        "sounds": [{"name": "alet:block/note/pling", "stream": false}]
+    },
+    
+    "block.note.sdrum":
+    {
+        "category": "block",
+        "subtitle": "block.note.sdrum",
+        "sounds": [{"name": "alet:block/note/sdrum", "stream": false}]
+    },
+    
+    "block.note.xylobone":
+    {
+        "category": "block",
+        "subtitle": "block.note.xylobone",
+        "sounds": [{"name": "alet:block/note/xylobone", "stream": false}]
+    }
+}

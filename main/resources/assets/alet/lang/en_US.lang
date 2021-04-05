@@ -18,3 +18,4 @@ config.alet.colorAccuracy.comment=This will change how many colors the printer h
 
 structure.advanced_noclip.name=Advanced No-clip
 structure.door_lock.name=Door Lock
+structure.state_activator.name=State Activator
