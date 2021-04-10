@@ -285,11 +285,6 @@ public class LittleNoClipStructureALET extends LittleStructure {
 				}
 				parent.controls.add(new GuiTextBox("message", "These settings are only avalible in creative mode", 140, 45, 50));
 			}
-			createCreativeControls(structure);
-			
-		}
-		
-		private void createCreativeControls(LittleStructure structure) {
 			
 		}
 		

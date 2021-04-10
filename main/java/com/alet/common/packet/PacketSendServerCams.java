@@ -3,7 +3,9 @@ package com.alet.common.packet;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.structure.type.LittleCamPlayer;
+import com.creativemd.creativecore.common.gui.container.SubGui;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
+import com.creativemd.creativecore.common.gui.mc.ContainerSub;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 
 import io.netty.buffer.ByteBuf;
@@ -16,10 +18,13 @@ public class PacketSendServerCams extends CreativeCorePacket {
 	
 	public String[] ids;
 	public NBTTagCompound nbt;
+	public int layer;
+	public String selected;
 	
-	public PacketSendServerCams(String[] id) {
+	public PacketSendServerCams(String[] id, String selected, int layer) {
 		this.ids = id;
 		this.nbt = new NBTTagCompound();
+		this.selected = selected;
 	}
 	
 	public PacketSendServerCams() {
@@ -36,12 +41,15 @@ public class PacketSendServerCams extends CreativeCorePacket {
 		}
 		nbt.setTag("ids", list);
 		writeNBT(buf, nbt);
+		buf.writeInt(layer);
+		writeString(buf, selected);
 	}
 	
 	@Override
 	public void readBytes(ByteBuf buf) {
 		nbt = readNBT(buf);
-		
+		layer = buf.readInt();
+		selected = readString(buf);
 	}
 	
 	@Override
@@ -53,13 +61,17 @@ public class PacketSendServerCams extends CreativeCorePacket {
 			t.add(((NBTTagCompound) each).getString(i + ""));
 			i++;
 		}
-		LittleCamPlayer.camIDs = t.toArray(new String[0]);
-		
+		if (player.openContainer instanceof ContainerSub) {
+			SubGui gui = ((ContainerSub) player.openContainer).gui.getLayers().get(layer).getGui();
+			GuiComboBox box = (GuiComboBox) gui.get("cameras");
+			box.lines = t;
+			box.enabled = true;
+			box.select(selected);
+		}
 	}
 	
 	@Override
 	public void executeServer(EntityPlayer player) {
-		// TODO Auto-generated method stub
 		
 	}
 	

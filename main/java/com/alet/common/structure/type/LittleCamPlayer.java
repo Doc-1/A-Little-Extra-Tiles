@@ -10,7 +10,10 @@ import com.creativemd.cmdcam.server.CMDCamServer;
 import com.creativemd.cmdcam.server.CamCommandServer;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
@@ -35,8 +38,10 @@ import net.minecraft.world.World;
 
 public class LittleCamPlayer extends LittleStructure {
 	
-	public static String[] camIDs;
-	public int camToPlay;
+	public String camToPlay = "";
+	public boolean playerIsCamera = true;
+	public int duration = 0;
+	public int loop = 0;
 	
 	public LittleCamPlayer(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
@@ -52,87 +57,90 @@ public class LittleCamPlayer extends LittleStructure {
 	public void playCam(World world) {
 		if (world.isRemote)
 			return;
-		CamPath path = CMDCamServer.getPath(world, "new");
-		if (path != null)
-			if (!path.isRunning()) {
-				path.mode = "outside";
-				long duration = CamCommandServer.StringToDuration("10");
-				path.duration = duration;
-				path.currentLoop = 0;
-			} else
-				for (EntityPlayer player : world.playerEntities)
-					player.sendMessage(new TextComponentString("Path '" + "new" + "' could not be found!"));
-				
-		PacketHandler.sendPacketToAllPlayers(new StartPathPacket(path));
+		CamPath path = CMDCamServer.getPath(world, camToPlay);
+		if (path != null) {
+			if (CamCommandServer.StringToDuration(this.duration + "") != 0) {
+				if (!path.isRunning()) {
+					if (playerIsCamera)
+						path.mode = "default";
+					else
+						path.mode = "outside";
+					long duration = CamCommandServer.StringToDuration(this.duration + "");
+					path.duration = duration;
+					path.loop = loop;
+				} else
+					for (EntityPlayer player : world.playerEntities)
+						player.sendMessage(new TextComponentString("Path '" + "new" + "' could not be found!"));
+					
+				PacketHandler.sendPacketToAllPlayers(new StartPathPacket(path));
+			}
+		}
 	}
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
-		playCam(worldIn);
+		if (playerIn.isCreative())
+			playCam(worldIn);
 		return true;
 	}
 	
 	@Override
 	protected void loadFromNBTExtra(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
-		
+		camToPlay = nbt.getString("cam");
+		playerIsCamera = nbt.getBoolean("playerIsCam");
+		duration = nbt.getInteger("duration");
+		loop = nbt.getInteger("loop");
 	}
 	
 	@Override
 	protected void writeToNBTExtra(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
-		
+		nbt.setString("cam", camToPlay);
+		nbt.setBoolean("playerIsCam", playerIsCamera);
+		nbt.setInteger("duration", duration);
+		nbt.setInteger("loop", loop);
 	}
 	
-	public static class LittleLockParserALET extends LittleStructureGuiParser {
+	public static class LittleCamPlayerParserALET extends LittleStructureGuiParser {
 		
-		public List<Integer> possibleChildren;
-		public List<Integer> selectedChildren;
-		
-		public LittleLockParserALET(GuiParent parent, AnimationGuiHandler handler) {
+		public LittleCamPlayerParserALET(GuiParent parent, AnimationGuiHandler handler) {
 			super(parent, handler);
-		}
-		
-		public String getDisplayName(LittlePreviews previews, int childId) {
-			String name = previews.getStructureName();
-			if (name == null)
-				if (previews.hasStructure())
-					name = previews.getStructureId();
-				else
-					name = "none";
-			return name + " " + childId;
 		}
 		
 		@Override
 		protected void createControls(LittlePreviews previews, LittleStructure structure) {
 			
-			PacketHandler.sendPacketToServer(new PacketGetServerCams());
-			GuiScrollBox box = new GuiScrollBox("content", 0, 0, 100, 115);
-			parent.controls.add(box);
-			LittleLockALET lock = structure instanceof LittleLockALET ? (LittleLockALET) structure : null;
-			possibleChildren = new ArrayList<>();
 			LittleCamPlayer camPlayer = structure instanceof LittleCamPlayer ? (LittleCamPlayer) structure : null;
+			if (camPlayer != null)
+				PacketHandler.sendPacketToServer(new PacketGetServerCams(parent.getID(), camPlayer.camToPlay));
+			else
+				PacketHandler.sendPacketToServer(new PacketGetServerCams(parent.getID()));
 			
-			if (LittleCamPlayer.camIDs != null) {
-				for (int i = 0; i < LittleCamPlayer.camIDs.length; i++) {
-					box.addControl(new GuiCheckBox("" + i, LittleCamPlayer.camIDs[i], 0, i * 20, camPlayer != null && camPlayer.camToPlay == i));
-				}
-				
-			}
+			List<String> list = new ArrayList<String>();
+			GuiComboBox box = new GuiComboBox("cameras", 0, 0, 100, list);
+			
+			box.enabled = false;
+			parent.controls.add(box);
+			parent.controls.add(new GuiCheckBox("plyrCam", "Player Is Camera", 0, 22, camPlayer == null ? true : camPlayer.playerIsCamera));
+			parent.controls.add(new GuiLabel("Duration: ", 0, 40));
+			parent.controls.add(new GuiLabel("Loop: ", 0, 60));
+			parent.controls.add(new GuiTextfield("duration", camPlayer == null ? "0" : camPlayer.duration + "", 50, 40, 20, 10));
+			parent.controls.add(new GuiTextfield("loop", camPlayer == null ? "0" : camPlayer.loop + "", 50, 60, 20, 10));
+			
+			parent.controls.add(new GuiTextBox("text", "Use the /cam-server add command to add a new path to the drop down menu. Duration cannot be zero. It will not play.", 110, 0, 82));
+			
 		}
 		
 		@Override
 		protected LittleStructure parseStructure(LittlePreviews previews) {
 			LittleCamPlayer structure = createStructure(LittleCamPlayer.class, null);
-			GuiScrollBox box = (GuiScrollBox) parent.get("content");
-			List<Integer> toPlay = new ArrayList<>();
-			for (Integer integer : possibleChildren) {
-				GuiCheckBox checkBox = (GuiCheckBox) box.get("" + integer);
-				if (checkBox != null && checkBox.value)
-					toPlay.add(integer);
-			}
-			for (int i = 0; i < toPlay.size(); i++)
-				structure.camToPlay = toPlay.get(i);
+			GuiComboBox cameras = (GuiComboBox) parent.get("cameras");
+			GuiCheckBox plyrCam = (GuiCheckBox) parent.get("plyrCam");
+			GuiTextfield duration = (GuiTextfield) parent.get("duration");
+			GuiTextfield loop = (GuiTextfield) parent.get("loop");
+			structure.camToPlay = cameras.getCaption();
+			structure.playerIsCamera = plyrCam.value;
+			structure.duration = Integer.parseInt(duration.text);
+			structure.loop = Integer.parseInt(loop.text);
 			return structure;
 		}
 		

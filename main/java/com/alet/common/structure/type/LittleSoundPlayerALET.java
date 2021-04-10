@@ -1,5 +1,8 @@
 package com.alet.common.structure.type;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,11 +19,12 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 
-import com.alet.client.gui.SubGuiSoundChannelSettings;
+import com.alet.client.gui.SubGuiSoundSettings;
 import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.client.gui.controls.Layer;
 import com.alet.client.sounds.Notes;
 import com.alet.common.packet.PacketSendSound;
+import com.alet.common.util.CopyUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
@@ -63,11 +67,14 @@ public class LittleSoundPlayerALET extends LittleStructure {
 	
 	public ValueTimeline CH1, CH2, CH3, CH4, CH5, CH6, CH7, CH8, CH9;
 	public String CHSound1, CHSound2, CHSound3, CHSound4, CHSound5, CHSound6, CHSound7, CHSound8, CHSound9;
-	public int duration = 50;
+	public int duration = 10;
 	public int tick = 0;
 	public BlockPos pos;
 	public boolean play = false;
 	public int coursor;
+	
+	public boolean playLocal = false;
+	public int volume = 1;
 	
 	public LittleSoundPlayerALET(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
@@ -118,6 +125,9 @@ public class LittleSoundPlayerALET extends LittleStructure {
 		nbt.setTag("audio", audio);
 		nbt.setTag("audioSetting", audioSetting);
 		nbt.setInteger("duration", duration);
+		
+		nbt.setInteger("volume", volume);
+		nbt.setBoolean("local", playLocal);
 	}
 	
 	@Override
@@ -174,8 +184,13 @@ public class LittleSoundPlayerALET extends LittleStructure {
 		}
 		if (nbt.hasKey("duration"))
 			duration = nbt.getInteger("duration");
-		else
-			duration = 10;
+		
+		if (nbt.hasKey("volume"))
+			volume = nbt.getInteger("volume");
+		
+		if (nbt.hasKey("local"))
+			playLocal = nbt.getBoolean("local");
+		
 	}
 	
 	@Override
@@ -271,10 +286,10 @@ public class LittleSoundPlayerALET extends LittleStructure {
 			for (int i = 0; i < timeLine.size(); i++) {
 				if (timeLine.get(i).getPointsCopy().containsKey(tick)) {
 					Notes note = Notes.getNoteFromPitch(pitch.get(i));
-					
+					if (sound.get(i) == "no sound")
+						return;
 					if (note != null)
-						PacketHandler.sendPacketToAllPlayers(new PacketSendSound(pitch.get(i), pos, sound.get(i) != null ? sound.get(i) : "harp"));
-					
+						PacketHandler.sendPacketToAllPlayers(new PacketSendSound(pitch.get(i), volume, playLocal, pos, sound.get(i) != null ? sound.get(i) : "harp"));
 				}
 			}
 	}
@@ -282,8 +297,11 @@ public class LittleSoundPlayerALET extends LittleStructure {
 	public static class LittleSoundPlayerParserALET extends LittleStructureGuiParser {
 		
 		public String selectedSound;
+		public int volume = 1;
+		public boolean local = false;
 		public List<String> possibleSounds;
-		public String CHSound1, CHSound2, CHSound3, CHSound4, CHSound5, CHSound6, CHSound7, CHSound8, CHSound9;
+		public String CHSound1 = "harp", CHSound2 = "harp", CHSound3 = "harp", CHSound4 = "harp", CHSound5 = "harp",
+		        CHSound6 = "harp", CHSound7 = "harp", CHSound8 = "harp", CHSound9 = "harp";
 		
 		public LittleSoundPlayerParserALET(GuiParent parent, AnimationGuiHandler handler) {
 			super(parent, handler);
@@ -302,61 +320,86 @@ public class LittleSoundPlayerALET extends LittleStructure {
 			channels.add(new TimelineChannelDouble("CH7"));
 			channels.add(new TimelineChannelDouble("CH8"));
 			channels.add(new TimelineChannelDouble("CH9"));
-			if (soundPlayer != null && soundPlayer.CH1 != null)
-				channels.get(0).addKeys(soundPlayer.CH1.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH2 != null)
-				channels.get(1).addKeys(soundPlayer.CH2.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH3 != null)
-				channels.get(2).addKeys(soundPlayer.CH3.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH4 != null)
-				channels.get(3).addKeys(soundPlayer.CH4.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH5 != null)
-				channels.get(4).addKeys(soundPlayer.CH5.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH6 != null)
-				channels.get(5).addKeys(soundPlayer.CH6.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH7 != null)
-				channels.get(6).addKeys(soundPlayer.CH7.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH8 != null)
-				channels.get(7).addKeys(soundPlayer.CH8.getPointsCopy());
-			if (soundPlayer != null && soundPlayer.CH9 != null)
-				channels.get(8).addKeys(soundPlayer.CH9.getPointsCopy());
-			
-			if (soundPlayer != null && soundPlayer.CHSound1 != null)
-				CHSound1 = soundPlayer.CHSound1;
-			if (soundPlayer != null && soundPlayer.CHSound2 != null)
-				CHSound2 = soundPlayer.CHSound2;
-			if (soundPlayer != null && soundPlayer.CHSound3 != null)
-				CHSound3 = soundPlayer.CHSound3;
-			if (soundPlayer != null && soundPlayer.CHSound4 != null)
-				CHSound4 = soundPlayer.CHSound4;
-			if (soundPlayer != null && soundPlayer.CHSound5 != null)
-				CHSound5 = soundPlayer.CHSound5;
-			if (soundPlayer != null && soundPlayer.CHSound6 != null)
-				CHSound6 = soundPlayer.CHSound6;
-			if (soundPlayer != null && soundPlayer.CHSound7 != null)
-				CHSound7 = soundPlayer.CHSound7;
-			if (soundPlayer != null && soundPlayer.CHSound8 != null)
-				CHSound8 = soundPlayer.CHSound8;
-			if (soundPlayer != null && soundPlayer.CHSound9 != null)
-				CHSound9 = soundPlayer.CHSound9;
-			
+			if (soundPlayer != null) {
+				if (soundPlayer.CH1 != null)
+					channels.get(0).addKeys(soundPlayer.CH1.getPointsCopy());
+				if (soundPlayer.CH2 != null)
+					channels.get(1).addKeys(soundPlayer.CH2.getPointsCopy());
+				if (soundPlayer.CH3 != null)
+					channels.get(2).addKeys(soundPlayer.CH3.getPointsCopy());
+				if (soundPlayer.CH4 != null)
+					channels.get(3).addKeys(soundPlayer.CH4.getPointsCopy());
+				if (soundPlayer.CH5 != null)
+					channels.get(4).addKeys(soundPlayer.CH5.getPointsCopy());
+				if (soundPlayer.CH6 != null)
+					channels.get(5).addKeys(soundPlayer.CH6.getPointsCopy());
+				if (soundPlayer.CH7 != null)
+					channels.get(6).addKeys(soundPlayer.CH7.getPointsCopy());
+				if (soundPlayer.CH8 != null)
+					channels.get(7).addKeys(soundPlayer.CH8.getPointsCopy());
+				if (soundPlayer.CH9 != null)
+					channels.get(8).addKeys(soundPlayer.CH9.getPointsCopy());
+				
+				if (soundPlayer.CHSound1 != null)
+					CHSound1 = soundPlayer.CHSound1;
+				if (soundPlayer.CHSound2 != null)
+					CHSound2 = soundPlayer.CHSound2;
+				if (soundPlayer.CHSound3 != null)
+					CHSound3 = soundPlayer.CHSound3;
+				if (soundPlayer.CHSound4 != null)
+					CHSound4 = soundPlayer.CHSound4;
+				if (soundPlayer.CHSound5 != null)
+					CHSound5 = soundPlayer.CHSound5;
+				if (soundPlayer.CHSound6 != null)
+					CHSound6 = soundPlayer.CHSound6;
+				if (soundPlayer.CHSound7 != null)
+					CHSound7 = soundPlayer.CHSound7;
+				if (soundPlayer.CHSound8 != null)
+					CHSound8 = soundPlayer.CHSound8;
+				if (soundPlayer.CHSound9 != null)
+					CHSound9 = soundPlayer.CHSound9;
+				
+				volume = soundPlayer.volume;
+				
+				local = soundPlayer.playLocal;
+			}
 			parent.controls.add(new GuiTimeline("timeline", 0, 0, 150, 97, soundPlayer != null ? soundPlayer.duration : 10, channels, handler).setSidebarWidth(20));
 			//parent.controls.add(new GuiTextfield("keyValue", "", 158, 0, 35, 10).setFloatOnly().setEnabled(false).setCustomTooltip("Pitch"));
 			
-			parent.controls.add(new GuiComboBox("keyValue", 158, 0, 35, Notes.allNotes()).setCustomTooltip("Pitch"));
-			parent.controls.add(new GuiButtonSoundChannel("Channel Settings", this, 0, 105, 80, 8));
+			parent.controls.add(new GuiComboBox("keyValue", 158, 0, 35, Notes.allNotes()).setCustomTooltip("Pitch").setEnabled(false));
 			
-			parent.controls.add(new GuiTextfield("keyPosition", "", 158, 20, 35, 10).setNumbersOnly().setEnabled(false).setCustomTooltip("Tick"));
+			parent.controls.add(new GuiButton("Paste", 108, 105, 28, 8) {
+				
+				@Override
+				public void onClicked(int x, int y, int button) {
+					
+					GuiLongTextField input = (GuiLongTextField) parent.get("file");
+					
+					StringSelection stringSelection = new StringSelection(input.text);
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					String path = CopyUtils.getCopiedFilePath(clipboard);
+					if (path == null)
+						return;
+					try {
+						input.text = path;
+					} catch (Exception e) {
+						
+					}
+				}
+			});
+			
+			parent.controls.add(new GuiTextfield("keyPosition", "", 158, 22, 35, 10).setNumbersOnly().setEnabled(false).setCustomTooltip("Tick"));
 			parent.controls.add(new GuiTextfield("duration_s", structure instanceof LittleSoundPlayerALET ? "" + ((LittleSoundPlayerALET) structure).duration : "" + 10, 158, 40, 35, 8).setNumbersOnly().setLangTooltip("gui.door.duration"));
 			
-			parent.controls.add(new GuiButton("importMid", "Import Midi", 144, 105, 50, 8) {
+			parent.controls.add(new GuiButtonSoundChannel("Sound Settings", this, 0, 105, 75, 8));
+			parent.controls.add(new GuiButton("importMid", "Import Midi", 143, 105, 50, 8) {
 				@Override
 				public void onClicked(int x, int y, int button) {
 					importMidi();
 				}
 			});
 			parent.get("importMid").setCustomTooltip("Enter File Path of a Midi File Below.", "Example: C:\\MIDIs\\Sound.mid");
-			parent.controls.add(new GuiButton("clearSounds", "Wipe", 107, 105, 30, 8) {
+			parent.controls.add(new GuiButton("clearSounds", "Wipe", 158, 89, 35, 8) {
 				@Override
 				public void onClicked(int x, int y, int button) {
 					clearKeys();
@@ -364,7 +407,6 @@ public class LittleSoundPlayerALET extends LittleStructure {
 			});
 			parent.get("clearSounds").setCustomTooltip("Removes all sounds from each channel");
 			parent.controls.add(new GuiLongTextField("file", "", 48, 121, 145, 8));
-			
 		}
 		
 		@SideOnly(Side.CLIENT)
@@ -375,7 +417,6 @@ public class LittleSoundPlayerALET extends LittleStructure {
 		public void onKeySelected(KeySelectedEvent event) {
 			
 			GuiComboBox textfield = (GuiComboBox) parent.get("keyValue");
-			System.out.println(handler.get());
 			selected = (KeyControl) event.source;
 			
 			if (((KeyControl) event.source).value instanceof Double) {
@@ -398,12 +439,15 @@ public class LittleSoundPlayerALET extends LittleStructure {
 		@SideOnly(Side.CLIENT)
 		public void onChange(GuiControlChangedEvent event) {
 			if (event.source.is("keyValue")) {
+				
+				if (selected == null)
+					return;
+				
 				if (!selected.modifiable)
 					return;
 				
 				try {
 					String pitchName = ((GuiComboBox) event.source).getCaption();
-					
 					Notes note = Notes.getNote(pitchName);
 					selected.value = Double.parseDouble(note.getPos() + "");
 				} catch (NumberFormatException e) {
@@ -469,18 +513,15 @@ public class LittleSoundPlayerALET extends LittleStructure {
 							Synthesizer synth = MidiSystem.getSynthesizer();
 							Sequencer s = MidiSystem.getSequencer();
 							s.setSequence(sequence);
-							int trackNumber = 0;
 							int tick = 0;
 							int usedChannels = 0;
 							int previousUsedChannels = 0;
 							int previousChannel = -1;
+							double mod = (s.getTempoInBPM() * sequence.getResolution()) / 60D;
 							for (Track track : s.getSequence().getTracks()) {
 								
-								trackNumber++;
 								for (int i = 0; i < track.size(); i++) {
 									MidiEvent event = track.get(i);
-									
-									double mod = (s.getTempoInBPM() * sequence.getResolution()) / 60D;
 									tick = (int) ((event.getTick() / mod) * 20D);
 									MidiMessage message = event.getMessage();
 									if (message instanceof ShortMessage) {
@@ -491,6 +532,7 @@ public class LittleSoundPlayerALET extends LittleStructure {
 											int octave = (key / 12) - 1;
 											int note = key % 12;
 											String noteName = NOTE_NAMES[note];
+											
 											double pitch = 0;
 											if (key > 64) {
 												pitch = key % 64;
@@ -499,7 +541,9 @@ public class LittleSoundPlayerALET extends LittleStructure {
 											} else if (key == 64) {
 												pitch = 0;
 											}
+											Notes note2 = Notes.getNoteFromPitch((int) pitch);
 											
+											//System.out.println(note2.getPitchName() + " : " + event.getTick() + " : " + tick);
 											GuiTimeline channelList = (GuiTimeline) this.parent.get("timeline");
 											KeyControl control = null;
 											if (previousChannel == -1)
@@ -545,15 +589,15 @@ public class LittleSoundPlayerALET extends LittleStructure {
 		@SideOnly(Side.CLIENT)
 		public void onKeyDeselected(KeyDeselectedEvent event) {
 			selected = null;
-			GuiTextfield textfield = (GuiTextfield) parent.get("keyValue");
-			textfield.setEnabled(false);
-			textfield.text = "";
-			textfield.setCursorPositionZero();
+			GuiComboBox comboBox = (GuiComboBox) parent.get("keyValue");
+			comboBox.setEnabled(false);
+			comboBox.select(0);
 			
-			textfield = (GuiTextfield) parent.get("keyPosition");
-			textfield.setEnabled(false);
-			textfield.text = "";
-			textfield.setCursorPositionZero();
+			GuiTextfield textField = (GuiTextfield) parent.get("keyPosition");
+			
+			textField.setEnabled(false);
+			textField.text = "";
+			textField.setCursorPositionZero();
 			
 		}
 		
@@ -583,6 +627,9 @@ public class LittleSoundPlayerALET extends LittleStructure {
 			structure.CHSound7 = CHSound7;
 			structure.CHSound8 = CHSound8;
 			structure.CHSound9 = CHSound9;
+			
+			structure.volume = volume;
+			structure.playLocal = local;
 			return structure;
 		}
 		
@@ -602,7 +649,7 @@ public class LittleSoundPlayerALET extends LittleStructure {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				SubGuiSoundChannelSettings channelSettings = new SubGuiSoundChannelSettings(littleSoundPlayerParserALET);
+				SubGuiSoundSettings channelSettings = new SubGuiSoundSettings(littleSoundPlayerParserALET);
 				Layer.addLayer(getGui(), channelSettings);
 				
 			}

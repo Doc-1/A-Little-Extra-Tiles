@@ -20,6 +20,7 @@ import com.alet.common.packet.PacketGetServerCams;
 import com.alet.common.packet.PacketSendServerCams;
 import com.alet.common.packet.PacketSendSound;
 import com.alet.common.packet.PacketUpdateNBT;
+import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.LittleCamPlayer;
 import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleNoClipStructureALET;
@@ -159,7 +160,7 @@ public class ALET {
 			@Override
 			@SideOnly(Side.CLIENT)
 			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
-				return new SubGuiTypeWriter();
+				return new SubGuiTypeWriter(structure);
 			}
 			
 			@Override
@@ -189,8 +190,8 @@ public class ALET {
 		LittleStructureRegistry.registerStructureType("state_activator", "simple", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("sound_player", "simple", LittleSoundPlayerALET.class, LittleStructureAttribute.TICKING, LittleSoundPlayerALET.LittleSoundPlayerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
 		
-		if (Loader.isModLoaded("CMDCam"))
-			LittleStructureRegistry.registerStructureType("cam_player", "simple", LittleCamPlayer.class, LittleStructureAttribute.TICKING, LittleCamPlayer.LittleLockParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
+		if (Loader.isModLoaded("cmdcam"))
+			LittleStructureRegistry.registerStructureType("cam_player", "simple", LittleCamPlayer.class, LittleStructureAttribute.TICKING, LittleCamPlayer.LittleCamPlayerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE);
 		
 		proxy.loadSidePre();
 	}
@@ -227,13 +228,16 @@ public class ALET {
 	public void Init(FMLInitializationEvent event) {
 		CreativeCorePacket.registerPacket(PacketUpdateNBT.class);
 		CreativeCorePacket.registerPacket(PacketSendSound.class);
-		CreativeCorePacket.registerPacket(PacketSendServerCams.class);
-		CreativeCorePacket.registerPacket(PacketGetServerCams.class);
+		CreativeCorePacket.registerPacket(PacketUpdateStructureFromClient.class);
+		if (Loader.isModLoaded("cmdcam")) {
+			CreativeCorePacket.registerPacket(PacketSendServerCams.class);
+			CreativeCorePacket.registerPacket(PacketGetServerCams.class);
+		}
 		CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
 		
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
-		LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class);
+		LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class).setNotShowCreativeTab();
 		SoundsHandler.registerSounds();
 		sounds = new ArrayList<>();
 		for (ResourceLocation location : SoundEvent.REGISTRY.getKeys())

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
+import com.alet.ALET;
 import com.creativemd.creativecore.client.rendering.RenderBox;
 import com.creativemd.creativecore.client.rendering.model.ICreativeRendered;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -108,21 +109,17 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (!worldIn.isRemote)
 			return;
-		EntityPlayer player = (EntityPlayer) entityIn;
-		if (player.isHandActive())
-			if (!isShifting) {
-				player.motionX = 0;
-				player.motionZ = 0;
-				player.motionY = 0;
-				player.fallDistance = 0;
-				renderParticles(worldIn, player);
-			} else {
-				player.motionX = 0;
-				player.motionZ = 0;
-				player.motionY = -0.1;
-				player.fallDistance = 0;
-				renderParticles(worldIn, player);
-			}
+		EntityLivingBase player = (EntityLivingBase) entityIn;
+		if (player.getHeldItemMainhand().getItem().equals(ALET.jumpRod)) {
+			if (player.isHandActive())
+				if (!isShifting) {
+					player.motionX = 0;
+					player.motionZ = 0;
+					player.motionY = 0;
+					player.fallDistance = 0;
+					renderParticles(worldIn, player);
+				}
+		}
 		
 	}
 	
@@ -190,8 +187,6 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
-		
-		isShifting = player.isSneaking();
 		player.setNoGravity(true);
 		player.setActiveHand(handIn);
 		
@@ -199,7 +194,7 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public void renderParticles(World worldIn, EntityPlayer player) {
+	public void renderParticles(World worldIn, EntityLivingBase player) {
 		if (!worldIn.isRemote)
 			return;
 		Minecraft mc = Minecraft.getMinecraft();

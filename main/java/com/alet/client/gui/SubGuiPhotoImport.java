@@ -2,14 +2,13 @@ package com.alet.client.gui;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.IOException;
 
 import com.alet.ALET;
 import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.client.gui.controls.Layer;
+import com.alet.common.util.CopyUtils;
 import com.alet.photo.PhotoReader;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
@@ -48,6 +47,7 @@ public class SubGuiPhotoImport extends SubGui {
 				
 				super.onTextChange();
 			}
+			
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				boolean result = super.onKeyPressed(character, key);
@@ -97,7 +97,7 @@ public class SubGuiPhotoImport extends SubGui {
 				int xa = Integer.parseInt(imgHeight.text);
 				int ya = Integer.parseInt(imgWidth.text);
 				System.out.println((xa * ya) + " " + x1);
-				if(xa * ya > x1) {
+				if (xa * ya > x1) {
 					if (Integer.parseInt(imgWidth.text) > Integer.parseInt(imgHeight.text)) {
 						imgHeight.text = String.valueOf(x2);
 						imgWidth.text = String.valueOf(y1);
@@ -109,7 +109,6 @@ public class SubGuiPhotoImport extends SubGui {
 						imgWidth.text = String.valueOf(x2);
 					}
 				}
-				
 				
 			}
 		});
@@ -142,7 +141,6 @@ public class SubGuiPhotoImport extends SubGui {
 				return result;
 			}
 		});
-		
 		
 		controls.add(useFile = new GuiCheckBox("useFile", translate("Use file path"), 40, -1, true) {
 			@Override
@@ -204,17 +202,14 @@ public class SubGuiPhotoImport extends SubGui {
 			@Override
 			public void onClicked(int x, int y, int button) {
 				StringSelection stringSelection = new StringSelection(file.text);
-				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				Transferable t = clpbrd.getContents(this);
-				if (t == null)
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				String path = CopyUtils.getCopiedFilePath(clipboard);
+				if (path == null)
 					return;
-				try {
-					file.text = (String) t.getTransferData(DataFlavor.stringFlavor);
-				} catch (Exception e) {
-				}
+				file.text = path;
 				
 				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelLength (file.text, useURL.value));
+					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
 					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
 					imgHeight.enabled = true;
 					imgWidth.enabled = true;
