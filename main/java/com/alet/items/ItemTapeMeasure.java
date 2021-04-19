@@ -16,13 +16,14 @@ import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
-import com.creativemd.littletiles.common.api.ILittleTile;
+import com.creativemd.littletiles.common.api.ILittlePlacer;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
+import com.creativemd.littletiles.common.util.tooltip.IItemTooltip;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,7 +32,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -39,7 +39,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemTapeMeasure extends Item implements ILittleTile {
+public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip {
 	
 	public static PosData data;
 	public static int measurementType = 0;
@@ -183,11 +183,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 		return false;
 	}
 	
-	@Override
-	public void onDeselect(EntityPlayer player, ItemStack stack) {
-		
-	}
-	
 	public class PosData {
 		public SelectLittleTile tilePosMin;
 		public SelectLittleTile tilePosMax;
@@ -203,7 +198,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	}
 	
 	@Override
-	public void tickPreview(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
+	public void tick(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
 		NBTTagCompound nbt = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
 		List<String> list = LittleGridContext.getNames();
 		
@@ -251,7 +246,7 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	}
 	
 	@Override
-	public void rotateLittlePreview(EntityPlayer player, ItemStack stack, Rotation rotation) {
+	public void rotate(EntityPlayer player, ItemStack stack, Rotation rotation, boolean client) {
 		NBTTagCompound nbt = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
 		if (nbt.hasKey("index")) {
 			int index = nbt.getInteger("index");
@@ -271,11 +266,6 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 			stack.setTagCompound(nbt);
 			
 		}
-	}
-	
-	@Override
-	public void flipLittlePreview(EntityPlayer player, ItemStack stack, Axis axis) {
-		
 	}
 	
 	@Override
@@ -326,6 +316,12 @@ public class ItemTapeMeasure extends Item implements ILittleTile {
 	public boolean containsIngredients(ItemStack stack) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public Object[] tooltipData(ItemStack stack) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

@@ -37,7 +37,7 @@ public class GuiColorPickerAlet extends GuiColorPicker {
 		super(name, x, y, color, hasAlpha, alphaMin);
 		
 		this.hasAlpha = hasAlpha;
-		this.width = 129 + getContentOffset() * 2;
+		this.width = 134 + getContentOffset() * 2;
 		this.height = 55 + getContentOffset() * 2;
 		marginWidth = 0;
 		this.color = color;

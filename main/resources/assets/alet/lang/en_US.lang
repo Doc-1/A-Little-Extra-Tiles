@@ -16,7 +16,7 @@ config.alet.maxPixelText.comment=This will set the max number of pixels a text c
 config.alet.colorAccuracy.comment=This will change how many colors the printer has access to. Zero is all available colors.
 
 
-structure.advanced_noclip.name=Advanced No-clip
+structure.tigger_box.name=Trigger Box
 structure.door_lock.name=Door Lock
 structure.state_activator.name=State Activator
 structure.sound_player.name=Sound Player

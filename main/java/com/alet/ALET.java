@@ -13,6 +13,7 @@ import java.util.List;
 import com.alet.blocks.BasicBlock;
 import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiBlock;
+import com.alet.client.gui.SubGuiNoBluePrintMessage;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.sounds.SoundsHandler;
@@ -27,13 +28,11 @@ import com.alet.common.structure.type.LittleNoClipStructureALET;
 import com.alet.common.structure.type.LittleSoundPlayerALET;
 import com.alet.common.structure.type.LittleStateActivatorALET;
 import com.alet.container.SubContainerBlock;
+import com.alet.container.SubContainerError;
 import com.alet.container.SubContainerPhotoImport;
 import com.alet.container.SubContainerTypeWriter;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.littletiles.items.ItemLittleChiselAlet;
-import com.alet.littletiles.items.ItemLittleGrabberAlet;
-import com.alet.littletiles.items.ItemLittlePaintBrushALET;
 import com.alet.structure.premade.LittlePhotoImporter;
 import com.alet.structure.premade.LittleTypeWriter;
 import com.alet.structure.premade.PickupItemPremade;
@@ -43,9 +42,7 @@ import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
-import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
-import com.creativemd.littletiles.common.api.ILittleTile;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.attribute.LittleStructureAttribute;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
@@ -58,7 +55,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -107,11 +103,6 @@ public class ALET {
 	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent event) {
-		
-		LittleTiles.chisel = new ItemLittleChiselAlet().setUnlocalizedName("LTChisel").setRegistryName("littletiles", "chisel");
-		LittleTiles.colorTube = new ItemLittlePaintBrushALET().setUnlocalizedName("LTColorTube").setRegistryName("littletiles", "colorTube");
-		LittleTiles.grabber = new ItemLittleGrabberAlet().setUnlocalizedName("LTGrabber").setRegistryName("littletiles", "grabber");
-		
 		jumpRod = new ItemJumpTool("jump_rod");
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
 		smoothOakPlank = new BasicBlock("smoothoakplank");
@@ -141,6 +132,19 @@ public class ALET {
 			}
 		});
 		
+		GuiHandler.registerGuiHandler("noblue", new CustomGuiHandler() {
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubGuiNoBluePrintMessage();
+			}
+			
+			@Override
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubContainerError(player);
+			}
+		});
 		GuiHandler.registerGuiHandler("photo-import", new LittleStructureGuiHandler() {
 			
 			@Override
@@ -169,23 +173,7 @@ public class ALET {
 			}
 		});
 		
-		GuiHandler.registerGuiHandler("grabberAlet", new CustomGuiHandler() {
-			
-			@Override
-			@SideOnly(Side.CLIENT)
-			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
-				ItemStack stack = player.getHeldItemMainhand();
-				return ItemLittleGrabberAlet.getMode(stack).getGui(player, stack, ((ILittleTile) stack.getItem()).getPositionContext(stack));
-			}
-			
-			@Override
-			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
-				ItemStack stack = player.getHeldItemMainhand();
-				return ItemLittleGrabberAlet.getMode(stack).getContainer(player, stack);
-			}
-		});
-		
-		LittleStructureRegistry.registerStructureType("advanced_noclip", "simple", LittleNoClipStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleNoClipStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
+		LittleStructureRegistry.registerStructureType("tigger_box", "simple", LittleNoClipStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleNoClipStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
 		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("state_activator", "simple", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("sound_player", "simple", LittleSoundPlayerALET.class, LittleStructureAttribute.TICKING, LittleSoundPlayerALET.LittleSoundPlayerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);

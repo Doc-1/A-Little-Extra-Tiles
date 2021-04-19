@@ -7,18 +7,14 @@ import org.lwjgl.input.Keyboard;
 import com.alet.client.overlay.gui.GuiAxisIndicatorAletControl;
 import com.alet.client.overlay.gui.GuiDisplayMeasurements;
 import com.alet.common.command.UpdateFontsCommand;
+import com.alet.common.event.ALETEventHandler;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
-import com.alet.common.util.shape.DragShapeSliceWall;
-import com.alet.common.util.shape.DragShapeTriangle;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;
 import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.render.overlay.OverlayControl;
 import com.creativemd.littletiles.client.render.overlay.OverlayRenderer.OverlayPositionType;
-import com.creativemd.littletiles.common.util.shape.DragShape;
-import com.creativemd.littletiles.common.util.shape.SelectShape;
-import com.creativemd.littletiles.common.util.shape.SelectShape.DragSelectShape;
 import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.client.Minecraft;
@@ -37,11 +33,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ALETClient extends LittleTilesServer {
 	
-	public static final DragShape triangle = new DragShapeTriangle();
-	public static final DragShape SliceWall = new DragShapeSliceWall();
-	
-	public static final DragSelectShape triangleSelect = new DragSelectShape(triangle);
-	
 	public static KeyBinding clearMeasurment;
 	Minecraft mc = Minecraft.getMinecraft();
 	private static ArrayList<Item> renderedItems = new ArrayList<Item>();
@@ -55,10 +46,6 @@ public class ALETClient extends LittleTilesServer {
 	
 	@Override
 	public void loadSidePre() {
-		DragShape.registerDragShape(triangle);
-		//DragShape.registerDragShape(SliceWall);
-		
-		SelectShape.registerShape(triangleSelect);
 	}
 	
 	@Override
@@ -84,6 +71,7 @@ public class ALETClient extends LittleTilesServer {
 		
 		MinecraftForge.EVENT_BUS.register(new TapeRenderer());
 		MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
+		MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
 		
 		LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
 		LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));

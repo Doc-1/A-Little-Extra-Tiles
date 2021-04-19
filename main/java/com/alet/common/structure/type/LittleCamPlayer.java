@@ -8,6 +8,7 @@ import com.creativemd.cmdcam.common.packet.StartPathPacket;
 import com.creativemd.cmdcam.common.utils.CamPath;
 import com.creativemd.cmdcam.server.CMDCamServer;
 import com.creativemd.cmdcam.server.CamCommandServer;
+import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
@@ -27,6 +28,8 @@ import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -108,6 +111,7 @@ public class LittleCamPlayer extends LittleStructure {
 		
 		@Override
 		protected void createControls(LittlePreviews previews, LittleStructure structure) {
+			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			
 			LittleCamPlayer camPlayer = structure instanceof LittleCamPlayer ? (LittleCamPlayer) structure : null;
 			if (camPlayer != null)
@@ -128,6 +132,14 @@ public class LittleCamPlayer extends LittleStructure {
 			
 			parent.controls.add(new GuiTextBox("text", "Use the /cam-server add command to add a new path to the drop down menu. Duration cannot be zero. It will not play.", 110, 0, 82));
 			
+			if (!player.isCreative()) {
+				for (GuiControl control : parent.controls) {
+					control.enabled = false;
+				}
+				parent.controls.add(new GuiTextBox("message", "These settings are only avalible in creative mode", 140, 45, 50));
+				GuiTextBox message = (GuiTextBox) parent.get("message");
+				parent.get("text").visible = false;
+			}
 		}
 		
 		@Override

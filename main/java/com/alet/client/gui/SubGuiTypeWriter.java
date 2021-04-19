@@ -14,12 +14,12 @@ import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.util.CopyUtils;
 import com.alet.font.FontReader;
+import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.alet.structure.premade.LittleTypeWriter;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiColorPicker;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.packet.PacketHandler;
@@ -55,7 +55,7 @@ public class SubGuiTypeWriter extends SubGui {
 			fontSize.text = nbt.getString("fontSize");
 		}
 		if (nbt.hasKey("color")) {
-			GuiColorPicker picker = (GuiColorPicker) get("picker");
+			GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
 			picker.setColor(ColorUtils.IntToRGBA(nbt.getInteger("color")));
 		}
 		if (nbt.hasKey("grid")) {
@@ -70,7 +70,7 @@ public class SubGuiTypeWriter extends SubGui {
 	
 	@Override
 	public void onClosed() {
-		GuiColorPicker picker = (GuiColorPicker) get("picker");
+		GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
 		GuiTextfield fontSize = (GuiTextfield) get("fontSize");
 		GuiComboBox fontBox = (GuiComboBox) get("fontType");
 		GuiComboBox gridBox = (GuiComboBox) get("grid");
@@ -89,9 +89,14 @@ public class SubGuiTypeWriter extends SubGui {
 	
 	@Override
 	public void createControls() {
-		
+		LittleTypeWriter typeWriter = (LittleTypeWriter) structure;
+		typeWriter.writeToNBT(nbt);
+		System.out.println(nbt);
 		Color color = ColorUtils.IntToRGBA(BLACK);
-		controls.add(new GuiColorPicker("picker", 0, 60, color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
+		if (nbt.hasKey("color"))
+			color = ColorUtils.IntToRGBA(nbt.getInteger("color"));
+		
+		controls.add(new GuiColorPickerAlet("picker", 0, 60, color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
 		
 		controls.add(new GuiComboBox("grid", 155, 40, 15, LittleGridContext.getNames()).setCustomTooltip("Grid"));
 		
@@ -161,7 +166,7 @@ public class SubGuiTypeWriter extends SubGui {
 			public void onClicked(int x, int y, int button) {
 				GuiLongTextField input = (GuiLongTextField) get("input");
 				
-				GuiColorPicker picker = (GuiColorPicker) get("picker");
+				GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
 				int color = ColorUtils.RGBAToInt(picker.color);
 				
 				GuiTextfield contextField = (GuiTextfield) get("fontSize");
@@ -174,9 +179,15 @@ public class SubGuiTypeWriter extends SubGui {
 				int grid = Integer.parseInt(contextBox_2.getCaption());
 				
 				GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
-				
+				System.out.println("Input Text: " + input.text);
+				System.out.println("Font: " + font);
+				System.out.println("Grid: " + grid);
+				System.out.println("Font size: " + fontSize);
+				System.out.println("Color: " + color);
+				System.out.println("Rotation: " + rotation.value);
 				try {
 					NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color, rotation.value);
+					System.out.println("NBT data: " + "" + nbt);
 					sendPacketToServer(nbt);
 				} catch (IOException e) {
 					e.printStackTrace();

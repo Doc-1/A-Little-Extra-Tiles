@@ -5,11 +5,11 @@ import java.util.List;
 
 public enum Notes {
     //
-	G1((float) Math.pow(2F, -5F / 12F), (float) Math.pow(2F, -33F / 12F), -33, "G2", "alet:block.note.-low5"),
-	GA1((float) Math.pow(2F, -4F / 12F), (float) Math.pow(2F, -32F / 12F), -32, "G#2", "alet:block.note.-low5"),
-	A1((float) Math.pow(2F, -3F / 12F), (float) Math.pow(2F, -31F / 12F), -31, "A2", "alet:block.note.-low5"),
-	AB1((float) Math.pow(2F, -2F / 12F), (float) Math.pow(2F, -30F / 12F), -30, "A#2", "alet:block.note.-low5"),
-	B1((float) Math.pow(2F, -1F / 12F), (float) Math.pow(2F, -29F / 12F), -29, "B2", "alet:block.note.-low5"),
+	G1((float) Math.pow(2F, -5F / 12F), (float) Math.pow(2F, -33F / 12F), -33, "G1", "alet:block.note.-low5"),
+	GA1((float) Math.pow(2F, -4F / 12F), (float) Math.pow(2F, -32F / 12F), -32, "G#1", "alet:block.note.-low5"),
+	A1((float) Math.pow(2F, -3F / 12F), (float) Math.pow(2F, -31F / 12F), -31, "A1", "alet:block.note.-low5"),
+	AB1((float) Math.pow(2F, -2F / 12F), (float) Math.pow(2F, -30F / 12F), -30, "A#1", "alet:block.note.-low5"),
+	B1((float) Math.pow(2F, -1F / 12F), (float) Math.pow(2F, -29F / 12F), -29, "B1", "alet:block.note.-low5"),
 	C2((float) Math.pow(2F, 0F / 12F), (float) Math.pow(2F, -28F / 12F), -28, "C2", "alet:block.note.-low5"),
     //
 	
@@ -100,11 +100,11 @@ public enum Notes {
 	
     //
 	C7((float) Math.pow(2F, 0F / 12F), (float) Math.pow(2F, 32F / 12F), 32, "C7", "alet:block.note.-high5"),
-	CD7((float) Math.pow(2F, 1F / 12F), (float) Math.pow(2F, 33F / 12F), 33, "C#6", "alet:block.note.-high5"),
-	D7((float) Math.pow(2F, 2F / 12F), (float) Math.pow(2F, 34F / 12F), 34, "D6", "alet:block.note.-high5"),
-	DE7((float) Math.pow(2F, 3F / 12F), (float) Math.pow(2F, 35F / 12F), 35, "D#6", "alet:block.note.-high5"),
-	E7((float) Math.pow(2F, 4F / 12F), (float) Math.pow(2F, 36F / 12F), 36, "E6", "alet:block.note.-high5"),
-	F7((float) Math.pow(2F, 5F / 12F), (float) Math.pow(2F, 37F / 12F), 37, "F6", "alet:block.note.-high5");
+	CD7((float) Math.pow(2F, 1F / 12F), (float) Math.pow(2F, 33F / 12F), 33, "C#7", "alet:block.note.-high5"),
+	D7((float) Math.pow(2F, 2F / 12F), (float) Math.pow(2F, 34F / 12F), 34, "D7", "alet:block.note.-high5"),
+	DE7((float) Math.pow(2F, 3F / 12F), (float) Math.pow(2F, 35F / 12F), 35, "D#7", "alet:block.note.-high5"),
+	E7((float) Math.pow(2F, 4F / 12F), (float) Math.pow(2F, 36F / 12F), 36, "E7", "alet:block.note.-high5"),
+	F7((float) Math.pow(2F, 5F / 12F), (float) Math.pow(2F, 37F / 12F), 37, "F7", "alet:block.note.-high5");
 	//
 	
 	private float pitchOut;

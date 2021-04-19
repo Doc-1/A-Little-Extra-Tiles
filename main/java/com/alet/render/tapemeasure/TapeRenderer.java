@@ -85,15 +85,18 @@ public class TapeRenderer {
 			allIndexes.add(x);
 		}
 		
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.glLineWidth(2.0F);
-		GlStateManager.disableTexture2D();
-		GlStateManager.depthMask(false);
-		GlStateManager.disableDepth();
-		bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
 		PosData data = ItemTapeMeasure.data;
 		if (data != null) {
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			GlStateManager.glLineWidth(2.0F);
+			GlStateManager.enableAlpha();
+			
+			GlStateManager.disableTexture2D();
+			GlStateManager.depthMask(false);
+			GlStateManager.disableDepth();
+			
+			bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
 			List<AxisAlignedBB> boxes = new ArrayList<AxisAlignedBB>();
 			for (int index : allIndexes) {
 				int index1 = index;
@@ -136,14 +139,71 @@ public class TapeRenderer {
 						Box.drawBox(tilePosMax, contextSize, r, g, b, 1.0F);
 					}
 			}
+			
+			tessellator.draw();
+			
+			GlStateManager.enableDepth();
+			GlStateManager.depthMask(true);
+			GlStateManager.enableTexture2D();
+			GlStateManager.disableBlend();
+			
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			GlStateManager.glLineWidth(5.0F);
+			GlStateManager.disableTexture2D();
+			
+			bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
+			for (int index : allIndexes) {
+				int index1 = index;
+				int index2 = index + 1;
+				int selectedIndex = (nbt.hasKey("index")) ? nbt.getInteger("index") * 2 : 0;
+				int contextSize = (nbt.hasKey("context" + index1)) ? Integer.parseInt(list.get(nbt.getInteger("context" + index1))) : ItemMultiTiles.currentContext.size;
+				
+				//Gets Color
+				int color = (nbt.hasKey("color" + index1)) ? nbt.getInteger("color" + index1) : ColorUtils.WHITE;
+				Color colour = ColorUtils.IntToRGBA(color);
+				float r = colour.getRed() / 255F;
+				float g = colour.getGreen() / 255F;
+				float b = colour.getBlue() / 255F;
+				//*********
+				
+				EnumFacing facingMin = (nbt.hasKey("facing" + index1)) ? EnumFacing.byName(nbt.getString("facing" + index1)) : EnumFacing.UP;
+				EnumFacing facingMax = (nbt.hasKey("facing" + index2)) ? EnumFacing.byName(nbt.getString("facing" + index2)) : EnumFacing.UP;
+				
+				double[] posEdit = ItemTapeMeasure.facingOffset(data.result.hitVec.x, data.result.hitVec.y, data.result.hitVec.z, contextSize, data.result.sideHit);
+				SelectLittleTile tilePosMin = data.tilePosCursor;
+				SelectLittleTile tilePosMax = data.tilePosCursor;
+				
+				boolean[] shouldRender = { false, false };
+				if (nbt.hasKey("x" + index1)) { //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+					tilePosMin = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x" + index1)), Double.parseDouble(nbt.getString("y" + index1)), Double.parseDouble(nbt.getString("z" + index1))), LittleGridContext.get(contextSize));
+					shouldRender[0] = true;
+				}
+				
+				if (nbt.hasKey("x" + index2)) { //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+					tilePosMax = new SelectLittleTile(new Vec3d(Double.parseDouble(nbt.getString("x" + index2)), Double.parseDouble(nbt.getString("y" + index2)), Double.parseDouble(nbt.getString("z" + index2))), LittleGridContext.get(contextSize));
+					shouldRender[1] = true;
+				}
+				
+				if (shouldRender[0] || shouldRender[1])
+					if (nbt.getInteger("shape" + index1) == 0) {
+						Box.drawBox(tilePosMin, tilePosMax, r, g, b, 1.0F);
+					} else if (nbt.getInteger("shape" + index1) == 1) {
+						Line.drawLine(tilePosMin, tilePosMax, r, g, b, 1.0F);
+						Box.drawBox(tilePosMin, contextSize, r, g, b, 1.0F);
+						Box.drawBox(tilePosMax, contextSize, r, g, b, 1.0F);
+					}
+			}
+			
+			tessellator.draw();
+			
+			GlStateManager.enableDepth();
+			GlStateManager.depthMask(true);
+			GlStateManager.enableTexture2D();
+			GlStateManager.disableBlend();
+			
 		}
 		
-		tessellator.draw();
-		
-		GlStateManager.enableDepth();
-		GlStateManager.depthMask(true);
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableBlend();
 	}
 	
 	public static void renderCursor(NBTTagCompound nbt, int index1, int contextSize, SelectLittleTile tilePosCursor) {

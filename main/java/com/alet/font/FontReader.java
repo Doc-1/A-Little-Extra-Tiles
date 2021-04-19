@@ -88,7 +88,7 @@ public class FontReader {
 		
 		try {
 			image = fontToPhoto(input, font, fontSize, fontColor, rotation);
-			
+			System.out.println("Image: " + image);
 			if (image != null) {
 				int width = image.getWidth();
 				int height = image.getHeight();

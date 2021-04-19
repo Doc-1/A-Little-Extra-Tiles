@@ -1,36 +1,14 @@
 package com.alet.common.util.shape;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.creativemd.creativecore.common.gui.GuiControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiSteppedSlider;
-import com.creativemd.creativecore.common.utils.math.Rotation;
-import com.creativemd.littletiles.common.item.ItemMultiTiles;
-import com.creativemd.littletiles.common.tile.math.box.LittleBox;
-import com.creativemd.littletiles.common.tile.math.box.LittleBoxes;
-import com.creativemd.littletiles.common.tile.math.box.slice.LittleSlice;
-import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
-import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
-import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
-import com.creativemd.littletiles.common.util.shape.DragShape;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-public class DragShapeOddBox extends DragShape {
+public class DragShapeOddBox {
 	
 	public static int thickness = 0;
 	public static PlacementPosition minPos;
 	public static PlacementPosition maxPos;
 	
+	/*
 	public DragShapeOddBox() {
 		super("odd box");
 	}
@@ -38,6 +16,7 @@ public class DragShapeOddBox extends DragShape {
 	/** Increase or decreases the given LittleVec
 	 * 
 	 * @return Returns the edited LittleVec object */
+	/*
 	public LittleVec editVec(LittleVec editVec, int modX, int modY, int modZ) {
 		LittleVec editedVec = new LittleVec(editVec.x + modX, editVec.y + modY, editVec.z + modZ);
 		return editedVec;
@@ -46,6 +25,7 @@ public class DragShapeOddBox extends DragShape {
 	/** Moves the LittleVec away from the face you entered.
 	 * 
 	 * @return Returns the edited LittleVec object */
+	/*
 	public LittleVec addDistence(LittleVec editVec, int distence, EnumFacing facing) {
 		editVec.set(facing.getAxis(), editVec.get(facing.getAxis()) + (facing.getAxisDirection().getOffset() * distence));
 		return editVec;
@@ -160,6 +140,5 @@ public class DragShapeOddBox extends DragShape {
 		boxes.add(box3);
 		boxes.add(box);
 		return boxes;
-	}
-	
+	}*/
 }
