@@ -11,10 +11,9 @@ import net.minecraft.util.EnumFacing;
 public class Measurement extends SelectLittleTile {
 	
 	public Shape shapeType = Shape.Line;
+	
 	public enum Shape {
-		Box,
-		Line,
-		Circle
+		Box, Line, Circle
 	}
 	
 	public Measurement() {

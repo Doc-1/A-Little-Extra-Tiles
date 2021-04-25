@@ -32,7 +32,7 @@ public class GuiAxisIndicatorAletControl extends GuiControl {
 		
 		posX = 50;
 		posY = 40;
-
+		
 		float partialTicks = mc.getRenderPartialTicks();
 		Entity entity = this.mc.getRenderViewEntity();
 		float pitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
@@ -41,7 +41,7 @@ public class GuiAxisIndicatorAletControl extends GuiControl {
 		GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
 		GlStateManager.scale(-1.0F, -1.0F, -1.0F);
 		
-		if (!Minecraft.getMinecraft().gameSettings.showDebugInfo){
+		if (!Minecraft.getMinecraft().gameSettings.showDebugInfo) {
 			{
 				float direction = pitch % 180;
 				
@@ -54,7 +54,7 @@ public class GuiAxisIndicatorAletControl extends GuiControl {
 				GlStateManager.rotate(180, 1, 0, 0);
 				GuiRenderHelper.instance.drawStringWithShadow("Y", 15, -50, ColorUtils.RGBAToInt(new Color(255, 255, 255, 255)));
 				GlStateManager.popMatrix();
-					
+				
 				if (direction < 45 && direction > -45) {
 					GlStateManager.pushMatrix();
 					GlStateManager.rotate(180, 0, 0, 1);
@@ -78,7 +78,6 @@ public class GuiAxisIndicatorAletControl extends GuiControl {
 					GuiRenderHelper.instance.drawStringWithShadow("X", -30, -15, ColorUtils.RGBAToInt(new Color(255, 255, 255, 255)));
 					GlStateManager.popMatrix();
 				}
-				
 				
 				GlStateManager.pushMatrix();
 				

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 public class SoundsHandler {
 	
 	public static void registerSounds() {
-		String[] listOfSounds = { "harp", "banjo", "bdrum", "bell", "bit", "click", "cow_bell", "dbas", "didgeridoo", "flute", "guitar", "icechime", "iron_xylophone", "pling", "sdrum", "xylobone" };
+		String[] listOfSounds = { "harp", "banjo", "bdrum", "bell", "bit", "click", "cow_bell", "dbas", "didgeridoo", "flute", "guitar", "icechime", "iron_xylophone", "pling", "sdrum", "xylobone", "donk4rmas_piano" };
 		
 		for (String sounds : listOfSounds) {
 			registerSound("block.note." + sounds);

@@ -16,7 +16,7 @@ public enum Notes {
     //
 	CD2((float) Math.pow(2F, -5F / 12F), (float) Math.pow(2F, -27F / 12F), -27, "C#2", "alet:block.note.-low4"),
 	D2((float) Math.pow(2F, -4F / 12F), (float) Math.pow(2F, -26F / 12F), -26, "D2", "alet:block.note.-low4"),
-	DE2((float) Math.pow(2F, -3F / 12F), (float) Math.pow(2F, -25F / 12F), -25, "D4#2", "alet:block.note.-low4"),
+	DE2((float) Math.pow(2F, -3F / 12F), (float) Math.pow(2F, -25F / 12F), -25, "D#2", "alet:block.note.-low4"),
 	E2((float) Math.pow(2F, -2F / 12F), (float) Math.pow(2F, -24F / 12F), -24, "E2", "alet:block.note.-low4"),
 	F2((float) Math.pow(2F, -1F / 12F), (float) Math.pow(2F, -23F / 12F), -23, "F2", "alet:block.note.-low4"),
 	FG2((float) Math.pow(2F, 0F / 12F), (float) Math.pow(2F, -22F / 12F), -22, "F#2", "alet:block.note.-low4"),

@@ -21,3 +21,5 @@ structure.door_lock.name=Door Lock
 structure.state_activator.name=State Activator
 structure.sound_player.name=Sound Player
 structure.cam_player.name=Cam Player
+
+alet.tapemeasure.tooltip='%s' to configure tool\n'%s', '%s' to change\nselected measurement\n'%s' to clear measurement

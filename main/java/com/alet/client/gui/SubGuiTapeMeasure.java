@@ -120,7 +120,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
 			public void onClicked(int x, int y, int button) {
 				ItemTapeMeasure thisTapeMeasure = (ItemTapeMeasure) stack.getItem();
 				if (GuiScreen.isShiftKeyDown())
-					thisTapeMeasure.clear(stack, indexBox.index);
+					thisTapeMeasure.clear(stack, indexBox.index, this.getPlayer());
 				else
 					thisTapeMeasure.clear(stack);
 				

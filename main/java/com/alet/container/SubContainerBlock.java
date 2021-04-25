@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class SubContainerBlock extends SubContainer {
 	
 	public final InventoryBasic slot = new InventoryBasic("slot", false, 1);
+	
 	public SubContainerBlock(EntityPlayer player) {
 		super(player);
 	}
@@ -42,7 +43,7 @@ public class SubContainerBlock extends SubContainer {
 			slot.setInventorySlotContents(0, newStack);
 		}
 	}
-
+	
 	@Override
 	public void onClosed() {
 		super.onClosed();

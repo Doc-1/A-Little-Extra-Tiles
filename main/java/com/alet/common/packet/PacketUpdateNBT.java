@@ -18,16 +18,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketUpdateNBT extends CreativeCorePacket{
+public class PacketUpdateNBT extends CreativeCorePacket {
 	
 	private NBTTagCompound nbt;
-
+	
 	public PacketUpdateNBT() {
 		
 	}
 	
 	public PacketUpdateNBT(ItemStack mainHand) {
-		if(mainHand.getItem().equals(ALET.tapeMeasure)) {
+		if (mainHand.getItem().equals(ALET.tapeMeasure)) {
 			NBTTagCompound nbt = mainHand.hasTagCompound() ? mainHand.getTagCompound() : new NBTTagCompound();
 			this.nbt = nbt;
 		}
@@ -37,25 +37,24 @@ public class PacketUpdateNBT extends CreativeCorePacket{
 	public void writeBytes(ByteBuf buf) {
 		writeNBT(buf, nbt);
 	}
-
+	
 	@Override
 	public void readBytes(ByteBuf buf) {
 		nbt = readNBT(buf);
 	}
-
+	
 	@Override
 	public void executeClient(EntityPlayer player) {
 	}
-
+	
 	@Override
 	public void executeServer(EntityPlayer player) {
 		ItemStack mainHand = player.getHeldItemMainhand();
-		if(mainHand.getItem().equals(ALET.tapeMeasure) && !nbt.hasNoTags()) {
-            mainHand.setTagCompound(nbt);
-        }
+		if (mainHand.getItem().equals(ALET.tapeMeasure) && !nbt.hasNoTags()) {
+			mainHand.setTagCompound(nbt);
+		}
 	}
 }
-
 
 /*
 public static class Handler implements IMessageHandler<PacketUpdateNBT, IMessage> {

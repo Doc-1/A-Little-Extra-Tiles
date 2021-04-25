@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiTapeMeasure;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
@@ -15,6 +16,7 @@ import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.api.ILittlePlacer;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
@@ -22,7 +24,10 @@ import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
+import com.creativemd.littletiles.common.util.place.IMarkMode;
+import com.creativemd.littletiles.common.util.place.MarkMode;
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
+import com.creativemd.littletiles.common.util.place.PlacementPreview;
 import com.creativemd.littletiles.common.util.tooltip.IItemTooltip;
 
 import net.minecraft.block.state.IBlockState;
@@ -52,14 +57,12 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
 	 *            The TapeMeasure the player is using
 	 * @param index
 	 *            What index the player is selected in the GUI */
-	public void clear(ItemStack stack, int index) {
+	public void clear(ItemStack stack, int index, EntityPlayer player) {
 		NBTTagCompound nbt = stack.getTagCompound();
 		
 		List<Integer> allIndexes = new ArrayList<Integer>();
 		List<String> allMatches = new ArrayList<String>();
 		index *= 2;
-		System.out.println(index);
-		System.out.println(nbt.toString());
 		
 		Matcher m1 = Pattern.compile("[a-zA-Z]+" + (index + 1)).matcher(nbt.toString());
 		while (m1.find()) {
@@ -74,9 +77,8 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
 		for (String key : allMatches) {
 			if (!key.contains("context") && !key.contains("color") && !key.contains("shape"))
 				nbt.removeTag(key);
-			
 		}
-		
+		PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
 	}
 	
 	public ItemTapeMeasure() {
@@ -114,7 +116,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add("THIS IS IN ALPHA!\n" + "Design Will Change.\n" + "Press C to change  \n" + "grid size.");
+		tooltip.add("THIS IS IN ALPHA!\n" + "Design Will Change.\n");
 	}
 	
 	@Override
@@ -222,7 +224,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
 	
 	public void onKeyPress(int pressedKey, EntityPlayer player, ItemStack stack) {
 		if (pressedKey == TapeMeasureKeyEventHandler.CLEAR) {
-			clear(stack, stack.getTagCompound().getInteger("index"));
+			clear(stack, stack.getTagCompound().getInteger("index"), player);
 		}
 	}
 	
@@ -320,8 +322,13 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
 	
 	@Override
 	public Object[] tooltipData(ItemStack stack) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Object[] { LittleTilesClient.configure.getDisplayName(), LittleTilesClient.up.getDisplayName(), LittleTilesClient.down.getDisplayName(), ALETClient.clearMeasurment.getDisplayName() };
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IMarkMode onMark(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result, PlacementPreview previews) {
+		return new MarkMode(player, position, previews);
 	}
 	
 }

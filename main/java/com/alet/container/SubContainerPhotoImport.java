@@ -1,12 +1,15 @@
 package com.alet.container;
 
+import com.alet.common.packet.PacketSendGuiToClient;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
+import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.WorldUtils;
 import com.creativemd.littletiles.common.item.ItemLittleRecipe;
 import com.creativemd.littletiles.common.item.ItemLittleRecipeAdvanced;
 import com.creativemd.littletiles.common.util.converation.StructureStringUtils;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -15,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class SubContainerPhotoImport extends SubContainer {
 	
 	public final InventoryBasic slot = new InventoryBasic("slot", false, 1);
+	
 	public SubContainerPhotoImport(EntityPlayer player) {
 		super(player);
 	}
@@ -22,7 +26,7 @@ public class SubContainerPhotoImport extends SubContainer {
 	@Override
 	public void createControls() {
 		addSlotToContainer(new Slot(slot, 0, 0, 0));
-		addPlayerSlotsToContainer(player,7,110);
+		addPlayerSlotsToContainer(player, 7, 110);
 	}
 	
 	@Override
@@ -41,8 +45,10 @@ public class SubContainerPhotoImport extends SubContainer {
 			}
 			slot.setInventorySlotContents(0, newStack);
 		}
+		if (player instanceof EntityPlayerMP)
+			PacketHandler.sendPacketToPlayer(new PacketSendGuiToClient(), (EntityPlayerMP) player);
 	}
-
+	
 	@Override
 	public void onClosed() {
 		super.onClosed();

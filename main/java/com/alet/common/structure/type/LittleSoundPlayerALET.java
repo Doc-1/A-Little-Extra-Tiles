@@ -5,6 +5,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import javax.sound.midi.Track;
 import com.alet.client.gui.SubGuiSoundSettings;
 import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.client.gui.controls.Layer;
+import com.alet.client.gui.message.SubGuiNoPathMessage;
 import com.alet.client.sounds.Notes;
 import com.alet.common.packet.PacketSendSound;
 import com.alet.common.util.CopyUtils;
@@ -522,7 +524,10 @@ public class LittleSoundPlayerALET extends LittleStructure {
 								
 								for (int i = 0; i < track.size(); i++) {
 									MidiEvent event = track.get(i);
-									tick = (int) ((event.getTick() / mod) * 20D);
+									DecimalFormat df = new DecimalFormat("#####.##");
+									double d = Double.parseDouble(df.format(event.getTick() / mod));
+									System.out.println(d);
+									tick = (int) (d * 20D);
 									MidiMessage message = event.getMessage();
 									if (message instanceof ShortMessage) {
 										ShortMessage sm = (ShortMessage) message;
@@ -582,7 +587,9 @@ public class LittleSoundPlayerALET extends LittleStructure {
 						} catch (InvalidMidiDataException | IOException | MidiUnavailableException e) {
 							e.printStackTrace();
 						}
-			}
+			} else
+				Layer.addLayer(parent.getGui(), new SubGuiNoPathMessage(".mid"));
+			
 		}
 		
 		@CustomEventSubscribe

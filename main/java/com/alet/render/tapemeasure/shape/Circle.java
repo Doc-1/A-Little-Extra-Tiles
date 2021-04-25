@@ -12,13 +12,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 
-public class Circle extends Shapes{
-	
+public class Circle extends Shapes {
 	
 	public Circle(Vec3d p, Vec3d p2, int contextSz) {
 		super(p, p2, contextSz);
 	}
-
+	
 	public static void drawCircle(Vec3d pos, Vec3d pos2, float red, float green, float blue, float alpha) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
@@ -40,16 +39,12 @@ public class Circle extends Shapes{
 			bufferbuilder.pos((x + pos.x) - d0 -0.001, (y + pos.y) - d1, pos.z - d2).color(red, green, blue, alpha).endVertex();
 		}*/
 	}
-
+	
 	@Override
 	protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {
 	}
-
-	
 	
 }
-
-
 
 /*
 double y = 0.0;

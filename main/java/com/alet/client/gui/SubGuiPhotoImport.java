@@ -8,6 +8,8 @@ import java.io.IOException;
 import com.alet.ALET;
 import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.client.gui.controls.Layer;
+import com.alet.client.gui.message.SubGuiErrorMessage;
+import com.alet.client.gui.message.SubGuiNoPathMessage;
 import com.alet.common.util.CopyUtils;
 import com.alet.photo.PhotoReader;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -96,7 +98,6 @@ public class SubGuiPhotoImport extends SubGui {
 				
 				int xa = Integer.parseInt(imgHeight.text);
 				int ya = Integer.parseInt(imgWidth.text);
-				System.out.println((xa * ya) + " " + x1);
 				if (xa * ya > x1) {
 					if (Integer.parseInt(imgWidth.text) > Integer.parseInt(imgHeight.text)) {
 						imgHeight.text = String.valueOf(x2);
@@ -242,7 +243,17 @@ public class SubGuiPhotoImport extends SubGui {
 					int grid = Integer.parseInt(contextBox.getCaption());
 					try {
 						NBTTagCompound nbt = PhotoReader.photoToNBT(file.text, useURL.value, grid);
-						sendPacketToServer(nbt);
+						/*
+						System.out.println("File Or URL: " + file.text);
+						System.out.println("Grid: " + grid);
+						System.out.println("Size: " + resizeX + " by " + resizeY);
+						System.out.println("NBT Data:" + nbt);
+						*/
+						if (nbt != null)
+							sendPacketToServer(nbt);
+						else
+							Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
+						
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

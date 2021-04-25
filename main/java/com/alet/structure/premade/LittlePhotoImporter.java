@@ -25,10 +25,12 @@ public class LittlePhotoImporter extends LittleStructurePremade {
 	}
 	
 	@Override
-	protected void loadFromNBTExtra(NBTTagCompound nbt) {}
+	protected void loadFromNBTExtra(NBTTagCompound nbt) {
+	}
 	
 	@Override
-	protected void writeToNBTExtra(NBTTagCompound nbt) {}
+	protected void writeToNBTExtra(NBTTagCompound nbt) {
+	}
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {

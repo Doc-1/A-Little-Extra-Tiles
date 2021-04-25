@@ -62,7 +62,6 @@ public class PhotoReader {
 		return resized;
 	}
 	
-	
 	public static boolean imageExists(String input, boolean uploadOption) {
 		InputStream in = null;
 		File file = null;
@@ -84,7 +83,7 @@ public class PhotoReader {
 		}
 		return true;
 	}
-
+	
 	public static int getPixelWidth(String input, boolean uploadOption) {
 		InputStream in = null;
 		File file = null;
@@ -173,50 +172,50 @@ public class PhotoReader {
 				int height = image.getHeight();
 				
 				byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-			    boolean hasAlphaChannel = image.getAlphaRaster() != null;
-			    int[][] result = new int[height][width];
-			    
+				boolean hasAlphaChannel = image.getAlphaRaster() != null;
+				int[][] result = new int[height][width];
+				
 				if (((width * height) < maxPixelAmount)) {
 					
-				    if (hasAlphaChannel) {
-				    	final int pixelLength = 4;
-				    	for (int pixel = 0, row = height-1, col = 0; pixel + 3 < pixels.length; pixel += pixelLength) {
-				    		int argb = 0;
-			            	argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
-		            		argb += ((int) pixels[pixel + 1] & 0xff); // blue
-			            	argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
-		            		argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
-			            	result[row][col] = argb;
-			            	col++;
-			            	if (col == width) {
-			            		col = 0;
-			            		row--;
-			            	}
-				    	}
-				    } else {
-				    	final int pixelLength = 3;
-			    	  	for (int pixel = 0, row = height-1, col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
-			    	  		int argb = 0;
-			    	  		argb += -16777216; // 255 alpha
-			    	  		argb += ((int) pixels[pixel] & 0xff); // blue
-			            	argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
-			            	argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
-			            	result[row][col] = argb;
-			            	col++;
-			            	if (col == width) {
-			            		col = 0;
-			            		row--;
-			            	}
-			    	  	}
-				    }
+					if (hasAlphaChannel) {
+						final int pixelLength = 4;
+						for (int pixel = 0, row = height - 1, col = 0; pixel + 3 < pixels.length; pixel += pixelLength) {
+							int argb = 0;
+							argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
+							argb += ((int) pixels[pixel + 1] & 0xff); // blue
+							argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
+							argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
+							result[row][col] = argb;
+							col++;
+							if (col == width) {
+								col = 0;
+								row--;
+							}
+						}
+					} else {
+						final int pixelLength = 3;
+						for (int pixel = 0, row = height - 1, col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
+							int argb = 0;
+							argb += -16777216; // 255 alpha
+							argb += ((int) pixels[pixel] & 0xff); // blue
+							argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
+							argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
+							result[row][col] = argb;
+							col++;
+							if (col == width) {
+								col = 0;
+								row--;
+							}
+						}
+					}
 				}
-				 
+				
 				LittleGridContext context = LittleGridContext.get(grid);
 				List<LittlePreview> tiles = new ArrayList<>();
 				LittleTileColored colorTile;
 				int expected = image.getWidth() * image.getHeight();
-				for(int row = 0; row < result.length; row++) 
-					for(int col = 0; col < result[row].length; col++) {
+				for (int row = 0; row < result.length; row++)
+					for (int col = 0; col < result[row].length; col++) {
 						
 						if (ALET.CONFIG.isColorAccuracy()) {
 							color = ColorAccuracy.roundRGB(result[row][col]);
@@ -231,9 +230,9 @@ public class PhotoReader {
 						}
 					}
 				
-				
 				//BasicCombiner.combinePreviews(tiles); // minimize tiles used
 				
+				BasicCombiner.combine(tiles);
 				ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
 				LittlePreviews previews = new LittlePreviews(context);
 				for (LittlePreview tile : tiles) {

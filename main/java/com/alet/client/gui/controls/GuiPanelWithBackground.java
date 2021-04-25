@@ -20,9 +20,7 @@ public class GuiPanelWithBackground extends GuiParent {
 		setStyle(panelStyle);
 	}
 	
-	/**
-	 * String name, DisplayStyle border, DisplayStyle background, DisplayStyle mouseOverBackground, DisplayStyle face, DisplayStyle disableEffect)
-	 */
+	/** String name, DisplayStyle border, DisplayStyle background, DisplayStyle mouseOverBackground, DisplayStyle face, DisplayStyle disableEffect) */
 	public void setColor(int color) {
 		Color colour = ColorUtils.IntToRGBA(color);
 		int r = colour.getRed();
@@ -31,6 +29,5 @@ public class GuiPanelWithBackground extends GuiParent {
 		panelStyle = new Style("panel", new ColoredDisplayStyle(0, 0, 0, 140), new ColoredDisplayStyle(r, g, b, 140), new ColoredDisplayStyle(r, g, b, 140), new ColoredDisplayStyle(0, 0, 0, 140), new ColoredDisplayStyle(0, 0, 0, 140));
 		setStyle(panelStyle);
 	}
-	
 	
 }

@@ -22,13 +22,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-public class Box extends Shapes{
+public class Box extends Shapes {
 	
 	public Box(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
 		super(x1, y1, z1, x2, y2, z2, contextSize);
 		calculateDistance();
 	}
-
+	
 	public static String xString = "";
 	public static String yString = "";
 	public static String zString = "";
@@ -81,15 +81,15 @@ public class Box extends Shapes{
 		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * mc.getRenderPartialTicks();
 		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * mc.getRenderPartialTicks();
 		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * mc.getRenderPartialTicks();
-		double conDiv = 0.5/contextSize;
+		double conDiv = 0.5 / contextSize;
 		
-		double minX = tilePos.centerX-conDiv;
-		double minY = tilePos.centerY-conDiv;
-		double minZ = tilePos.centerZ-conDiv;
+		double minX = tilePos.centerX - conDiv;
+		double minY = tilePos.centerY - conDiv;
+		double minZ = tilePos.centerZ - conDiv;
 		
-		double maxX = tilePos.centerX+conDiv;
-		double maxY = tilePos.centerY+conDiv;
-		double maxZ = tilePos.centerZ+conDiv;
+		double maxX = tilePos.centerX + conDiv;
+		double maxY = tilePos.centerY + conDiv;
+		double maxZ = tilePos.centerZ + conDiv;
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -223,7 +223,7 @@ public class Box extends Shapes{
 			drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
 		}
 	}
-
+	
 	@Override
 	protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {
 		double xDistence = getDistence(pos.x, pos2.x, contextSize);
@@ -241,41 +241,40 @@ public class Box extends Shapes{
 		String[] zDis = String.valueOf(zDistence).split("\\.");
 		double zNumerator = contextSize * Double.parseDouble("0." + zDis[1]);
 		
-		
 		String xStr = "";
 		String yStr = "";
 		String zStr = "";
-
+		
 		if (ItemTapeMeasure.measurementType == 0) {
-			if((int)(xNumerator)==0) 
+			if ((int) (xNumerator) == 0)
 				xStr = xDis[0] + " BLOCK";
-			else if(Integer.parseInt(xDis[0])==0)
+			else if (Integer.parseInt(xDis[0]) == 0)
 				xStr = (int) (xNumerator) + "/" + denominator + " TILE";
-			else 
+			else
 				xStr = xDis[0] + " BLOCK " + (int) (xNumerator) + "/" + denominator + " TILE";
 			
-			if((int)(yNumerator)==0) 
+			if ((int) (yNumerator) == 0)
 				yStr = yDis[0] + " BLOCK";
-			else if(Integer.parseInt(yDis[0])==0)
+			else if (Integer.parseInt(yDis[0]) == 0)
 				yStr = (int) (yNumerator) + "/" + denominator + " TILE";
-			else 
+			else
 				yStr = yDis[0] + " BLOCK " + (int) (yNumerator) + "/" + denominator + " TILE";
 			
-			if((int)(zNumerator)==0) 
+			if ((int) (zNumerator) == 0)
 				zStr = zDis[0] + " BLOCK";
-			else if(Integer.parseInt(zDis[0])==0)
+			else if (Integer.parseInt(zDis[0]) == 0)
 				zStr = (int) (zNumerator) + "/" + denominator + " TILE";
-			else 
+			else
 				zStr = zDis[0] + " BLOCK " + (int) (zNumerator) + "/" + denominator + " TILE";
 			
 			xString = xStr;
 			yString = yStr;
 			zString = zStr;
-		}else {
-			String measurementName = ALETConfig.tapeMeasure.measurementName.get(ItemTapeMeasure.measurementType-1);
-			xString = cleanDouble(changeMesurmentType((Math.abs(pos.x - pos2.x)+contDecimal))) + " " + measurementName;
-			yString = cleanDouble(changeMesurmentType((Math.abs(pos.y - pos2.y)+contDecimal))) + " " + measurementName;
-			zString = cleanDouble(changeMesurmentType((Math.abs(pos.z - pos2.z)+contDecimal))) + " " + measurementName;
+		} else {
+			String measurementName = ALETConfig.tapeMeasure.measurementName.get(ItemTapeMeasure.measurementType - 1);
+			xString = cleanDouble(changeMesurmentType((Math.abs(pos.x - pos2.x) + contDecimal))) + " " + measurementName;
+			yString = cleanDouble(changeMesurmentType((Math.abs(pos.y - pos2.y) + contDecimal))) + " " + measurementName;
+			zString = cleanDouble(changeMesurmentType((Math.abs(pos.z - pos2.z) + contDecimal))) + " " + measurementName;
 		}
 	}
 }

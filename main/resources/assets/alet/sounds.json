@@ -1127,5 +1127,75 @@
         "category": "block",
         "subtitle": "block.note.xylobone",
         "sounds": [{"name": "alet:block/note/xylobone", "stream": false}]
+    },
+    "block.note.donK4rmas_pianolow":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianolow",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianolow", "stream": false}]
+    },
+    "block.note.donK4rmas_pianolow2":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianolow2",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianolow2", "stream": false}]
+    },
+    "block.note.donK4rmas_pianolow3":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianolow3",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianolow3", "stream": false}]
+    },
+    "block.note.donK4rmas_pianolow4":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianolow4",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianolow4", "stream": false}]
+    },
+    "block.note.donK4rmas_pianolow5":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianolow5",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianolow5", "stream": false}]
+    },
+    "block.note.donk4rmas_piano":
+    {
+        "category": "block",
+        "subtitle": "block.note.donk4rmas_piano",
+        "sounds": [{"name": "alet:block/note/donk4rmas_piano", "stream": false}]
+    },
+    "block.note.donK4rmas_pianohigh":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianohigh",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianohigh", "stream": false}]
+    },
+    
+    "block.note.donK4rmas_pianohigh2":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianohigh2",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianohigh2", "stream": false}]
+    },
+    
+    "block.note.donK4rmas_pianohigh3":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianohigh3",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianohigh3", "stream": false}]
+    },
+    
+    "block.note.donK4rmas_pianohigh4":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianohigh4",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianohigh4", "stream": false}]
+    },
+    
+    "block.note.donK4rmas_pianohigh5":
+    {
+        "category": "block",
+        "subtitle": "block.note.donK4rmas_pianohigh5",
+        "sounds": [{"name": "alet:block/note/donK4rmas_pianohigh5", "stream": false}]
     }
 }

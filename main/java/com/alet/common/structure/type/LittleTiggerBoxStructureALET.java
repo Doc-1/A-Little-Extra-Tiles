@@ -37,7 +37,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class LittleNoClipStructureALET extends LittleStructure {
+public class LittleTiggerBoxStructureALET extends LittleStructure {
 	
 	public HashSet<Entity> entities = new HashSet<>();
 	
@@ -83,7 +83,7 @@ public class LittleNoClipStructureALET extends LittleStructure {
 	
 	public boolean listen = true;
 	
-	public LittleNoClipStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
+	public LittleTiggerBoxStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
 	}
 	
@@ -240,20 +240,20 @@ public class LittleNoClipStructureALET extends LittleStructure {
 			int dmgPerTick = 0;
 			
 			List<String> sourceList = new ArrayList<String>();
-			for (DamageSource forEachSource : ((LittleNoClipStructureALET) structure).sourceOfDmg) {
+			for (DamageSource forEachSource : ((LittleTiggerBoxStructureALET) structure).sourceOfDmg) {
 				sourceList.add(forEachSource.damageType);
 			}
-			if (structure instanceof LittleNoClipStructureALET) {
-				push = ((LittleNoClipStructureALET) structure).motion;
-				xStrength = ((LittleNoClipStructureALET) structure).xMotionStrength;
-				yStrength = ((LittleNoClipStructureALET) structure).yMotionStrength;
-				zStrength = ((LittleNoClipStructureALET) structure).zMotionStrength;
-				forward = ((LittleNoClipStructureALET) structure).forward;
+			if (structure instanceof LittleTiggerBoxStructureALET) {
+				push = ((LittleTiggerBoxStructureALET) structure).motion;
+				xStrength = ((LittleTiggerBoxStructureALET) structure).xMotionStrength;
+				yStrength = ((LittleTiggerBoxStructureALET) structure).yMotionStrength;
+				zStrength = ((LittleTiggerBoxStructureALET) structure).zMotionStrength;
+				forward = ((LittleTiggerBoxStructureALET) structure).forward;
 				
-				hurt = ((LittleNoClipStructureALET) structure).damage;
-				source = ((LittleNoClipStructureALET) structure).damageType;
-				dmgAmount = ((LittleNoClipStructureALET) structure).damageAmount;
-				dmgPerTick = ((LittleNoClipStructureALET) structure).damagePerTick;
+				hurt = ((LittleTiggerBoxStructureALET) structure).damage;
+				source = ((LittleTiggerBoxStructureALET) structure).damageType;
+				dmgAmount = ((LittleTiggerBoxStructureALET) structure).damageAmount;
+				dmgPerTick = ((LittleTiggerBoxStructureALET) structure).damagePerTick;
 			}
 			
 			parent.controls.add(new GuiCheckBox("motion", "push entity", 3, 1, push));
@@ -290,8 +290,8 @@ public class LittleNoClipStructureALET extends LittleStructure {
 		
 		@Override
 		@SideOnly(Side.CLIENT)
-		public LittleNoClipStructureALET parseStructure(LittlePreviews previews) {
-			LittleNoClipStructureALET structure = createStructure(LittleNoClipStructureALET.class, null);
+		public LittleTiggerBoxStructureALET parseStructure(LittlePreviews previews) {
+			LittleTiggerBoxStructureALET structure = createStructure(LittleTiggerBoxStructureALET.class, null);
 			if (parent.getPlayer().isCreative()) {
 				structure.damage = ((GuiCheckBox) parent.get("hurt")).value;
 				structure.damageType = ((GuiComboBox) parent.get("sources")).getCaption();
@@ -309,7 +309,7 @@ public class LittleNoClipStructureALET extends LittleStructure {
 		@Override
 		@SideOnly(Side.CLIENT)
 		protected LittleStructureType getStructureType() {
-			return LittleStructureRegistry.getStructureType(LittleNoClipStructureALET.class);
+			return LittleStructureRegistry.getStructureType(LittleTiggerBoxStructureALET.class);
 		}
 	}
 	

@@ -1,6 +1,5 @@
 package com.alet.structure.premade;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,13 +68,10 @@ public class Testing extends LittleStructurePremade {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand,
-			ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action)
-			throws LittleActionException {
+	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
 		if (getWorld().isRemote)
 			return true;
 		
-			
 		SurroundingBox box = new SurroundingBox(false, null).add(this.mainBlock);
 		long minX = box.getMinX();
 		long minY = box.getMinY();
@@ -101,16 +97,16 @@ public class Testing extends LittleStructurePremade {
 		try {
 			PlacementPreview placePreview = new PlacementPreview(this.getWorld(), previews, PlacementMode.fill, preview.box, false, this.mainBlock.getPos(), LittleVec.ZERO, EnumFacing.DOWN);
 			this.removeStructure();
-
+			
 			Placement place = new Placement(Minecraft.getMinecraft().player, placePreview);
 			place.tryPlace();
 		} catch (CorruptedConnectionException | NotYetConnectedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
-			// Places new structure
-			//System.out.println("10 seconds "+this.getMainTile().getBlockPos());
+		
+		// Places new structure
+		//System.out.println("10 seconds "+this.getMainTile().getBlockPos());
 		return true;
 	}
 	

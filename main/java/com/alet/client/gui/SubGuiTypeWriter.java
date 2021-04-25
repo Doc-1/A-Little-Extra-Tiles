@@ -11,6 +11,8 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALET;
 import com.alet.client.gui.controls.GuiLongTextField;
+import com.alet.client.gui.controls.Layer;
+import com.alet.client.gui.message.SubGuiNoTextInFieldMessage;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.util.CopyUtils;
 import com.alet.font.FontReader;
@@ -91,7 +93,7 @@ public class SubGuiTypeWriter extends SubGui {
 	public void createControls() {
 		LittleTypeWriter typeWriter = (LittleTypeWriter) structure;
 		typeWriter.writeToNBT(nbt);
-		System.out.println(nbt);
+		//System.out.println(nbt);
 		Color color = ColorUtils.IntToRGBA(BLACK);
 		if (nbt.hasKey("color"))
 			color = ColorUtils.IntToRGBA(nbt.getInteger("color"));
@@ -165,34 +167,30 @@ public class SubGuiTypeWriter extends SubGui {
 			@Override
 			public void onClicked(int x, int y, int button) {
 				GuiLongTextField input = (GuiLongTextField) get("input");
-				
-				GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
-				int color = ColorUtils.RGBAToInt(picker.color);
-				
-				GuiTextfield contextField = (GuiTextfield) get("fontSize");
-				int fontSize = Integer.parseInt(contextField.text);
-				
-				GuiComboBox contextBox = (GuiComboBox) get("fontType");
-				String font = contextBox.getCaption();
-				
-				GuiComboBox contextBox_2 = (GuiComboBox) get("grid");
-				int grid = Integer.parseInt(contextBox_2.getCaption());
-				
-				GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
-				System.out.println("Input Text: " + input.text);
-				System.out.println("Font: " + font);
-				System.out.println("Grid: " + grid);
-				System.out.println("Font size: " + fontSize);
-				System.out.println("Color: " + color);
-				System.out.println("Rotation: " + rotation.value);
-				try {
-					NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color, rotation.value);
-					System.out.println("NBT data: " + "" + nbt);
-					sendPacketToServer(nbt);
-				} catch (IOException e) {
-					e.printStackTrace();
+				if (input.text.equals(""))
+					Layer.addLayer(getGui(), new SubGuiNoTextInFieldMessage("for the text that will be exported", "digit(s) and or character(s)"));
+				else {
+					GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
+					int color = ColorUtils.RGBAToInt(picker.color);
+					
+					GuiTextfield contextField = (GuiTextfield) get("fontSize");
+					int fontSize = Integer.parseInt(contextField.text);
+					
+					GuiComboBox contextBox = (GuiComboBox) get("fontType");
+					String font = contextBox.getCaption();
+					
+					GuiComboBox contextBox_2 = (GuiComboBox) get("grid");
+					int grid = Integer.parseInt(contextBox_2.getCaption());
+					
+					GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+					try {
+						NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color, rotation.value);
+						if (nbt != null)
+							sendPacketToServer(nbt);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-				
 			}
 		});
 		

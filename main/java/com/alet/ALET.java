@@ -13,20 +13,21 @@ import java.util.List;
 import com.alet.blocks.BasicBlock;
 import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiBlock;
-import com.alet.client.gui.SubGuiNoBluePrintMessage;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiTypeWriter;
+import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
 import com.alet.client.sounds.SoundsHandler;
 import com.alet.common.packet.PacketGetServerCams;
+import com.alet.common.packet.PacketSendGuiToClient;
 import com.alet.common.packet.PacketSendServerCams;
 import com.alet.common.packet.PacketSendSound;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.LittleCamPlayer;
 import com.alet.common.structure.type.LittleLockALET;
-import com.alet.common.structure.type.LittleNoClipStructureALET;
 import com.alet.common.structure.type.LittleSoundPlayerALET;
 import com.alet.common.structure.type.LittleStateActivatorALET;
+import com.alet.common.structure.type.LittleTiggerBoxStructureALET;
 import com.alet.container.SubContainerBlock;
 import com.alet.container.SubContainerError;
 import com.alet.container.SubContainerPhotoImport;
@@ -173,7 +174,7 @@ public class ALET {
 			}
 		});
 		
-		LittleStructureRegistry.registerStructureType("tigger_box", "simple", LittleNoClipStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleNoClipStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
+		LittleStructureRegistry.registerStructureType("tigger_box", "simple", LittleTiggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTiggerBoxStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
 		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("state_activator", "simple", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("sound_player", "simple", LittleSoundPlayerALET.class, LittleStructureAttribute.TICKING, LittleSoundPlayerALET.LittleSoundPlayerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
@@ -217,6 +218,7 @@ public class ALET {
 		CreativeCorePacket.registerPacket(PacketUpdateNBT.class);
 		CreativeCorePacket.registerPacket(PacketSendSound.class);
 		CreativeCorePacket.registerPacket(PacketUpdateStructureFromClient.class);
+		CreativeCorePacket.registerPacket(PacketSendGuiToClient.class);
 		if (Loader.isModLoaded("cmdcam")) {
 			CreativeCorePacket.registerPacket(PacketSendServerCams.class);
 			CreativeCorePacket.registerPacket(PacketGetServerCams.class);

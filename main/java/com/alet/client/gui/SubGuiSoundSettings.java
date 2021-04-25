@@ -39,6 +39,7 @@ public class SubGuiSoundSettings extends SubGui {
 		soundList.add("cow_bell");
 		soundList.add("dbass");
 		soundList.add("didgeridoo");
+		soundList.add("DonK4rmas_Piano");
 		soundList.add("flute");
 		soundList.add("guitar");
 		soundList.add("harp");
@@ -190,6 +191,7 @@ public class SubGuiSoundSettings extends SubGui {
 				soundList.add("cow_bell");
 				soundList.add("dbass");
 				soundList.add("didgeridoo");
+				soundList.add("DonK4rmas_Piano");
 				soundList.add("flute");
 				soundList.add("guitar");
 				soundList.add("harp");

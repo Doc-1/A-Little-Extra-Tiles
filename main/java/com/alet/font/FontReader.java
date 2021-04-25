@@ -19,6 +19,7 @@ import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.common.block.BlockLittleDyeable;
 import com.creativemd.littletiles.common.tile.LittleTileColored;
+import com.creativemd.littletiles.common.tile.combine.BasicCombiner;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
@@ -88,7 +89,7 @@ public class FontReader {
 		
 		try {
 			image = fontToPhoto(input, font, fontSize, fontColor, rotation);
-			System.out.println("Image: " + image);
+			//System.out.println("Image: " + image);
 			if (image != null) {
 				int width = image.getWidth();
 				int height = image.getHeight();
@@ -112,9 +113,11 @@ public class FontReader {
 					
 					ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
 					LittlePreviews previews = new LittlePreviews(context);
+					BasicCombiner.combine(tiles);
 					for (LittlePreview tile : tiles) {
 						previews.addWithoutCheckingPreview(tile);
 					}
+					
 					LittlePreview.savePreview(previews, stack); // save tiles to itemstacks
 					
 					return stack.getTagCompound();
