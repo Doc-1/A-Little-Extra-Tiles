@@ -1,4 +1,4 @@
-package com.alet.client.overlay.gui.controls;
+package com.alet.client.gui.overlay.controls;
 
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;

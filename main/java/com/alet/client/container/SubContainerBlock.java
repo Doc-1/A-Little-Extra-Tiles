@@ -1,4 +1,4 @@
-package com.alet.container;
+package com.alet.client.container;
 
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.utils.mc.WorldUtils;

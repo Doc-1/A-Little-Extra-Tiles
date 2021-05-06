@@ -4,17 +4,20 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
-import com.alet.client.overlay.gui.GuiAxisIndicatorAletControl;
-import com.alet.client.overlay.gui.GuiDisplayMeasurements;
+import com.alet.client.gui.overlay.GuiAxisIndicatorAletControl;
+import com.alet.client.gui.overlay.GuiDisplayMeasurements;
 import com.alet.common.command.UpdateFontsCommand;
 import com.alet.common.event.ALETEventHandler;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
+import com.alet.common.util.shape.LittleShapeMagicWand;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;
 import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.render.overlay.OverlayControl;
 import com.creativemd.littletiles.client.render.overlay.OverlayRenderer.OverlayPositionType;
+import com.creativemd.littletiles.common.util.shape.ShapeRegistry;
+import com.creativemd.littletiles.common.util.shape.ShapeRegistry.ShapeType;
 import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.client.Minecraft;
@@ -66,6 +69,7 @@ public class ALETClient extends LittleTilesServer {
 	public void loadSidePost() {
 		clearMeasurment = new KeyBinding("Clear Measurement", net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL, KeyModifier.ALT, Keyboard.KEY_C, "key.categories.littletiles");
 		ClientRegistry.registerKeyBinding(clearMeasurment);
+		ShapeRegistry.registerShape("magic_wand", new LittleShapeMagicWand(), ShapeType.SELECTOR);
 		
 		ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
 		

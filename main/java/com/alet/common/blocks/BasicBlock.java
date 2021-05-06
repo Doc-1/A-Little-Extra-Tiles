@@ -1,4 +1,4 @@
-package com.alet.blocks;
+package com.alet.common.blocks;
 
 import com.creativemd.littletiles.LittleTiles;
 

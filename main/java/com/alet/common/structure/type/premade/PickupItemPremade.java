@@ -1,4 +1,4 @@
-package com.alet.structure.premade;
+package com.alet.common.structure.type.premade;
 
 import com.alet.ALET;
 import com.creativemd.littletiles.common.action.LittleActionException;

@@ -1,4 +1,4 @@
-package com.alet.client.overlay.gui;
+package com.alet.client.gui.overlay;
 
 import org.lwjgl.util.Color;
 

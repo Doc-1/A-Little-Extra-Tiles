@@ -2,12 +2,12 @@ package com.alet.common.packet;
 
 import java.util.List;
 
+import com.alet.client.container.SubContainerPhotoImport;
+import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.controls.Layer;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
-import com.alet.container.SubContainerPhotoImport;
-import com.alet.container.SubContainerTypeWriter;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.mc.ContainerSub;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;

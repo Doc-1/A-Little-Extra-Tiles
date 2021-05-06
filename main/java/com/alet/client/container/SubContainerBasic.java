@@ -1,13 +1,13 @@
-package com.alet.container;
+package com.alet.client.container;
 
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SubContainerError extends SubContainer {
+public class SubContainerBasic extends SubContainer {
 	
-	public SubContainerError(EntityPlayer player) {
+	public SubContainerBasic(EntityPlayer player) {
 		super(player);
 		// TODO Auto-generated constructor stub
 	}

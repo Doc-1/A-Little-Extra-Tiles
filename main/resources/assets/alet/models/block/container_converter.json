@@ -1,0 +1,9 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "top": "alet:blocks/container_converter_side",
+        "front": "alet:blocks/container_converter_front",
+        "back": "alet:blocks/container_converter_back",
+        "side": "alet:blocks/container_converter_side"
+    }
+}

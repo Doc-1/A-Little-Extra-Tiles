@@ -1,4 +1,4 @@
-package com.alet.client.overlay.gui;
+package com.alet.client.gui.overlay;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.lwjgl.opengl.GL11;
 
 import com.alet.ALET;
-import com.alet.client.overlay.gui.controls.GuiOverlayTextList;
+import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.items.ItemTapeMeasure.PosData;
 import com.alet.render.tapemeasure.shape.Box;

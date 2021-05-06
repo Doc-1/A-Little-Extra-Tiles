@@ -10,13 +10,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.blocks.BasicBlock;
 import com.alet.client.ALETClient;
+import com.alet.client.container.SubContainerBasic;
+import com.alet.client.container.SubContainerBlock;
+import com.alet.client.container.SubContainerPhotoImport;
+import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiBlock;
+import com.alet.client.gui.SubGuiMagnitudeComparator;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
 import com.alet.client.sounds.SoundsHandler;
+import com.alet.common.blocks.BasicBlock;
+import com.alet.common.packet.PacketDropItem;
 import com.alet.common.packet.PacketGetServerCams;
 import com.alet.common.packet.PacketSendGuiToClient;
 import com.alet.common.packet.PacketSendServerCams;
@@ -28,15 +34,14 @@ import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleSoundPlayerALET;
 import com.alet.common.structure.type.LittleStateActivatorALET;
 import com.alet.common.structure.type.LittleTiggerBoxStructureALET;
-import com.alet.container.SubContainerBlock;
-import com.alet.container.SubContainerError;
-import com.alet.container.SubContainerPhotoImport;
-import com.alet.container.SubContainerTypeWriter;
+import com.alet.common.structure.type.premade.LittlePhotoImporter;
+import com.alet.common.structure.type.premade.LittleTypeWriter;
+import com.alet.common.structure.type.premade.PickupItemPremade;
+import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator;
+import com.alet.common.structure.type.premade.transfer.LittleTransferItemExport;
+import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.structure.premade.LittlePhotoImporter;
-import com.alet.structure.premade.LittleTypeWriter;
-import com.alet.structure.premade.PickupItemPremade;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -92,6 +97,8 @@ public class ALET {
 	public static Item tapeMeasure;
 	public static Item jumpRod;
 	
+	//public static ContainerAdapterBlock adapter;
+	
 	public static BasicBlock smoothOakPlank;
 	public static BasicBlock smoothDarkOakPlank;
 	public static BasicBlock smoothSprucePlank;
@@ -106,6 +113,9 @@ public class ALET {
 	public void PreInit(FMLPreInitializationEvent event) {
 		jumpRod = new ItemJumpTool("jump_rod");
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
+		
+		//adapter = new ContainerAdapterBlock("container_converter");
+		
 		smoothOakPlank = new BasicBlock("smoothoakplank");
 		smoothDarkOakPlank = new BasicBlock("smoothdarkoakplank");
 		smoothSprucePlank = new BasicBlock("smoothspruceplank");
@@ -143,7 +153,7 @@ public class ALET {
 			
 			@Override
 			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
-				return new SubContainerError(player);
+				return new SubContainerBasic(player);
 			}
 		});
 		GuiHandler.registerGuiHandler("photo-import", new LittleStructureGuiHandler() {
@@ -171,6 +181,20 @@ public class ALET {
 			@Override
 			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
 				return new SubContainerTypeWriter(player);
+			}
+		});
+		
+		GuiHandler.registerGuiHandler("magnitude-comparator", new LittleStructureGuiHandler() {
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+				return new SubGuiMagnitudeComparator(structure);
+			}
+			
+			@Override
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+				return new SubContainerBasic(player);
 			}
 		});
 		
@@ -219,11 +243,16 @@ public class ALET {
 		CreativeCorePacket.registerPacket(PacketSendSound.class);
 		CreativeCorePacket.registerPacket(PacketUpdateStructureFromClient.class);
 		CreativeCorePacket.registerPacket(PacketSendGuiToClient.class);
+		CreativeCorePacket.registerPacket(PacketDropItem.class);
+		
 		if (Loader.isModLoaded("cmdcam")) {
 			CreativeCorePacket.registerPacket(PacketSendServerCams.class);
 			CreativeCorePacket.registerPacket(PacketGetServerCams.class);
 		}
 		CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
+		LittleStructurePremade.registerPremadeStructureType("item_export", ALET.MODID, LittleTransferItemExport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid().addOutput("drop", 16, SignalMode.EQUAL, true);
+		LittleStructurePremade.registerPremadeStructureType("item_import", ALET.MODID, LittleTransferItemImport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid().addOutput("block", 16, SignalMode.EQUAL, true);
+		LittleStructurePremade.registerPremadeStructureType("magnitude_comparator", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING).setNotSnapToGrid();
 		
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);

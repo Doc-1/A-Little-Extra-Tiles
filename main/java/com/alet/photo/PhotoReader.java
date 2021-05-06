@@ -174,8 +174,8 @@ public class PhotoReader {
 				byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 				boolean hasAlphaChannel = image.getAlphaRaster() != null;
 				int[][] result = new int[height][width];
-				
-				if (((width * height) < maxPixelAmount)) {
+				System.out.println(width + ", " + height + ", " + maxPixelAmount);
+				if (((width * height) <= maxPixelAmount)) {
 					
 					if (hasAlphaChannel) {
 						final int pixelLength = 4;

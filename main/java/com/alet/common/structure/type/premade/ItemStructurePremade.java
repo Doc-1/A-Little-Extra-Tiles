@@ -1,4 +1,4 @@
-package com.alet.structure.premade;
+package com.alet.common.structure.type.premade;
 
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;

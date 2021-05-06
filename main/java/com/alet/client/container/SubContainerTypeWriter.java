@@ -1,4 +1,4 @@
-package com.alet.container;
+package com.alet.client.container;
 
 import com.alet.common.packet.PacketSendGuiToClient;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
@@ -15,18 +15,18 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SubContainerPhotoImport extends SubContainer {
+public class SubContainerTypeWriter extends SubContainer {
 	
 	public final InventoryBasic slot = new InventoryBasic("slot", false, 1);
 	
-	public SubContainerPhotoImport(EntityPlayer player) {
+	public SubContainerTypeWriter(EntityPlayer player) {
 		super(player);
 	}
 	
 	@Override
 	public void createControls() {
 		addSlotToContainer(new Slot(slot, 0, 0, 0));
-		addPlayerSlotsToContainer(player, 7, 110);
+		addPlayerSlotsToContainer(player, 7, 114);
 	}
 	
 	@Override
