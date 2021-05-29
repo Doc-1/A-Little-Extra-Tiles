@@ -27,7 +27,8 @@ public class UpdateFontsCommand extends CommandBase {
 	
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		ALET.getFonts();
+		//ALET.getFonts();
+		System.out.println(ALET.getFonts());
 		sender.sendMessage(new TextComponentString("Fonts have been updated"));
 	}
 	

@@ -165,12 +165,6 @@ public class GuiDisplayMeasurements extends GuiControl {
 						}
 					}
 					
-					/*AxisAlignedBB box = getBox(player.getPositionEyes(1F), player.getLookVec(), boxes, 5);
-					
-					
-					if(box != null) {
-					    mc.fontRenderer.drawStringWithShadow("da "+ this.getGui().getScreenRect().maxX, 0, 0, 0xFFFFFFFF);
-					}*/
 					textList.renderControl(helper, 0, getRect());
 					
 				}

@@ -18,7 +18,6 @@ import com.creativemd.littletiles.common.structure.registry.LittleStructureRegis
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.signal.output.InternalSignalOutput;
 import com.creativemd.littletiles.common.structure.type.door.LittleDoor;
-import com.creativemd.littletiles.common.structure.type.door.LittleDoorBase;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
@@ -52,8 +51,8 @@ public class LittleLockALET extends LittleStructure {
 		try {
 			for (int c : toLock) {
 				LittleStructure child = this.getChild(c).getStructure();
-				if (child instanceof LittleDoorBase) {
-					LittleDoorBase door = (LittleDoorBase) child;
+				if (child instanceof LittleDoor) {
+					LittleDoor door = (LittleDoor) child;
 					if (door.disableRightClick) {
 						door.disableRightClick = false;
 					} else {

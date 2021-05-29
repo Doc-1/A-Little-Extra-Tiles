@@ -29,6 +29,7 @@ import com.alet.common.packet.PacketSendServerCams;
 import com.alet.common.packet.PacketSendSound;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
+import com.alet.common.structure.type.LittleAdjustableFixedStructure;
 import com.alet.common.structure.type.LittleCamPlayer;
 import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleSoundPlayerALET;
@@ -257,6 +258,8 @@ public class ALET {
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
 		LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class).setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType("d", ALET.MODID, LittleAdjustableFixedStructure.class).setNotShowCreativeTab();
+		
 		SoundsHandler.registerSounds();
 		sounds = new ArrayList<>();
 		for (ResourceLocation location : SoundEvent.REGISTRY.getKeys())

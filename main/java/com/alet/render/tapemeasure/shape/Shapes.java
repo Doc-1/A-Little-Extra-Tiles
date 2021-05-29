@@ -4,15 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import com.alet.ALETConfig;
 import com.alet.items.ItemTapeMeasure;
-import com.creativemd.creativecore.common.gui.GuiRenderHelper;
-import com.creativemd.creativecore.common.gui.Rect;
-import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.Minecraft;
@@ -55,8 +48,13 @@ public abstract class Shapes {
 		if (x != 0) {
 			String s = ALETConfig.tapeMeasure.measurementEquation.get(x - 1);
 			List<String> arg = Arrays.asList(s.split("M"));
+			System.out.println(arg.get(0));
+			
 			if (arg.size() == 2) {
-				return evaluate(toChange + arg.get(1));
+				if (arg.get(0).equals("("))
+					return evaluate("( " + toChange + arg.get(1));
+				else
+					return evaluate(toChange + arg.get(1));
 			}
 		}
 		return 0;

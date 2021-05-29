@@ -2,6 +2,7 @@ package com.alet.common.structure.type.premade.signal;
 
 import javax.annotation.Nullable;
 
+import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
@@ -41,14 +42,21 @@ public class LittleMagnitudeComparator extends LittleStructurePremade {
 				LittleSignalInput red = (LittleSignalInput) this.children.get(1).getStructure();
 				LittleSignalInput blue = (LittleSignalInput) this.children.get(2).getStructure();
 				int rBits = 0;
+				/*
 				for (int i = 0; i < red.getState().length; i++)
 					if (red.getState()[i])
 						rBits |= 1 << i;
+				*/
 				int bBits = 0;
+				/*
 				for (int i = 0; i < blue.getState().length; i++)
 					if (blue.getState()[i])
 						bBits |= 1 << i;
-					
+				*/
+				
+				rBits = BooleanUtils.toNumber(red.getState());
+				bBits = BooleanUtils.toNumber(blue.getState());
+				//System.out.println(bBits + " " + rBits);
 				boolean result = false;
 				
 				switch (logic) {
