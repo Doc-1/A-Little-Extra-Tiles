@@ -125,4 +125,5 @@ public class LittleMagnitudeComparator extends LittleStructurePremade {
 			LittleStructureGuiHandler.openGui("magnitude-comparator", new NBTTagCompound(), playerIn, this);
 		return true;
 	}
+	
 }

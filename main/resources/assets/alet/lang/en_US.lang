@@ -1,5 +1,14 @@
 item.LTPremade.photoimporter.name=Photo Importer
 item.LTPremade.typewriter.name=Typewriter
+item.LTPremade.item_export.name=Item Exporter
+item.LTPremade.item_import.name=Item Importer
+
+item.LTPremade.magnitude_comparator.name=Magnitude Comparator (4-bit)
+item.LTPremade.clock_simple.name=Clock 10Hz (1-bit)
+item.LTPremade.clock_advanced.name=Clock 10Hz Toggleable (1-bit)
+
+itemGroup.alet=Little Circuits
+
 item.tapemeasure.name=Tape Measure
 tile.smoothbrick.name=Borderless Brick
 tile.smoothgroutbrick.name=Borderless Brick Grout
