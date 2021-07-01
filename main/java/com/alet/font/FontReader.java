@@ -46,9 +46,10 @@ public class FontReader {
 		
 		Font font = new Font(fontType, Font.PLAIN, fontSize);
 		g2d.setFont(font);
+		
 		FontMetrics fm = g2d.getFontMetrics();
 		int w = fm.stringWidth(text) + 10;
-		int h = fm.getHeight();
+		int h = fm.getHeight() + 1;
 		g2d.dispose();
 		
 		double rads = Math.toRadians(rotation);

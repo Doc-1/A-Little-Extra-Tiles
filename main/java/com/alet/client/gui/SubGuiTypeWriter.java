@@ -10,6 +10,7 @@ import java.util.List;
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
+import com.alet.client.gui.controls.GuiGlyphSelector;
 import com.alet.client.gui.controls.GuiImage;
 import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.client.gui.controls.GuiToolTipBox;
@@ -26,11 +27,13 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
+import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -70,6 +73,13 @@ public class SubGuiTypeWriter extends SubGui {
 			GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 			rotation.value = nbt.getDouble("rotation");
 		}
+		GuiImage image = (GuiImage) get("image");
+		GuiComboBox contextBox = (GuiComboBox) get("fontType");
+		GuiTextfield fontSize = (GuiTextfield) get("fontSize");
+		String font = contextBox.getCaption();
+		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+		GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
+		image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
 	}
 	
 	@Override
@@ -92,6 +102,34 @@ public class SubGuiTypeWriter extends SubGui {
 	}
 	
 	@Override
+	public boolean mousePressed(int x, int y, int button) {
+		boolean result = super.mousePressed(x, y, button);
+		if (result) {
+			GuiImage image = (GuiImage) get("image");
+			GuiComboBox contextBox = (GuiComboBox) get("fontType");
+			GuiTextfield fontSize = (GuiTextfield) get("fontSize");
+			String font = contextBox.getCaption();
+			GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+			GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
+			image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
+		}
+		return result;
+	}
+	
+	@Override
+	public void mouseReleased(int x, int y, int button) {
+		GuiImage image = (GuiImage) get("image");
+		GuiComboBox contextBox = (GuiComboBox) get("fontType");
+		GuiTextfield fontSize = (GuiTextfield) get("fontSize");
+		String font = contextBox.getCaption();
+		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+		GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
+		image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
+		
+		super.mouseReleased(x, y, button);
+	}
+	
+	@Override
 	public void createControls() {
 		LittleTypeWriter typeWriter = (LittleTypeWriter) structure;
 		typeWriter.writeToNBT(nbt);
@@ -103,22 +141,28 @@ public class SubGuiTypeWriter extends SubGui {
 		controls.add(new GuiColorPickerAlet("picker", -2, 42, color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
 		
 		controls.add(new GuiComboBox("grid", 256, 0, 15, LittleGridContext.getNames()) {
+			
 			@Override
 			protected GuiComboBoxExtension createBox() {
 				return new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 30 - getContentOffset() * 2, 100, lines);
 			}
 		});
-		GuiComboBox gridCombo = (GuiComboBox) get("grid");
-		gridCombo.setCustomTooltip("Grid Size");
 		
 		GuiTextfield fontSize = new GuiTextfield("fontSize", "48", 229, 0, 20, 14);
-		fontSize.setCustomTooltip("Font Size");
 		controls.add(fontSize);
 		
-		controls.add(new GuiLongTextField("input", "", 0, 21, 271, 15).setCustomTooltip("Text to Print"));
+		controls.add(new GuiLongTextField("input", "", 0, 21, 271, 15));
 		
-		controls.add(new GuiToolTipBox("tips", 120, 200).addAdditionalTips("picker", "\nThis sets the color of the text."));
-		
+		controls.add(new GuiToolTipBox("tips").addAdditionalTips("picker", "\n\nThis sets the color of the text.").addAdditionalTips("grid", "Grid Size:\nSets the size the tiles will be.\n\nSizes:\nTo change the max grid size open your littletiles.json in your config folder within your Minecraft folder. \n\nChange the Scale line to:\nScale = 7 (64 grid)\nScale = 8 (128 grid)\nScale = 9 (256 grid)\nAnd so on."));
+		GuiToolTipBox tips = (GuiToolTipBox) get("tips");
+		tips.addAdditionalTips("input", "Input:\nThis is the text that will be exported as a structure.\n\nClick on it and you can type or press ctrl+v to paste text you have copied.");
+		tips.addAdditionalTips("search", "Search Font:\nSearch for a font.\n\nClick and type in a name or part of a name of the font you are looking for.");
+		tips.addAdditionalTips("fontSize", "Font Size:\nSet the size of the font.\n\nClick and type in a positive number for the size of the font.");
+		tips.addAdditionalTips("fontType", "Font:\nSelect the Font to use.\n\nClick and select a font. You can click and drag the scroll bar or use the mouse wheel to move the menu.");
+		tips.addAdditionalTips("rotation", "Rotation:\nUsed to change the rotation of the text.\n\nControls:\nClick and drag on the slider to adjust rotation.\nRight Click to enter a value");
+		tips.addAdditionalTips("Paste", "Paste:\nPastes any text you have copied into the text field above.");
+		tips.addAdditionalTips("Print", "Print:\nPrints out the text you have entered into the text field above.");
+		tips.addAdditionalTips("MainGui", "Typewriter:\nWill create a structure of the text you entered with the font, font size, color, and grid size you have selected.");
 		controls.add(new GuiTextfield("search", "", 0, 0, 115, 14) {
 			
 			@Override
@@ -159,7 +203,7 @@ public class SubGuiTypeWriter extends SubGui {
 		GuiComboBox fontCombo = (GuiComboBox) get("fontType");
 		fontCombo.setCustomTooltip("Font");
 		
-		controls.add(new GuiAnalogeSlider("rotation", 0, 96, 150, 10, 0, 0, 360).setCustomTooltip("Text Rotation", "Right-Click to enter value"));
+		controls.add(new GuiAnalogeSlider("rotation", 0, 96, 150, 10, 0, 0, 360));
 		
 		controls.add(new GuiButton("Paste", "Paste", 221, 43, 50) {
 			
@@ -180,9 +224,14 @@ public class SubGuiTypeWriter extends SubGui {
 				}
 			}
 		});
-		controls.add(new GuiImage("image", 0, 0));
 		
-		controls.add(new GuiButton("Print ", 243, 64) {
+		GuiComboBox contextBox = (GuiComboBox) get("fontType");
+		String font = contextBox.getCaption();
+		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+		controls.add(new GuiImage("image", 180, 130, font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color), rotation.value));
+		
+		controls.add(new GuiGlyphSelector("na", font, 180, 85, 80));
+		controls.add(new GuiButton("Print", 243, 64) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
@@ -204,9 +253,6 @@ public class SubGuiTypeWriter extends SubGui {
 					
 					GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 					
-					GuiImage image = (GuiImage) get("image");
-					image.updateFont(font, fontSize, color, rotation.value);
-					
 					try {
 						NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color, rotation.value);
 						if (nbt != null)
@@ -221,4 +267,17 @@ public class SubGuiTypeWriter extends SubGui {
 		openedGui();
 	}
 	
+	@CustomEventSubscribe
+	public void onChanged(GuiControlChangedEvent event) {
+		System.out.println(event.source.name);
+		GuiComboBox contextBox = (GuiComboBox) get("fontType");
+		String font = contextBox.getCaption();
+		System.out.println(font);
+		GuiGlyphSelector na = (GuiGlyphSelector) get("na");
+		na.fontr = font;
+		if (event.source.is("searchBar")) {
+			
+			refreshControls();
+		}
+	}
 }
