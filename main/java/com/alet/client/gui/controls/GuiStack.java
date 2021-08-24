@@ -8,7 +8,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -82,8 +85,10 @@ public class GuiStack extends GuiStackSelectorAll {
 		ResourceLocation location = new ResourceLocation(reg.toString());
 		Minecraft minecraft = Minecraft.getMinecraft();
 		BlockRendererDispatcher ren = minecraft.getBlockRendererDispatcher();
-		System.out.println(facing);
-		texture = ren.getModelForState(state).getQuads(state, facing, 0).get(0).getSprite().toString();
+		RenderItem itemRen = minecraft.getRenderItem();
+		ItemModelMesher mesher = itemRen.getItemModelMesher();
+		//System.out.println(mesher.getItemModel(new ItemStack(Items.APPLE)).getQuads(null, null, 0).get(0).getSprite().toString());
+		texture = mesher.getItemModel(new ItemStack(Items.APPLE)).getQuads(null, null, 0).get(0).getSprite().toString();
 		return texture;
 	}
 }

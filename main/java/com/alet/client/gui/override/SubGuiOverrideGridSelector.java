@@ -8,7 +8,12 @@ import com.creativemd.littletiles.client.gui.configure.SubGuiGridSelector;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
-public class SubGuiOverrideGridSelector implements IOverrideSubGui {
+public class SubGuiOverrideGridSelector extends SubGuiOverride {
+	
+	public SubGuiOverrideGridSelector(boolean shouldUpdate) {
+		super(shouldUpdate);
+		// TODO Auto-generated constructor stub
+	}
 	
 	@Override
 	public void modifyControls(SubGui gui) {
@@ -32,6 +37,12 @@ public class SubGuiOverrideGridSelector implements IOverrideSubGui {
 		gridGui.controls.add(tips);
 		
 		gridGui.refreshControls();
+	}
+	
+	@Override
+	public void updateControls(SubGui gui) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

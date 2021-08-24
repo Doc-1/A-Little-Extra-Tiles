@@ -9,10 +9,11 @@ import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.SubGuiColorTube;
 import com.creativemd.littletiles.common.item.ItemLittlePaintBrush;
 
-public class SubGuiOverrideColorTube implements IOverrideSubGui {
+public class SubGuiOverrideColorTube extends SubGuiOverride {
 	
-	public SubGuiOverrideColorTube() {
-		
+	public SubGuiOverrideColorTube(boolean shouldUpdate) {
+		super(shouldUpdate);
+		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -27,6 +28,12 @@ public class SubGuiOverrideColorTube implements IOverrideSubGui {
 		colorTubeGui.get("settings").height -= 2;
 		colorTubeGui.get("shape").posY += 4;
 		colorTubeGui.refreshControls();
+	}
+	
+	@Override
+	public void updateControls(SubGui gui) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -11,10 +11,11 @@ import com.creativemd.littletiles.client.gui.SubGuiChisel;
 import com.creativemd.littletiles.common.item.ItemLittleChisel;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 
-public class SubGuiOverrideChisel implements IOverrideSubGui {
+public class SubGuiOverrideChisel extends SubGuiOverride {
 	
-	public SubGuiOverrideChisel() {
-		
+	public SubGuiOverrideChisel(boolean shouldUpdate) {
+		super(shouldUpdate);
+		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -37,6 +38,12 @@ public class SubGuiOverrideChisel implements IOverrideSubGui {
 		chiselGui.controls.add(1, new GuiColorPickerAlet("picker", 2, 2, color, LittleTiles.CONFIG.isTransparencyEnabled(chiselGui.getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(chiselGui.getPlayer())));
 		
 		chiselGui.refreshControls();
+	}
+	
+	@Override
+	public void updateControls(SubGui gui) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

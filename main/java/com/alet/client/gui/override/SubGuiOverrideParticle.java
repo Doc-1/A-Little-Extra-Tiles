@@ -7,7 +7,12 @@ import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.client.gui.SubGuiParticle;
 
-public class SubGuiOverrideParticle implements IOverrideSubGui {
+public class SubGuiOverrideParticle extends SubGuiOverride {
+	
+	public SubGuiOverrideParticle(boolean shouldUpdate) {
+		super(shouldUpdate);
+		// TODO Auto-generated constructor stub
+	}
 	
 	@Override
 	public void modifyControls(SubGui gui) {
@@ -33,6 +38,12 @@ public class SubGuiOverrideParticle implements IOverrideSubGui {
 		particleGui.get("spreadpanel").posY += 6;
 		particleGui.get("save").posY += 6;
 		particleGui.refreshControls();
+	}
+	
+	@Override
+	public void updateControls(SubGui gui) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

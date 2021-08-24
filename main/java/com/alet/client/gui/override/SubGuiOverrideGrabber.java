@@ -11,10 +11,11 @@ import com.creativemd.littletiles.common.item.ItemLittleChisel;
 import com.creativemd.littletiles.common.item.ItemLittleGrabber.GrabberMode;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 
-public class SubGuiOverrideGrabber implements IOverrideSubGui {
+public class SubGuiOverrideGrabber extends SubGuiOverride {
 	
-	public SubGuiOverrideGrabber() {
-		
+	public SubGuiOverrideGrabber(boolean shouldUpdate) {
+		super(shouldUpdate);
+		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -42,6 +43,12 @@ public class SubGuiOverrideGrabber implements IOverrideSubGui {
 			
 			grabberGui.refreshControls();
 		}
+	}
+	
+	@Override
+	public void updateControls(SubGui gui) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

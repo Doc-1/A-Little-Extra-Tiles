@@ -12,11 +12,11 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
 import com.creativemd.creativecore.common.gui.event.container.SlotChangeEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
-import com.creativemd.littletiles.client.gui.LittleSubGuiUtils;
 import com.creativemd.littletiles.common.item.ItemLittleChisel;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
@@ -48,7 +48,7 @@ public class SubGuiBlock extends SubGui {
 	public void createControls() {
 		LittlePreview preview = ItemLittleChisel.getPreview(stack);
 		Color color = ColorUtils.IntToRGBA(preview.getColor());
-		selector = new GuiStack("preview", 20, 26, 112, getPlayer(), LittleSubGuiUtils.getCollector(getPlayer()), true);
+		selector = new GuiStack("preview", 20, 26, 112, getPlayer(), new GuiStackSelectorAll.InventoryCollector(new LittleItemSelector()), true);
 		
 		selector.setSelectedForce(preview.getBlockStack());
 		controls.add(selector);

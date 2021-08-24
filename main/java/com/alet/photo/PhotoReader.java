@@ -102,7 +102,7 @@ public class PhotoReader {
 				image = ImageIO.read(file);
 			}
 		} catch (IOException e) {
-			return 0;
+			return 1;
 		}
 		return image.getWidth();
 	}
@@ -125,7 +125,7 @@ public class PhotoReader {
 				image = ImageIO.read(file);
 			}
 		} catch (IOException e) {
-			return 0;
+			return 1;
 		}
 		return image.getHeight();
 	}
