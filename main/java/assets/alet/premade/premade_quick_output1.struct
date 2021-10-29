@@ -1,1 +1,0 @@
-{tiles:[{boxes:[[I;2,0,4,3,1,5],[I;2,0,6,3,1,7]],tile:{color:-13619152,block:"littletiles:ltcoloredblock"}}],min:[I;2,0,4],size:[I;1,1,3],children:[{tiles:[{bBox:[I;2,0,5,3,1,6],tile:{color:-13619152,invisible:1b,block:"littletiles:ltcoloredblock"}}],count:1,dynamic:1b,structure:{color:-13619152,facing:5,dynamic:1b,id:"signal_quick_output1",state:0}}],grid:32,count:2}

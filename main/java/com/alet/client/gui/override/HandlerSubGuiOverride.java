@@ -8,7 +8,6 @@ import com.creativemd.littletiles.client.gui.SubGuiColorTube;
 import com.creativemd.littletiles.client.gui.SubGuiGrabber;
 import com.creativemd.littletiles.client.gui.SubGuiParticle;
 import com.creativemd.littletiles.client.gui.SubGuiRecipe;
-import com.creativemd.littletiles.client.gui.SubGuiRecipeAdvancedSelection;
 import com.creativemd.littletiles.client.gui.configure.SubGuiGridSelector;
 import com.creativemd.littletiles.client.gui.configure.SubGuiModeSelector;
 
@@ -24,7 +23,6 @@ public class HandlerSubGuiOverride {
 		guiToMod.put(SubGuiModeSelector.class, new SubGuiOverrideConfigure(false));
 		guiToMod.put(SubGuiGridSelector.class, new SubGuiOverrideGridSelector(false));
 		guiToMod.put(SubGuiRecipe.class, new SubGuiOverrideRecipe(true));
-		guiToMod.put(SubGuiRecipeAdvancedSelection.class, new SubGuiOverrideRecipeAdvancedSelection(true));
 	}
 	
 	public static HashMap<Class<? extends SubGui>, SubGuiOverride> getGuiToMod() {

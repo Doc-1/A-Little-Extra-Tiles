@@ -1,1 +1,0 @@
-{tiles:[{boxes:[[I;0,0,7,16,16,9],[I;0,16,7,16,32,9]],tile:{block:"minecraft:stone"}}],min:[I;0,0,7],size:[I;16,32,2],count:2,structure:{duration:50,axisCenter:[I;7,-1,7,9,1,9,16],normal:2,interpolation:0,activateParent:0b,id:"door",axis:1,rot-type:0,events:[],disableRightClick:0b}}

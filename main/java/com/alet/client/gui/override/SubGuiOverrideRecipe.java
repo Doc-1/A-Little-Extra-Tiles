@@ -28,7 +28,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
 			hasUpdated = false;
 			reload(gui, recipeGui);
 		}
-		if (name.equals("structure.sound_player.name")) {
+		if (name.equals("structure.music_composer.name")) {
 			if (!hasUpdated) {
 				gui.height = 270;
 				gui.width = 406;
@@ -78,7 +78,30 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
 				typesComboBox.select(index);
 				hasUpdated = true;
 			}
-		} else {
+		} else if (name.equals("structure.state_activator.name")) {
+			if (!hasUpdated) {
+				gui.width = 456;
+				recipeGui.get("tilescount").posX = 308;
+				recipeGui.get("pause").posX = 348;
+				recipeGui.get("play").posX = 368;
+				recipeGui.get("stop").posX = 388;
+				recipeGui.get("panel").width = 306;
+				recipeGui.controls.remove(recipeGui.get("renderer"));
+				GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 308, 30, 136, 135);
+				recipeGui.controls.add(4, viewer);
+				viewer.moveViewPort(-50, 0);
+				
+				recipeGui.refreshControls();
+				try {
+					viewer.onLoaded(recipeGui.animationPreview);
+				} catch (NullPointerException e) {
+				}
+				
+				typesComboBox.select(index);
+				hasUpdated = true;
+			}
+		}
+		else {
 			if (!hasUpdated) {
 				reload(gui, recipeGui);
 				hasUpdated = true;
@@ -88,6 +111,8 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
 	}
 	
 	public void reload(SubGui gui, SubGuiRecipe recipeGui) {
+		recipeGui.get("types").width = 115;
+		recipeGui.get("hierarchy").posX = 120;
 		gui.width = 356;
 		gui.height = 206;
 		recipeGui.get("tilescount").posX = 208;
