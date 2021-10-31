@@ -33,7 +33,6 @@ import com.alet.common.structure.type.LittleCamPlayerALET;
 import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleMusicComposerALET;
 import com.alet.common.structure.type.LittleStateActivatorALET;
-import com.alet.common.structure.type.LittleTiggerBoxStructureALET;
 import com.alet.common.structure.type.premade.LittleAdjustableFixedStructure;
 import com.alet.common.structure.type.premade.LittlePhotoImporter;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
@@ -55,6 +54,7 @@ import com.alet.common.structure.type.premade.signal.LittleSignalOutputQuick.Lit
 import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemExport;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
+import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
@@ -239,7 +239,7 @@ public class ALET {
 				return new SubContainerBasic(player);
 			}
 		});
-		LittleStructureRegistry.registerStructureType("tigger_box", "advance", LittleTiggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTiggerBoxStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
+		LittleStructureRegistry.registerStructureType("tigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
 		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("state_activator", "advance", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("music_composer", "sound", LittleMusicComposerALET.class, LittleStructureAttribute.TICKING, LittleMusicComposerALET.LittleMusicComposerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
