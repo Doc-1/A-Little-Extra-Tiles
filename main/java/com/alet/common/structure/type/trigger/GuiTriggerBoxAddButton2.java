@@ -20,8 +20,9 @@ public class GuiTriggerBoxAddButton2 extends GuiButton {
 		GuiComboBox list = (GuiComboBox) this.getGui().get("list");
 		int i = box.controls.size();
 		parser.triggers.add(LittleTriggerEvent.getLittleTrigger(list.getCaption(), list.getCaption() + i));
-		
+		System.out.println(parser.triggers);
 		GuiTriggerBoxAddButton bu = new GuiTriggerBoxAddButton(parser, list.getCaption() + i, list.getCaption(), 0, i * 17, 119, 12);
+		
 		box.addControl(bu);
 	}
 	

@@ -83,6 +83,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
 		for (NBTBase base : list) {
 			if (base instanceof NBTTagCompound) {
 				NBTTagCompound n = (NBTTagCompound) base;
+				System.out.println(n.getTag(i + ""));
 				triggers.add(LittleTriggerEvent.createFromNBT((NBTTagCompound) n.getTag(i + "")));
 				i++;
 			}
@@ -194,9 +195,13 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
 					}
 					tick = 0;
 				}
-				
 				tick++;
-				System.out.println(tick);
+				break;
+			case "Execute Command":
+				LittleTriggerExecuteCommand command = (LittleTriggerExecuteCommand) trig;
+				for (Entity entity : entities) {
+					entity.world.getMinecraftServer().getCommandManager().executeCommand(entity, command.command);
+				}
 				break;
 			default:
 				break;
@@ -236,7 +241,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
 		@SideOnly(Side.CLIENT)
 		public void createControls(LittlePreviews previews, LittleStructure structure) {
 			LittleTriggerBoxStructureALET triggerBox = (LittleTriggerBoxStructureALET) structure;
-			this.triggers = triggerBox.triggers;
+			if (triggerBox != null)
+				this.triggers = triggerBox.triggers;
 			
 			GuiPanel panel = new GuiPanel("content", 135, 0, 159, 199);
 			parent.controls.add(panel);
@@ -266,10 +272,11 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
 			GuiTriggerBoxAddButton2 add = new GuiTriggerBoxAddButton2(this, "Add", 105, 170, 22);
 			add.height = 19;
 			parent.addControl(add);
-			
+			System.out.println(triggers);
 			if (triggers != null && !triggers.isEmpty()) {
-				for (int i = 0; i < triggers.size(); i++)
+				for (int i = 0; i < triggers.size(); i++) {
 					box.addControl(new GuiTriggerBoxAddButton(this, triggers.get(i).name + i, triggers.get(i).name, 0, i * 17, 119, 12));
+				}
 			}
 		}
 		

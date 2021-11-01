@@ -102,8 +102,8 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
 				hasUpdated = true;
 			}
 		} else if (name.equals("structure.tigger_box.name")) {
-			
-			recipeGui.get("signal").posY = 192;
+			//GuiPanel panel = (GuiPanel) recipeGui.get("panel");
+			//panel.get("signal").posY = 192;
 			if (!hasUpdated) {
 				gui.height = 270;
 				gui.width = 456;

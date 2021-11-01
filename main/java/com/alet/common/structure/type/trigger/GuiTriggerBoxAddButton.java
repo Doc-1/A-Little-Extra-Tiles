@@ -72,7 +72,6 @@ public class GuiTriggerBoxAddButton extends GuiButton {
 			}
 		if (parser.trigger != null)
 			parser.trigger.updateControls(this.getGui());
-		System.out.println(parser.trigger.id);
 	}
 	
 	@Override

@@ -19,11 +19,15 @@ public abstract class LittleTriggerEvent {
 	}
 	
 	public static LittleTriggerEvent getLittleTrigger(String name, String id) {
+		
+		System.out.println(name);
 		switch (name) {
 		case "Modify Motion":
 			return new LittleTriggerModifyMotion(id);
 		case "Modify Health":
 			return new LittleTriggerModifyHealth(id);
+		case "Execute Command":
+			return new LittleTriggerExecuteCommand(id);
 		default:
 			break;
 		}
@@ -41,6 +45,8 @@ public abstract class LittleTriggerEvent {
 			return new LittleTriggerModifyMotion(id, nbt.getDouble("xStrength"), nbt.getDouble("yStrength"), nbt.getDouble("zStrength"), nbt.getDouble("forward"));
 		case "Modify Health":
 			return new LittleTriggerModifyHealth(id, nbt.getFloat("damageAmount"), nbt.getFloat("healAmount"), nbt.getString("damageType"), nbt.getInteger("effectPerTick"), nbt.getBoolean("heal"), nbt.getBoolean("harm"));
+		case "Execute Command":
+			return new LittleTriggerExecuteCommand(id, nbt.getString("command"));
 		default:
 			break;
 		}
