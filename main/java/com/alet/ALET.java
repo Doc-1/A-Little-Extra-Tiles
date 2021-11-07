@@ -22,6 +22,7 @@ import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
 import com.alet.client.sounds.SoundsHandler;
 import com.alet.common.blocks.BasicBlock;
+import com.alet.common.packet.PacketConnectLead;
 import com.alet.common.packet.PacketDropItem;
 import com.alet.common.packet.PacketGetServerCams;
 import com.alet.common.packet.PacketSendGuiToClient;
@@ -30,6 +31,7 @@ import com.alet.common.packet.PacketSendSound;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.LittleCamPlayerALET;
+import com.alet.common.structure.type.LittleLeadConnectionALET;
 import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleMusicComposerALET;
 import com.alet.common.structure.type.LittleStateActivatorALET;
@@ -55,6 +57,7 @@ import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemExport;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
+import com.alet.entity.EntityLeadConnection;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
@@ -75,6 +78,7 @@ import com.creativemd.littletiles.server.LittleTilesServer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -88,11 +92,13 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -102,6 +108,9 @@ public class ALET {
 	
 	@SidedProxy(clientSide = "com.alet.client.ALETClient", serverSide = "com.alet.server.ALETServer")
 	public static LittleTilesServer proxy;
+	
+	@Instance
+	public static ALET instance;
 	
 	public static final String MODID = "alet";
 	public static final String NAME = "A Little Extra Tiles";
@@ -171,6 +180,9 @@ public class ALET {
 			ALETClient.addItemToRenderTiles(jumpRod);
 		}
 		getFonts();
+		
+		registerEntity();
+		
 		GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
 			
 			@Override
@@ -243,6 +255,7 @@ public class ALET {
 		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("state_activator", "advance", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("music_composer", "sound", LittleMusicComposerALET.class, LittleStructureAttribute.TICKING, LittleMusicComposerALET.LittleMusicComposerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
+		LittleStructureRegistry.registerStructureType("lead_connection", "simple", LittleLeadConnectionALET.class, LittleStructureAttribute.NONE, LittleLeadConnectionALET.LittleLeadConnectionParserALET.class);
 		
 		if (Loader.isModLoaded("cmdcam"))
 			LittleStructureRegistry.registerStructureType("cam_player", "advance", LittleCamPlayerALET.class, LittleStructureAttribute.TICKING, LittleCamPlayerALET.LittleCamPlayerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE);
@@ -285,6 +298,7 @@ public class ALET {
 		CreativeCorePacket.registerPacket(PacketUpdateStructureFromClient.class);
 		CreativeCorePacket.registerPacket(PacketSendGuiToClient.class);
 		CreativeCorePacket.registerPacket(PacketDropItem.class);
+		CreativeCorePacket.registerPacket(PacketConnectLead.class);
 		
 		if (Loader.isModLoaded("cmdcam")) {
 			CreativeCorePacket.registerPacket(PacketSendServerCams.class);
@@ -362,6 +376,15 @@ public class ALET {
 			fontTypeNames.add(fonts[i]);
 		
 		return fontTypeNames;
+	}
+	
+	public static void registerEntity() {
+		registerEntity("littleleash", EntityLeadConnection.class, 1, 250, 250, true);
+	}
+	
+	public static void registerEntity(String name, Class<? extends Entity> entity, int id, int range, int updateFrequence, boolean sendsVelocityUpdates) {
+		EntityRegistry.registerModEntity(new ResourceLocation(MODID, name), entity, name, id, instance, range, updateFrequence, sendsVelocityUpdates);
+		
 	}
 	
 }

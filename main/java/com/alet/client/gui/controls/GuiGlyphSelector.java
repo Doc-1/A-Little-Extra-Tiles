@@ -13,11 +13,12 @@ public class GuiGlyphSelector extends GuiComboBox {
 	public GuiGlyphSelector(String name, String font, int x, int y, int width) {
 		super(name, x, y, width, new ArrayList<String>());
 		caption = "Glyphs";
+		this.fontr = font;
 	}
 	
 	@Override
 	protected GuiComboBoxExtension createBox() {
-		return new GuiGlythSelectorExtension(name + "extension", posX, posY + height, (width - getContentOffset() * 2), 50, this, fontr);
+		return new GuiGlythSelectorExtension(name + "extension", posX, posY + height, (width - getContentOffset() * 2), 80, this, fontr);
 	}
 	
 	@Override

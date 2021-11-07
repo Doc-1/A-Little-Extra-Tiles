@@ -1,6 +1,7 @@
 package com.alet.common.structure.type.trigger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import com.creativemd.creativecore.common.gui.CoreControl;
@@ -12,6 +13,8 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 
@@ -23,6 +26,32 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
 	public int effectPerTick = 0;
 	public boolean heal = false;
 	public boolean harm = false;
+	
+	public static List<DamageSource> sourceOfDmg = new ArrayList<DamageSource>();
+	static {
+		if (sourceOfDmg.isEmpty()) {
+			sourceOfDmg.add(DamageSource.ANVIL);
+			sourceOfDmg.add(DamageSource.CACTUS);
+			sourceOfDmg.add(DamageSource.CRAMMING);
+			sourceOfDmg.add(DamageSource.DRAGON_BREATH);
+			sourceOfDmg.add(DamageSource.DROWN);
+			sourceOfDmg.add(DamageSource.FALL);
+			sourceOfDmg.add(DamageSource.FALLING_BLOCK);
+			sourceOfDmg.add(DamageSource.FIREWORKS);
+			sourceOfDmg.add(DamageSource.FLY_INTO_WALL);
+			sourceOfDmg.add(DamageSource.GENERIC);
+			sourceOfDmg.add(DamageSource.HOT_FLOOR);
+			sourceOfDmg.add(DamageSource.IN_FIRE);
+			sourceOfDmg.add(DamageSource.IN_WALL);
+			sourceOfDmg.add(DamageSource.LAVA);
+			sourceOfDmg.add(DamageSource.LIGHTNING_BOLT);
+			sourceOfDmg.add(DamageSource.MAGIC);
+			sourceOfDmg.add(DamageSource.ON_FIRE);
+			sourceOfDmg.add(DamageSource.OUT_OF_WORLD);
+			sourceOfDmg.add(DamageSource.STARVE);
+			sourceOfDmg.add(DamageSource.WITHER);
+		}
+	}
 	
 	public LittleTriggerModifyHealth(String id) {
 		super(id);
@@ -57,7 +86,7 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
 	public void updateControls(GuiParent parent) {
 		GuiPanel panel = (GuiPanel) parent.get("content");
 		List<String> sourceList = new ArrayList<String>();
-		for (DamageSource forEachSource : LittleTriggerBoxStructureALET.sourceOfDmg) {
+		for (DamageSource forEachSource : sourceOfDmg) {
 			sourceList.add(forEachSource.damageType);
 		}
 		wipeControls(panel);
@@ -111,5 +140,34 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
 			panel.get("dmgAmount").setEnabled(harm);
 			panel.get("healAmount").setEnabled(heal);
 		}
+	}
+	
+	@Override
+	public void runEvent(HashSet<Entity> entities, Integer tick) {
+		System.out.println(this.tick);
+		if (this.effectPerTick <= this.tick) {
+			if (this.harm) {
+				DamageSource damageSource = DamageSource.GENERIC;
+				for (DamageSource source : sourceOfDmg) {
+					if (this.damageType.equals(source.getDamageType())) {
+						damageSource = source;
+						break;
+					}
+				}
+				for (Entity entity : entities) {
+					entity.attackEntityFrom(damageSource, this.damageAmount);
+				}
+			}
+			if (this.heal) {
+				for (Entity entity : entities) {
+					if (entity instanceof EntityLivingBase) {
+						EntityLivingBase living = (EntityLivingBase) entity;
+						living.heal(this.healAmount);
+					}
+				}
+			}
+			this.tick = 0;
+		}
+		this.tick++;
 	}
 }

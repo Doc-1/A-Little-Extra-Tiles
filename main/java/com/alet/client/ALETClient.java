@@ -6,10 +6,12 @@ import org.lwjgl.input.Keyboard;
 
 import com.alet.client.gui.overlay.GuiAxisIndicatorAletControl;
 import com.alet.client.gui.overlay.GuiDisplayMeasurements;
+import com.alet.client.render.entity.RenderLeashConnection;
 import com.alet.common.command.UpdateFontsCommand;
 import com.alet.common.event.ALETEventHandler;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.common.util.shape.LittleShapeMagicWand;
+import com.alet.entity.EntityLeadConnection;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;
@@ -22,6 +24,8 @@ import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -29,6 +33,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -49,6 +55,13 @@ public class ALETClient extends LittleTilesServer {
 	
 	@Override
 	public void loadSidePre() {
+		RenderingRegistry.registerEntityRenderingHandler(EntityLeadConnection.class, new IRenderFactory<EntityLeadConnection>() {
+			
+			@Override
+			public Render<? super EntityLeadConnection> createRenderFor(RenderManager manager) {
+				return new RenderLeashConnection(manager);
+			}
+		});
 	}
 	
 	@Override

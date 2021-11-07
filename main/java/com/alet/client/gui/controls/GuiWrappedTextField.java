@@ -446,47 +446,54 @@ public class GuiWrappedTextField extends GuiFocusControl {
 		int l = 4;
 		int i1 = (GuiRenderHelper.instance.getFontHeight() - getContentOffset());
 		int j1 = l;
-		int j2 = l;
 		if (k > s.length())
 			k = s.length();
 		
 		int y = 0;
+		
+		int cursorWidth = 0;
+		int cursorHeight = 0;
+		int stringLength = 0;
+		
+		boolean flag3 = false;
+		
 		if (s.length() > 0) {
 			
 			String s1 = flag ? s.substring(0, j) : s;
-			for (String s2 : font.listFormattedStringToWidth(text, width)) {
-				j1 = font.getStringWidth(s2) + 5;
-				j2 = font.getStringWidth(s1) + 5;
-				GuiRenderHelper.instance.font.drawStringWithShadow(s2, l, y + i1, i);
+			for (String line : font.listFormattedStringToWidth(text, width)) {
+				int lineWidth = font.getStringWidth(line);
+				j1 = lineWidth + 5;
+				GuiRenderHelper.instance.font.drawStringWithShadow(line, l, y + i1, i);
+				stringLength += line.length();
+				
+				if (stringLength < cursorPosition)
+					cursorHeight += font.FONT_HEIGHT + 1;
+				else if (!flag3) {
+					flag3 = true;
+					if (cursorPosition != -1) {
+						cursorWidth = 4 + (lineWidth - font.getStringWidth(line.substring(cursorPosition - (stringLength - line.length()))));
+					}
+				}
+				
 				y += font.FONT_HEIGHT + 1;
 			}
 			y -= font.FONT_HEIGHT + 1;
 		}
-		//System.out.println(j1 + " " + j2);
 		
 		boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.maxLength;
 		int k1 = j1;
-		int k2 = j2;
 		if (!flag) {
 			k1 = j > 0 ? l + this.width : l;
-			k2 = j > 0 ? l + this.width : l;
 		} else if (flag2) {
 			k1 = j1 - 1;
-			k2 = j2 - 1;
 			--j1;
-			--j2;
 		}
-		/*
-		if (s.length() > 0 && flag && j < s.length()) {
-			GuiRenderHelper.instance.font.drawStringWithShadow(s.substring(j), j1, i1, i);
-		}
-		*/
 		
 		if (flag1) {
 			if (flag2) {
-				Gui.drawRect(k2, i1 - 1, k2 + 1, i1 + 1 + GuiRenderHelper.instance.getFontHeight(), -3092272);
+				Gui.drawRect(cursorWidth, (i1 - 1) + cursorHeight, cursorWidth + 1, cursorHeight + i1 + 1 + GuiRenderHelper.instance.getFontHeight(), -3092272);
 			} else {
-				GuiRenderHelper.instance.font.drawStringWithShadow("_", k1, i1 + (y == 0 ? 0 : y), i);
+				GuiRenderHelper.instance.font.drawStringWithShadow("_", k1, i1 + y, i);
 			}
 		}
 		

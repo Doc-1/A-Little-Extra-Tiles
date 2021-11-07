@@ -1,26 +1,26 @@
 package com.alet.common.structure.type.trigger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LittleTriggerEvent {
 	
 	public String name = "";
 	public String id = "";
+	public int tick = 0;
 	
 	public LittleTriggerEvent(String id) {
 		this.id = id;
 	}
 	
 	public static LittleTriggerEvent getLittleTrigger(String name, String id) {
-		
-		System.out.println(name);
 		switch (name) {
 		case "Modify Motion":
 			return new LittleTriggerModifyMotion(id);
@@ -28,6 +28,8 @@ public abstract class LittleTriggerEvent {
 			return new LittleTriggerModifyHealth(id);
 		case "Execute Command":
 			return new LittleTriggerExecuteCommand(id);
+		case "Modify Scoreboard":
+			return new LittleTriggerEventModifyScoreboard(id);
 		default:
 			break;
 		}
@@ -47,6 +49,8 @@ public abstract class LittleTriggerEvent {
 			return new LittleTriggerModifyHealth(id, nbt.getFloat("damageAmount"), nbt.getFloat("healAmount"), nbt.getString("damageType"), nbt.getInteger("effectPerTick"), nbt.getBoolean("heal"), nbt.getBoolean("harm"));
 		case "Execute Command":
 			return new LittleTriggerExecuteCommand(id, nbt.getString("command"));
+		case "Modify Scoreboard":
+			return new LittleTriggerEventModifyScoreboard(id, nbt.getInteger("value"), nbt.getString("scoreName"), nbt.getInteger("tick"));
 		default:
 			break;
 		}
@@ -60,7 +64,9 @@ public abstract class LittleTriggerEvent {
 	
 	public abstract void updateValues(CoreControl source);
 	
-	public static void wipeControls(GuiPanel panel) {
+	public abstract void runEvent(HashSet<Entity> entities, Integer tick);
+	
+	public static void wipeControls(GuiParent panel) {
 		panel.controls = new ArrayList<GuiControl>();
 	}
 }

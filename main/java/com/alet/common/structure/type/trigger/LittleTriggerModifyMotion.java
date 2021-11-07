@@ -1,5 +1,7 @@
 package com.alet.common.structure.type.trigger;
 
+import java.util.HashSet;
+
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
@@ -8,7 +10,9 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 
 public class LittleTriggerModifyMotion extends LittleTriggerEvent {
 	
@@ -74,6 +78,39 @@ public class LittleTriggerModifyMotion extends LittleTriggerEvent {
 				zStrength = slider.value;
 			if (slider.name.equals("forward"))
 				forward = slider.value;
+		}
+	}
+	
+	@Override
+	public void runEvent(HashSet<Entity> entities, Integer tick) {
+		for (Entity entity : entities) {
+			
+			entity.velocityChanged = true;
+			
+			double totalX = 0;
+			double totalY = this.yStrength;
+			double totalZ = 0;
+			float rotationYawA = entity.rotationYaw;
+			float rotationYawB = entity.rotationYaw;
+			
+			double x1 = -MathHelper.sin((entity.rotationYaw) / 180.0F * (float) Math.PI) * this.forward;
+			double z1 = MathHelper.cos((entity.rotationYaw) / 180.0F * (float) Math.PI) * this.forward;
+			double y1 = -MathHelper.sin((entity.rotationPitch) / 180.0F * (float) Math.PI) * 0.5;
+			
+			double x2 = -MathHelper.sin((270) / 180.0F * (float) Math.PI) * this.xStrength;
+			double z2 = MathHelper.cos((270) / 180.0F * (float) Math.PI) * this.xStrength;
+			
+			double x3 = -MathHelper.sin((360) / 180.0F * (float) Math.PI) * this.zStrength;
+			double z3 = MathHelper.cos((360) / 180.0F * (float) Math.PI) * this.zStrength;
+			
+			totalX = (this.forward != 0) ? x1 + x2 + x3 : x2 + x3;
+			totalZ = (this.forward != 0) ? z1 + z2 + z3 : z2 + z3;
+			totalY += (this.forward != 0) ? y1 : 0;
+			//System.out.println(x1 + " " + x2 + " " + z1 + " " + z2);
+			entity.motionX += totalX;
+			entity.motionY += totalY;
+			entity.motionZ += totalZ;
+			entity.fallDistance = 0;
 		}
 	}
 	

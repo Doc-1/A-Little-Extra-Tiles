@@ -1,11 +1,13 @@
 package com.alet.common.structure.type.trigger;
 
+import java.util.HashSet;
+
 import com.alet.client.gui.controls.GuiWrappedTextField;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
@@ -35,8 +37,7 @@ public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
 	public void updateControls(GuiParent parent) {
 		GuiPanel panel = (GuiPanel) parent.get("content");
 		wipeControls(panel);
-		panel.addControl(new GuiWrappedTextField("command", command, 0, 50, 100, 100));
-		new GuiTextBox("", "", 0, 0, 0);
+		panel.addControl(new GuiWrappedTextField("command", command, 0, 50, 150, 100));
 	}
 	
 	@Override
@@ -44,6 +45,13 @@ public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
 		if (source instanceof GuiWrappedTextField) {
 			GuiWrappedTextField text = (GuiWrappedTextField) source;
 			this.command = text.text;
+		}
+	}
+	
+	@Override
+	public void runEvent(HashSet<Entity> entities, Integer tick) {
+		for (Entity entity : entities) {
+			entity.world.getMinecraftServer().getCommandManager().executeCommand(entity.world.getMinecraftServer(), this.command);
 		}
 	}
 	

@@ -37,7 +37,7 @@ public class GuiGlythSelectorExtension extends GuiComboBoxExtension {
 			int rowMax = glyphs.size() / 5;
 			int counter = 0;
 			for (int r = 0; r <= rowMax; r++) {
-				for (int c = 0; c <= 5; c++) {
+				for (int c = 0; c <= 6; c++) {
 					if (counter >= glyphs.size())
 						break;
 					
@@ -47,7 +47,7 @@ public class GuiGlythSelectorExtension extends GuiComboBoxExtension {
 							GuiLongTextField text = (GuiLongTextField) this.getParent().getParent().get("input");
 							if (text != null) {
 								int codePoint = Integer.parseInt(name);
-								System.out.println((char) codePoint);
+								//System.out.println((char) codePoint);
 								text.text += (char) codePoint;
 							}
 						}

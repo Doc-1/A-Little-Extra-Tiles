@@ -185,6 +185,47 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
 		return EnumAction.BOW;
 	}
 	
+	/*
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		Block block = worldIn.getBlockState(pos).getBlock();
+		
+		if (!(block instanceof BlockTile)) {
+			return EnumActionResult.PASS;
+		} else {
+			if (!worldIn.isRemote) {
+				attachToFence(player, worldIn, pos);
+				System.out.println("da");
+			}
+			
+			return EnumActionResult.SUCCESS;
+		}
+	}
+	
+	
+	public static boolean attachToFence(EntityPlayer player, World worldIn, BlockPos fence) {
+		EntityLeadConnection entityleashknot = EntityLeadConnection.getKnotForPosition(worldIn, fence);
+		boolean flag = false;
+		double d0 = 7.0D;
+		int i = fence.getX();
+		int j = fence.getY();
+		int k = fence.getZ();
+		EntityLeadConnection.createKnot(worldIn, fence);
+		
+		for (EntityLiving entityliving : worldIn.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB((double) i - 7.0D, (double) j - 7.0D, (double) k - 7.0D, (double) i + 7.0D, (double) j + 7.0D, (double) k + 7.0D))) {
+			if (entityliving.getLeashed() && entityliving.getLeashHolder() == player) {
+				if (entityleashknot == null) {
+					entityleashknot = EntityLeadConnection.createKnot(worldIn, fence);
+				}
+				
+				entityliving.setLeashHolder(entityleashknot, true);
+				flag = true;
+			}
+		}
+		
+		return flag;
+	}
+	*/
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
 		player.setNoGravity(true);
@@ -251,4 +292,5 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
 			return LittleStructurePremade.getStructurePremadeEntry(stack.getTagCompound().getCompoundTag("structure").getString("id"));
 		return null;
 	}
+	
 }

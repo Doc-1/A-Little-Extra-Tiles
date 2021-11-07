@@ -130,4 +130,53 @@ public class FontReader {
 		return null;
 	}
 	
+	public static LittlePreviews photoToPreviews(String input, String font, int grid, int fontSize, int fontColor, double rotation) throws IOException {
+		InputStream in = null;
+		File file = null;
+		BufferedImage image = null;
+		int color = 0;
+		int maxPixelAmount = ALET.CONFIG.getMaxPixelText();
+		
+		try {
+			image = fontToPhoto(input, font, fontSize, fontColor, rotation);
+			//System.out.println("Image: " + image);
+			if (image != null) {
+				int width = image.getWidth();
+				int height = image.getHeight();
+				
+				if (((width * height) < maxPixelAmount)) {
+					LittleGridContext context = LittleGridContext.get(grid);
+					List<LittlePreview> tiles = new ArrayList<>();
+					int expected = image.getWidth() * image.getHeight();
+					for (int x = 0; x < image.getWidth(); x++) {
+						for (int y = 0; y < image.getHeight(); y++) {
+							
+							color = image.getRGB(x, image.getHeight() - y - 1);
+							
+							if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
+								LittleTileColored tile = new LittleTileColored(LittleTiles.dyeableBlock, BlockLittleDyeable.LittleDyeableType.CLEAN.getMetadata(), color);
+								tile.setBox(new LittleBox(new LittleVec(x, y, 0)));
+								tiles.add(tile.getPreviewTile());
+							}
+						}
+					}
+					
+					ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
+					LittlePreviews previews = new LittlePreviews(context);
+					BasicCombiner.combine(tiles);
+					for (LittlePreview tile : tiles) {
+						previews.addWithoutCheckingPreview(tile);
+					}
+					
+					LittlePreview.savePreview(previews, stack); // save tiles to itemstacks
+					
+					return LittlePreview.getPreview(stack);
+				}
+			}
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
+		return null;
+	}
+	
 }

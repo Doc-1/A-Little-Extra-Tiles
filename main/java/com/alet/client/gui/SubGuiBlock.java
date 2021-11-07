@@ -1,7 +1,5 @@
 package com.alet.client.gui;
 
-import java.io.IOException;
-
 import org.lwjgl.util.Color;
 
 import com.alet.client.gui.controls.GuiStack;
@@ -189,13 +187,13 @@ public class SubGuiBlock extends SubGui {
 				GuiTextfield xScale = (GuiTextfield) get("xScale");
 				int resizeX = Integer.parseInt(xScale.text);
 				PhotoReader.setScale(resizeX, resizeY);
-				
+				/*
 				try {
 					NBTTagCompound nbt = PhotoReader.photoToNBT(path, false, grid);
 					sendPacketToServer(nbt);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}*/
 			}
 			
 		});

@@ -11,7 +11,6 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALET;
 import com.alet.client.gui.controls.GuiGlyphSelector;
-import com.alet.client.gui.controls.GuiImage;
 import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.client.gui.controls.GuiToolTipBox;
 import com.alet.client.gui.controls.Layer;
@@ -20,6 +19,7 @@ import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.util.CopyUtils;
 import com.alet.font.FontReader;
+import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
@@ -31,6 +31,7 @@ import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.common.entity.AnimationPreview;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
@@ -46,7 +47,7 @@ public class SubGuiTypeWriter extends SubGui {
 	public NBTTagCompound nbt = new NBTTagCompound();
 	
 	public SubGuiTypeWriter(LittleStructure structure) {
-		super(277, 190);
+		super(422, 190);
 		this.structure = structure;
 	}
 	
@@ -73,13 +74,13 @@ public class SubGuiTypeWriter extends SubGui {
 			GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 			rotation.value = nbt.getDouble("rotation");
 		}
-		GuiImage image = (GuiImage) get("image");
+		//GuiImage image = (GuiImage) get("image");
 		GuiComboBox contextBox = (GuiComboBox) get("fontType");
 		GuiTextfield fontSize = (GuiTextfield) get("fontSize");
 		String font = contextBox.getCaption();
 		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 		GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
-		image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
+		//image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
 	}
 	
 	@Override
@@ -105,26 +106,26 @@ public class SubGuiTypeWriter extends SubGui {
 	public boolean mousePressed(int x, int y, int button) {
 		boolean result = super.mousePressed(x, y, button);
 		if (result) {
-			GuiImage image = (GuiImage) get("image");
+			//GuiImage image = (GuiImage) get("image");
 			GuiComboBox contextBox = (GuiComboBox) get("fontType");
 			GuiTextfield fontSize = (GuiTextfield) get("fontSize");
 			String font = contextBox.getCaption();
 			GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 			GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
-			image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
+			//image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
 		}
 		return result;
 	}
 	
 	@Override
 	public void mouseReleased(int x, int y, int button) {
-		GuiImage image = (GuiImage) get("image");
+		//GuiImage image = (GuiImage) get("image");
 		GuiComboBox contextBox = (GuiComboBox) get("fontType");
 		GuiTextfield fontSize = (GuiTextfield) get("fontSize");
 		String font = contextBox.getCaption();
 		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 		GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
-		image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
+		//image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
 		
 		super.mouseReleased(x, y, button);
 	}
@@ -137,6 +138,10 @@ public class SubGuiTypeWriter extends SubGui {
 		Color color = ColorUtils.IntToRGBA(BLACK);
 		if (nbt.hasKey("color"))
 			color = ColorUtils.IntToRGBA(nbt.getInteger("color"));
+		
+		GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 280, 0, 136, 135);
+		controls.add(viewer);
+		viewer.moveViewPort(0, 50);
 		
 		controls.add(new GuiColorPickerAlet("picker", -2, 42, color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
 		
@@ -205,6 +210,35 @@ public class SubGuiTypeWriter extends SubGui {
 		
 		controls.add(new GuiAnalogeSlider("rotation", 0, 96, 150, 10, 0, 0, 360));
 		
+		controls.add(new GuiButton("refresh", "Refresh Preview", 326, 145, 90) {
+			
+			@Override
+			public void onClicked(int x, int y, int button) {
+				GuiLongTextField input = (GuiLongTextField) get("input");
+				if (input.text.equals(""))
+					Layer.addLayer(getGui(), new SubGuiNoTextInFieldMessage("for the text that will be exported", "digit(s) and or character(s)"));
+				else {
+					GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
+					int color = ColorUtils.RGBAToInt(picker.color);
+					
+					GuiTextfield contextField = (GuiTextfield) get("fontSize");
+					int fontSize = Integer.parseInt(contextField.text);
+					
+					GuiComboBox contextBox = (GuiComboBox) get("fontType");
+					String font = contextBox.getCaption();
+					
+					GuiComboBox contextBox_2 = (GuiComboBox) get("grid");
+					int grid = Integer.parseInt(contextBox_2.getCaption());
+					
+					GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+					try {
+						viewer.onLoaded(new AnimationPreview(FontReader.photoToPreviews(input.text, font, grid, fontSize, color, rotation.value)));
+					} catch (NullPointerException | IOException e) {
+					}
+				}
+			}
+		});
+		
 		controls.add(new GuiButton("Paste", "Paste", 221, 43, 50) {
 			
 			@Override
@@ -228,10 +262,10 @@ public class SubGuiTypeWriter extends SubGui {
 		GuiComboBox contextBox = (GuiComboBox) get("fontType");
 		String font = contextBox.getCaption();
 		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
-		controls.add(new GuiImage("image", 180, 130, font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color), rotation.value));
+		//controls.add(new GuiImage("image", 180, 130, font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color), rotation.value));
 		
-		controls.add(new GuiGlyphSelector("na", font, 180, 85, 80));
-		controls.add(new GuiButton("Print", 243, 64) {
+		controls.add(new GuiGlyphSelector("na", font, 165, 85, 106));
+		controls.add(new GuiButton("Print", 243, 64, 28) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
@@ -269,10 +303,10 @@ public class SubGuiTypeWriter extends SubGui {
 	
 	@CustomEventSubscribe
 	public void onChanged(GuiControlChangedEvent event) {
-		System.out.println(event.source.name);
+		//System.out.println(event.source.name);
 		GuiComboBox contextBox = (GuiComboBox) get("fontType");
 		String font = contextBox.getCaption();
-		System.out.println(font);
+		//System.out.println(font);
 		GuiGlyphSelector na = (GuiGlyphSelector) get("na");
 		na.fontr = font;
 		if (event.source.is("searchBar")) {

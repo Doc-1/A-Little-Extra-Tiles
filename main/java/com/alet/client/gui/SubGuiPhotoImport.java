@@ -11,15 +11,24 @@ import com.alet.client.gui.controls.Layer;
 import com.alet.client.gui.message.SubGuiErrorMessage;
 import com.alet.client.gui.message.SubGuiNoPathMessage;
 import com.alet.common.util.CopyUtils;
+import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
+import com.alet.photo.PhotoConverter;
 import com.alet.photo.PhotoReader;
+import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
+import com.creativemd.creativecore.common.gui.client.style.DisplayStyle;
+import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiProgressBar;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
+import com.creativemd.littletiles.common.entity.AnimationPreview;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
+import com.creativemd.littletiles.common.tile.preview.LittlePreview;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.init.SoundEvents;
@@ -35,15 +44,48 @@ public class SubGuiPhotoImport extends SubGui {
 	public GuiTextfield imgWidth = null;
 	public GuiButton autoScale = null;
 	
+	private volatile Thread thread;
+	
 	public double aspectRatio = 0;
 	
 	public SubGuiPhotoImport() {
-		super(176, 190);
+		super(313, 200);
 	}
 	
 	@Override
 	public void createControls() {
-		imgWidth = (new GuiTextfield("imgWidth", "0", 93, 85, 30, 14) {
+		GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 171, 0, 136, 135);
+		controls.add(viewer);
+		viewer.moveViewPort(0, 60);
+		
+		controls.add(new GuiButton("refresh", "Refresh Preview", 217, 145, 90) {
+			
+			@Override
+			public void onClicked(int x, int y, int button) {
+				
+				int resizeX = Integer.parseInt(imgWidth.text);
+				int resizeY = Integer.parseInt(imgHeight.text);
+				
+				if (resizeX * resizeY > ALET.CONFIG.getMaxPixelAmount()) {
+					Layer.addLayer(getGui(), new SubGuiErrorMessage(resizeX * resizeY));
+				} else {
+					PhotoReader.setScale(resizeX, resizeY);
+					
+					GuiComboBox contextBox = (GuiComboBox) get("grid");
+					int grid = Integer.parseInt(contextBox.getCaption());
+					try {
+						LittlePreviews pre = LittlePreview.getPreview(PhotoReader.photoToStack(file.text, useURL.value, grid, getGui()));
+						viewer.onLoaded(new AnimationPreview(pre));
+						if (pre == null)
+							Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
+					} catch (NullPointerException | IOException e) {
+					}
+				}
+				
+			}
+		});
+		
+		imgWidth = (new GuiTextfield("imgWidth", "0", 93, 102, 30, 14) {
 			@Override
 			public void onTextChange() {
 				
@@ -64,7 +106,8 @@ public class SubGuiPhotoImport extends SubGui {
 		imgWidth.setNumbersOnly();
 		controls.add(imgWidth);
 		
-		imgHeight = (new GuiTextfield("imgHeight", "0", 135, 85, 30, 14) {
+		imgHeight = (new GuiTextfield("imgHeight", "0", 132, 102, 30, 14) {
+			
 			@Override
 			public void onTextChange() {
 				
@@ -85,10 +128,12 @@ public class SubGuiPhotoImport extends SubGui {
 		imgHeight.setNumbersOnly();
 		controls.add(imgHeight);
 		
-		keepAspect = new GuiCheckBox("keepAspect", translate("Keep Aspect Ratio?"), 8, 47, false);
+		controls.add(new GuiCheckBox("ignoreAlpha", "Ignore Alpha", -3, 50, false));
+		
+		keepAspect = new GuiCheckBox("keepAspect", translate("Keep Aspect Ratio?"), -3, 65, false);
 		controls.add(keepAspect);
 		
-		autoScale = (new GuiButton("autoScale", "Auto Scale Image?", 10, 61, 90) {
+		autoScale = (new GuiButton("autoScale", "Auto Scale Image?", 0, 80, 90) {
 			@Override
 			public void onClicked(int x, int y, int button) {
 				
@@ -121,7 +166,7 @@ public class SubGuiPhotoImport extends SubGui {
 		contextBox.select(ItemMultiTiles.currentContext.size + "");
 		controls.add(contextBox);
 		
-		controls.add(file = new GuiLongTextField("file", "", 10, 26, 150, 14) {
+		controls.add(file = new GuiLongTextField("file", "", 0, 26, 162, 14) {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				boolean result = super.onKeyPressed(character, key);
@@ -198,7 +243,7 @@ public class SubGuiPhotoImport extends SubGui {
 			useURL.enabled = false;
 		}
 		
-		GuiButton paste = (new GuiButton("Paste", 10, 85) {
+		GuiButton paste = (new GuiButton("Paste", 0, 102) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
@@ -227,37 +272,26 @@ public class SubGuiPhotoImport extends SubGui {
 		});
 		controls.add(paste);
 		
-		GuiButton print = (new GuiButton("Print", 50, 85) {
+		GuiButton print = (new GuiButton("Print", 38, 102) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
 				int resizeX = Integer.parseInt(imgWidth.text);
 				int resizeY = Integer.parseInt(imgHeight.text);
-				
-				if (resizeX * resizeY > ALET.CONFIG.getMaxPixelAmount()) {
-					Layer.addLayer(getGui(), new SubGuiErrorMessage(resizeX * resizeY));
-				} else {
-					PhotoReader.setScale(resizeX, resizeY);
-					
-					GuiComboBox contextBox = (GuiComboBox) get("grid");
-					int grid = Integer.parseInt(contextBox.getCaption());
-					try {
-						NBTTagCompound nbt = PhotoReader.photoToNBT(file.text, useURL.value, grid);
-						/*
-						System.out.println("File Or URL: " + file.text);
-						System.out.println("Grid: " + grid);
-						System.out.println("Size: " + resizeX + " by " + resizeY);
-						System.out.println("NBT Data:" + nbt);
-						*/
-						if (nbt != null)
-							sendPacketToServer(nbt);
-						else
-							Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
+				if (PhotoReader.photoExists(file.text, useURL.value))
+					if (resizeX * resizeY > ALET.CONFIG.getMaxPixelAmount()) {
+						Layer.addLayer(getGui(), new SubGuiErrorMessage(resizeX * resizeY));
+					} else {
+						PhotoReader.setScale(resizeX, resizeY);
 						
-					} catch (IOException e) {
-						e.printStackTrace();
+						GuiComboBox contextBox = (GuiComboBox) get("grid");
+						int grid = Integer.parseInt(contextBox.getCaption());
+						PhotoConverter converter = new PhotoConverter(file.text, useURL.value, grid, this.getGui());
+						thread = new Thread(converter);
+						thread.start();
 					}
-				}
+				else
+					Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
 			}
 		});
 		controls.add(print);
@@ -270,5 +304,17 @@ public class SubGuiPhotoImport extends SubGui {
 				GuiHandler.openGui("block", new NBTTagCompound(), getPlayer());
 			}
 		});
+		GuiProgressBar progress = new GuiProgressBar("progress", 165, 184, 142, 10, 100, 0);
+		progress.setStyle(new Style("s", new ColoredDisplayStyle(0x11111111), new ColoredDisplayStyle(0xdddddddd), DisplayStyle.emptyDisplay, new ColoredDisplayStyle(0x2d9912), DisplayStyle.emptyDisplay));
+		controls.add(progress);
+	}
+	
+	@Override
+	public void onClosed() {
+		if (thread != null) {
+			thread.currentThread().interrupt();
+			thread = null;
+		}
+		super.onClosed();
 	}
 }
