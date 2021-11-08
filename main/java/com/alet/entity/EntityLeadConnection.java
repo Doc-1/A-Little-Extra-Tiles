@@ -1,7 +1,5 @@
 package com.alet.entity;
 
-import java.util.UUID;
-
 import javax.annotation.Nullable;
 import javax.vecmath.Vector3d;
 
@@ -16,10 +14,7 @@ import com.creativemd.littletiles.common.structure.exception.CorruptedConnection
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityLeashKnot;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -29,11 +24,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -45,9 +39,10 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	public static final DataParameter<Float> CHAIRZ = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
 	private StructureChildConnection temp;
 	
-	private NBTTagCompound leashNBTTag;
 	public boolean isLeashed;
 	public Entity leashHolder;
+	public float prevRenderYawOffset;
+	public float renderYawOffset;
 	
 	public EntityLeadConnection(World worldIn) {
 		super(worldIn);
@@ -74,6 +69,9 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		this.temp = chair.generateConnection(this);
 		this.dataManager.set(CONNECTION, temp.writeToNBT(new NBTTagCompound()));
 		isLeashed = false;
+		forceSpawn = true;
+		noClip = true;
+		preventEntitySpawning = false;
 		this.setPosition(x, y, z);
 	}
 	
@@ -106,13 +104,19 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	}
 	
 	@Override
+	public void onEntityUpdate() {
+		super.onEntityUpdate();
+	}
+	
+	@Override
 	public void onUpdate() {
-		super.onUpdate();
+		if (this.getLeashHolder() == null) {
+			this.isLeashed = false;
+		}
 		StructureChildConnection connection = StructureChildConnection.loadFromNBT(this, dataManager.get(CONNECTION), false);
-		//System.out.println(connection);
-		if (!world.isRemote) {
-			this.updateLeashedState();
+		if (!world.isRemote && !isBeingRidden()) {
 			try {
+				
 				LittleStructure structure = connection.getStructure();
 				if (structure instanceof LittleLeadConnectionALET)
 					((LittleLeadConnectionALET) structure).setPlayer(null);
@@ -130,17 +134,14 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 			} catch (CorruptedConnectionException | NotYetConnectedException e) {
 			}
 		}
+		super.onUpdate();
+		this.prevRenderYawOffset = this.renderYawOffset;
+		
 	}
 	
 	@Override
 	public double getMountedYOffset() {
 		return 0;
-	}
-	
-	@Override
-	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
-		System.out.println(hand);
-		return super.applyPlayerInteraction(player, vec, hand);
 	}
 	
 	@Override
@@ -153,43 +154,76 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		this.isLeashed = nbt.getBoolean("Leashed");
 		
 		dataManager.set(CONNECTION, nbt.getCompoundTag("connection"));
 		dataManager.set(CHAIRX, nbt.getFloat("chairX"));
 		dataManager.set(CHAIRY, nbt.getFloat("chairY"));
 		dataManager.set(CHAIRZ, nbt.getFloat("chairZ"));
-		
-		this.isLeashed = nbt.getBoolean("Leashed");
-		
-		if (this.isLeashed && nbt.hasKey("Leash", 10)) {
-			this.leashNBTTag = nbt.getCompoundTag("Leash");
-		}
 	}
 	
 	@Override
 	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
 		nbt.setBoolean("Leashed", this.isLeashed);
 		nbt.setTag("connection", dataManager.get(CONNECTION));
 		nbt.setFloat("chairX", dataManager.get(CHAIRX));
 		nbt.setFloat("chairY", dataManager.get(CHAIRY));
 		nbt.setFloat("chairZ", dataManager.get(CHAIRZ));
+	}
+	
+	public void setLeashHolder(Entity entityIn, @Nullable EntityPlayerMP receiverPlayer, boolean sendAttachNotification) {
+		this.isLeashed = true;
+		this.leashHolder = entityIn;
 		
-		nbt.setBoolean("Leashed", this.isLeashed);
+		if (!this.world.isRemote && sendAttachNotification && this.world instanceof WorldServer && this.leashHolder instanceof EntityLeadConnection) {
+			PacketHandler.sendPacketToPlayer(new PacketConnectLead(this, this.leashHolder), receiverPlayer);
+		}
 		
-		if (this.leashHolder != null) {
-			NBTTagCompound nbt2 = new NBTTagCompound();
+		if (this.isRiding()) {
+			this.dismountRidingEntity();
+		}
+	}
+	
+	public boolean getLeashed() {
+		return this.isLeashed;
+	}
+	
+	public Entity getLeashHolder() {
+		return this.leashHolder;
+	}
+	
+	public void clearLeashed(boolean sendPacket, boolean dropLead) {
+		if (this.isLeashed) {
+			this.isLeashed = false;
+			this.leashHolder = null;
 			
-			if (this.leashHolder instanceof EntityLivingBase) {
-				UUID uuid = this.leashHolder.getUniqueID();
-				nbt2.setUniqueId("UUID", uuid);
-			} else if (this.leashHolder instanceof EntityHanging) {
-				BlockPos blockpos = ((EntityHanging) this.leashHolder).getHangingPosition();
-				nbt2.setInteger("X", blockpos.getX());
-				nbt2.setInteger("Y", blockpos.getY());
-				nbt2.setInteger("Z", blockpos.getZ());
+			if (!this.world.isRemote && dropLead) {
+				this.dropItem(Items.LEAD, 1);
 			}
 			
-			nbt.setTag("Leash", nbt2);
+			if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer && this.leashHolder instanceof EntityPlayerMP) {
+				PacketHandler.sendPacketToPlayer(new PacketConnectLead(this, null), (EntityPlayerMP) this.leashHolder);
+			}
+		}
+	}
+	
+	@Override
+	public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
+		if (this.getLeashed() && this.getLeashHolder() == player) {
+			this.clearLeashed(true, !player.capabilities.isCreativeMode);
+			return true;
+		} else {
+			ItemStack itemstack = player.getHeldItem(hand);
+			
+			if (itemstack.getItem() == Items.LEAD) {
+				this.setLeashHolder(player, (EntityPlayerMP) player, true);
+				itemstack.shrink(1);
+				return true;
+			} else {
+				return this.processInteract(player, hand) ? true : super.processInitialInteract(player, hand);
+			}
 		}
 	}
 	
@@ -230,105 +264,31 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		this.playSound(SoundEvents.ENTITY_LEASHKNOT_PLACE, 1.0F, 1.0F);
 	}
 	
-	@Override
-	public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-		if (this.getLeashed() && this.getLeashHolder() == player) {
-			this.clearLeashed(true, !player.capabilities.isCreativeMode);
-			return true;
-		} else {
-			ItemStack itemstack = player.getHeldItem(hand);
-			
-			if (itemstack.getItem() == Items.LEAD) {
-				this.setLeashHolder(player, true);
-				itemstack.shrink(1);
-				return true;
-			} else {
-				return this.processInteract(player, hand) ? true : super.processInitialInteract(player, hand);
-			}
-		}
-	}
-	
-	protected void updateLeashedState() {
-		if (this.leashNBTTag != null) {
-			this.recreateLeash();
+	protected float updateDistance(float p_110146_1_, float p_110146_2_) {
+		float f = MathHelper.wrapDegrees(p_110146_1_ - this.renderYawOffset);
+		this.renderYawOffset += f * 0.3F;
+		float f1 = MathHelper.wrapDegrees(this.rotationYaw - this.renderYawOffset);
+		boolean flag = f1 < -90.0F || f1 >= 90.0F;
+		
+		if (f1 < -75.0F) {
+			f1 = -75.0F;
 		}
 		
-		if (this.isLeashed) {
-			if (!this.isEntityAlive()) {
-				this.clearLeashed(true, true);
-			}
-			
-			if (this.leashHolder == null || this.leashHolder.isDead) {
-				this.clearLeashed(true, true);
-			}
-		}
-	}
-	
-	public void setLeashHolder(Entity entityIn, boolean sendAttachNotification) {
-		this.isLeashed = true;
-		this.leashHolder = entityIn;
-		
-		if (!this.world.isRemote && sendAttachNotification && this.world instanceof WorldServer && this.leashHolder instanceof EntityPlayerMP) {
-			PacketHandler.sendPacketToPlayer(new PacketConnectLead(this, this.leashHolder), (EntityPlayerMP) this.leashHolder);
+		if (f1 >= 75.0F) {
+			f1 = 75.0F;
 		}
 		
-		if (this.isRiding()) {
-			this.dismountRidingEntity();
-		}
-	}
-	
-	public boolean canBeLeashedTo(EntityPlayer player) {
-		return !this.getLeashed() && !(this instanceof IMob);
-	}
-	
-	public boolean getLeashed() {
-		return this.isLeashed;
-	}
-	
-	public Entity getLeashHolder() {
-		return this.leashHolder;
-	}
-	
-	public void clearLeashed(boolean sendPacket, boolean dropLead) {
-		if (this.isLeashed) {
-			this.isLeashed = false;
-			this.leashHolder = null;
-			
-			if (!this.world.isRemote && dropLead) {
-				this.dropItem(Items.LEAD, 1);
-			}
-			
-			if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer && this.leashHolder instanceof EntityPlayerMP) {
-				PacketHandler.sendPacketToPlayer(new PacketConnectLead(this, null), (EntityPlayerMP) this.leashHolder);
-			}
-		}
-	}
-	
-	private void recreateLeash() {
-		if (this.isLeashed && this.leashNBTTag != null) {
-			if (this.leashNBTTag.hasUniqueId("UUID")) {
-				UUID uuid = this.leashNBTTag.getUniqueId("UUID");
-				
-				for (EntityLivingBase entitylivingbase : this.world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox().grow(10.0D))) {
-					if (entitylivingbase.getUniqueID().equals(uuid)) {
-						this.setLeashHolder(entitylivingbase, true);
-						break;
-					}
-				}
-			} else if (this.leashNBTTag.hasKey("X", 99) && this.leashNBTTag.hasKey("Y", 99) && this.leashNBTTag.hasKey("Z", 99)) {
-				BlockPos blockpos = new BlockPos(this.leashNBTTag.getInteger("X"), this.leashNBTTag.getInteger("Y"), this.leashNBTTag.getInteger("Z"));
-				EntityLeashKnot entityleashknot = EntityLeashKnot.getKnotForPosition(this.world, blockpos);
-				
-				if (entityleashknot == null) {
-					entityleashknot = EntityLeashKnot.createKnot(this.world, blockpos);
-				}
-				
-				this.setLeashHolder(entityleashknot, true);
-			} else {
-				this.clearLeashed(false, true);
-			}
+		this.renderYawOffset = this.rotationYaw - f1;
+		
+		if (f1 * f1 > 2500.0F) {
+			this.renderYawOffset += f1 * 0.2F;
 		}
 		
-		this.leashNBTTag = null;
+		if (flag) {
+			p_110146_2_ *= -1.0F;
+		}
+		
+		return p_110146_2_;
 	}
+	
 }

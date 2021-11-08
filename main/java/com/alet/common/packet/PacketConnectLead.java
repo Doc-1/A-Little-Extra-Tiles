@@ -44,7 +44,7 @@ public class PacketConnectLead extends CreativeCorePacket {
 		System.out.println(entity);
 		if (entity instanceof EntityLeadConnection) {
 			if (entity1 != null) {
-				((EntityLeadConnection) entity).setLeashHolder(entity1, false);
+				((EntityLeadConnection) entity).setLeashHolder(entity1, null, false);
 			} else {
 				((EntityLeadConnection) entity).clearLeashed(false, false);
 			}

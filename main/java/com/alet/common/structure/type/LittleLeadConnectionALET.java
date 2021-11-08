@@ -21,8 +21,8 @@ import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -30,6 +30,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class LittleLeadConnectionALET extends LittleStructure {
 	
@@ -106,17 +107,19 @@ public class LittleLeadConnectionALET extends LittleStructure {
 					double i = vec.getPosX();
 					double j = vec.getPosY();
 					double k = vec.getPosZ();
-					if (!connection.isLeashed && this.connectionUUID == null) {
+					WorldServer serverWorld = (WorldServer) world;
+					if (!connection.isLeashed && serverWorld.getEntityFromUuid(connectionUUID) == null) {
 						this.connectionUUID = connection.getPersistentID();
-						//((EntityLiving) player).setLeashHolder(connection, true);
-						System.out.println(i + " " + j + " " + k);
-						for (EntityLiving entityliving : world.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB((double) i - 7.0D, (double) j - 7.0D, (double) k - 7.0D, (double) i + 7.0D, (double) j + 7.0D, (double) k + 7.0D))) {
-							//System.out.println(entityliving);
-						}
+						//((EntityLiving) player).setLeashHolder(connecton, true);
 						world.spawnEntity(connection);
-						connection.playPlaceSound();
-						connection.setLeashHolder(player, true);
-						
+						for (EntityLeadConnection entityliving : world.getEntitiesWithinAABB(EntityLeadConnection.class, new AxisAlignedBB((double) i - 7.0D, (double) j - 7.0D, (double) k - 7.0D, (double) i + 7.0D, (double) j + 7.0D, (double) k + 7.0D))) {
+							if (!entityliving.getLeashed() && !entityliving.equals(connection)) {
+								connection.playPlaceSound();
+								connection.setLeashHolder(entityliving, (EntityPlayerMP) player, true);
+								System.out.println("leashed " + connection.isLeashed);
+								
+							}
+						}
 					}
 				}
 			} catch (CorruptedConnectionException | NotYetConnectedException e) {
