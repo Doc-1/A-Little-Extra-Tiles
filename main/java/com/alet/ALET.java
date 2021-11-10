@@ -59,6 +59,7 @@ import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.entity.EntityLeadConnection;
 import com.alet.items.ItemJumpTool;
+import com.alet.items.ItemLittleRope;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
@@ -134,6 +135,8 @@ public class ALET {
 	public static List<String> fontTypeNames;
 	public static List<String> sounds;
 	
+	public static Item littleRope;
+	
 	public static Item tapeMeasure;
 	public static Item jumpRod;
 	
@@ -162,6 +165,7 @@ public class ALET {
 	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent event) {
+		littleRope = new ItemLittleRope("little_rope");
 		jumpRod = new ItemJumpTool("jump_rod");
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
 		
@@ -270,12 +274,13 @@ public class ALET {
 	
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(jumpRod, tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
+		event.getRegistry().registerAll(littleRope, jumpRod, tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
 		proxy.loadSide();
 	}
 	
 	@SubscribeEvent
 	public static void registerRenders(ModelRegistryEvent event) {
+		registerRender(littleRope);
 		registerRender(tapeMeasure);
 		registerRender(Item.getItemFromBlock(smoothGroutBrick));
 		registerRender(Item.getItemFromBlock(smoothBrick));

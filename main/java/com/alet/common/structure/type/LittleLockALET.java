@@ -163,9 +163,11 @@ public class LittleLockALET extends LittleStructure {
 		
 		@Override
 		protected void createControls(LittlePreviews previews, LittleStructure structure) {
+			
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			LittleLockALET lock = structure instanceof LittleLockALET ? (LittleLockALET) structure : null;
 			GuiScrollBox box = new GuiScrollBox("content", 0, 0, 100, 115);
+			parent.removeControl(box);
 			parent.controls.add(box);
 			possibleChildren = new ArrayList<>();
 			int i = 0;

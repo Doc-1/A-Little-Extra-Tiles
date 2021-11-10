@@ -1,5 +1,8 @@
 package com.alet.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Nullable;
 import javax.vecmath.Vector3d;
 
@@ -14,11 +17,9 @@ import com.creativemd.littletiles.common.structure.exception.CorruptedConnection
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLeashKnot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -31,7 +32,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-public class EntityLeadConnection extends EntityLeashKnot implements IWorldPositionProvider {
+public class EntityLeadConnection extends Entity implements IWorldPositionProvider {
 	
 	public static final DataParameter<NBTTagCompound> CONNECTION = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.COMPOUND_TAG);
 	public static final DataParameter<Float> CHAIRX = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
@@ -41,6 +42,7 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	
 	public boolean isLeashed;
 	public Entity leashHolder;
+	public Set<Integer> connectIDs = new HashSet<Integer>();
 	public float prevRenderYawOffset;
 	public float renderYawOffset;
 	
@@ -49,6 +51,8 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		noClip = true;
 		preventEntitySpawning = true;
 		isLeashed = false;
+		width = 0;
+		height = 0;
 	}
 	
 	/*
@@ -61,17 +65,19 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		this.forceSpawn = true;
 	}
 	*/
-	public EntityLeadConnection(LittleLeadConnectionALET chair, World world, double x, double y, double z) {
-		super(world, new BlockPos(x, y, z));
+	public EntityLeadConnection(LittleLeadConnectionALET connection, World world, double x, double y, double z) {
+		super(world);
 		dataManager.set(CHAIRX, (float) x);
 		dataManager.set(CHAIRY, (float) y);
 		dataManager.set(CHAIRZ, (float) z);
-		this.temp = chair.generateConnection(this);
+		this.temp = connection.generateConnection(this);
 		this.dataManager.set(CONNECTION, temp.writeToNBT(new NBTTagCompound()));
 		isLeashed = false;
-		forceSpawn = true;
 		noClip = true;
-		preventEntitySpawning = false;
+		preventEntitySpawning = true;
+		width = 0;
+		height = 0;
+		
 		this.setPosition(x, y, z);
 	}
 	
@@ -82,7 +88,6 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	
 	@Override
 	public void setPosition(double x, double y, double z) {
-		
 		this.posX = x;
 		this.posY = y;
 		this.posZ = z;
@@ -91,6 +96,12 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		float f = 0.2F;
 		float f1 = 0.4F;
 		this.setEntityBoundingBox(new AxisAlignedBB(x - (double) f, y - 0.1D, z - (double) f, x + (double) f, y + (double) f1, z + (double) f));
+		
+	}
+	
+	@Override
+	public float getEyeHeight() {
+		return 0;
 	}
 	
 	@Override
@@ -98,7 +109,6 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		return super.hitByEntity(entityIn);
 	}
 	
-	@Override
 	public boolean onValidSurface() {
 		return true;
 	}
@@ -110,20 +120,14 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	
 	@Override
 	public void onUpdate() {
+		this.prevPosX = this.posX;
+		this.prevPosY = this.posY;
+		this.prevPosZ = this.posZ;
 		if (this.getLeashHolder() == null) {
 			this.isLeashed = false;
 		}
 		StructureChildConnection connection = StructureChildConnection.loadFromNBT(this, dataManager.get(CONNECTION), false);
-		if (!world.isRemote && !isBeingRidden()) {
-			try {
-				
-				LittleStructure structure = connection.getStructure();
-				if (structure instanceof LittleLeadConnectionALET)
-					((LittleLeadConnectionALET) structure).setPlayer(null);
-			} catch (CorruptedConnectionException | NotYetConnectedException e) {
-			}
-			
-		} else {
+		if (world.isRemote) {
 			try {
 				LittleStructure structure = connection.getStructure();
 				if (structure.getWorld() instanceof IOrientatedWorld) {
@@ -136,7 +140,6 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		}
 		super.onUpdate();
 		this.prevRenderYawOffset = this.renderYawOffset;
-		
 	}
 	
 	@Override
@@ -154,7 +157,6 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbt) {
-		super.readEntityFromNBT(nbt);
 		this.isLeashed = nbt.getBoolean("Leashed");
 		
 		dataManager.set(CONNECTION, nbt.getCompoundTag("connection"));
@@ -165,7 +167,6 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	
 	@Override
 	public void writeEntityToNBT(NBTTagCompound nbt) {
-		super.writeEntityToNBT(nbt);
 		nbt.setBoolean("Leashed", this.isLeashed);
 		nbt.setTag("connection", dataManager.get(CONNECTION));
 		nbt.setFloat("chairX", dataManager.get(CHAIRX));
@@ -173,12 +174,10 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		nbt.setFloat("chairZ", dataManager.get(CHAIRZ));
 	}
 	
-	public void setLeashHolder(Entity entityIn, @Nullable EntityPlayerMP receiverPlayer, boolean sendAttachNotification) {
+	public void updateLeashHolders(@Nullable EntityPlayerMP receiverPlayer, boolean sendAttachNotification) {
 		this.isLeashed = true;
-		this.leashHolder = entityIn;
-		
-		if (!this.world.isRemote && sendAttachNotification && this.world instanceof WorldServer && this.leashHolder instanceof EntityLeadConnection) {
-			PacketHandler.sendPacketToPlayer(new PacketConnectLead(this, this.leashHolder), receiverPlayer);
+		if (!this.world.isRemote && sendAttachNotification && this.world instanceof WorldServer) {
+			PacketHandler.sendPacketToPlayer(new PacketConnectLead(this), receiverPlayer);
 		}
 		
 		if (this.isRiding()) {
@@ -194,31 +193,34 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 		return this.leashHolder;
 	}
 	
+	/*
 	public void clearLeashed(boolean sendPacket, boolean dropLead) {
 		if (this.isLeashed) {
 			this.isLeashed = false;
 			this.leashHolder = null;
-			
-			if (!this.world.isRemote && dropLead) {
-				this.dropItem(Items.LEAD, 1);
+			if (!this.world.isRemote) {
+				this.onBroken(null);
+				this.setDead();
+				if (dropLead)
+					this.dropItem(Items.LEAD, 1);
 			}
 			
-			if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer && this.leashHolder instanceof EntityPlayerMP) {
-				PacketHandler.sendPacketToPlayer(new PacketConnectLead(this, null), (EntityPlayerMP) this.leashHolder);
+			if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer && (this.leashHolder instanceof EntityLeadConnection || this.leashHolder instanceof EntityPlayerMP)) {
+				PacketHandler.sendPacketToPlayer(new PacketConnectLead(this), (EntityPlayerMP) this.leashHolder);
 			}
 		}
 	}
-	
+	*/
 	@Override
 	public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
 		if (this.getLeashed() && this.getLeashHolder() == player) {
-			this.clearLeashed(true, !player.capabilities.isCreativeMode);
+			//this.clearLeashed(true, !player.capabilities.isCreativeMode);
 			return true;
 		} else {
 			ItemStack itemstack = player.getHeldItem(hand);
 			
 			if (itemstack.getItem() == Items.LEAD) {
-				this.setLeashHolder(player, (EntityPlayerMP) player, true);
+				//this.setLeashHolder(player, (EntityPlayerMP) player, true);
 				itemstack.shrink(1);
 				return true;
 			} else {
@@ -243,25 +245,6 @@ public class EntityLeadConnection extends EntityLeashKnot implements IWorldPosit
 	
 	@Override
 	public void onStructureDestroyed() {
-	}
-	
-	@Override
-	public int getWidthPixels() {
-		return 9;
-	}
-	
-	@Override
-	public int getHeightPixels() {
-		return 9;
-	}
-	
-	/** Called when this entity is broken. Entity parameter may be null. */
-	public void onBroken(@Nullable Entity brokenEntity) {
-		this.playSound(SoundEvents.ENTITY_LEASHKNOT_BREAK, 1.0F, 1.0F);
-	}
-	
-	public void playPlaceSound() {
-		this.playSound(SoundEvents.ENTITY_LEASHKNOT_PLACE, 1.0F, 1.0F);
 	}
 	
 	protected float updateDistance(float p_110146_1_, float p_110146_2_) {
