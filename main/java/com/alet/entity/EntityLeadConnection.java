@@ -2,14 +2,15 @@ package com.alet.entity;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.vecmath.Vector3d;
 
 import com.alet.common.packet.PacketConnectLead;
 import com.alet.common.structure.type.LittleLeadConnectionALET;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.world.IOrientatedWorld;
+import com.creativemd.littletiles.common.entity.INoPushEntity;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.connection.IWorldPositionProvider;
 import com.creativemd.littletiles.common.structure.connection.StructureChildConnection;
@@ -21,28 +22,33 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.Constants;
 
-public class EntityLeadConnection extends Entity implements IWorldPositionProvider {
+public class EntityLeadConnection extends Entity implements IWorldPositionProvider, INoPushEntity {
 	
 	public static final DataParameter<NBTTagCompound> CONNECTION = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.COMPOUND_TAG);
-	public static final DataParameter<Float> CHAIRX = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
-	public static final DataParameter<Float> CHAIRY = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
-	public static final DataParameter<Float> CHAIRZ = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
+	public static final DataParameter<NBTTagCompound> CONNECTIONS = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.COMPOUND_TAG);
+	public static final DataParameter<Float> CONNECTIONX = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
+	public static final DataParameter<Float> CONNECTIONY = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
+	public static final DataParameter<Float> CONNECTIONZ = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
 	private StructureChildConnection temp;
 	
 	public boolean isLeashed;
 	public Entity leashHolder;
 	public Set<Integer> connectIDs = new HashSet<Integer>();
+	public Set<UUID> connectUUIDs = new HashSet<UUID>();
 	public float prevRenderYawOffset;
 	public float renderYawOffset;
 	
@@ -67,17 +73,18 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
 	*/
 	public EntityLeadConnection(LittleLeadConnectionALET connection, World world, double x, double y, double z) {
 		super(world);
-		dataManager.set(CHAIRX, (float) x);
-		dataManager.set(CHAIRY, (float) y);
-		dataManager.set(CHAIRZ, (float) z);
+		//EntityLeashKnot
+		dataManager.set(CONNECTIONX, (float) x);
+		dataManager.set(CONNECTIONY, (float) y);
+		dataManager.set(CONNECTIONZ, (float) z);
 		this.temp = connection.generateConnection(this);
 		this.dataManager.set(CONNECTION, temp.writeToNBT(new NBTTagCompound()));
 		isLeashed = false;
 		noClip = true;
 		preventEntitySpawning = true;
-		width = 0;
-		height = 0;
 		
+		width = 1F;
+		height = 1F;
 		this.setPosition(x, y, z);
 	}
 	
@@ -93,20 +100,30 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
 		this.posZ = z;
 		if (this.isAddedToWorld() && !this.world.isRemote)
 			this.world.updateEntityWithOptionalForce(this, false); // Forge - Process chunk registration after moving.
-		float f = 0.2F;
-		float f1 = 0.4F;
-		this.setEntityBoundingBox(new AxisAlignedBB(x - (double) f, y - 0.1D, z - (double) f, x + (double) f, y + (double) f1, z + (double) f));
+		float f = 0.03F;
+		this.setEntityBoundingBox(new AxisAlignedBB(x + f, y + f, z + f, x - f, y - f, z - f));
 		
 	}
 	
 	@Override
-	public float getEyeHeight() {
-		return 0;
+	public void setLocationAndAngles(double x, double y, double z, float yaw, float pitch) {
+		this.posX = x;
+		this.posY = y;
+		this.posZ = z;
+		this.prevPosX = this.posX;
+		this.prevPosY = this.posY;
+		this.prevPosZ = this.posZ;
+		this.lastTickPosX = this.posX;
+		this.lastTickPosY = this.posY;
+		this.lastTickPosZ = this.posZ;
+		this.rotationYaw = yaw;
+		this.rotationPitch = pitch;
+		this.setPosition(this.posX, this.posY, this.posZ);
 	}
 	
 	@Override
-	public boolean hitByEntity(Entity entityIn) {
-		return super.hitByEntity(entityIn);
+	public float getEyeHeight() {
+		return 0.0F;
 	}
 	
 	public boolean onValidSurface() {
@@ -114,15 +131,11 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
 	}
 	
 	@Override
-	public void onEntityUpdate() {
-		super.onEntityUpdate();
-	}
-	
-	@Override
 	public void onUpdate() {
 		this.prevPosX = this.posX;
 		this.prevPosY = this.posY;
 		this.prevPosZ = this.posZ;
+		super.onUpdate();
 		if (this.getLeashHolder() == null) {
 			this.isLeashed = false;
 		}
@@ -131,15 +144,15 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
 			try {
 				LittleStructure structure = connection.getStructure();
 				if (structure.getWorld() instanceof IOrientatedWorld) {
-					Vector3d vec = new Vector3d(dataManager.get(CHAIRX), dataManager.get(CHAIRY), dataManager.get(CHAIRZ));
+					Vector3d vec = new Vector3d(dataManager.get(CONNECTIONX), dataManager.get(CONNECTIONY), dataManager.get(CONNECTIONZ));
 					((IOrientatedWorld) structure.getWorld()).getOrigin().transformPointToWorld(vec);
 					setPosition(vec.x, vec.y, vec.z);
 				}
 			} catch (CorruptedConnectionException | NotYetConnectedException e) {
 			}
 		}
-		super.onUpdate();
 		this.prevRenderYawOffset = this.renderYawOffset;
+		
 	}
 	
 	@Override
@@ -150,31 +163,74 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
 	@Override
 	protected void entityInit() {
 		this.dataManager.register(CONNECTION, new NBTTagCompound());
-		this.dataManager.register(CHAIRX, 0F);
-		this.dataManager.register(CHAIRY, 0F);
-		this.dataManager.register(CHAIRZ, 0F);
+		this.dataManager.register(CONNECTIONS, new NBTTagCompound());
+		this.dataManager.register(CONNECTIONX, 0F);
+		this.dataManager.register(CONNECTIONY, 0F);
+		this.dataManager.register(CONNECTIONZ, 0F);
 	}
 	
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbt) {
-		this.isLeashed = nbt.getBoolean("Leashed");
+	public boolean writeToNBTOptional(NBTTagCompound nbt) {
 		
-		dataManager.set(CONNECTION, nbt.getCompoundTag("connection"));
-		dataManager.set(CHAIRX, nbt.getFloat("chairX"));
-		dataManager.set(CHAIRY, nbt.getFloat("chairY"));
-		dataManager.set(CHAIRZ, nbt.getFloat("chairZ"));
+		return super.writeToNBTOptional(nbt);
 	}
 	
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		NBTTagList list = new NBTTagList();
+		if (this.connectUUIDs != null)
+			if (this.connectUUIDs.isEmpty()) {
+				if (!this.connectIDs.isEmpty())
+					for (int id : this.connectIDs) {
+						Entity e = this.world.getEntityByID(id);
+						if (e != null) {
+							NBTTagCompound nbt2 = NBTUtil.createUUIDTag(e.getPersistentID());
+							list.appendTag(nbt2);
+						}
+					}
+			} else
+				for (UUID uuid : connectUUIDs) {
+					NBTTagCompound nbt2 = NBTUtil.createUUIDTag(uuid);
+					list.appendTag(nbt2);
+				}
+		NBTTagCompound n = new NBTTagCompound();
+		n.setTag("c", list);
+		nbt.setTag("connections", n);
+		return nbt;
+	}
+	
+	@Override
+	protected void readEntityFromNBT(NBTTagCompound nbt) {
+		
+		this.isLeashed = nbt.getBoolean("Leashed");
+		dataManager.set(CONNECTION, nbt.getCompoundTag("connection"));
+		dataManager.set(CONNECTIONS, nbt.getCompoundTag("connections"));
+		dataManager.set(CONNECTIONX, nbt.getFloat("chairX"));
+		dataManager.set(CONNECTIONY, nbt.getFloat("chairY"));
+		dataManager.set(CONNECTIONZ, nbt.getFloat("chairZ"));
+		NBTTagCompound n = nbt.getCompoundTag("connections");
+		for (NBTBase nbt2 : n.getTagList("c", Constants.NBT.TAG_COMPOUND)) {
+			WorldServer serverWorld = (WorldServer) this.getWorld();
+			UUID uuid = NBTUtil.getUUIDFromTag((NBTTagCompound) nbt2);
+			this.connectUUIDs.add(uuid);
+		}
+	}
+	
+	@Override
+	protected void writeEntityToNBT(NBTTagCompound nbt) {
 		nbt.setBoolean("Leashed", this.isLeashed);
 		nbt.setTag("connection", dataManager.get(CONNECTION));
-		nbt.setFloat("chairX", dataManager.get(CHAIRX));
-		nbt.setFloat("chairY", dataManager.get(CHAIRY));
-		nbt.setFloat("chairZ", dataManager.get(CHAIRZ));
+		nbt.setFloat("chairX", dataManager.get(CONNECTIONX));
+		nbt.setFloat("chairY", dataManager.get(CONNECTIONY));
+		nbt.setFloat("chairZ", dataManager.get(CONNECTIONZ));
+		nbt.setTag("connections", dataManager.get(CONNECTIONS));
 	}
 	
-	public void updateLeashHolders(@Nullable EntityPlayerMP receiverPlayer, boolean sendAttachNotification) {
+	/*
+	/entitydata @e[type=!player,r=3] {}
+	 */
+	public void updateLeashHolders(EntityPlayerMP receiverPlayer, boolean sendAttachNotification) {
 		this.isLeashed = true;
 		if (!this.world.isRemote && sendAttachNotification && this.world instanceof WorldServer) {
 			PacketHandler.sendPacketToPlayer(new PacketConnectLead(this), receiverPlayer);
@@ -182,6 +238,14 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
 		
 		if (this.isRiding()) {
 			this.dismountRidingEntity();
+		}
+	}
+	
+	public void updateLeashHolders(boolean sendAttachNotification) {
+		this.isLeashed = true;
+		System.out.println("why?");
+		if (!this.world.isRemote && sendAttachNotification && this.world instanceof WorldServer) {
+			PacketHandler.sendPacketToAllPlayers(new PacketConnectLead(this));
 		}
 	}
 	
@@ -245,33 +309,6 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
 	
 	@Override
 	public void onStructureDestroyed() {
-	}
-	
-	protected float updateDistance(float p_110146_1_, float p_110146_2_) {
-		float f = MathHelper.wrapDegrees(p_110146_1_ - this.renderYawOffset);
-		this.renderYawOffset += f * 0.3F;
-		float f1 = MathHelper.wrapDegrees(this.rotationYaw - this.renderYawOffset);
-		boolean flag = f1 < -90.0F || f1 >= 90.0F;
-		
-		if (f1 < -75.0F) {
-			f1 = -75.0F;
-		}
-		
-		if (f1 >= 75.0F) {
-			f1 = 75.0F;
-		}
-		
-		this.renderYawOffset = this.rotationYaw - f1;
-		
-		if (f1 * f1 > 2500.0F) {
-			this.renderYawOffset += f1 * 0.2F;
-		}
-		
-		if (flag) {
-			p_110146_2_ *= -1.0F;
-		}
-		
-		return p_110146_2_;
 	}
 	
 }

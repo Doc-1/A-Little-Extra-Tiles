@@ -12,6 +12,8 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiIconButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiStateButton;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.world.CreativeWorld;
 import com.creativemd.creativecore.common.world.IOrientatedWorld;
 import com.creativemd.creativecore.common.world.SubWorld;
@@ -20,8 +22,6 @@ import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
 import com.creativemd.littletiles.common.structure.connection.StructureChildConnection;
-import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
-import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureGuiParser;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
@@ -30,10 +30,10 @@ import com.creativemd.littletiles.common.structure.relative.StructureRelative;
 import com.creativemd.littletiles.common.structure.type.door.LittleAdvancedDoor;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
-import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
+import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
@@ -48,6 +48,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 	
@@ -140,111 +142,108 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 		if (!world.isRemote) {
 			if (this.player != null)
 				return true;
-			try {
-				LittleAbsoluteVec vec = getHighestCenterPoint();
-				if (vec != null && heldItem.getItem() instanceof ItemLittleRope) {
-					if (world instanceof IOrientatedWorld)
-						world = ((IOrientatedWorld) world).getRealWorld();
-					Vector3d vec3D = this.axisCenter.getCenter();
-					double i1 = vec3D.x;
-					double j1 = vec3D.y + 0.05D;
-					double k1 = vec3D.z;
-					double i2 = this.getStructureLocation().pos.getX() + i1;
-					double j2 = this.getStructureLocation().pos.getY() + j1;
-					double k2 = this.getStructureLocation().pos.getZ() + k1;
-					WorldServer serverWorld = (WorldServer) world;
-					
-					EntityLeadConnection connection;
-					
-					if (serverWorld.getEntityFromUuid(connectionUUID) == null) {
-						connection = new EntityLeadConnection(this, world, i2, j2 - 0.25, k2);
-						world.spawnEntity(connection);
-						if (heldItem.hasTagCompound()) {
-							NBTTagCompound nbt = heldItem.getTagCompound();
-							if (nbt.hasKey("playerIsHolding") && nbt.getBoolean("playerIsHolding")) {
-								nbt.setBoolean("playerIsHolding", false);
-								heldItem.setTagCompound(nbt);
-							}
-						}
-					} else {
-						connection = (EntityLeadConnection) serverWorld.getEntityFromUuid(connectionUUID);
-					}
-					
-					this.connectionUUID = connection.getPersistentID();
-					
-					NBTTagCompound nbt = new NBTTagCompound();
-					boolean sameConnectionID = false;
-					boolean playerIsHolding = false;
-					int selectedID = -1;
-					int prevSelectedID = -1;
-					
+			Vector3d vec3D = this.axisCenter.getCenter();
+			if (vec3D != null && heldItem.getItem() instanceof ItemLittleRope) {
+				if (world instanceof IOrientatedWorld)
+					world = ((IOrientatedWorld) world).getRealWorld();
+				double i1 = vec3D.x;
+				double j1 = vec3D.y;
+				double k1 = vec3D.z;
+				double i2 = this.getStructureLocation().pos.getX() + i1;
+				double j2 = this.getStructureLocation().pos.getY() + j1;
+				double k2 = this.getStructureLocation().pos.getZ() + k1;
+				WorldServer serverWorld = (WorldServer) world;
+				
+				EntityLeadConnection connection;
+				
+				if (serverWorld.getEntityFromUuid(connectionUUID) == null) {
+					connection = new EntityLeadConnection(this, world, i2, j2, k2);
+					world.spawnEntity(connection);
 					if (heldItem.hasTagCompound()) {
-						nbt = heldItem.getTagCompound();
-						if (nbt.hasKey("selectedID")) {
-							sameConnectionID = nbt.getInteger("selectedID") == connection.getEntityId();
-							nbt.setInteger("prevSelectedID", nbt.getInteger("selectedID"));
-						}
-					} else {
-						nbt.setBoolean("playerIsHolding", false);
-						heldItem.setTagCompound(nbt);
-					}
-					nbt.setInteger("selectedID", connection.getEntityId());
-					selectedID = connection.getEntityId();
-					if (nbt.hasKey("prevSelectedID"))
-						prevSelectedID = nbt.getInteger("prevSelectedID");
-					
-					EntityLeadConnection en0 = (EntityLeadConnection) world.getEntityByID(selectedID);
-					EntityLeadConnection en1 = (EntityLeadConnection) world.getEntityByID(prevSelectedID);
-					
-					if (en1 == null)
-						en1 = (EntityLeadConnection) world.getEntityByID(selectedID);
-					playerIsHolding = nbt.getBoolean("playerIsHolding");
-					
-					List<Entity> entityList = sortEntityList(world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB((double) i2 - 7.0D, (double) j2 - 7.0D, (double) k2 - 7.0D, (double) i2 + 7.0D, (double) j2 + 7.0D, (double) k2 + 7.0D)));
-					for (Entity entity : entityList) {
-						
-						if (playerIsHolding) {
-							if (!sameConnectionID) {
-								en0.connectIDs.remove(player.getEntityId());
-								en1.connectIDs.remove(player.getEntityId());
-								en1.connectIDs.add(en0.getEntityId());
-								nbt.setBoolean("playerIsHolding", false);
-								System.out.println("da");
-							} else {
-								en0.connectIDs.remove(player.getEntityId());
-								nbt.setBoolean("playerIsHolding", false);
-							}
-						} else {
-							en0.connectIDs.add(player.getEntityId());
-							nbt.setBoolean("playerIsHolding", true);
+						NBTTagCompound nbt = heldItem.getTagCompound();
+						if (nbt.hasKey("playerIsHolding") && nbt.getBoolean("playerIsHolding")) {
+							//nbt.setBoolean("playerIsHolding", false);
+							heldItem.setTagCompound(nbt);
 						}
 					}
-					/*
-					EntityLeadConnection lead0 = (EntityLeadConnection) world.getEntityByID(nbt.getInteger("connectionID"));
-					Entity en0 = world.getEntityByID(nbt.getInteger("connectorID"));
-					
-					EntityLeadConnection lead1 = null;
-					
-					if (en0 instanceof EntityLeadConnection) {
-						lead1 = (EntityLeadConnection) en0;
-						lead1.connectIDs.add(lead0.getEntityId());
-						removeID(lead1, player.getEntityId());
-						System.out.println("\n" + lead0 + "\n" + lead1);
-					} else {
-						lead0.connectIDs.add(player.getEntityId());
-						System.out.println("\n" + lead0 + "\n" + en0);
-					}
-					
-					*/
-					
-					System.out.println(heldItem.getTagCompound());
-					System.out.println(en0.connectIDs);
-					System.out.println(en1.connectIDs);
-					en0.updateLeashHolders((EntityPlayerMP) player, true);
-					en1.updateLeashHolders((EntityPlayerMP) player, true);
+				} else {
+					connection = (EntityLeadConnection) serverWorld.getEntityFromUuid(connectionUUID);
 				}
-			} catch (CorruptedConnectionException | NotYetConnectedException e) {
-				e.printStackTrace();
+				
+				this.connectionUUID = connection.getPersistentID();
+				NBTTagCompound nbt = new NBTTagCompound();
+				boolean sameConnectionID = false;
+				boolean playerIsHolding = false;
+				int selectedID = -1;
+				int prevSelectedID = -1;
+				
+				System.out.println(heldItem.hasTagCompound());
+				if (heldItem.hasTagCompound()) {
+					System.out.println(heldItem.getTagCompound());
+					nbt = heldItem.getTagCompound();
+					if (nbt.hasKey("selectedID")) {
+						sameConnectionID = nbt.getInteger("selectedID") == connection.getEntityId();
+						nbt.setInteger("prevSelectedID", nbt.getInteger("selectedID"));
+					}
+				} else {
+					nbt.setBoolean("playerIsHolding", false);
+					heldItem.setTagCompound(nbt);
+				}
+				nbt.setInteger("selectedID", connection.getEntityId());
+				selectedID = connection.getEntityId();
+				if (nbt.hasKey("prevSelectedID"))
+					prevSelectedID = nbt.getInteger("prevSelectedID");
+				
+				EntityLeadConnection en0 = (EntityLeadConnection) world.getEntityByID(selectedID);
+				EntityLeadConnection en1 = (EntityLeadConnection) world.getEntityByID(prevSelectedID);
+				
+				if (en1 == null)
+					en1 = (EntityLeadConnection) world.getEntityByID(selectedID);
+				playerIsHolding = nbt.getBoolean("playerIsHolding");
+				
+				System.out.println(playerIsHolding);
+				List<Entity> entityList = sortEntityList(world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB((double) i2 - 7.0D, (double) j2 - 7.0D, (double) k2 - 7.0D, (double) i2 + 7.0D, (double) j2 + 7.0D, (double) k2 + 7.0D)));
+				for (Entity entity : entityList) {
+					
+					if (playerIsHolding) {
+						if (!sameConnectionID) {
+							en0.connectIDs.remove(player.getEntityId());
+							en1.connectIDs.remove(player.getEntityId());
+							en1.connectIDs.add(en0.getEntityId());
+							nbt.setBoolean("playerIsHolding", false);
+							System.out.println("da");
+						} else {
+							en0.connectIDs.remove(player.getEntityId());
+							nbt.setBoolean("playerIsHolding", false);
+						}
+					} else {
+						en0.connectIDs.add(player.getEntityId());
+						nbt.setBoolean("playerIsHolding", true);
+					}
+				}
+				/*
+				EntityLeadConnection lead0 = (EntityLeadConnection) world.getEntityByID(nbt.getInteger("connectionID"));
+				Entity en0 = world.getEntityByID(nbt.getInteger("connectorID"));
+				
+				EntityLeadConnection lead1 = null;
+				
+				if (en0 instanceof EntityLeadConnection) {
+					lead1 = (EntityLeadConnection) en0;
+					lead1.connectIDs.add(lead0.getEntityId());
+					removeID(lead1, player.getEntityId());
+					System.out.println("\n" + lead0 + "\n" + lead1);
+				} else {
+					lead0.connectIDs.add(player.getEntityId());
+					System.out.println("\n" + lead0 + "\n" + en0);
+				}
+				
+				*/
+				
+				System.out.println(heldItem.getTagCompound());
+				System.out.println(en0.connectIDs);
+				System.out.println(en1.connectIDs);
+				en0.updateLeashHolders((EntityPlayerMP) player, true);
+				en1.updateLeashHolders((EntityPlayerMP) player, true);
 			}
 			
 		}
@@ -254,16 +253,31 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 	
 	@Override
 	public void onStructureDestroyed() {
-		if (!this.getWorld().isRemote && !(this.getWorld() instanceof SubWorld)) {
-			WorldServer serverWorld = (WorldServer) this.getWorld();
-			Entity entity = serverWorld.getEntityFromUuid(connectionUUID);
-			if (entity != null && entity instanceof EntityLeadConnection) {
-				EntityLeadConnection connection = (EntityLeadConnection) entity;
-				/*Entity holder = connection.getLeashHolder();
-				if (holder != null && !(holder instanceof EntityPlayer)) {
-					holder.setDead();
-				}*/
-				connection.setDead();
+		if (!this.getWorld().isRemote) {
+			World world = this.getWorld();
+			WorldServer serverWorld = null;
+			
+			if (this.getWorld() instanceof SubWorld) {
+				SubWorld subWorld = (SubWorld) world;
+				serverWorld = (WorldServer) subWorld.getRealWorld();
+			} else if (this.getWorld() instanceof WorldServer)
+				serverWorld = (WorldServer) this.getWorld();
+			
+			if (serverWorld != null) {
+				Entity entity = serverWorld.getEntityFromUuid(connectionUUID);
+				if (entity != null && entity instanceof EntityLeadConnection) {
+					EntityLeadConnection connection = (EntityLeadConnection) entity;
+					if (connection.connectIDs != null && !connection.connectIDs.isEmpty())
+						for (int id : connection.connectIDs) {
+							Entity en = serverWorld.getEntityByID(id);
+							if (en instanceof EntityLeadConnection) {
+								EntityLeadConnection connected = (EntityLeadConnection) en;
+								connected.connectIDs.remove(connection.getEntityId());
+							}
+						}
+					
+					connection.setDead();
+				}
 			}
 		}
 		
@@ -281,8 +295,8 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 			LittleAdvancedDoor door = structure instanceof LittleAdvancedDoor ? (LittleAdvancedDoor) structure : null;
 			
 			GuiTileViewer viewer = new GuiTileViewer("tileviewer", 0, 0, 100, 100, previews.getContext());
-			parent.controls.add(viewer);
 			setViewer(viewer, door, previews.getContext());
+			parent.controls.add(viewer);
 			parent.controls.add(new GuiIconButton("reset view", 20, 107, 8) {
 				
 				@Override
@@ -372,6 +386,50 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 				viewer.setAxis(new LittleBox(0, 0, 0, 1, 1, 1), viewer.context);
 			}
 			handler.setCenter(new StructureAbsolute(new BlockPos(0, 75, 0), viewer.getBox().copy(), viewer.getAxisContext()));
+		}
+		
+		@CustomEventSubscribe
+		@SideOnly(Side.CLIENT)
+		public void onButtonClicked(GuiControlClickEvent event) {
+			GuiTileViewer viewer = (GuiTileViewer) event.source.parent.get("tileviewer");
+			if (event.source.is("even")) {
+				viewer.setEven(((GuiCheckBox) event.source).value);
+			}
+		}
+		
+		@CustomEventSubscribe
+		@SideOnly(Side.CLIENT)
+		public void onStateChange(GuiControlChangedEvent event) {
+			if (event.source.is("grid")) {
+				GuiStateButton contextBox = (GuiStateButton) event.source;
+				LittleGridContext context;
+				try {
+					context = LittleGridContext.get(Integer.parseInt(contextBox.getCaption()));
+				} catch (NumberFormatException e) {
+					context = LittleGridContext.get();
+				}
+				
+				GuiTileViewer viewer = (GuiTileViewer) event.source.parent.get("tileviewer");
+				LittleBox box = viewer.getBox();
+				box.convertTo(viewer.getAxisContext(), context);
+				
+				if (viewer.isEven())
+					box.maxX = box.minX + 2;
+				else
+					box.maxX = box.minX + 1;
+				
+				if (viewer.isEven())
+					box.maxY = box.minY + 2;
+				else
+					box.maxY = box.minY + 1;
+				
+				if (viewer.isEven())
+					box.maxZ = box.minZ + 2;
+				else
+					box.maxZ = box.minZ + 1;
+				
+				viewer.setAxis(box, context);
+			}
 		}
 		
 		@Override

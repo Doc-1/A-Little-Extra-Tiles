@@ -21,6 +21,7 @@ public class PacketConnectLead extends CreativeCorePacket {
 	}
 	
 	public PacketConnectLead(EntityLeadConnection connection) {
+		System.out.println("not?");
 		this.connection = connection.getEntityId();
 		for (int id : connection.connectIDs) {
 			this.connectors.add(id);
