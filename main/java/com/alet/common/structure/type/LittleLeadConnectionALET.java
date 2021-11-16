@@ -1,12 +1,15 @@
 package com.alet.common.structure.type;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.vecmath.Vector3d;
 
 import com.alet.entity.EntityLeadConnection;
+import com.alet.entity.LeadConnectionData;
 import com.alet.items.ItemLittleRope;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
@@ -77,12 +80,6 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 	}
 	
 	@Override
-	public void renderTick(BlockPos pos, double x, double y, double z, float partialTickTime) {
-		// TODO Auto-generated method stub
-		super.renderTick(pos, x, y, z, partialTickTime);
-	}
-	
-	@Override
 	protected void afterPlaced() {
 		super.afterPlaced();
 		if (connectionUUID != null) {
@@ -102,10 +99,6 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 		} else {
 			
 		}
-	}
-	
-	public void removeID(EntityLeadConnection connection, int id) {
-		connection.connectIDs.remove(id);
 	}
 	
 	public List<Entity> sortEntityList(List<Entity> entityList) {
@@ -177,9 +170,7 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 				int selectedID = -1;
 				int prevSelectedID = -1;
 				
-				System.out.println(heldItem.hasTagCompound());
 				if (heldItem.hasTagCompound()) {
-					System.out.println(heldItem.getTagCompound());
 					nbt = heldItem.getTagCompound();
 					if (nbt.hasKey("selectedID")) {
 						sameConnectionID = nbt.getInteger("selectedID") == connection.getEntityId();
@@ -201,47 +192,84 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 					en1 = (EntityLeadConnection) world.getEntityByID(selectedID);
 				playerIsHolding = nbt.getBoolean("playerIsHolding");
 				
-				System.out.println(playerIsHolding);
 				List<Entity> entityList = sortEntityList(world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB((double) i2 - 7.0D, (double) j2 - 7.0D, (double) k2 - 7.0D, (double) i2 + 7.0D, (double) j2 + 7.0D, (double) k2 + 7.0D)));
 				for (Entity entity : entityList) {
 					
 					if (playerIsHolding) {
 						if (!sameConnectionID) {
-							en0.connectIDs.remove(player.getEntityId());
-							en1.connectIDs.remove(player.getEntityId());
-							en1.connectIDs.add(en0.getEntityId());
+							/*
+							en0.data.connectIDs.remove(player.getEntityId());
+							en1.data.connectIDs.remove(player.getEntityId());
+							en0.data.connectIDs.add(en1.getEntityId());*/
+							//en0.connectionsMap.clear();
+							//en0.connectionsMap.clear();
+							
+							int color = nbt.getInteger("color");
+							double thickness = nbt.getDouble("thickness");
+							double tautness = nbt.getDouble("tautness");
+							LeadConnectionData data = null;
+							for (LeadConnectionData d : en1.connectionsMap) {
+								if (d.equals(new LeadConnectionData(color, thickness, tautness))) {
+									data = d;
+									break;
+								}
+							}
+							if (data == null) {
+								LeadConnectionData newData = new LeadConnectionData(color, thickness, tautness);
+								newData.uuidsConnected.add(en0.getPersistentID());
+								newData.idsConnected.add(en0.getEntityId());
+								en1.connectionsMap.add(newData);
+							} else {
+								data.uuidsConnected.add(en0.getPersistentID());
+								data.uuidsConnected.remove(player.getPersistentID());
+								data.idsConnected.add(en0.getEntityId());
+								data.idsConnected.remove(player.getEntityId());
+							}
 							nbt.setBoolean("playerIsHolding", false);
-							System.out.println("da");
 						} else {
-							en0.connectIDs.remove(player.getEntityId());
+							//remove player from en0
+							boolean hasMatch = false;
+							LeadConnectionData data = null;
+							for (LeadConnectionData d : en0.connectionsMap)
+								for (UUID uuid : d.uuidsConnected) {
+									if (uuid.equals(player.getPersistentID())) {
+										data = d;
+										hasMatch = true;
+										break;
+									}
+								}
+							if (hasMatch) {
+								data.uuidsConnected.remove(player.getPersistentID());
+								data.idsConnected.remove(player.getEntityId());
+							}
 							nbt.setBoolean("playerIsHolding", false);
 						}
 					} else {
-						en0.connectIDs.add(player.getEntityId());
+						int color = nbt.getInteger("color");
+						double thickness = nbt.getDouble("thickness");
+						double tautness = nbt.getDouble("tautness");
+						LeadConnectionData data = null;
+						for (LeadConnectionData d : en0.connectionsMap) {
+							if (d.equals(new LeadConnectionData(color, thickness, tautness))) {
+								data = d;
+								break;
+							}
+						}
+						if (data == null) {
+							Set<UUID> connectUUIDs = new HashSet<UUID>();
+							connectUUIDs.add(player.getPersistentID());
+							LeadConnectionData newData = new LeadConnectionData(color, thickness, tautness);
+							newData.uuidsConnected.add(player.getPersistentID());
+							newData.idsConnected.add(player.getEntityId());
+							en0.connectionsMap.add(newData);
+						} else {
+							data.uuidsConnected.add(player.getPersistentID());
+							data.idsConnected.add(player.getEntityId());
+						}
 						nbt.setBoolean("playerIsHolding", true);
 					}
 				}
-				/*
-				EntityLeadConnection lead0 = (EntityLeadConnection) world.getEntityByID(nbt.getInteger("connectionID"));
-				Entity en0 = world.getEntityByID(nbt.getInteger("connectorID"));
 				
-				EntityLeadConnection lead1 = null;
-				
-				if (en0 instanceof EntityLeadConnection) {
-					lead1 = (EntityLeadConnection) en0;
-					lead1.connectIDs.add(lead0.getEntityId());
-					removeID(lead1, player.getEntityId());
-					System.out.println("\n" + lead0 + "\n" + lead1);
-				} else {
-					lead0.connectIDs.add(player.getEntityId());
-					System.out.println("\n" + lead0 + "\n" + en0);
-				}
-				
-				*/
-				
-				System.out.println(heldItem.getTagCompound());
-				System.out.println(en0.connectIDs);
-				System.out.println(en1.connectIDs);
 				en0.updateLeashHolders((EntityPlayerMP) player, true);
 				en1.updateLeashHolders((EntityPlayerMP) player, true);
 			}
@@ -251,6 +279,13 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 		
 	}
 	
+	/*connections:{group4:[
+	 * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
+	 * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
+	 * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
+	 * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
+	 * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}]]}}
+	*/
 	@Override
 	public void onStructureDestroyed() {
 		if (!this.getWorld().isRemote) {
@@ -267,16 +302,16 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 				Entity entity = serverWorld.getEntityFromUuid(connectionUUID);
 				if (entity != null && entity instanceof EntityLeadConnection) {
 					EntityLeadConnection connection = (EntityLeadConnection) entity;
-					if (connection.connectIDs != null && !connection.connectIDs.isEmpty())
-						for (int id : connection.connectIDs) {
-							Entity en = serverWorld.getEntityByID(id);
-							if (en instanceof EntityLeadConnection) {
-								EntityLeadConnection connected = (EntityLeadConnection) en;
-								connected.connectIDs.remove(connection.getEntityId());
+					if (connection.connectionsMap != null && !connection.connectionsMap.isEmpty())
+						for (LeadConnectionData data : connection.connectionsMap)
+							for (int id : data.idsConnected) {
+								Entity en = serverWorld.getEntityByID(id);
+								if (en instanceof EntityLeadConnection) {
+									EntityLeadConnection connected = (EntityLeadConnection) en;
+									data.idsConnected.remove(connection.getEntityId());
+									//connection.setDead();
+								}
 							}
-						}
-					
-					connection.setDead();
 				}
 			}
 		}

@@ -77,9 +77,7 @@ public class LittleLockALET extends LittleStructure {
 				getOutput(0).toggle();
 		else if (playSound) {
 			SoundEvent event = new SoundEvent(new ResourceLocation("block.wooden_trapdoor.close"));
-			System.out.println(event.getSoundName());
 			worldIn.playSound(playerIn, pos.getX(), pos.getY(), pos.getZ(), event, SoundCategory.BLOCKS, 1.0F, 1.6F);
-			System.out.println("play?");
 		}
 		return true;
 	}
@@ -175,7 +173,8 @@ public class LittleLockALET extends LittleStructure {
 			for (LittlePreviews child : previews.getChildren()) {
 				Class clazz = LittleStructureRegistry.getStructureClass(child.getStructureId());
 				if (clazz != null && LittleDoor.class.isAssignableFrom(clazz)) {
-					box.addControl(new GuiCheckBox("" + i, getDisplayName(child, i), 0, added * 20, lock != null && ArrayUtils.contains(lock.toLock, i)));
+					box.addControl(new GuiCheckBox("" + i, getDisplayName(child, i), 0, added * 20, lock != null
+					        && ArrayUtils.contains(lock.toLock, i)));
 					possibleChildren.add(i);
 					added++;
 				}
@@ -253,7 +252,7 @@ public class LittleLockALET extends LittleStructure {
 			
 			@Override
 			public boolean mousePressed(int x, int y, int button) {
-				if (button == 1) {
+				if (button == 1 || button == 0) {
 					updateItemStack(ItemStack.EMPTY);
 				}
 				return super.mousePressed(x, y, button);

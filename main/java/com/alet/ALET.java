@@ -168,7 +168,6 @@ public class ALET {
 		littleRope = new ItemLittleRope("little_rope");
 		jumpRod = new ItemJumpTool("jump_rod");
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
-		
 		//adapter = new ContainerAdapterBlock("container_converter");
 		
 		smoothOakPlank = new BasicBlock("smoothoakplank");

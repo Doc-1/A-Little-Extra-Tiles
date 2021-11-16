@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,10 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.io.IOUtils;
 
 import com.alet.ALET;
+import com.alet.photo.PhotoReader;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.common.block.BlockLittleDyeable;
@@ -34,7 +39,7 @@ public class FontReader {
 	public static int fontSize;
 	public static String fontType;
 	
-	public static BufferedImage fontToPhoto(String text, String fontType, int fontSize, int fontColor, double rotation) {
+	public static BufferedImage fontToPhoto(String text, String fontType, @Nullable Map<TextAttribute, Object> textAttributeMap, int fontSize, int fontColor, double rotation) {
 		if (text.equalsIgnoreCase("When Redstone?")) {
 			text = "Please read the FAQ in TeamCreative's Discord";
 		}
@@ -45,13 +50,20 @@ public class FontReader {
 		Graphics2D g2d = image.createGraphics();
 		
 		Font font = new Font(fontType, Font.PLAIN, fontSize);
+		if (textAttributeMap != null && !textAttributeMap.isEmpty()) {
+			Map fontAttr = font.getAttributes();
+			fontAttr.putAll(textAttributeMap);
+			font = new Font(fontAttr);
+		}
+		
 		g2d.setFont(font);
 		
 		FontMetrics fm = g2d.getFontMetrics();
+		
 		int w = fm.stringWidth(text) + 10;
 		int h = fm.getHeight() + 1;
-		g2d.dispose();
 		
+		g2d.dispose();
 		double rads = Math.toRadians(rotation);
 		double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
 		
@@ -81,7 +93,7 @@ public class FontReader {
 		return image;
 	}
 	
-	public static NBTTagCompound photoToNBT(String input, String font, int grid, int fontSize, int fontColor, double rotation) throws IOException {
+	public static NBTTagCompound photoToNBT(String input, String font, @Nullable Map<TextAttribute, Object> textAttributeMap, int grid, int fontSize, int fontColor, double rotation) throws IOException {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
@@ -89,8 +101,13 @@ public class FontReader {
 		int maxPixelAmount = ALET.CONFIG.getMaxPixelText();
 		
 		try {
-			image = fontToPhoto(input, font, fontSize, fontColor, rotation);
-			//System.out.println("Image: " + image);
+			image = fontToPhoto(input, font, textAttributeMap, fontSize, fontColor, rotation);
+			if (PhotoReader.isRescale) {
+				if (!(PhotoReader.scaleX < 1) || !(PhotoReader.scaleY < 1)) {
+					image = PhotoReader.resize(image, PhotoReader.scaleY, PhotoReader.scaleX);
+				}
+				PhotoReader.isRescale = false;
+			}
 			if (image != null) {
 				int width = image.getWidth();
 				int height = image.getHeight();
@@ -130,7 +147,7 @@ public class FontReader {
 		return null;
 	}
 	
-	public static LittlePreviews photoToPreviews(String input, String font, int grid, int fontSize, int fontColor, double rotation) throws IOException {
+	public static LittlePreviews photoToPreviews(String input, String font, @Nullable Map<TextAttribute, Object> textAttributeMap, int grid, int fontSize, int fontColor, double rotation) throws IOException {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
@@ -138,8 +155,13 @@ public class FontReader {
 		int maxPixelAmount = ALET.CONFIG.getMaxPixelText();
 		
 		try {
-			image = fontToPhoto(input, font, fontSize, fontColor, rotation);
-			//System.out.println("Image: " + image);
+			image = fontToPhoto(input, font, textAttributeMap, fontSize, fontColor, rotation);
+			if (PhotoReader.isRescale) {
+				if (!(PhotoReader.scaleX < 1) || !(PhotoReader.scaleY < 1)) {
+					image = PhotoReader.resize(image, PhotoReader.scaleY, PhotoReader.scaleX);
+				}
+				PhotoReader.isRescale = false;
+			}
 			if (image != null) {
 				int width = image.getWidth();
 				int height = image.getHeight();
@@ -177,6 +199,44 @@ public class FontReader {
 			IOUtils.closeQuietly(in);
 		}
 		return null;
+	}
+	
+	public static int getTextPixelHeight(String text, String fontType, @Nullable Map<TextAttribute, Object> textAttributeMap, int fontSize) {
+		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = image.createGraphics();
+		
+		Font font = new Font(fontType, Font.PLAIN, fontSize);
+		if (textAttributeMap != null && !textAttributeMap.isEmpty()) {
+			Map fontAttr = font.getAttributes();
+			fontAttr.putAll(textAttributeMap);
+			font = new Font(fontAttr);
+		}
+		
+		g2d.setFont(font);
+		
+		FontMetrics fm = g2d.getFontMetrics();
+		
+		int h = fm.getHeight() + 1;
+		return h;
+	}
+	
+	public static int getTextPixelWidth(String text, String fontType, @Nullable Map<TextAttribute, Object> textAttributeMap, int fontSize) {
+		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = image.createGraphics();
+		
+		Font font = new Font(fontType, Font.PLAIN, fontSize);
+		if (textAttributeMap != null && !textAttributeMap.isEmpty()) {
+			Map fontAttr = font.getAttributes();
+			fontAttr.putAll(textAttributeMap);
+			font = new Font(fontAttr);
+		}
+		
+		g2d.setFont(font);
+		
+		FontMetrics fm = g2d.getFontMetrics();
+		
+		int w = fm.stringWidth(text) + 10;
+		return w;
 	}
 	
 }

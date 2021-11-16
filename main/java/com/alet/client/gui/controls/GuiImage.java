@@ -1,6 +1,8 @@
 package com.alet.client.gui.controls;
 
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 import com.alet.ALET;
 import com.alet.font.FontReader;
@@ -15,19 +17,23 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiImage extends GuiControl {
 	
+	public Map<TextAttribute, Object> textAttributeMap;
 	public BufferedImage image;
 	public DynamicTexture texture;
 	
-	public GuiImage(String name, int x, int y, String fontType, int fontSize, int fontColor, double rotation) {
+	public GuiImage(String name, int x, int y, String fontType, Map<TextAttribute, Object> textAttributeMap, int fontSize, int fontColor, double rotation) {
 		super(name, x, y, 0, 0);
 		this.marginWidth = 0;
+		this.textAttributeMap = textAttributeMap;
 		updateFont(fontType, fontSize, fontColor, rotation);
 		texture = new DynamicTexture(image);
+		
 	}
 	
-	public GuiImage(String name, String text, int x, int y, String fontType, int fontSize, int fontColor, double rotation) {
+	public GuiImage(String name, String text, int x, int y, String fontType, Map<TextAttribute, Object> textAttributeMap, int fontSize, int fontColor, double rotation) {
 		super(name, x, y, 0, 0);
 		this.marginWidth = 0;
+		this.textAttributeMap = textAttributeMap;
 		updateFont(fontType, text, fontSize, fontColor, rotation);
 		texture = new DynamicTexture(image);
 	}
@@ -47,7 +53,8 @@ public class GuiImage extends GuiControl {
 			fontType = "Arial";
 		if (fontSize == 0)
 			fontSize = 48;
-		image = FontReader.fontToPhoto(text, fontType, fontSize, fontColor, rotation);
+		//System.out.println(this.textAttributeMap);
+		image = FontReader.fontToPhoto(text, fontType, textAttributeMap, fontSize, fontColor, rotation);
 		this.width = (image.getWidth() / 3);
 		this.height = (image.getHeight() / 3);
 		texture = new DynamicTexture(image);
@@ -62,7 +69,8 @@ public class GuiImage extends GuiControl {
 			
 			this.mc.getTextureManager().bindTexture(location);
 			int i = 3;
-			GuiIngame.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, image.getWidth() / i, image.getHeight() / i, image.getWidth() / i, image.getHeight() / i);
+			GuiIngame.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, image.getWidth() / i, image.getHeight()
+			        / i, image.getWidth() / i, image.getHeight() / i);
 			//this.drawTexturedModalRect(location, 0, 50, 0, 0, image.getWidth(), image.getHeight(), image.getWidth(), image.getHeight());
 			//TextureStretchDisplayStyle backgroundPlate = new TextureStretchDisplayStyle(this.mc.getTextureManager().getDynamicTextureLocation(ALET.MODID, texture), 200, 200, image.getWidth(), image.getHeight());
 			//backgroundPlate.renderStyle(helper, width, height);

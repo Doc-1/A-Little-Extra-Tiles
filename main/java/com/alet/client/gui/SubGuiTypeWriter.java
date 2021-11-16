@@ -3,27 +3,35 @@ package com.alet.client.gui;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.font.TextAttribute;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
+import com.alet.client.gui.controls.GuiDepressedCheckBox;
 import com.alet.client.gui.controls.GuiGlyphSelector;
 import com.alet.client.gui.controls.GuiLongTextField;
-import com.alet.client.gui.controls.GuiToolTipBox;
 import com.alet.client.gui.controls.Layer;
 import com.alet.client.gui.message.SubGuiNoTextInFieldMessage;
+import com.alet.client.gui.tutorial.controls.GuiTutorialBox;
+import com.alet.client.gui.tutorial.controls.TutorialData;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.util.CopyUtils;
 import com.alet.font.FontReader;
 import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
+import com.alet.photo.PhotoReader;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
@@ -37,14 +45,20 @@ import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextFormatting;
 
 public class SubGuiTypeWriter extends SubGui {
 	
 	public static List<String> names = ALET.fontTypeNames;
-	
+	public Map<TextAttribute, Object> textAttributeMap = new HashMap<TextAttribute, Object>();
 	public LittleStructure structure;
 	public int BLACK = ColorUtils.BLACK;
+	public GuiCheckBox keepAspect = null;
+	public GuiTextfield imgHeight = null;
+	public GuiTextfield imgWidth = null;
 	public NBTTagCompound nbt = new NBTTagCompound();
+	
+	public double aspectRatio = 0;
 	
 	public SubGuiTypeWriter(LittleStructure structure) {
 		super(422, 190);
@@ -54,6 +68,7 @@ public class SubGuiTypeWriter extends SubGui {
 	public void openedGui() {
 		LittleTypeWriter typeWriter = (LittleTypeWriter) structure;
 		typeWriter.writeToNBT(nbt);
+		System.out.println(nbt);
 		if (nbt.hasKey("font")) {
 			GuiComboBox fontBox = (GuiComboBox) get("fontType");
 			fontBox.select(nbt.getString("font"));
@@ -74,13 +89,38 @@ public class SubGuiTypeWriter extends SubGui {
 			GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 			rotation.value = nbt.getDouble("rotation");
 		}
-		//GuiImage image = (GuiImage) get("image");
-		GuiComboBox contextBox = (GuiComboBox) get("fontType");
-		GuiTextfield fontSize = (GuiTextfield) get("fontSize");
-		String font = contextBox.getCaption();
-		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
-		GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
-		//image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
+		if (nbt.hasKey("italic")) {
+			GuiDepressedCheckBox italic = (GuiDepressedCheckBox) get("italic");
+			italic.value = nbt.getBoolean("italic");
+			if (italic.value)
+				this.textAttributeMap.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+			else
+				this.textAttributeMap.remove(TextAttribute.POSTURE);
+		}
+		if (nbt.hasKey("bold")) {
+			GuiDepressedCheckBox bold = (GuiDepressedCheckBox) get("bold");
+			bold.value = nbt.getBoolean("bold");
+			if (bold.value)
+				this.textAttributeMap.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+			else
+				this.textAttributeMap.remove(TextAttribute.WEIGHT);
+		}
+		if (nbt.hasKey("underline")) {
+			GuiDepressedCheckBox underline = (GuiDepressedCheckBox) get("underline");
+			underline.value = nbt.getBoolean("underline");
+			if (underline.value)
+				this.textAttributeMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+			else
+				this.textAttributeMap.remove(TextAttribute.UNDERLINE);
+		}
+		if (nbt.hasKey("strikethrough")) {
+			GuiDepressedCheckBox strikethrough = (GuiDepressedCheckBox) get("strikethrough");
+			strikethrough.value = nbt.getBoolean("strikethrough");
+			if (strikethrough.value)
+				this.textAttributeMap.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+			else
+				this.textAttributeMap.remove(TextAttribute.STRIKETHROUGH);
+		}
 	}
 	
 	@Override
@@ -90,6 +130,10 @@ public class SubGuiTypeWriter extends SubGui {
 		GuiComboBox fontBox = (GuiComboBox) get("fontType");
 		GuiComboBox gridBox = (GuiComboBox) get("grid");
 		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
+		GuiDepressedCheckBox italic = (GuiDepressedCheckBox) get("italic");
+		GuiDepressedCheckBox bold = (GuiDepressedCheckBox) get("bold");
+		GuiDepressedCheckBox underline = (GuiDepressedCheckBox) get("underline");
+		GuiDepressedCheckBox strikethrough = (GuiDepressedCheckBox) get("strikethrough");
 		
 		LittleTypeWriter typeWriter = (LittleTypeWriter) structure;
 		nbt.setString("font", fontBox.getCaption());
@@ -97,37 +141,16 @@ public class SubGuiTypeWriter extends SubGui {
 		nbt.setInteger("color", ColorUtils.RGBAToInt(picker.color));
 		nbt.setString("grid", gridBox.getCaption());
 		nbt.setDouble("rotation", rotation.value);
+		nbt.setBoolean("italic", italic.value);
+		nbt.setBoolean("bold", bold.value);
+		nbt.setBoolean("underline", underline.value);
+		nbt.setBoolean("strikethrough", strikethrough.value);
+		
+		System.out.println(nbt);
+		
 		PacketHandler.sendPacketToServer(new PacketUpdateStructureFromClient(typeWriter.getStructureLocation(), nbt));
 		
 		super.onClosed();
-	}
-	
-	@Override
-	public boolean mousePressed(int x, int y, int button) {
-		boolean result = super.mousePressed(x, y, button);
-		if (result) {
-			//GuiImage image = (GuiImage) get("image");
-			GuiComboBox contextBox = (GuiComboBox) get("fontType");
-			GuiTextfield fontSize = (GuiTextfield) get("fontSize");
-			String font = contextBox.getCaption();
-			GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
-			GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
-			//image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
-		}
-		return result;
-	}
-	
-	@Override
-	public void mouseReleased(int x, int y, int button) {
-		//GuiImage image = (GuiImage) get("image");
-		GuiComboBox contextBox = (GuiComboBox) get("fontType");
-		GuiTextfield fontSize = (GuiTextfield) get("fontSize");
-		String font = contextBox.getCaption();
-		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
-		GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
-		//image.updateFont(font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), rotation.value);
-		
-		super.mouseReleased(x, y, button);
 	}
 	
 	@Override
@@ -143,31 +166,41 @@ public class SubGuiTypeWriter extends SubGui {
 		controls.add(viewer);
 		viewer.moveViewPort(0, 50);
 		
+		//GuiCheckBox keepAspect = new GuiCheckBox("keepAspect", translate("Keep Aspect Ratio?"), -3, 65, false);
+		//controls.add(keepAspect);
+		
+		imgWidth = (new GuiTextfield("imgWidth", "0", 347, 170, 30, 14));
+		imgWidth.setCustomTooltip("Width Of Image");
+		imgWidth.setNumbersOnly();
+		controls.add(imgWidth);
+		imgHeight = (new GuiTextfield("imgHeight", "0", 386, 170, 30, 14));
+		imgHeight.setCustomTooltip("Height Of Image");
+		imgHeight.setNumbersOnly();
+		controls.add(imgHeight);
+		
+		controls.add(new GuiDepressedCheckBox("italic", "I", 140, 44, 19, 19, TextFormatting.ITALIC + "", false));
+		controls.add(new GuiDepressedCheckBox("bold", "B", 160, 44, 19, 19, TextFormatting.BOLD + "", false));
+		controls.add(new GuiDepressedCheckBox("underline", "U", 180, 44, 19, 19, TextFormatting.UNDERLINE + "", false));
+		controls.add(new GuiDepressedCheckBox("strikethrough", "S", 200, 44, 19, 19, TextFormatting.STRIKETHROUGH
+		        + "", false));
+		
 		controls.add(new GuiColorPickerAlet("picker", -2, 42, color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
 		
 		controls.add(new GuiComboBox("grid", 256, 0, 15, LittleGridContext.getNames()) {
 			
 			@Override
 			protected GuiComboBoxExtension createBox() {
-				return new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 30 - getContentOffset() * 2, 100, lines);
+				return new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 30
+				        - getContentOffset() * 2, 100, lines);
 			}
 		});
 		
 		GuiTextfield fontSize = new GuiTextfield("fontSize", "48", 229, 0, 20, 14);
 		controls.add(fontSize);
 		
+		//this.moveControlAbove(fontSize, get("hi"));
 		controls.add(new GuiLongTextField("input", "", 0, 21, 271, 15));
 		
-		controls.add(new GuiToolTipBox("tips").addAdditionalTips("picker", "\n\nThis sets the color of the text.").addAdditionalTips("grid", "Grid Size:\nSets the size the tiles will be.\n\nSizes:\nTo change the max grid size open your littletiles.json in your config folder within your Minecraft folder. \n\nChange the Scale line to:\nScale = 7 (64 grid)\nScale = 8 (128 grid)\nScale = 9 (256 grid)\nAnd so on."));
-		GuiToolTipBox tips = (GuiToolTipBox) get("tips");
-		tips.addAdditionalTips("input", "Input:\nThis is the text that will be exported as a structure.\n\nClick on it and you can type or press ctrl+v to paste text you have copied.");
-		tips.addAdditionalTips("search", "Search Font:\nSearch for a font.\n\nClick and type in a name or part of a name of the font you are looking for.");
-		tips.addAdditionalTips("fontSize", "Font Size:\nSet the size of the font.\n\nClick and type in a positive number for the size of the font.");
-		tips.addAdditionalTips("fontType", "Font:\nSelect the Font to use.\n\nClick and select a font. You can click and drag the scroll bar or use the mouse wheel to move the menu.");
-		tips.addAdditionalTips("rotation", "Rotation:\nUsed to change the rotation of the text.\n\nControls:\nClick and drag on the slider to adjust rotation.\nRight Click to enter a value");
-		tips.addAdditionalTips("Paste", "Paste:\nPastes any text you have copied into the text field above.");
-		tips.addAdditionalTips("Print", "Print:\nPrints out the text you have entered into the text field above.");
-		tips.addAdditionalTips("MainGui", "Typewriter:\nWill create a structure of the text you entered with the font, font size, color, and grid size you have selected.");
 		controls.add(new GuiTextfield("search", "", 0, 0, 115, 14) {
 			
 			@Override
@@ -200,7 +233,8 @@ public class SubGuiTypeWriter extends SubGui {
 			
 			@Override
 			protected GuiComboBoxExtension createBox() {
-				GuiComboBoxExtension extend = new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 200 - getContentOffset() * 2, 100, lines);
+				GuiComboBoxExtension extend = new GuiComboBoxExtension(name + "extension", this, posX, posY
+				        + height, 200 - getContentOffset() * 2, 100, lines);
 				extend.scrolled.set(15 * this.index);
 				return extend;
 			}
@@ -232,7 +266,8 @@ public class SubGuiTypeWriter extends SubGui {
 					
 					GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 					try {
-						viewer.onLoaded(new AnimationPreview(FontReader.photoToPreviews(input.text, font, grid, fontSize, color, rotation.value)));
+						PhotoReader.setScale(Integer.parseInt(imgWidth.text), Integer.parseInt(imgHeight.text));
+						viewer.onLoaded(new AnimationPreview(FontReader.photoToPreviews(input.text, font, textAttributeMap, grid, fontSize, color, rotation.value)));
 					} catch (NullPointerException | IOException e) {
 					}
 				}
@@ -262,9 +297,8 @@ public class SubGuiTypeWriter extends SubGui {
 		GuiComboBox contextBox = (GuiComboBox) get("fontType");
 		String font = contextBox.getCaption();
 		GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
-		//controls.add(new GuiImage("image", 180, 130, font, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color), rotation.value));
 		
-		controls.add(new GuiGlyphSelector("na", font, 165, 85, 106));
+		controls.add(new GuiGlyphSelector("glyph", font, textAttributeMap, 165, 85, 106));
 		controls.add(new GuiButton("Print", 243, 64, 28) {
 			
 			@Override
@@ -288,7 +322,8 @@ public class SubGuiTypeWriter extends SubGui {
 					GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
 					
 					try {
-						NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, grid, fontSize, color, rotation.value);
+						PhotoReader.setScale(Integer.parseInt(imgWidth.text), Integer.parseInt(imgHeight.text));
+						NBTTagCompound nbt = FontReader.photoToNBT(input.text, font, textAttributeMap, grid, fontSize, color, rotation.value);
 						if (nbt != null)
 							sendPacketToServer(nbt);
 					} catch (IOException e) {
@@ -298,6 +333,38 @@ public class SubGuiTypeWriter extends SubGui {
 			}
 		});
 		
+		GuiTutorialBox boxx = new GuiTutorialBox("ih", -110, 0, 180, width, height);
+		System.out.println(((GuiColorPickerAlet) get("picker")).get("r"));
+		GuiColorPickerAlet picker = ((GuiColorPickerAlet) get("picker"));
+		boxx.tutorialMap.add(new TutorialData(get("fontType"), "right", "Clicking on this will open a dropdown menu that lets you select the type of font your text will print with. You can add custom font(s) by going to your Minecraft directory, the same place you add mods too, and look for a folder called Fonts."));
+		boxx.tutorialMap.add(new TutorialData(get("fontType"), "right", "The readme.txt file inside will explain further on how to bring your new fonts into the game."));
+		boxx.tutorialMap.add(new TutorialData(get("search"), "right", "This is the search text field. It allows you to search for specific font(s)."));
+		boxx.tutorialMap.add(new TutorialData(get("fontSize"), "right", "This is the font size text field. It allows you to change the font size that your text will print in."));
+		boxx.tutorialMap.add(new TutorialData(get("grid"), "right", "This is the grid drop down menu. Clicking on this will open a dropdown menu that allows you to change the grid size that your text will print with."));
+		boxx.tutorialMap.add(new TutorialData(get("grid"), "right", "The grid size is how small or large each tile will be. Grid 8 is 1/8th the size of a block. Grid 16 is 1/16th the size of a block. Grid 32 is 1/32nd the size of a block and so on."));
+		boxx.tutorialMap.add(new TutorialData(get("input"), "right", "This is the input text field where you type whatever text you want to print."));
+		boxx.tutorialMap.add(new TutorialData(get("Paste"), "right", "This is the paste button. It will allow you to paste text into the text field that you have copied."));
+		boxx.tutorialMap.add(new TutorialData(get("glyph"), "right", "This is the glyph drop down menu. Clicking on this will open a dropdown menu that displays all glyphs (or characters) that the font you have selected has. You can click on the glyphs to add it into the input text field. However, some glyphs are unusable, such as Wingding."));
+		boxx.tutorialMap.add(new TutorialData(get("italic"), "right", "This is the italic button. Clicking on this will cause the text to print with the italic attribute."));
+		boxx.tutorialMap.add(new TutorialData(get("bold"), "right", "This is the bold button. Clicking on this will cause the text to print with the bold attribute."));
+		boxx.tutorialMap.add(new TutorialData(get("underline"), "right", "This is the underline button. Clicking on this will cause the text to print with the underline attribute."));
+		boxx.tutorialMap.add(new TutorialData(get("strikethrough"), "right", "This is the strikethrough button. Clicking on this will cause the text to print with the strikethrough attribute."));
+		boxx.tutorialMap.add(new TutorialData(get("rotation"), "right", "This is the rotation slider. You can click and drag to change the roation of the text."));
+		boxx.tutorialMap.add(new TutorialData(get("picker"), "right", "This is the color picker. With it you can set the color your font will print in."));
+		boxx.tutorialMap.add(new TutorialData(get("picker"), "right", "Each color slider can go from 0 to 255. To change the value:            -You can use the arrows on either side of the sliders.            -You can click and drag on a slider. -You can right click a slider and enter a value manualy."));
+		boxx.tutorialMap.add(new TutorialData(picker.get("r"), "right", "This is the red color slider."));
+		boxx.tutorialMap.add(new TutorialData(picker.get("g"), "right", "This is the green color slider."));
+		boxx.tutorialMap.add(new TutorialData(picker.get("b"), "right", "This is the blue color slider."));
+		boxx.tutorialMap.add(new TutorialData(picker.get("a"), "right", "This is the alpha slider. How transparent the color is."));
+		boxx.tutorialMap.add(new TutorialData(picker.get("s"), "right", "This is the shader slider. It allows you to easly change how dark or light a color is."));
+		boxx.tutorialMap.add(new TutorialData(picker.get("more"), "right", "Click on this to open the color palette. It allows you to save your currently selected color for later use."));
+		boxx.tutorialMap.add(new TutorialData(get("imgWidth"), "left", "This is the width text field. It will display how many tiles the structure's width will be. You can also change the value."));
+		boxx.tutorialMap.add(new TutorialData(get("imgHeight"), "left", "This is the height text field. It will display how many tiles the structure's height will be. You can also change the value."));
+		boxx.tutorialMap.add(new TutorialData(get("renderer"), "left", "This is the preview viewer. Here you can view what the structure will look like before placing it into the world."));
+		boxx.tutorialMap.add(new TutorialData(get("refresh"), "left", "This is the refresh button. Click on this to update the preview in the preview viewer."));
+		boxx.tutorialMap.add(new TutorialData(get("Print"), "left", "This is the print button. Click on this to print your structure."));
+		controls.add(boxx);
+		moveControlToTop(get("ih"));
 		openedGui();
 	}
 	
@@ -307,11 +374,46 @@ public class SubGuiTypeWriter extends SubGui {
 		GuiComboBox contextBox = (GuiComboBox) get("fontType");
 		String font = contextBox.getCaption();
 		//System.out.println(font);
-		GuiGlyphSelector na = (GuiGlyphSelector) get("na");
+		GuiGlyphSelector na = (GuiGlyphSelector) get("glyph");
 		na.fontr = font;
-		if (event.source.is("searchBar")) {
-			
-			refreshControls();
+		if (event.source.is("italic")) {
+			GuiDepressedCheckBox box = (GuiDepressedCheckBox) event.source;
+			if (box.value)
+				this.textAttributeMap.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+			else
+				this.textAttributeMap.remove(TextAttribute.POSTURE);
+		} else if (event.source.is("bold")) {
+			GuiDepressedCheckBox box = (GuiDepressedCheckBox) event.source;
+			if (box.value)
+				this.textAttributeMap.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+			else
+				this.textAttributeMap.remove(TextAttribute.WEIGHT);
+		} else if (event.source.is("underline")) {
+			GuiDepressedCheckBox box = (GuiDepressedCheckBox) event.source;
+			if (box.value)
+				this.textAttributeMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+			else
+				this.textAttributeMap.remove(TextAttribute.UNDERLINE);
+		} else if (event.source.is("strikethrough")) {
+			GuiDepressedCheckBox box = (GuiDepressedCheckBox) event.source;
+			if (box.value)
+				this.textAttributeMap.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+			else
+				this.textAttributeMap.remove(TextAttribute.STRIKETHROUGH);
 		}
+		if (event.source.is("searchBar")) {
+			refreshControls();
+		} else if (event.source.is("input") || event.source instanceof GuiDepressedCheckBox) {
+			GuiLongTextField text = (GuiLongTextField) get("input");
+			GuiComboBox fontCombo = (GuiComboBox) get("fontType");
+			GuiTextfield fontSize = (GuiTextfield) get("fontSize");
+			GuiColorPickerAlet color = (GuiColorPickerAlet) get("picker");
+			BufferedImage image = FontReader.fontToPhoto(text.text, fontCombo.getCaption(), textAttributeMap, Integer.parseInt(fontSize.text), ColorUtils.RGBAToInt(color.color), BLACK);
+			imgHeight.text = FontReader.getTextPixelHeight(text.text, fontCombo.getCaption(), textAttributeMap, Integer.parseInt(fontSize.text))
+			        + "";
+			imgWidth.text = FontReader.getTextPixelWidth(text.text, fontCombo.getCaption(), textAttributeMap, Integer.parseInt(fontSize.text))
+			        + "";
+		}
+		
 	}
 }

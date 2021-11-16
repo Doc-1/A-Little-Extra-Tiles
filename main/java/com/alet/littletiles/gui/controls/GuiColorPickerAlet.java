@@ -32,7 +32,8 @@ public class GuiColorPickerAlet extends GuiColorPicker {
 	 * @param y
 	 * @param color
 	 * @param hasAlpha
-	 * @param alphaMin */
+	 * @param alphaMin
+	 */
 	public GuiColorPickerAlet(String name, int x, int y, Color color, boolean hasAlpha, int alphaMin) {
 		super(name, x, y, color, hasAlpha, alphaMin);
 		
@@ -262,7 +263,7 @@ public class GuiColorPickerAlet extends GuiColorPicker {
 		addControl(sliderS.setStyle(defaultStyle));
 		
 		addControl(new GuiColorPlate("plate", 107, 2, 20, 20, color).setStyle(defaultStyle));
-		addControl(new GuiButton("more", 105, 28) {
+		addControl(new GuiButton("more", "more", 105, 28) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
@@ -291,7 +292,8 @@ public class GuiColorPickerAlet extends GuiColorPicker {
 	}
 	
 	public void openPalette() {
-		palette = new GuiColorPickerPalette(name + "palette", this, posX, posY + height, width - getContentOffset() * 2, 100);
+		palette = new GuiColorPickerPalette(name + "palette", this, posX, posY + height, width
+		        - getContentOffset() * 2, 100);
 		getGui().controls.add(palette);
 		
 		palette.parent = getGui();

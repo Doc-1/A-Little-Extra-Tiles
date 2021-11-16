@@ -23,7 +23,6 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiProgressBar;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
-import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.littletiles.common.entity.AnimationPreview;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
@@ -86,11 +85,6 @@ public class SubGuiPhotoImport extends SubGui {
 		});
 		
 		imgWidth = (new GuiTextfield("imgWidth", "0", 93, 102, 30, 14) {
-			@Override
-			public void onTextChange() {
-				
-				super.onTextChange();
-			}
 			
 			@Override
 			public boolean onKeyPressed(char character, int key) {
@@ -107,12 +101,6 @@ public class SubGuiPhotoImport extends SubGui {
 		controls.add(imgWidth);
 		
 		imgHeight = (new GuiTextfield("imgHeight", "0", 132, 102, 30, 14) {
-			
-			@Override
-			public void onTextChange() {
-				
-				super.onTextChange();
-			}
 			
 			@Override
 			public boolean onKeyPressed(char character, int key) {
@@ -170,20 +158,7 @@ public class SubGuiPhotoImport extends SubGui {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				boolean result = super.onKeyPressed(character, key);
-				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
-					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-					imgHeight.enabled = true;
-					imgWidth.enabled = true;
-					autoScale.enabled = true;
-					aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
-				} else {
-					imgHeight.text = "0";
-					imgWidth.text = "0";
-					imgHeight.enabled = false;
-					imgWidth.enabled = false;
-					autoScale.enabled = false;
-				}
+				updatePhotoData();
 				return result;
 			}
 		});
@@ -194,21 +169,7 @@ public class SubGuiPhotoImport extends SubGui {
 				playSound(SoundEvents.UI_BUTTON_CLICK);
 				useFile.value = true;
 				useURL.value = false;
-				raiseEvent(new GuiControlChangedEvent(this));
-				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
-					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-					imgHeight.enabled = true;
-					imgWidth.enabled = true;
-					autoScale.enabled = true;
-					aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
-				} else {
-					imgHeight.text = "0";
-					imgWidth.text = "0";
-					imgHeight.enabled = false;
-					imgWidth.enabled = false;
-					autoScale.enabled = false;
-				}
+				updatePhotoData();
 				return true;
 			}
 		});
@@ -220,21 +181,7 @@ public class SubGuiPhotoImport extends SubGui {
 				playSound(SoundEvents.UI_BUTTON_CLICK);
 				useFile.value = false;
 				useURL.value = true;
-				raiseEvent(new GuiControlChangedEvent(this));
-				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
-					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-					imgHeight.enabled = true;
-					imgWidth.enabled = true;
-					autoScale.enabled = true;
-					aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
-				} else {
-					imgHeight.text = "0";
-					imgWidth.text = "0";
-					imgHeight.enabled = false;
-					imgWidth.enabled = false;
-					autoScale.enabled = false;
-				}
+				updatePhotoData();
 				return true;
 			}
 		});
@@ -254,20 +201,7 @@ public class SubGuiPhotoImport extends SubGui {
 					return;
 				file.text = path;
 				
-				if (PhotoReader.imageExists(file.text, useURL.value)) {
-					imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
-					imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
-					imgHeight.enabled = true;
-					imgWidth.enabled = true;
-					autoScale.enabled = true;
-					aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
-				} else {
-					imgHeight.text = "0";
-					imgWidth.text = "0";
-					autoScale.enabled = false;
-					imgHeight.enabled = false;
-					imgWidth.enabled = false;
-				}
+				updatePhotoData();
 			}
 		});
 		controls.add(paste);
@@ -307,6 +241,23 @@ public class SubGuiPhotoImport extends SubGui {
 		GuiProgressBar progress = new GuiProgressBar("progress", 165, 184, 142, 10, 100, 0);
 		progress.setStyle(new Style("s", new ColoredDisplayStyle(0x11111111), new ColoredDisplayStyle(0xdddddddd), DisplayStyle.emptyDisplay, new ColoredDisplayStyle(0x2d9912), DisplayStyle.emptyDisplay));
 		controls.add(progress);
+	}
+	
+	public void updatePhotoData() {
+		if (PhotoReader.imageExists(file.text, useURL.value)) {
+			imgHeight.text = Integer.toString(PhotoReader.getPixelLength(file.text, useURL.value));
+			imgWidth.text = Integer.toString(PhotoReader.getPixelWidth(file.text, useURL.value));
+			imgHeight.enabled = true;
+			imgWidth.enabled = true;
+			autoScale.enabled = true;
+			aspectRatio = Float.parseFloat(imgHeight.text) / Float.parseFloat(imgWidth.text);
+		} else {
+			imgHeight.text = "0";
+			imgWidth.text = "0";
+			imgHeight.enabled = false;
+			imgWidth.enabled = false;
+			autoScale.enabled = false;
+		}
 	}
 	
 	@Override

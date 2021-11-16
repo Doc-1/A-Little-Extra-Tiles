@@ -25,6 +25,10 @@ public class LittleTypeWriter extends LittleStructurePremade {
 	public String fontSize = "48";
 	public String grid = "16";
 	public double rotation = 0.0;
+	public boolean strikethrough;
+	public boolean underline;
+	public boolean bold;
+	public boolean italic;
 	
 	public LittleTypeWriter(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
@@ -42,6 +46,14 @@ public class LittleTypeWriter extends LittleStructurePremade {
 			grid = nbt.getString("grid");
 		if (nbt.hasKey("rotation"))
 			rotation = nbt.getDouble("rotation");
+		if (nbt.hasKey("italic"))
+			italic = nbt.getBoolean("italic");
+		if (nbt.hasKey("bold"))
+			bold = nbt.getBoolean("bold");
+		if (nbt.hasKey("underline"))
+			underline = nbt.getBoolean("underline");
+		if (nbt.hasKey("strikethrough"))
+			strikethrough = nbt.getBoolean("strikethrough");
 		
 	}
 	
@@ -52,6 +64,10 @@ public class LittleTypeWriter extends LittleStructurePremade {
 		nbt.setInteger("color", color);
 		nbt.setString("grid", grid);
 		nbt.setDouble("rotation", rotation);
+		nbt.setBoolean("italic", italic);
+		nbt.setBoolean("bold", bold);
+		nbt.setBoolean("underline", underline);
+		nbt.setBoolean("strikethrough", strikethrough);
 	}
 	
 	@Override
