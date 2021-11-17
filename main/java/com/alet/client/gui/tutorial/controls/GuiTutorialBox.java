@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.lwjgl.util.Color;
 
-import com.alet.client.gui.controls.GuiPanelWithBackground;
+import com.alet.client.gui.controls.GuiColorablePanel;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -157,12 +157,12 @@ public class GuiTutorialBox extends GuiParent {
 				return false;
 			}
 		});
-		addControl(new GuiPanelWithBackground("pageBackground", 23, this.width + 58, 48, 10));
+		addControl(new GuiColorablePanel("pageBackground", 23, this.width
+		        + 58, 48, 10, new Color(0, 0, 0), new Color(198, 198, 198)));
 		GuiControlHighlighter highlighter = new GuiControlHighlighter("highlight", null, this.boxPosX, this.boxPosY);
 		addControl(highlighter);
 		updateHighlightedControl();
 		get("next").setStyle(panelStyle);
-		((GuiPanelWithBackground) get("pageBackground")).setColor(ColorUtils.RGBAToInt(new Color(198, 198, 198)));
 		get("close").setStyle(panelStyle);
 		get("back").setStyle(panelStyle);
 	}

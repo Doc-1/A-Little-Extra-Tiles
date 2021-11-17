@@ -17,6 +17,7 @@ import com.alet.client.container.SubContainerPhotoImport;
 import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiBlock;
 import com.alet.client.gui.SubGuiMagnitudeComparator;
+import com.alet.client.gui.SubGuiManual;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
@@ -30,6 +31,8 @@ import com.alet.common.packet.PacketSendServerCams;
 import com.alet.common.packet.PacketSendSound;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
+import com.alet.common.structure.type.LittleAlwaysOnLight;
+import com.alet.common.structure.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
 import com.alet.common.structure.type.LittleCamPlayerALET;
 import com.alet.common.structure.type.LittleLeadConnectionALET;
 import com.alet.common.structure.type.LittleLockALET;
@@ -59,6 +62,7 @@ import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.entity.EntityLeadConnection;
 import com.alet.items.ItemJumpTool;
+import com.alet.items.ItemLittleManual;
 import com.alet.items.ItemLittleRope;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
@@ -72,8 +76,10 @@ import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.attribute.LittleStructureAttribute;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
+import com.creativemd.littletiles.common.structure.registry.StructureIngredientRule.StructureIngredientScalerVolume;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalMode;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
+import com.creativemd.littletiles.common.util.ingredient.StackIngredient;
 import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.block.Block;
@@ -81,6 +87,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -136,7 +143,7 @@ public class ALET {
 	public static List<String> sounds;
 	
 	public static Item littleRope;
-	
+	public static Item manual;
 	public static Item tapeMeasure;
 	public static Item jumpRod;
 	
@@ -165,6 +172,7 @@ public class ALET {
 	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent event) {
+		manual = new ItemLittleManual("little_manual");
 		littleRope = new ItemLittleRope("little_rope");
 		jumpRod = new ItemJumpTool("jump_rod");
 		tapeMeasure = new ItemTapeMeasure("tapemeasure");
@@ -254,7 +262,22 @@ public class ALET {
 				return new SubContainerBasic(player);
 			}
 		});
-		LittleStructureRegistry.registerStructureType("tigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
+		GuiHandler.registerGuiHandler("manual", new CustomGuiHandler() {
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubGuiManual();
+			}
+			
+			@Override
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubContainerBasic(player);
+			}
+		});
+		LittleStructureRegistry.registerStructureType("allows_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class).addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
+		LittleStructureRegistry.registerStructureType("tigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION
+		        | LittleStructureAttribute.COLLISION_LISTENER, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
 		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("state_activator", "advance", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("music_composer", "sound", LittleMusicComposerALET.class, LittleStructureAttribute.TICKING, LittleMusicComposerALET.LittleMusicComposerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
@@ -273,13 +296,14 @@ public class ALET {
 	
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(littleRope, jumpRod, tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
+		event.getRegistry().registerAll(manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
 		proxy.loadSide();
 	}
 	
 	@SubscribeEvent
 	public static void registerRenders(ModelRegistryEvent event) {
 		registerRender(littleRope);
+		registerRender(manual);
 		registerRender(tapeMeasure);
 		registerRender(Item.getItemFromBlock(smoothGroutBrick));
 		registerRender(Item.getItemFromBlock(smoothBrick));
@@ -352,7 +376,10 @@ public class ALET {
 			if (!d.exists()) {
 				d.mkdir();
 				try {
-					String data = "Place any TrueTypeFont files in this folder to add them to the typewritter. \n" + "If you added any TrueTypeFont files while still in Minecraft you can run the commmand \n" + "/alet-updatefont to add the new fonts. Otherwise just launching Minecraft will gather \n" + "the new files.";
+					String data = "Place any TrueTypeFont files in this folder to add them to the typewritter. \n"
+					        + "If you added any TrueTypeFont files while still in Minecraft you can run the commmand \n"
+					        + "/alet-updatefont to add the new fonts. Otherwise just launching Minecraft will gather \n"
+					        + "the new files.";
 					File f1 = new File("./fonts/README.txt");
 					if (!f1.exists())
 						f1.createNewFile();
@@ -367,7 +394,8 @@ public class ALET {
 			for (File file : d.listFiles()) {
 				String fileName = file.getName();
 				if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-					if (fileName.substring(fileName.lastIndexOf(".") + 1).equals("ttf") || fileName.substring(fileName.lastIndexOf(".") + 1).equals("otf"))
+					if (fileName.substring(fileName.lastIndexOf(".") + 1).equalsIgnoreCase("ttf")
+					        || fileName.substring(fileName.lastIndexOf(".") + 1).equalsIgnoreCase("otf"))
 						ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
 			}
 		} catch (FontFormatException | IOException e) {

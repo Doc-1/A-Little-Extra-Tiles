@@ -3,8 +3,10 @@ package com.alet.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.util.Color;
+
 import com.alet.ALETConfig;
-import com.alet.client.gui.controls.GuiPanelWithBackground;
+import com.alet.client.gui.controls.GuiColorablePanel;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
@@ -12,6 +14,7 @@ import com.alet.littletiles.gui.controls.GuiColoredSteppedSliderAlet;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -27,7 +30,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
 	public GuiComboBox shapeBox;
 	public GuiComboBox indexBox;
 	public GuiColorPickerAlet colorPicker;
-	public GuiPanelWithBackground colorDisp;
+	public GuiColorablePanel colorDisp;
 	
 	public int selectedIndex = 0;
 	
@@ -94,8 +97,10 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
 		
 		int measurementIndex = nbt.getInteger("index");
 		
-		int context = (nbt.hasKey("context" + (measurementIndex * 2))) ? nbt.getInteger("context" + (measurementIndex * 2)) : list.indexOf(ItemMultiTiles.currentContext.size + "");
-		int color = (nbt.hasKey("color" + (measurementIndex * 2))) ? nbt.getInteger("color" + (measurementIndex * 2)) : ColorUtilsAlet.WHITE;
+		int context = (nbt.hasKey("context" + (measurementIndex * 2))) ? nbt.getInteger("context"
+		        + (measurementIndex * 2)) : list.indexOf(ItemMultiTiles.currentContext.size + "");
+		int color = (nbt.hasKey("color" + (measurementIndex * 2))) ? nbt.getInteger("color"
+		        + (measurementIndex * 2)) : ColorUtilsAlet.WHITE;
 		
 		List<String> relativeMeasurement = new ArrayList<String>();
 		relativeMeasurement.add("tile");
@@ -108,11 +113,9 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
 		contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
 		contextBox.select(context);
 		contextBox.index = context;
-		System.out.println(context);
 		controls.add(contextBox);
 		
-		colorDisp = new GuiPanelWithBackground("colorDisp", 120, 22, 14, 14);
-		colorDisp.setColor(color);
+		colorDisp = new GuiColorablePanel("colorDisp", 120, 22, 14, 14, new Color(0, 0, 0), ColorUtils.IntToRGBA(color));
 		controls.add(colorDisp);
 		
 		GuiButton clearButton = (new GuiButton("Clear", 0, 0, 40) {
@@ -141,7 +144,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
 			@Override
 			public void onColorChanged() {
 				super.onColorChanged();
-				colorDisp.setColor(ColorUtilsAlet.RGBAToInt(color));
+				colorDisp.setBackgroundColor(ColorUtilsAlet.RGBAToInt(color));
 			}
 		});
 		controls.add(colorPicker);
@@ -155,7 +158,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
 		indexBox = (new GuiComboBox("indexSelector", 0, 80, 20, indexMax) {
 			@Override
 			protected GuiComboBoxExtension createBox() {
-				return (new GuiComboBoxExtension(name + "extension", this, posX, posY + height, width - getContentOffset() * 2, 100, lines) {
+				return (new GuiComboBoxExtension(name + "extension", this, posX, posY + height, width
+				        - getContentOffset() * 2, 100, lines) {
 					@Override
 					public void onSelectionChange() {
 						saveConfiguration(index);
@@ -172,10 +176,11 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
 	
 	private void updateControls(NBTTagCompound nbt, int index) {
 		int shape = (nbt.hasKey("shape" + (index * 2))) ? nbt.getInteger("shape" + (index * 2)) : 0;
-		int context = (nbt.hasKey("context" + (index * 2))) ? nbt.getInteger("context" + (index * 2)) : LittleGridContext.getNames().indexOf(ItemMultiTiles.currentContext.size + "");
+		int context = (nbt.hasKey("context" + (index * 2))) ? nbt.getInteger("context"
+		        + (index * 2)) : LittleGridContext.getNames().indexOf(ItemMultiTiles.currentContext.size + "");
 		int color = (nbt.hasKey("color" + (index * 2))) ? nbt.getInteger("color" + (index * 2)) : ColorUtilsAlet.WHITE;
 		
-		colorDisp.setColor(color);
+		colorDisp.setBackgroundColor(color);
 		
 		GuiColoredSteppedSliderAlet sliderR = colorPicker.sliderR;
 		GuiColoredSteppedSliderAlet sliderG = colorPicker.sliderG;

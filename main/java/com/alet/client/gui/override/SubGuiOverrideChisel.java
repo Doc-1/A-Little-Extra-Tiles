@@ -40,6 +40,7 @@ public class SubGuiOverrideChisel extends SubGuiOverride {
 		chiselGui.controls.add(1, new GuiColorPickerAlet("picker", 2, 2, color, LittleTiles.CONFIG.isTransparencyEnabled(chiselGui.getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(chiselGui.getPlayer())));
 		GuiColorPickerAlet picker = (GuiColorPickerAlet) chiselGui.get("picker");
 		GuiTutorialBox box = new GuiTutorialBox("box", 0, 0, 180, gui.width, gui.height);
+		box.tutorialMap.add(new TutorialData(chiselGui.get("picker"), "leftout", "This is the color picker. With it you can set the color your chisel will place in."));
 		box.tutorialMap.add(new TutorialData(chiselGui.get("picker"), "leftout", "Each color slider can go from 0 to 255. To change the value:            -You can use the arrows on either side of the sliders.            -You can click and drag on a slider. -You can right click a slider and enter a value manualy."));
 		box.tutorialMap.add(new TutorialData(picker.get("r"), "leftout", "This is the red color slider."));
 		box.tutorialMap.add(new TutorialData(picker.get("g"), "leftout", "This is the green color slider."));
