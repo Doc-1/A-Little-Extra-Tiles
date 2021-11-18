@@ -110,96 +110,71 @@ public class SubGuiManual extends SubGui {
 			return this.listOfParts.size();
 		}
 		
+		//Check if open. if open move not same branch down that many
 		public void moveTreePartsDown(GuiTreePart button) {
 			boolean flag = true;
 			int move = button.getBranchSize();
 			int start = button.getPartID() + 1;
-			for (int i = start; i < this.listOfParts.size(); i++) {
-				GuiTreePart p2 = this.listOfParts.get(i);
-				
-				if (this.has(p2.name) && !button.isInSameBranch(p2)) {
-					p2.posY = p2.posY + (move * 14);
-				}
-				
-			}
-			
-			//int x = button.getTotalBranchSize(false);
-			//System.out.println(button.getBranchSize());
-			
-			/*
-			boolean flag = true;
-			int end = this.listOfAllSubTrees.size();
-			int move = 0;
-			for (int i = button.getPartID(); i < end; i++) {
-				GuiTreeButton p = this.listOfAllSubTrees.get(i);
-				
-				if (this.has(p.name) && p.opened) {
-					int start = p.getPartID() + p.getTotalBranchSize(false) + 1;
-					move = p.getTotalBranchSize(true);
-					for (int j = start; j < end; j++) {
-						GuiTreeButton p2 = this.listOfAllSubTrees.get(j);
-						if (this.has(p2.name)) {
-							System.out.println(p2.CONSTANT_CAPTION + " " + move);
-							p2.posY += (move * 14);
+			GuiTreePart branch = button;
+			GuiTreePart part = button;
+			while (branch.hasNextBranch()) {
+				if (button.isInSameBranch(branch)) {
+					//System.out.println("Branch " + branch.CAPTION);
+					part = branch;
+					
+					while (part.hasNextPart()) {
+						part = part.nextPart();
+						if (!branch.isInSameBranch(part) && this.has(part.name) && branch.isOpened()) {
+							//System.out.println("Part " + part.CAPTION + " " + branch.getBranchSize());
+							part.posY = part.posY + (14 * branch.getBranchSize());
 						}
 					}
-					//
-					
 				}
-				
-			}*/
-			/*
-			int moveRoot = 0;
-			int move = 0;
-			boolean flag = true;
-			button.getBranchRootID();
-			for (GuiTreeButton part : listOfAllSubTrees) {
-				if (part.opened) {
-					
-				}
-				if (part.isBranch() && part.opened) {
-					
-				}
+				branch = branch.nextBranch();
 			}
-			*/
-			/*
-			int id = 0;
-			int moveRoot = 0;
-			int move = 0;
-			boolean flag = true;
 			
-			int start = button.getPartID() + button.getTotalBranchSize(false) + 1;
-			for (int i = start; i < this.listOfAllSubTrees.size(); i++) {
-				GuiTreeButton p2 = this.listOfAllSubTrees.get(i);
-				if (this.has(p2.name)) {
-					//System.out.println(p2.CONSTANT_CAPTION + " " + i + "  " + button.getTotalBranchSize(true) * 14);
-					p2.posY = p2.posY + (button.getTotalBranchSize(true) * 14);
-				}
-			} 
-			  for (int i = 1; i < this.listOfAllSubTrees.size(); i++) {
-			  GuiTreeButton p3 = this.listOfAllSubTrees.get(i);
-			  if (p3.opened) {
-			  	start = p3.getPartID() + p3.getTotalBranchSize(false) + 1;
-			  	System.out.println(p3.CONSTANT_CAPTION + " " + start + " " + p3.getBranchSize());
-			  }
-			  }*/
 		}
 		
 		public void moveTreePartsUp(GuiTreePart button) {
 			boolean flag = true;
 			int move = button.getBranchSize();
 			int start = button.getPartID() + 1;
+			GuiTreePart branch = button;
+			GuiTreePart part = button;
+			while (branch.hasNextBranch()) {
+				if (button.isInSameBranch(branch)) {
+					System.out.println("Branch " + branch.CAPTION);
+					part = branch;
+					
+					while (part.hasNextPart()) {
+						part = part.nextPart();
+						//System.out.println("Part " + part.CAPTION);
+						if (!branch.isInSameBranch(part) && !branch.isBranchHiddenAndClosed()) {
+							System.out.println("Part " + part.CAPTION + " " + branch.getBranchSize());
+							part.posY = part.posY - (14 * branch.getBranchSize());
+						}
+					}
+				}
+				branch = branch.nextBranch();
+			}
+			
+		}
+		
+		/*
+		 * 
+			boolean flag = true;
+			int move = button.getTotalOpenedBranchSize();
+			int start = button.getPartID() + 1;
 			for (int i = start; i < this.listOfParts.size(); i++) {
 				GuiTreePart p2 = this.listOfParts.get(i);
 				
 				if (this.has(p2.name)) {
-					
 					p2.posY = p2.posY - (move * 14);
-					
 				}
 				
 			}
-		}
+		
+		 */
 		
 		@Override
 		public boolean hasBackground() {
@@ -262,20 +237,58 @@ public class SubGuiManual extends SubGui {
 		
 		/** @return
 		 *         The previous part in the list. If there is no previous part returns null. */
-		public GuiTreePart getPreviousPart() {
+		public GuiTreePart previousPart() {
 			int id = this.getPartID() - 1;
-			if (id < 0)
+			if (id <= 0)
 				return null;
 			return tree.listOfParts.get(id);
 		}
 		
 		/** @return
 		 *         The next part in the list. If there is no next part returns null. */
-		public GuiTreePart getNextPart() {
+		public GuiTreePart nextPart() {
 			int id = this.getPartID() + 1;
-			if (id > tree.numberOfAllParts())
+			if (id >= tree.numberOfAllParts())
 				return null;
 			return tree.listOfParts.get(id);
+		}
+		
+		public boolean hasNextPart() {
+			return this.nextPart() != null;
+		}
+		
+		public boolean hasPreviousPart() {
+			return this.previousPart() != null;
+		}
+		
+		public GuiTreePart nextBranch() {
+			GuiTreePart part = this;
+			while (part.hasNextPart()) {
+				part = part.nextPart();
+				if (part.isBranch()) {
+					return part;
+				}
+			}
+			return null;
+		}
+		
+		public boolean hasNextBranch() {
+			return this.nextBranch() != null;
+		}
+		
+		public boolean hasPreviousBranch() {
+			return this.previousBranch() != null;
+		}
+		
+		public GuiTreePart previousBranch() {
+			GuiTreePart part = this;
+			while (part.hasPreviousPart()) {
+				part = part.previousPart();
+				if (part.isBranch()) {
+					return part;
+				}
+			}
+			return null;
 		}
 		
 		/** @return
@@ -328,7 +341,7 @@ public class SubGuiManual extends SubGui {
 		
 		/** @return
 		 *         How many parts a branch has including other branches that are a part of it. */
-		public int getTotalBranchSize(boolean checkForOpened) {
+		public int getTotalBranchSize() {
 			int total = 0;
 			int start = this.getPartID() + 1;
 			GuiTreePart part0 = tree.listOfParts.get(start);
@@ -341,20 +354,17 @@ public class SubGuiManual extends SubGui {
 			return total;
 		}
 		
-		private int getTotalBranchSize(GuiTreePart part, int total, boolean checkForOpened) {
-			for (int i = part.getPartID() + 1; i < part.getPartID() + part.getBranchSize() + 1; i++) {
-				GuiTreePart part2 = tree.listOfParts.get(i);
-				total++;
-				if (checkForOpened) {
-					if (part2.isBranch() && part2.isOpened)
-						total = getTotalBranchSize(part2, total, true);
-				} else {
-					if (part2.isBranch())
-						
-						total = getTotalBranchSize(part2, total, false);
+		public int getTotalOpenedBranchSize() {
+			int start = this.getPartID() + 1;
+			GuiTreePart part0 = tree.listOfParts.get(start);
+			int total = this.getTotalBranchSize();
+			for (int i = start; i < start + total; i++) {
+				GuiTreePart checkPart = tree.listOfParts.get(i);
+				if (checkPart.isBranch() && !checkPart.isOpened()) {
+					total -= checkPart.getTotalBranchSize();
 				}
-				System.out.println(part2.CAPTION + "  " + total);
 			}
+			
 			return total;
 		}
 		
@@ -362,12 +372,13 @@ public class SubGuiManual extends SubGui {
 			GuiTreePart previousPart = part;
 			GuiTreePart comparePart = this;
 			if (comparePart.isBranch())
-				comparePart = comparePart.getNextPart();
+				comparePart = comparePart.nextPart();
 			int partBranchID = comparePart.getBranchIDThisIsIn();
 			int partBranchID2 = part.getBranchIDThisIsIn();
 			if (partBranchID == partBranchID2)
 				return true;
-			
+			if (part.equals(this))
+				return true;
 			while (previousPart != null) {
 				if (previousPart.isRoot())
 					return false;
@@ -376,7 +387,7 @@ public class SubGuiManual extends SubGui {
 					return true;
 				else if (partBranchID > previousPartBrandID)
 					return false;
-				previousPart = previousPart.getPreviousPart();
+				previousPart = previousPart.previousPart();
 			}
 			return false;
 		}
