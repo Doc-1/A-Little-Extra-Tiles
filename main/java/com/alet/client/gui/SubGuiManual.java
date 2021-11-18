@@ -33,20 +33,23 @@ public class SubGuiManual extends SubGui {
 		controls.add(panel);
 		panel.controls.add(scrollBox);
 		
-		List<GuiTreeButton> listOfMenus = new ArrayList<GuiTreeButton>();
-		GuiTreeButton a1 = new GuiTreeButton("old", "Draw Shapes");
-		GuiTreeButton a2 = new GuiTreeButton("old", "Box");
-		GuiTreeButton a3 = new GuiTreeButton("old", "Slice");
-		GuiTreeButton a3_1 = new GuiTreeButton("old", "Corner Slice");
-		GuiTreeButton a4_0 = new GuiTreeButton("old", "ZZZZZZZZ");
-		GuiTreeButton a4_1 = new GuiTreeButton("old", "OTHER1");
-		GuiTreeButton a4_2 = new GuiTreeButton("old", "OTHER2");
-		GuiTreeButton a4_3 = new GuiTreeButton("old", "OTHER3");
-		GuiTreeButton a4 = new GuiTreeButton("old", "Wall");
-		GuiTreeButton b1 = new GuiTreeButton("old", "Door");
+		List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
+		GuiTreePart a1 = new GuiTreePart("old", "Draw Shapes");
+		GuiTreePart a2 = new GuiTreePart("old", "Box");
+		GuiTreePart a3 = new GuiTreePart("old", "Slice");
+		GuiTreePart a3_1 = new GuiTreePart("old", "Corner Slice");
+		GuiTreePart a4_0 = new GuiTreePart("old", "ZZZZZZZZ");
+		GuiTreePart a4_1 = new GuiTreePart("old", "OTHER1");
+		GuiTreePart a4_2 = new GuiTreePart("old", "OTHER2");
+		GuiTreePart a4_3 = new GuiTreePart("old", "OTHER3");
+		GuiTreePart aa = new GuiTreePart("old", "11111111");
+		GuiTreePart aaa = new GuiTreePart("old", "222222222");
+		GuiTreePart aab = new GuiTreePart("old", "sadasdfwe");
+		GuiTreePart a4 = new GuiTreePart("old", "Wall");
+		GuiTreePart b1 = new GuiTreePart("old", "Door");
 		a3.addMenu(a3_1).addMenu(a4_1).addMenu(a4_2.addMenu(a4_3));
-		a1.addMenu(a2).addMenu(a3).addMenu(a4);
-		b1.addMenu(a4_0);
+		a1.addMenu(a2).addMenu(a3).addMenu(a4).addMenu(aa.addMenu(aab));
+		b1.addMenu(a4_0).addMenu(aaa);
 		listOfMenus.add(a1);
 		listOfMenus.add(b1);
 		
@@ -56,21 +59,21 @@ public class SubGuiManual extends SubGui {
 	
 	public class GuiTree extends GuiParent {
 		
-		public List<GuiTreeButton> listOfMenus;
-		public List<GuiTreeButton> listOfAllSubTrees = new ArrayList<GuiTreeButton>();
-		public Map<GuiTreeButton, GuiTreeButton> mapOfRootToSubTrees = new HashMap<GuiTreeButton, GuiTreeButton>();
+		public List<GuiTreePart> listOfRoots;
+		public List<GuiTreePart> listOfParts = new ArrayList<GuiTreePart>();
+		public Map<GuiTreePart, GuiTreePart> mapOfRootToSubTrees = new HashMap<GuiTreePart, GuiTreePart>();
 		private int indexPos = 0;
 		
-		public GuiTree(String name, int x, int y, int width, List<GuiTreeButton> listOfMenus) {
+		public GuiTree(String name, int x, int y, int width, List<GuiTreePart> listOfRoots) {
 			super(name, x, y, width, 320);
-			this.listOfMenus = listOfMenus;
+			this.listOfRoots = listOfRoots;
 			createControls();
 			allButtons();
 		}
 		
 		public void createControls() {
-			for (int i = 0; i < listOfMenus.size(); i++) {
-				GuiTreeButton button = listOfMenus.get(i);
+			for (int i = 0; i < listOfRoots.size(); i++) {
+				GuiTreePart button = listOfRoots.get(i);
 				button.posY = 14 * i;
 				button.originPosY = new Integer(button.posY);
 				addControl(button);
@@ -78,77 +81,120 @@ public class SubGuiManual extends SubGui {
 		}
 		
 		public void allButtons() {
-			for (int i = 0; i < listOfMenus.size(); i++) {
-				GuiTreeButton root = listOfMenus.get(i);
+			for (int i = 0; i < listOfRoots.size(); i++) {
+				GuiTreePart root = listOfRoots.get(i);
 				root.isRoot = true;
-				root.parentIndex = -1;
 				root.name = indexPos++ + "";
+				root.heldIn = Integer.parseInt(root.name);
 				root.tree = this;
-				listOfAllSubTrees.add(root);
-				if (root.listOfMenus != null && !root.listOfMenus.isEmpty())
+				listOfParts.add(root);
+				if (root.listOfParts != null && !root.listOfParts.isEmpty())
 					allButtons(root, i);
 			}
 		}
 		
-		public void allButtons(GuiTreeButton root, int j) {
-			for (int i = 0; i < root.listOfMenus.size(); i++) {
-				GuiTreeButton part = root.listOfMenus.get(i);
-				part.parentIndex = Integer.parseInt(root.name);
+		public void allButtons(GuiTreePart root, int j) {
+			for (int i = 0; i < root.listOfParts.size(); i++) {
+				GuiTreePart part = root.listOfParts.get(i);
+				part.heldIn = Integer.parseInt(root.name);
 				part.name = indexPos++ + "";
 				part.tree = this;
-				listOfAllSubTrees.add(part);
-				if (part.listOfMenus != null && !part.listOfMenus.isEmpty()) {
+				listOfParts.add(part);
+				if (part.listOfParts != null && !part.listOfParts.isEmpty()) {
 					allButtons(part, j);
 				}
 			}
 		}
 		
-		public void onMenuChanged() {
+		public int numberOfAllParts() {
+			return this.listOfParts.size();
 		}
 		
-		//Make a find root method. for buttons
-		public void moveTreePartsDown(GuiTreeButton button) {
-			int id = 0;
+		public void moveTreePartsDown(GuiTreePart button) {
+			boolean flag = true;
+			int move = button.getBranchSize();
+			int start = button.getPartID() + 1;
+			for (int i = start; i < this.listOfParts.size(); i++) {
+				GuiTreePart p2 = this.listOfParts.get(i);
+				
+				if (this.has(p2.name) && !button.isInSameBranch(p2)) {
+					p2.posY = p2.posY + (move * 14);
+				}
+				
+			}
+			
+			//int x = button.getTotalBranchSize(false);
+			//System.out.println(button.getBranchSize());
+			
+			/*
+			boolean flag = true;
+			int end = this.listOfAllSubTrees.size();
+			int move = 0;
+			for (int i = button.getPartID(); i < end; i++) {
+				GuiTreeButton p = this.listOfAllSubTrees.get(i);
+				
+				if (this.has(p.name) && p.opened) {
+					int start = p.getPartID() + p.getTotalBranchSize(false) + 1;
+					move = p.getTotalBranchSize(true);
+					for (int j = start; j < end; j++) {
+						GuiTreeButton p2 = this.listOfAllSubTrees.get(j);
+						if (this.has(p2.name)) {
+							System.out.println(p2.CONSTANT_CAPTION + " " + move);
+							p2.posY += (move * 14);
+						}
+					}
+					//
+					
+				}
+				
+			}*/
+			/*
 			int moveRoot = 0;
 			int move = 0;
 			boolean flag = true;
 			button.getBranchRootID();
 			for (GuiTreeButton part : listOfAllSubTrees) {
 				if (part.opened) {
-					moveRoot = part.getTotalBranchSize(true);
-					move = part.getTotalBranchSize(false);
-					id = part.getPartID();
+					
 				}
 				if (part.isBranch() && part.opened) {
-					GuiTreeButton p = listOfAllSubTrees.get(id);
-					int start = part.getPartID() + move + 1;
 					
-					for (int i = start; i < this.listOfAllSubTrees.size(); i++) {
-						GuiTreeButton p2 = listOfAllSubTrees.get(i);
-						if (p2.parentIndex == part.parentIndex) {
-							p2.posY = p2.originPosY + (moveRoot * 14);
-							System.out.println(p2.CONSTANT_CAPTION + " " + start + " " + moveRoot + " "
-							        + p2.parentIndex);
-						}
-					}
 				}
 			}
-		}
-		
-		public void moveTreePartsUp(GuiTreeButton button) {
+			*/
+			/*
 			int id = 0;
 			int moveRoot = 0;
 			int move = 0;
 			boolean flag = true;
 			
-			int start = button.getPartID() + move + 1;
+			int start = button.getPartID() + button.getTotalBranchSize(false) + 1;
 			for (int i = start; i < this.listOfAllSubTrees.size(); i++) {
 				GuiTreeButton p2 = this.listOfAllSubTrees.get(i);
+				if (this.has(p2.name)) {
+					//System.out.println(p2.CONSTANT_CAPTION + " " + i + "  " + button.getTotalBranchSize(true) * 14);
+					p2.posY = p2.posY + (button.getTotalBranchSize(true) * 14);
+				}
+			} 
+			  for (int i = 1; i < this.listOfAllSubTrees.size(); i++) {
+			  GuiTreeButton p3 = this.listOfAllSubTrees.get(i);
+			  if (p3.opened) {
+			  	start = p3.getPartID() + p3.getTotalBranchSize(false) + 1;
+			  	System.out.println(p3.CONSTANT_CAPTION + " " + start + " " + p3.getBranchSize());
+			  }
+			  }*/
+		}
+		
+		public void moveTreePartsUp(GuiTreePart button) {
+			boolean flag = true;
+			int move = button.getBranchSize();
+			int start = button.getPartID() + 1;
+			for (int i = start; i < this.listOfParts.size(); i++) {
+				GuiTreePart p2 = this.listOfParts.get(i);
 				
 				if (this.has(p2.name)) {
-					System.out.println(p2.CONSTANT_CAPTION + "  " + button.getTotalBranchSize(true));
 					
-					p2.posY = p2.posY - (button.getTotalBranchSize(true) * 14);
+					p2.posY = p2.posY - (move * 14);
 					
 				}
 				
@@ -167,13 +213,13 @@ public class SubGuiManual extends SubGui {
 		
 	}
 	
-	public class GuiTreeButton extends GuiControl {
+	public class GuiTreePart extends GuiControl {
 		
-		public List<GuiTreeButton> listOfMenus = new ArrayList<GuiTreeButton>();
-		public boolean opened = false;
-		public boolean isRoot = false;
-		public int parentIndex = 1;
-		public final String CONSTANT_CAPTION;
+		public List<GuiTreePart> listOfParts = new ArrayList<GuiTreePart>();
+		private boolean isOpened = false;
+		private boolean isRoot = false;
+		private int heldIn;
+		public final String CAPTION;
 		public String caption;
 		public GuiTree tree;
 		
@@ -181,17 +227,18 @@ public class SubGuiManual extends SubGui {
 		public int originPosY;
 		public int originPosX;
 		
-		public GuiTreeButton(String name, String caption) {
+		public GuiTreePart(String name, String caption) {
 			super(name, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), 8);
 			this.caption = caption;
-			this.CONSTANT_CAPTION = caption;
+			this.CAPTION = caption;
 		}
 		
-		public GuiTreeButton addMenu(GuiTreeButton button) {
-			this.listOfMenus.add(button);
-			if (this.listOfMenus != null && !this.listOfMenus.isEmpty())
+		public GuiTreePart addMenu(GuiTreePart button) {
+			this.listOfParts.add(button);
+			if (this.listOfParts != null && !this.listOfParts.isEmpty())
 				if (!caption.contains("+")) {
 					this.caption = "+ " + caption;
+					this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
 				}
 			return this;
 		}
@@ -199,10 +246,10 @@ public class SubGuiManual extends SubGui {
 		@Override
 		protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
 			
-			if (opened) {
+			if (isOpened) {
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0, 3, 0);
-				helper.drawRect(2, 0, 3, (this.getTotalBranchSize(true) * 14) + 2, ColorUtils.WHITE);
+				//helper.drawRect(2, 0, 3, (this.getTotalBranchSize(true) * 14) + 2, ColorUtils.WHITE);
 				GlStateManager.popMatrix();
 			}
 			if (!this.isBranch() && !this.isRoot) {
@@ -214,26 +261,56 @@ public class SubGuiManual extends SubGui {
 		}
 		
 		/** @return
+		 *         The previous part in the list. If there is no previous part returns null. */
+		public GuiTreePart getPreviousPart() {
+			int id = this.getPartID() - 1;
+			if (id < 0)
+				return null;
+			return tree.listOfParts.get(id);
+		}
+		
+		/** @return
+		 *         The next part in the list. If there is no next part returns null. */
+		public GuiTreePart getNextPart() {
+			int id = this.getPartID() + 1;
+			if (id > tree.numberOfAllParts())
+				return null;
+			return tree.listOfParts.get(id);
+		}
+		
+		/** @return
 		 *         The ID the part has. IDs are in same order as addMenus that create the tree */
 		public int getPartID() {
 			return Integer.parseInt(this.name);
 		}
 		
 		/** @return
-		 *         true the part is a branch. false if it is a root. */
+		 *         true the part is a branch. false if it is a root or leaf. */
 		public boolean isBranch() {
-			return this.listOfMenus != null && !this.listOfMenus.isEmpty();
+			return this.listOfParts != null && !this.listOfParts.isEmpty();
+		}
+		
+		public int getBranchIDThisIsIn() {
+			return this.heldIn;
+		}
+		
+		public boolean isOpened() {
+			return this.isOpened;
+		}
+		
+		public boolean isRoot() {
+			return this.isRoot;
 		}
 		
 		/** @return
 		 *         If part is not root return the root it is connected to.
 		 *         If part is root it will always return 0.
 		 *         If failed return -2. */
-		public int getBranchRootID() {
+		public int getRootIDThisIsIn() {
 			if (!this.isRoot) {
 				for (int i = this.getPartID(); i >= 0; i--) {
-					if (tree.listOfAllSubTrees.get(i).isRoot)
-						return tree.listOfAllSubTrees.get(i).getPartID();
+					if (tree.listOfParts.get(i).isRoot)
+						return tree.listOfParts.get(i).getPartID();
 				}
 			} else {
 				return -1;
@@ -245,7 +322,7 @@ public class SubGuiManual extends SubGui {
 		 *         How many parts a branch has. */
 		public int getBranchSize() {
 			if (isBranch())
-				return this.listOfMenus.size();
+				return this.listOfParts.size();
 			return 0;
 		}
 		
@@ -253,63 +330,89 @@ public class SubGuiManual extends SubGui {
 		 *         How many parts a branch has including other branches that are a part of it. */
 		public int getTotalBranchSize(boolean checkForOpened) {
 			int total = 0;
-			for (int i = this.getPartID() + 1; i < this.getPartID() + this.getBranchSize() + 1; i++) {
-				GuiTreeButton part2 = tree.listOfAllSubTrees.get(i);
-				total++;
-				if (checkForOpened) {
-					if (part2.isBranch() && part2.opened)
-						total = getTotalBranchSize(part2, total, true);
-				} else {
-					if (part2.isBranch())
-						total = getTotalBranchSize(part2, total, false);
+			int start = this.getPartID() + 1;
+			GuiTreePart part0 = tree.listOfParts.get(start);
+			for (int i = start; i < tree.numberOfAllParts(); i++) {
+				GuiTreePart part1 = tree.listOfParts.get(i);
+				if (this.isInSameBranch(part1)) {
+					total++;
 				}
 			}
 			return total;
 		}
 		
-		private int getTotalBranchSize(GuiTreeButton part, int total, boolean checkForOpened) {
+		private int getTotalBranchSize(GuiTreePart part, int total, boolean checkForOpened) {
 			for (int i = part.getPartID() + 1; i < part.getPartID() + part.getBranchSize() + 1; i++) {
-				GuiTreeButton part2 = tree.listOfAllSubTrees.get(i);
-				
+				GuiTreePart part2 = tree.listOfParts.get(i);
 				total++;
 				if (checkForOpened) {
-					if (part2.isBranch() && part2.opened)
+					if (part2.isBranch() && part2.isOpened)
 						total = getTotalBranchSize(part2, total, true);
 				} else {
 					if (part2.isBranch())
+						
 						total = getTotalBranchSize(part2, total, false);
 				}
+				System.out.println(part2.CAPTION + "  " + total);
 			}
 			return total;
+		}
+		
+		public boolean isInSameBranch(GuiTreePart part) {
+			GuiTreePart previousPart = part;
+			GuiTreePart comparePart = this;
+			if (comparePart.isBranch())
+				comparePart = comparePart.getNextPart();
+			int partBranchID = comparePart.getBranchIDThisIsIn();
+			int partBranchID2 = part.getBranchIDThisIsIn();
+			if (partBranchID == partBranchID2)
+				return true;
+			
+			while (previousPart != null) {
+				if (previousPart.isRoot())
+					return false;
+				int previousPartBrandID = previousPart.getBranchIDThisIsIn();
+				if (partBranchID == previousPartBrandID)
+					return true;
+				else if (partBranchID > previousPartBrandID)
+					return false;
+				previousPart = previousPart.getPreviousPart();
+			}
+			return false;
 		}
 		
 		/** @return
 		 *         true if the branch is opened but no longer in view. false if still in view or closed and not in view. */
-		public boolean isBranchHidden() {
-			return !tree.has(this.name) && this.opened;
+		public boolean isBranchHiddenAndOpened() {
+			return !tree.has(this.name) && this.isOpened;
+		}
+		
+		/** @return
+		 *         true if the branch is closed but no longer in view. false if still in view or opened and not in view. */
+		public boolean isBranchHiddenAndClosed() {
+			return !tree.has(this.name) && !this.isOpened;
 		}
 		
 		public void onClicked(int x, int y, int mouseButton) {
-			if (this.listOfMenus != null && !this.listOfMenus.isEmpty()) {
-				if (!opened) {
-					opened = true;
-					this.caption = "- " + this.CONSTANT_CAPTION;
-					this.width = GuiRenderHelper.instance.getStringWidth(caption) + 6;
+			if (this.listOfParts != null && !this.listOfParts.isEmpty()) {
+				if (!isOpened) {
+					isOpened = true;
+					this.caption = "- " + this.CAPTION;
 					this.openMenus();
 					tree.moveTreePartsDown(this);
 				} else {
-					opened = false;
-					this.caption = "+ " + this.CONSTANT_CAPTION;
-					this.width = GuiRenderHelper.instance.getStringWidth(caption) + 6;
+					isOpened = false;
+					this.caption = "+ " + this.CAPTION;
 					this.closeMenus();
 					tree.moveTreePartsUp(this);
 				}
 			}
 		}
 		
+		// try adding mod when it reiterates this method
 		public void openMenus() {
-			for (int i = 0; i < listOfMenus.size(); i++) {
-				GuiTreeButton button = listOfMenus.get(i);
+			for (int i = 0; i < listOfParts.size(); i++) {
+				GuiTreePart button = listOfParts.get(i);
 				if (!button.isRoot) {
 					button.posY = (14 * (i + 1)) + this.posY;
 					button.posX = 14 + this.posX;
@@ -319,7 +422,7 @@ public class SubGuiManual extends SubGui {
 						button.flag = true;
 					}
 					tree.addControl(button);
-					if (button.isBranch() && button.opened) {
+					if (button.isBranch() && button.isOpened) {
 						button.openMenus();
 					}
 				}
@@ -328,7 +431,7 @@ public class SubGuiManual extends SubGui {
 		
 		public void closeMenus() {
 			List controls = tree.getControls();
-			for (GuiTreeButton button : listOfMenus) {
+			for (GuiTreePart button : listOfParts) {
 				if (button.isBranch()) {
 					button.closeMenus();
 				}
