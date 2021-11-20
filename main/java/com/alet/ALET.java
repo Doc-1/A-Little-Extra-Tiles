@@ -355,6 +355,7 @@ public class ALET {
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
 		LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class).setNotShowCreativeTab();
 		LittleStructurePremade.registerPremadeStructureType("adjustable", ALET.MODID, LittleAdjustableFixedStructure.class).setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType("filling_cabinet", ALET.MODID, LittleAdjustableFixedStructure.class);
 		
 		SoundsHandler.registerSounds();
 		sounds = new ArrayList<>();

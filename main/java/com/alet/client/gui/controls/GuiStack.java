@@ -1,5 +1,6 @@
 package com.alet.client.gui.controls;
 
+import com.creativemd.creativecore.client.rendering.model.CreativeBakedModel;
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.mc.BlockUtils;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -22,9 +22,12 @@ public class GuiStack extends GuiStackSelectorAll {
 	public String texture;
 	private EnumFacing facing;
 	private ItemStack itemStack;
+	public boolean useBlock;
 	
-	public GuiStack(String name, int x, int y, int width, EntityPlayer player, StackCollector collector, boolean searchBar) {
+	public GuiStack(String name, int x, int y, int width, EntityPlayer player, StackCollector collector, boolean searchBar, boolean block) {
 		super(name, x, y, width, player, collector, searchBar);
+		this.useBlock = block;
+		System.out.println("adsdfvsdjfhvnshj nvm" + useBlock);
 	}
 	
 	public void setEnumFacing(String face) {
@@ -65,7 +68,6 @@ public class GuiStack extends GuiStackSelectorAll {
 			if (facing == null) {
 				facing = EnumFacing.NORTH;
 			}
-			getTexture(itemStack);
 			caption = stack.getDisplayName();
 			this.selected = stack;
 			raiseEvent(new GuiControlChangedEvent(this));
@@ -81,14 +83,19 @@ public class GuiStack extends GuiStackSelectorAll {
 		int meta = item.getMetadata(damage);
 		IBlockState state = BlockUtils.getState(block, meta);
 		
-		ResourceLocation reg = block.getRegistryName();
-		ResourceLocation location = new ResourceLocation(reg.toString());
 		Minecraft minecraft = Minecraft.getMinecraft();
-		BlockRendererDispatcher ren = minecraft.getBlockRendererDispatcher();
-		RenderItem itemRen = minecraft.getRenderItem();
-		ItemModelMesher mesher = itemRen.getItemModelMesher();
-		//System.out.println(mesher.getItemModel(new ItemStack(Items.APPLE)).getQuads(null, null, 0).get(0).getSprite().toString());
-		texture = mesher.getItemModel(new ItemStack(Items.APPLE)).getQuads(null, null, 0).get(0).getSprite().toString();
+		if (this.useBlock) {
+			ResourceLocation reg = block.getRegistryName();
+			BlockRendererDispatcher ren = minecraft.getBlockRendererDispatcher();
+			texture = ren.getModelForState(state).getQuads(state, facing, 0).get(0).getSprite().toString();
+		} else {
+			RenderItem itemRen = minecraft.getRenderItem();
+			ItemModelMesher mesher = itemRen.getItemModelMesher();
+			CreativeBakedModel model;
+			texture = mesher.getItemModel(stack).getQuads(null, null, 0).get(0).getSprite().toString();
+			//texture = 
+			//.getQuads(null, null, 0).get(0).getSprite().toString();
+		}
 		return texture;
 	}
 }

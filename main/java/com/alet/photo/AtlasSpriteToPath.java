@@ -1,7 +1,5 @@
 package com.alet.photo;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-
 public class AtlasSpriteToPath {
 	
 	private String modid;

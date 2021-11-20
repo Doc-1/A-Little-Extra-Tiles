@@ -17,6 +17,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
+import org.lwjgl.util.Color;
 
 import com.alet.ALET;
 import com.alet.client.gui.SubGuiPhotoImport;
@@ -45,7 +46,6 @@ public class PhotoReader {
 	public static int scaleX = 1;
 	public static int scaleY = 1;
 	public static boolean isRescale = false;
-	public static boolean isBlock = false;
 	
 	public static InputStream load(String url) throws IOException {
 		long requestTime = System.currentTimeMillis();
@@ -71,90 +71,49 @@ public class PhotoReader {
 		return resized;
 	}
 	
-	public static boolean imageExists(String input, boolean uploadOption) {
+	public static BufferedImage getImage(String input, String uploadOption) throws IOException {
 		InputStream in = null;
 		File file = null;
 		BufferedImage image = null;
-		try {
-			if (isBlock) {
-				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-				image = ImageIO.read(in);
-				isBlock = false;
-			} else if (uploadOption) {
-				in = load(input);
-				image = ImageIO.read(in);
-			} else {
-				file = new File(input);
-				image = ImageIO.read(file);
-			}
-		} catch (IOException e) {
-			return false;
+		if (uploadOption.equals("Print From Item") || uploadOption.equals("Print From Block")) {
+			in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
+			//in = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(input)).getInputStream();
+			image = ImageIO.read(in);
+		} else if (uploadOption.equals("Print From URL")) {
+			in = PhotoReader.load(input);
+			image = ImageIO.read(in);
+		} else if (uploadOption.equals("Print From File")) {
+			file = new File(input);
+			image = ImageIO.read(file);
 		}
-		return true;
+		return image;
 	}
 	
-	public static int getPixelWidth(String input, boolean uploadOption) {
-		InputStream in = null;
-		File file = null;
+	public static int getPixelWidth(String input, String uploadOption) {
 		BufferedImage image = null;
-		
 		try {
-			if (isBlock) {
-				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-				image = ImageIO.read(in);
-				isBlock = false;
-			} else if (uploadOption) {
-				in = load(input);
-				image = ImageIO.read(in);
-			} else {
-				file = new File(input);
-				image = ImageIO.read(file);
-			}
+			image = getImage(input, uploadOption);
 		} catch (IOException e) {
 			return 1;
 		}
 		return image.getWidth();
 	}
 	
-	public static int getPixelLength(String input, boolean uploadOption) {
-		InputStream in = null;
-		File file = null;
+	public static int getPixelLength(String input, String uploadOption) {
 		BufferedImage image = null;
 		
 		try {
-			if (isBlock) {
-				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-				image = ImageIO.read(in);
-				isBlock = false;
-			} else if (uploadOption) {
-				in = load(input);
-				image = ImageIO.read(in);
-			} else {
-				file = new File(input);
-				image = ImageIO.read(file);
-			}
+			image = getImage(input, uploadOption);
 		} catch (IOException e) {
 			return 1;
 		}
 		return image.getHeight();
 	}
 	
-	public static boolean photoExists(String input, boolean uploadOption) {
-		InputStream in = null;
-		File file = null;
+	public static boolean photoExists(String input, String uploadOption) {
 		BufferedImage image = null;
 		try {
-			if (PhotoReader.isBlock) {
-				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-				image = ImageIO.read(in);
-				PhotoReader.isBlock = false;
-			} else if (uploadOption) {
-				in = PhotoReader.load(input);
-				image = ImageIO.read(in);
-			} else {
-				file = new File(input);
-				image = ImageIO.read(file);
-			}
+			image = getImage(input, uploadOption);
 		} catch (IOException e) {
 		}
 		return image != null;
@@ -168,7 +127,7 @@ public class PhotoReader {
 	 *            The context or grid size of the tile.
 	 * @return
 	 *         Returns the NBT data for the structure */
-	public static ItemStack photoToStack(String input, boolean uploadOption, int grid, SubGui gui) throws IOException {
+	public static ItemStack photoToStack(String input, boolean ignoreAlpha, String uploadOption, int grid, SubGui gui) throws IOException {
 		GuiProgressBar progress = (GuiProgressBar) ((SubGuiPhotoImport) gui).get("progress");
 		
 		InputStream in = null;
@@ -179,17 +138,7 @@ public class PhotoReader {
 		int maxPixelAmount = ALET.CONFIG.getMaxPixelAmount();
 		
 		try {
-			if (PhotoReader.isBlock) {
-				in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-				image = ImageIO.read(in);
-				PhotoReader.isBlock = false;
-			} else if (uploadOption) {
-				in = PhotoReader.load(input);
-				image = ImageIO.read(in);
-			} else {
-				file = new File(input);
-				image = ImageIO.read(file);
-			}
+			image = getImage(input, uploadOption);
 			
 			if (PhotoReader.isRescale) {
 				if (!(PhotoReader.scaleX < 1) || !(PhotoReader.scaleY < 1)) {
@@ -210,8 +159,8 @@ public class PhotoReader {
 					
 					if (hasAlphaChannel) {
 						final int pixelLength = 4;
-						for (int pixel = 0, row = height - 1,
-						        col = 0; pixel + 3 < pixels.length; pixel += pixelLength) {
+						for (int pixel = 0, row = height - 1, col = 0; pixel
+						        + 3 < pixels.length; pixel += pixelLength) {
 							int argb = 0;
 							argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
 							argb += ((int) pixels[pixel + 1] & 0xff); // blue
@@ -227,8 +176,8 @@ public class PhotoReader {
 						}
 					} else {
 						final int pixelLength = 3;
-						for (int pixel = 0, row = height - 1,
-						        col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
+						for (int pixel = 0, row = height - 1, col = 0; pixel
+						        + 2 < pixels.length; pixel += pixelLength) {
 							int argb = 0;
 							argb += -16777216; // 255 alpha
 							argb += ((int) pixels[pixel] & 0xff); // blue
@@ -257,7 +206,11 @@ public class PhotoReader {
 						}
 						
 						if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
-							
+							if (ignoreAlpha) {
+								Color c = ColorUtils.IntToRGBA(color);
+								c.setAlpha(255);
+								color = ColorUtils.RGBAToInt(c);
+							}
 							colorTile = new LittleTileColored(LittleTiles.dyeableBlock, BlockLittleDyeable.LittleDyeableType.CLEAN.getMetadata(), color);
 							colorTile.setBox(new LittleBox(new LittleVec(col, row, 0)));
 							tiles.add(colorTile.getPreviewTile());
@@ -280,7 +233,6 @@ public class PhotoReader {
 			IOUtils.closeQuietly(in);
 			
 		}
-		PhotoReader.isBlock = false;
 		PhotoReader.isRescale = false;
 		return ItemStack.EMPTY;
 	}
@@ -289,10 +241,6 @@ public class PhotoReader {
 		isRescale = true;
 		scaleX = x;
 		scaleY = y;
-	}
-	
-	public static void printBlock() {
-		isBlock = true;
 	}
 	
 	public static void savePreview(LittlePreviews previews, ItemStack stack, GuiProgressBar progress) {
@@ -373,7 +321,6 @@ public class PhotoReader {
 							groupNBT = grouping.startNBTGrouping();
 						grouping.groupNBTTile(groupNBT, preview);
 						iterator2.remove();
-						System.out.println((double) classList.size() / classListMax);
 					}
 				}
 				
