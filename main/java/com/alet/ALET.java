@@ -16,6 +16,7 @@ import com.alet.client.container.SubContainerBlock;
 import com.alet.client.container.SubContainerPhotoImport;
 import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiBlock;
+import com.alet.client.gui.SubGuiFillingCabinet;
 import com.alet.client.gui.SubGuiMagnitudeComparator;
 import com.alet.client.gui.SubGuiManual;
 import com.alet.client.gui.SubGuiPhotoImport;
@@ -268,6 +269,19 @@ public class ALET {
 			@SideOnly(Side.CLIENT)
 			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
 				return new SubGuiManual();
+			}
+			
+			@Override
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubContainerBasic(player);
+			}
+		});
+		GuiHandler.registerGuiHandler("filling_cabinet", new CustomGuiHandler() {
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+				return new SubGuiFillingCabinet();
 			}
 			
 			@Override
