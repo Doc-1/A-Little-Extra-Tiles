@@ -26,6 +26,20 @@ public class GuiTreePart extends GuiControl {
 	public int originPosY;
 	public int originPosX;
 	
+	public int tempPosY;
+	public int tempPosX;
+	
+	public GuiTreePart(GuiTreePart part) {
+		this(part.caption);
+		this.posX = part.posX;
+		this.posY = part.posY;
+		this.originPosX = part.originPosX;
+		this.originPosY = part.originPosY;
+		this.tempPosX = part.tempPosX;
+		this.tempPosY = part.tempPosY;
+		this.tree = part.tree;
+	}
+	
 	public GuiTreePart(String caption) {
 		super("", 0, 0, GuiRenderHelper.instance.getStringWidth(caption), 8);
 		this.caption = caption;

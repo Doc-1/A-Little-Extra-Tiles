@@ -112,7 +112,7 @@ public class SubGuiManual extends SubGui {
 		listOfMenus.add(drawshapeAlet);
 		listOfMenus.add(blockAlet);
 		listOfMenus.add(toolsAlet);
-		scrollBox.controls.add(new GuiTree("tree", 0, 0, 194, listOfMenus));
+		scrollBox.controls.add(new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50));
 		
 	}
 	

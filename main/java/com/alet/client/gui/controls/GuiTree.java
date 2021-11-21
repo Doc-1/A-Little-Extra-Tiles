@@ -4,18 +4,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
 public class GuiTree extends GuiParent {
 	
 	public List<GuiTreePart> listOfRoots;
 	public List<GuiTreePart> listOfParts = new ArrayList<GuiTreePart>();
+	public List<GuiTreePart> listOfPartsSearched = new ArrayList<GuiTreePart>();
+	public List<GuiTreePart> listOfPartsRemoved = new ArrayList<GuiTreePart>();
 	public Map<GuiTreePart, GuiTreePart> mapOfRootToSubTrees = new HashMap<GuiTreePart, GuiTreePart>();
 	private int indexPos = 0;
+	public boolean useSearchBar;
+	int searchBarX;
+	int searchBarY;
+	int searchBarWidth;
 	
-	public GuiTree(String name, int x, int y, int width, List<GuiTreePart> listOfRoots) {
+	public GuiTree(String name, int x, int y, int width, List<GuiTreePart> listOfRoots, boolean useSearchBar, int searchBarX, int searchBarY, int searchBarWidth) {
 		super(name, x, y, width, 320);
+		this.useSearchBar = useSearchBar;
+		this.searchBarX = searchBarX;
+		this.searchBarY = searchBarY;
+		this.searchBarWidth = searchBarWidth;
 		this.listOfRoots = listOfRoots;
 		createControls();
 		allButtons();
@@ -25,9 +37,64 @@ public class GuiTree extends GuiParent {
 	public void createControls() {
 		for (int i = 0; i < listOfRoots.size(); i++) {
 			GuiTreePart button = listOfRoots.get(i);
-			button.posY = 14 * i;
+			button.posY = (14 * i) + 20;
 			button.originPosY = new Integer(button.posY);
 			addControl(button);
+		}
+		if (useSearchBar && !has("search"))
+			addControl(new GuiTextfield("search", "", searchBarX, searchBarY, searchBarWidth, 10) {
+				@Override
+				public boolean onKeyPressed(char character, int key) {
+					boolean result = super.onKeyPressed(character, key);
+					if (result) {
+						System.out.println(character + " " + key);
+						displaySearchResult();
+					}
+					return result;
+				}
+			});
+	}
+	
+	public void displaySearchResult() {
+		GuiTextfield searchBar = (GuiTextfield) get("search");
+		
+		for (GuiTreePart part : listOfPartsSearched) {
+			if (controls.contains(part))
+				removeControl(part);
+		}
+		
+		listOfPartsSearched.clear();
+		
+		for (GuiTreePart part : listOfParts) {
+			
+			if (!part.isRoot() && !part.isBranch()
+			        && Pattern.compile(Pattern.quote(searchBar.text), Pattern.CASE_INSENSITIVE).matcher(part.CAPTION).find()
+			        && !searchBar.text.equals("")) {
+				listOfPartsSearched.add(new GuiTreePart(part));
+			}
+			if (has(part.name)) {
+				listOfPartsRemoved.add(part);
+				removeControl(part);
+			}
+		}
+		
+		for (int i = 0; i < listOfPartsSearched.size(); i++) {
+			GuiTreePart button = listOfPartsSearched.get(i);
+			button.posY = (14 * i) + 20;
+			button.posX = 0;
+			addControl(button);
+		}
+		
+		if (searchBar.text.equals("")) {
+			for (GuiTreePart part : listOfPartsSearched) {
+				if (controls.contains(part))
+					removeControl(part);
+			}
+			for (GuiTreePart part : listOfPartsRemoved) {
+				addControl(part);
+			}
+			listOfPartsRemoved.clear();
+			listOfPartsSearched.clear();
 		}
 	}
 	
