@@ -10,6 +10,9 @@ import com.alet.client.render.entity.RenderLeashConnection;
 import com.alet.common.command.UpdateFontsCommand;
 import com.alet.common.event.ALETEventHandler;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
+import com.alet.common.util.shape.DragShapeCenteredBox;
+import com.alet.common.util.shape.DragShapeCenteredCylinder;
+import com.alet.common.util.shape.DragShapeCenteredSphere;
 import com.alet.common.util.shape.LittleShapeMagicWand;
 import com.alet.entity.EntityLeadConnection;
 import com.alet.render.tapemeasure.TapeRenderer;
@@ -83,6 +86,9 @@ public class ALETClient extends LittleTilesServer {
 		clearMeasurment = new KeyBinding("Clear Measurement", net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL, KeyModifier.ALT, Keyboard.KEY_C, "key.categories.littletiles");
 		ClientRegistry.registerKeyBinding(clearMeasurment);
 		ShapeRegistry.registerShape("magic_wand", new LittleShapeMagicWand(), ShapeType.SELECTOR);
+		ShapeRegistry.registerShape("centered_box", new DragShapeCenteredBox(), ShapeType.SELECTOR);
+		ShapeRegistry.registerShape("centered_cylider", new DragShapeCenteredCylinder(), ShapeType.SELECTOR);
+		ShapeRegistry.registerShape("centered_sphere", new DragShapeCenteredSphere(), ShapeType.SELECTOR);
 		
 		ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
 		

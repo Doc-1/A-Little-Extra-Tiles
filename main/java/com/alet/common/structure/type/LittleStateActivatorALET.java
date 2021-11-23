@@ -3,7 +3,6 @@ package com.alet.common.structure.type;
 import java.util.HashMap;
 
 import com.alet.client.gui.mutator.controls.GuiButtonAddMutationType;
-import com.alet.client.gui.mutator.controls.GuiComboBoxMutationType;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
@@ -110,7 +109,6 @@ public class LittleStateActivatorALET extends LittleStructure {
 	public void changeMaterialState() throws CorruptedConnectionException, NotYetConnectedException {
 		for (IStructureTileList tileList : this.blocksList()) {
 			for (LittleTile tile : tileList) {
-				System.out.println(tile.getBlockState());
 				
 				for (int i = 0; i < mutateMaterial.size() / 2; i++) {
 					IBlockState stateA = mutateMaterial.get("a" + i);
@@ -207,7 +205,7 @@ public class LittleStateActivatorALET extends LittleStructure {
 				mutatorCount = mutator.mutateMaterial.size();
 			GuiScrollBox box = new GuiScrollBox("box", 0, 0, 294, 100);
 			
-			parent.controls.add(new GuiComboBoxMutationType("mutationType", 125, 110, 90));
+			//parent.controls.add(new GuiComboBoxMutationType("mutationType", 125, 110, 90));
 			
 			GuiButtonAddMutationType add = new GuiButtonAddMutationType("new", 224, 110, 20, box);
 			

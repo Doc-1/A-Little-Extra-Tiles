@@ -67,6 +67,8 @@ public class GuiConfigurableTextBox extends GuiTextBox {
 				for (String s : font.listFormattedStringToWidth(data.text, w)) {
 					GlStateManager.pushMatrix();
 					GlStateManager.scale(data.size, data.size, 1);
+					if (y > 1)
+						GlStateManager.translate(0, -data.size * 9, 0);
 					font.drawString(s, x, y, color, true);
 					GlStateManager.popMatrix();
 					y += font.FONT_HEIGHT;

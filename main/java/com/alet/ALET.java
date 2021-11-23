@@ -13,6 +13,7 @@ import java.util.List;
 import com.alet.client.ALETClient;
 import com.alet.client.container.SubContainerBasic;
 import com.alet.client.container.SubContainerBlock;
+import com.alet.client.container.SubContainerFillingCabinet;
 import com.alet.client.container.SubContainerPhotoImport;
 import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiBlock;
@@ -24,6 +25,7 @@ import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
 import com.alet.client.sounds.SoundsHandler;
 import com.alet.common.blocks.BasicBlock;
+import com.alet.common.blocks.TransparentBlock;
 import com.alet.common.packet.PacketConnectLead;
 import com.alet.common.packet.PacketDropItem;
 import com.alet.common.packet.PacketGetServerCams;
@@ -40,6 +42,7 @@ import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleMusicComposerALET;
 import com.alet.common.structure.type.LittleStateActivatorALET;
 import com.alet.common.structure.type.premade.LittleAdjustableFixedStructure;
+import com.alet.common.structure.type.premade.LittleFillingCabinet;
 import com.alet.common.structure.type.premade.LittlePhotoImporter;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.structure.type.premade.PickupItemPremade;
@@ -171,6 +174,8 @@ public class ALET {
 	public static BasicBlock smoothBrick;
 	public static BasicBlock smoothGroutBrick;
 	
+	public static TransparentBlock transparent;
+	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent event) {
 		manual = new ItemLittleManual("little_manual");
@@ -185,13 +190,15 @@ public class ALET {
 		smoothJunglePlank = new BasicBlock("smoothjungleplank");
 		smoothBirchPlank = new BasicBlock("smoothbirchplank");
 		smoothAcaciaPlank = new BasicBlock("smoothacaciaplank");
+		transparent = new TransparentBlock("transparent");
 		
 		smoothBrick = new BasicBlock("smoothbrick");
 		smoothGroutBrick = new BasicBlock("smoothgroutbrick");
 		if (event.getSide().equals(Side.CLIENT)) {
 			ALETClient.addItemToRenderTiles(jumpRod);
+			createStructureFolder();
+			getFonts();
 		}
-		getFonts();
 		
 		registerEntity();
 		
@@ -276,17 +283,17 @@ public class ALET {
 				return new SubContainerBasic(player);
 			}
 		});
-		GuiHandler.registerGuiHandler("filling_cabinet", new CustomGuiHandler() {
+		GuiHandler.registerGuiHandler("filling_cabinet", new LittleStructureGuiHandler() {
 			
 			@Override
 			@SideOnly(Side.CLIENT)
-			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
-				return new SubGuiFillingCabinet();
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+				return new SubGuiFillingCabinet(structure);
 			}
 			
 			@Override
-			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
-				return new SubContainerBasic(player);
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+				return new SubContainerFillingCabinet(player, (LittleFillingCabinet) structure);
 			}
 		});
 		LittleStructureRegistry.registerStructureType("allows_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class).addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
@@ -305,12 +312,12 @@ public class ALET {
 	
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
-		event.getRegistry().registerAll(smoothGroutBrick, smoothBrick, smoothOakPlank, smoothDarkOakPlank, smoothAcaciaPlank, smoothSprucePlank, smoothJunglePlank, smoothBirchPlank);
+		event.getRegistry().registerAll(transparent, smoothGroutBrick, smoothBrick, smoothOakPlank, smoothDarkOakPlank, smoothAcaciaPlank, smoothSprucePlank, smoothJunglePlank, smoothBirchPlank);
 	}
 	
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
+		event.getRegistry().registerAll(manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(transparent).setRegistryName(transparent.getRegistryName()), new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
 		proxy.loadSide();
 	}
 	
@@ -362,14 +369,14 @@ public class ALET {
 		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("premade_quick_input1", ALET.MODID, LittlePremadeSignalInputQuickOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().addOutput("SignalMode", 1, SignalMode.PULSE);
 		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("premade_quick_output1", ALET.MODID, LittlePremadeSignalOutputQuickOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
 		
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output1", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input1", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output1", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input1", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid().setNotShowCreativeTab();
 		
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
 		LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class).setNotShowCreativeTab();
 		LittleStructurePremade.registerPremadeStructureType("adjustable", ALET.MODID, LittleAdjustableFixedStructure.class).setNotShowCreativeTab();
-		LittleStructurePremade.registerPremadeStructureType("filling_cabinet", ALET.MODID, LittleAdjustableFixedStructure.class);
+		LittleStructurePremade.registerPremadeStructureType("filling_cabinet", ALET.MODID, LittleFillingCabinet.class, LittleStructureAttribute.TICKING).addInput("accessed", 1);
 		
 		SoundsHandler.registerSounds();
 		sounds = new ArrayList<>();
@@ -380,6 +387,12 @@ public class ALET {
 	@EventHandler
 	public void PostInit(FMLPostInitializationEvent event) {
 		proxy.loadSidePost();
+	}
+	
+	public static void createStructureFolder() {
+		File d = new File("./little_structures");
+		if (!d.exists())
+			d.mkdir();
 	}
 	
 	public static List<String> getFonts() {

@@ -153,17 +153,15 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
 			
 			List<String> strings = new ArrayList<>();
 			strings.add("Modify Motion");
-			strings.add("Modify Inventory");
 			strings.add("Modify Health");
-			strings.add("Modify NBT");
-			strings.add("Modify Potion Effect");
 			strings.add("Modify Scoreboard");
 			strings.add("Execute Command");
 			GuiComboBox list = (new GuiComboBox("list", 0, 170, 100, strings) {
 				
 				@Override
 				protected GuiComboBoxExtension createBox() {
-					return new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 133 - getContentOffset() * 2, 100, lines);
+					return new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 133
+					        - getContentOffset() * 2, 100, lines);
 				}
 			});
 			list.height = 19;
@@ -175,7 +173,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
 			System.out.println(triggers);
 			if (triggers != null && !triggers.isEmpty()) {
 				for (int i = 0; i < triggers.size(); i++) {
-					box.addControl(new GuiTriggerEventButton(this, triggers.get(i).name + i, triggers.get(i).name, 0, i * 17, 119, 12));
+					box.addControl(new GuiTriggerEventButton(this, triggers.get(i).name + i, triggers.get(i).name, 0, i
+					        * 17, 119, 12));
 				}
 			}
 		}

@@ -67,7 +67,7 @@ public class GuiTree extends GuiParent {
 		
 		for (GuiTreePart part : listOfParts) {
 			
-			if (!part.isRoot() && !part.isBranch()
+			if (!part.isBranch()
 			        && Pattern.compile(Pattern.quote(searchBar.text), Pattern.CASE_INSENSITIVE).matcher(part.CAPTION).find()
 			        && !searchBar.text.equals("")) {
 				listOfPartsSearched.add(new GuiTreePart(part));
