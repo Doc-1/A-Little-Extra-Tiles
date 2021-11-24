@@ -72,7 +72,7 @@ public class SubGuiFillingCabinet extends SubGui {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				SlotControl slot = (SlotControl) contain.get("slot0");
+				SlotControl slot = (SlotControl) contain.get("input0");
 				ItemStack stack = slot.slot.getStack();
 				GuiTextfield text = (GuiTextfield) this.getGui().get("saveName");
 				if (stack != null
