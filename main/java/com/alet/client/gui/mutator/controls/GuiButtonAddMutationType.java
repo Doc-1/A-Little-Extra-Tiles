@@ -28,8 +28,10 @@ public class GuiButtonAddMutationType extends GuiButton {
 	
 	public void addMaterialMutation() {
 		
-		box.controls.add(new GuiStackSelectorAll("a" + depth, 0, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true));
-		box.controls.add(new GuiStackSelectorAll("b" + depth, 134, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true));
+		box.controls.add(new GuiStackSelectorAll("a" + depth
+		        / 21, 0, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true));
+		box.controls.add(new GuiStackSelectorAll("b" + depth
+		        / 21, 134, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true));
 		
 		box.controls.add(new GuiLabel("To", 111, (depth) + 2));
 		box.refreshControls();
@@ -58,11 +60,17 @@ public class GuiButtonAddMutationType extends GuiButton {
 	public void addMaterialMutation(LittleStateActivatorALET mutator) {
 		if (mutator != null && !mutator.mutateMaterial.isEmpty()) {
 			for (int i = 0; i < mutator.mutateMaterial.size() / 2; i++) {
-				GuiStackSelectorAll boxA = new GuiStackSelectorAll("a" + i, 0, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
-				GuiStackSelectorAll boxB = new GuiStackSelectorAll("b" + i, 134, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+				GuiStackSelectorAll boxA = new GuiStackSelectorAll("a"
+				        + i, 0, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+				GuiStackSelectorAll boxB = new GuiStackSelectorAll("b"
+				        + i, 134, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
 				
-				ItemStack itemA = new ItemStack(mutator.mutateMaterial.get("a" + i).getBlock(), 1, mutator.mutateMaterial.get("a" + i).getBlock().getMetaFromState(mutator.mutateMaterial.get("a" + i)));
-				ItemStack itemB = new ItemStack(mutator.mutateMaterial.get("b" + i).getBlock(), 1, mutator.mutateMaterial.get("b" + i).getBlock().getMetaFromState(mutator.mutateMaterial.get("b" + i)));
+				ItemStack itemA = new ItemStack(mutator.mutateMaterial.get("a"
+				        + i).getBlock(), 1, mutator.mutateMaterial.get("a"
+				                + i).getBlock().getMetaFromState(mutator.mutateMaterial.get("a" + i)));
+				ItemStack itemB = new ItemStack(mutator.mutateMaterial.get("b"
+				        + i).getBlock(), 1, mutator.mutateMaterial.get("b"
+				                + i).getBlock().getMetaFromState(mutator.mutateMaterial.get("b" + i)));
 				
 				boxA.setSelectedForce(itemA);
 				boxB.setSelectedForce(itemB);

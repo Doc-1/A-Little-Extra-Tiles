@@ -225,6 +225,7 @@ public class LittleStateActivatorALET extends LittleStructure {
 				}
 			
 			structure.mutateMaterial = mutateMaterial;
+			System.out.println(structure.mutateMaterial);
 			return structure;
 		}
 		
