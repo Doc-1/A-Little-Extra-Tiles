@@ -1,6 +1,8 @@
 package com.alet.common.structure.type;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.alet.client.gui.mutator.controls.GuiButtonAddMutationType;
 import com.creativemd.creativecore.common.gui.GuiControl;
@@ -42,6 +44,7 @@ public class LittleStateActivatorALET extends LittleStructure {
 	public int attributeMod = 0;
 	public HashMap<String, IBlockState> mutateMaterial = new HashMap<String, IBlockState>();
 	public boolean activated = false;
+	public List<IBlockState> ignoreMaterial = new ArrayList<IBlockState>();
 	
 	public LittleStateActivatorALET(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
@@ -115,10 +118,8 @@ public class LittleStateActivatorALET extends LittleStructure {
 					IBlockState stateB = mutateMaterial.get("b" + i);
 					if (tile.getBlockState().equals(stateA)) {
 						tile.setBlock(stateB.getBlock(), stateB.getBlock().getMetaFromState(stateB));
-						continue;
+						break;
 					}
-					if (tile.getBlockState().equals(stateB))
-						tile.setBlock(stateA.getBlock(), stateA.getBlock().getMetaFromState(stateA));
 					
 				}
 				tile.updateBlockState();
@@ -191,8 +192,6 @@ public class LittleStateActivatorALET extends LittleStructure {
 	
 	public static class LittleStateActivatorParserALET extends LittleStructureGuiParser {
 		
-		int mutatorCount = 0;
-		
 		public LittleStateActivatorParserALET(GuiParent parent, AnimationGuiHandler handler) {
 			super(parent, handler);
 		}
@@ -201,14 +200,16 @@ public class LittleStateActivatorALET extends LittleStructure {
 		protected void createControls(LittlePreviews previews, LittleStructure structure) {
 			LittleStateActivatorALET mutator = (LittleStateActivatorALET) structure;
 			
-			if (mutator != null && !mutator.mutateMaterial.isEmpty())
-				mutatorCount = mutator.mutateMaterial.size();
 			GuiScrollBox box = new GuiScrollBox("box", 0, 0, 294, 100);
-			
-			//parent.controls.add(new GuiComboBoxMutationType("mutationType", 125, 110, 90));
-			
 			GuiButtonAddMutationType add = new GuiButtonAddMutationType("new", 224, 110, 20, box);
 			
+			if (mutator != null && !mutator.mutateMaterial.isEmpty()) {
+				for (int i = 0; i < mutator.mutateMaterial.size() / 2; i++) {
+					IBlockState a = mutator.mutateMaterial.get("a" + i);
+					IBlockState b = mutator.mutateMaterial.get("b" + i);
+					add.addMaterialMutation(a, b);
+				}
+			}
 			parent.controls.add(add);
 			parent.controls.add(box);
 		}

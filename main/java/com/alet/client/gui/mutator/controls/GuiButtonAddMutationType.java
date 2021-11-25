@@ -1,6 +1,5 @@
 package com.alet.client.gui.mutator.controls;
 
-import com.alet.common.structure.type.LittleStateActivatorALET;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
@@ -9,7 +8,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelect
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.client.gui.LittleSubGuiUtils.LittleBlockSelector;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.state.IBlockState;
 
 public class GuiButtonAddMutationType extends GuiButton {
 	
@@ -39,6 +38,22 @@ public class GuiButtonAddMutationType extends GuiButton {
 		depth += 21;
 	}
 	
+	public void addMaterialMutation(IBlockState materialA, IBlockState materialB) {
+		GuiStackSelectorAll a = new GuiStackSelectorAll("a" + depth
+		        / 21, 0, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+		box.controls.add(a);
+		GuiStackSelectorAll b = new GuiStackSelectorAll("b" + depth
+		        / 21, 134, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+		box.controls.add(b);
+		box.controls.add(new GuiLabel("To", 111, (depth) + 2));
+		
+		a.setSelectedForce(materialA.getBlock().getPickBlock(materialA, null, null, null, null));
+		b.setSelectedForce(materialB.getBlock().getPickBlock(materialB, null, null, null, null));
+		box.refreshControls();
+		
+		depth += 21;
+	}
+	
 	public void addColorMutation() {
 		System.out.println(depth);
 		box.controls.add(new GuiColorPickerAlet("a", 0, depth, ColorUtils.IntToRGBA(ColorUtils.WHITE), true, 0));
@@ -57,30 +72,4 @@ public class GuiButtonAddMutationType extends GuiButton {
 		
 	}
 	
-	public void addMaterialMutation(LittleStateActivatorALET mutator) {
-		if (mutator != null && !mutator.mutateMaterial.isEmpty()) {
-			for (int i = 0; i < mutator.mutateMaterial.size() / 2; i++) {
-				GuiStackSelectorAll boxA = new GuiStackSelectorAll("a"
-				        + i, 0, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
-				GuiStackSelectorAll boxB = new GuiStackSelectorAll("b"
-				        + i, 134, (depth), 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
-				
-				ItemStack itemA = new ItemStack(mutator.mutateMaterial.get("a"
-				        + i).getBlock(), 1, mutator.mutateMaterial.get("a"
-				                + i).getBlock().getMetaFromState(mutator.mutateMaterial.get("a" + i)));
-				ItemStack itemB = new ItemStack(mutator.mutateMaterial.get("b"
-				        + i).getBlock(), 1, mutator.mutateMaterial.get("b"
-				                + i).getBlock().getMetaFromState(mutator.mutateMaterial.get("b" + i)));
-				
-				boxA.setSelectedForce(itemA);
-				boxB.setSelectedForce(itemB);
-				box.controls.add(boxA);
-				box.controls.add(boxB);
-				box.controls.add(new GuiLabel("To", 111, (i * 21) + 2));
-				
-				box.refreshControls();
-				depth += 21;
-			}
-		}
-	}
 }
