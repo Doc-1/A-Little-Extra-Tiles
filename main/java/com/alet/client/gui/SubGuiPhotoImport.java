@@ -100,7 +100,8 @@ public class SubGuiPhotoImport extends SubGui {
 				GuiTextfield imageHeight = (GuiTextfield) get("imageHeight");
 				GuiCheckBox keepAspect = (GuiCheckBox) get("keepAspect");
 				boolean result = super.onKeyPressed(character, key);
-				if (!this.text.isEmpty() && keepAspect.value) {
+				if (result && !this.text.isEmpty() && keepAspect.value) {
+					System.out.println(key);
 					imageHeight.text = String.valueOf((int) (aspectRatio * Double.parseDouble(imageWidth.text)));
 				}
 				return result;
@@ -119,7 +120,8 @@ public class SubGuiPhotoImport extends SubGui {
 				GuiTextfield imageHeight = (GuiTextfield) get("imageHeight");
 				GuiCheckBox keepAspect = (GuiCheckBox) get("keepAspect");
 				boolean result = super.onKeyPressed(character, key);
-				if (!imageHeight.text.isEmpty() && keepAspect.value) {
+				if (result && !imageHeight.text.isEmpty() && keepAspect.value) {
+					System.out.println(key);
 					imageWidth.text = String.valueOf((int) (Double.parseDouble(imageHeight.text) / aspectRatio));
 				}
 				return result;
@@ -348,7 +350,8 @@ public class SubGuiPhotoImport extends SubGui {
 			@Override
 			public boolean onKeyPressed(char character, int key) {
 				boolean result = super.onKeyPressed(character, key);
-				updatePhotoData();
+				if (result)
+					updatePhotoData();
 				return result;
 			}
 		});
@@ -387,6 +390,7 @@ public class SubGuiPhotoImport extends SubGui {
 	}
 	
 	public void updatePhotoData() {
+		System.out.println("update?");
 		GuiLongTextField file = (GuiLongTextField) get("file");
 		GuiTextfield imageWidth = (GuiTextfield) get("imageWidth");
 		GuiTextfield imageHeight = (GuiTextfield) get("imageHeight");

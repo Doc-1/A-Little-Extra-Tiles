@@ -27,7 +27,6 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -131,32 +130,6 @@ public class LittleStateActivatorALET extends LittleStructure {
 		this.updateStructure();
 	}
 	
-	public void changeMaterialState2() throws CorruptedConnectionException, NotYetConnectedException {
-		for (IStructureTileList tileList : this.blocksList()) {
-			for (LittleTile tile : tileList) {
-				System.out.println(tile.getBlockState());
-				
-				//stateA becomes stateB and vice versa
-				IBlockState stateA = Blocks.COBBLESTONE.getDefaultState();
-				IBlockState stateB = Blocks.DIRT.getDefaultState();
-				
-				//Sees if the tile is currently stateA or stateB.
-				if (tile.getBlockState().equals(stateA)) //if tile = stateA then change to stateB
-					tile.setBlock(stateB.getBlock(), stateB.getBlock().getMetaFromState(stateB));
-				else if (tile.getBlockState().equals(stateB)) //if tile = stateB then change to stateA
-					tile.setBlock(stateA.getBlock(), stateA.getBlock().getMetaFromState(stateA));
-				
-				//updates state
-				tile.updateBlockState();
-			}
-			//updates other tiles and blocks next to tiles.
-			tileList.getTe().updateBlock();
-			tileList.getTe().updateNeighbour();
-		}
-		//Update structure
-		this.updateStructure();
-	}
-	
 	public void changeCollisionState() throws CorruptedConnectionException, NotYetConnectedException {
 		NBTTagCompound nbt = new NBTTagCompound();
 		
@@ -202,7 +175,6 @@ public class LittleStateActivatorALET extends LittleStructure {
 			
 			GuiScrollBox box = new GuiScrollBox("box", 0, 0, 294, 100);
 			GuiButtonAddMutationType add = new GuiButtonAddMutationType("new", 224, 110, 20, box);
-			
 			if (mutator != null && !mutator.mutateMaterial.isEmpty()) {
 				for (int i = 0; i < mutator.mutateMaterial.size() / 2; i++) {
 					IBlockState a = mutator.mutateMaterial.get("a" + i);
@@ -210,6 +182,7 @@ public class LittleStateActivatorALET extends LittleStructure {
 					add.addMaterialMutation(a, b);
 				}
 			}
+			
 			parent.controls.add(add);
 			parent.controls.add(box);
 		}
@@ -226,7 +199,6 @@ public class LittleStateActivatorALET extends LittleStructure {
 				}
 			
 			structure.mutateMaterial = mutateMaterial;
-			System.out.println(structure.mutateMaterial);
 			return structure;
 		}
 		
