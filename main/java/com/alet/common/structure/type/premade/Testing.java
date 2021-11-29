@@ -69,7 +69,10 @@ public class Testing extends LittleStructurePremade {
 		LittleGridContext context = box.getContext();
 		BlockPos min = new BlockPos(context.toBlockOffset(minX), context.toBlockOffset(minY), context.toBlockOffset(minZ));
 		
-		LittleVecContext minVec = new LittleVecContext(new LittleVec((int) (minX - (long) min.getX() * (long) context.size), (int) (minY - (long) min.getY() * (long) context.size), (int) (minZ - (long) min.getZ() * (long) context.size)), context);
+		LittleVecContext minVec = new LittleVecContext(new LittleVec((int) (minX
+		        - (long) min.getX() * (long) context.size), (int) (minY
+		                - (long) min.getY() * (long) context.size), (int) (minZ
+		                        - (long) min.getZ() * (long) context.size)), context);
 		
 		LittlePreviews previews = getStructurePremadeEntry("photoimporter").previews.copy(); // Change this line to support different states
 		LittleVec previewMinVec = previews.getMinVec();
@@ -86,7 +89,7 @@ public class Testing extends LittleStructurePremade {
 		previews.getPlacePreviews(LittleVec.ZERO);
 		try {
 			PlacementPreview placePreview = new PlacementPreview(this.getWorld(), previews, PlacementMode.fill, preview.box, false, this.mainBlock.getPos(), LittleVec.ZERO, EnumFacing.DOWN);
-			this.removeStructure();
+			this.onLittleTileDestroy();
 			
 			Placement place = new Placement(Minecraft.getMinecraft().player, placePreview);
 			place.tryPlace();

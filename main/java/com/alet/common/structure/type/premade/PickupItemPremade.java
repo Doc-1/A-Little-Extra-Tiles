@@ -59,7 +59,7 @@ public class PickupItemPremade extends InteractivePremade {
 				parent.removeDynamicChild(getParent().childId);
 				parent.updateStructure();
 			}
-			this.removeStructure();
+			this.onLittleTileDestroy();
 		}
 		return true;
 	}
