@@ -8,6 +8,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiStateButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTabStateButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.type.HashMapList;
 import com.creativemd.creativecore.common.utils.type.UUIDSupplier;
 import com.creativemd.creativecore.common.world.SubWorld;
@@ -17,6 +18,8 @@ import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.entity.DoorController;
 import com.creativemd.littletiles.common.entity.EntityAnimation;
+import com.creativemd.littletiles.common.packet.LittleAnimationControllerPacket;
+import com.creativemd.littletiles.common.packet.LittleAnimationDataPacket;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.relative.StructureAbsolute;
@@ -59,10 +62,14 @@ public class LittleAxisLoopDoor extends LittleAxisDoor {
 	@Override
 	public EntityAnimation openDoor(EntityPlayer player, UUIDSupplier uuid, boolean tickOnce) throws LittleActionException {
 		if (isAnimated()) {
-			System.out.println(((DoorController) animation.controller).writeToNBT(new NBTTagCompound()));
+			NBTTagCompound n = ((DoorController) animation.controller).writeToNBT(new NBTTagCompound());
+			n.setInteger("duration", 0);
+			animation.controller = ((DoorController) animation.controller).parseController(animation, n);
+			System.out.println();
 			((DoorController) animation.controller).activate();
 			if (tickOnce)
 				animation.onUpdateForReal();
+			PacketHandler.sendPacketToTrackingPlayers(new LittleAnimationControllerPacket(animation), animation, null);
 			return animation;
 		}
 		
@@ -78,7 +85,9 @@ public class LittleAxisLoopDoor extends LittleAxisDoor {
 		
 		EntityAnimation animation = place(getWorld(), fakeWorld, player, placement, uuid, absolute, tickOnce);
 		
-		boolean sendUpdate = !world.isRemote && world instanceof WorldServer;
+		System.out.println(((DoorController) animation.controller).writeToNBT(new NBTTagCompound()));
+		boolean sendUpdate = !world.isRemote;
+		EntityAnimation topAnimation = world instanceof WorldServer ? null : (EntityAnimation) fakeWorld.getTopEntity();
 		
 		for (Entry<BlockPos, ArrayList<IStructureTileList>> entry : blocks.entrySet()) {
 			if (entry.getValue().isEmpty())
@@ -89,10 +98,15 @@ public class LittleAxisLoopDoor extends LittleAxisDoor {
 					x.get(list).remove();
 			});
 			if (sendUpdate)
-				((WorldServer) world).getPlayerChunkMap().markBlockForUpdate(te.getPos());
+				if (topAnimation == null)
+					((WorldServer) world).getPlayerChunkMap().markBlockForUpdate(te.getPos());
+				else
+					PacketHandler.sendPacketToTrackingPlayers(new LittleAnimationDataPacket(topAnimation), topAnimation, null);
+				
 		}
 		
 		return animation;
+		
 	}
 	
 	public static class LittleAxisLoopDoorParser extends LittleAxisDoorParser {

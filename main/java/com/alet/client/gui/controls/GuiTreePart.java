@@ -29,8 +29,10 @@ public class GuiTreePart extends GuiControl {
 	public int tempPosY;
 	public int tempPosX;
 	
+	public EnumPartType type;
+	
 	public GuiTreePart(GuiTreePart part) {
-		this(part.caption);
+		this(part.caption, part.type);
 		this.posX = part.posX;
 		this.posY = part.posY;
 		this.originPosX = part.originPosX;
@@ -40,19 +42,21 @@ public class GuiTreePart extends GuiControl {
 		this.tree = part.tree;
 	}
 	
-	public GuiTreePart(String caption) {
+	public GuiTreePart(String caption, EnumPartType type) {
 		super("", 0, 0, GuiRenderHelper.instance.getStringWidth(caption), 8);
 		this.caption = caption;
 		this.CAPTION = caption;
+		this.type = type;
 	}
 	
 	public GuiTreePart addMenu(GuiTreePart button) {
 		this.listOfParts.add(button);
 		if (this.listOfParts != null && !this.listOfParts.isEmpty())
-			if (!caption.contains("+")) {
-				this.caption = "+ " + caption;
-				this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
-			}
+			System.out.println(this.CAPTION + " " + this.type + "  " + button.CAPTION + " " + button.type);
+		if (!caption.contains("+")) {
+			this.caption = "+ " + caption;
+			this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
+		}
 		return this;
 	}
 	
@@ -196,16 +200,16 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public int getTotalOpenedBranchSize() {
-		int start = this.getPartID() + 1;
-		GuiTreePart part0 = tree.listOfParts.get(start);
+		int start = this.getPartID();
 		int total = this.getTotalBranchSize();
-		for (int i = start; i < start + total; i++) {
+		int end = start + total;
+		for (int i = start; i < end; i++) {
 			GuiTreePart checkPart = tree.listOfParts.get(i);
 			if (checkPart.isBranch() && !checkPart.isOpened()) {
-				total -= checkPart.getTotalBranchSize();
+				int f = checkPart.getTotalBranchSize();
+				total -= f;
 			}
 		}
-		
 		return total;
 	}
 	
@@ -309,5 +313,9 @@ public class GuiTreePart extends GuiControl {
 	@Override
 	public boolean hasBorder() {
 		return false;
+	}
+	
+	public enum EnumPartType {
+		Title, Root, Branch, Leaf;
 	}
 }

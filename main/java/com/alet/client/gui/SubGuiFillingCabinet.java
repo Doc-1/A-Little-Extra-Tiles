@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.alet.client.gui.controls.GuiTree;
 import com.alet.client.gui.controls.GuiTreePart;
+import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.Layer;
 import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
@@ -128,7 +129,7 @@ public class SubGuiFillingCabinet extends SubGui {
 			}
 		listOfRoots.clear();
 		for (File file : d.listFiles()) {
-			listOfRoots.add(new GuiTreePart(file.getName()));
+			listOfRoots.add(new GuiTreePart(file.getName(), EnumPartType.Root));
 		}
 		tree.createControls();
 		tree.allButtons();
