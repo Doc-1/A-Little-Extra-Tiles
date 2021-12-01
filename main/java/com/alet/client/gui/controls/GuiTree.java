@@ -103,7 +103,7 @@ public class GuiTree extends GuiParent {
 			GuiTreePart root = listOfRoots.get(i);
 			root.isRoot = true;
 			root.name = indexPos++ + "";
-			root.heldIn = Integer.parseInt(root.name);
+			root.heldInRoot = Integer.parseInt(root.name);
 			root.tree = this;
 			listOfParts.add(root);
 			if (root.listOfParts != null && !root.listOfParts.isEmpty())
@@ -114,7 +114,7 @@ public class GuiTree extends GuiParent {
 	public void allButtons(GuiTreePart root, int j) {
 		for (int i = 0; i < root.listOfParts.size(); i++) {
 			GuiTreePart part = root.listOfParts.get(i);
-			part.heldIn = Integer.parseInt(root.name);
+			part.heldInRoot = Integer.parseInt(root.name);
 			part.name = indexPos++ + "";
 			part.tree = this;
 			listOfParts.add(part);
@@ -131,7 +131,19 @@ public class GuiTree extends GuiParent {
 	public void moveTreePartsDown(GuiTreePart button) {
 		boolean flag = true;
 		int move = button.getBranchSize();
-		int start = button.getPartID() + 1;
+		int start = button.getPartID() + 1;/*
+		                                   for (GuiTreePart part : this.listOfParts) {
+		                                   if (part.isInView() && !part.isRoot()) {
+		                                   System.out.println(part.CAPTION);
+		                                   }
+		                                   }*/
+		System.out.println();
+		GuiTreePart branch = button;
+		for (GuiTreePart part : button.getListOfPartsToMove()) {
+			System.out.println(part.CAPTION + button.getTotalOpenedBranchSize());
+			part.posY = part.posY + (14 * button.getTotalOpenedBranchSize());
+		}
+		/*
 		GuiTreePart branch = button;
 		GuiTreePart part = button;
 		do {
@@ -146,15 +158,20 @@ public class GuiTree extends GuiParent {
 			}
 			branch = branch.nextBranch();
 		} while (branch != null && branch.hasNextBranch());
-		
+		*/
 	}
 	
 	public void moveTreePartsUp(GuiTreePart button) {
 		boolean flag = true;
 		int move = button.getBranchSize();
 		int start = button.getPartID() + 1;
+		System.out.println();
 		GuiTreePart branch = button;
-		GuiTreePart part = button;
+		for (GuiTreePart part : button.getListOfPartsToMove()) {
+			System.out.println(part.CAPTION + button.getTotalOpenedBranchSize());
+			part.posY = part.posY - (14 * button.getTotalOpenedBranchSize());
+		}
+		/*
 		do {
 			if (button.isInSameBranch(branch)) {
 				part = branch;
@@ -167,7 +184,7 @@ public class GuiTree extends GuiParent {
 			}
 			branch = branch.nextBranch();
 		} while (branch != null && branch.hasNextBranch());
-		
+		*/
 	}
 	
 	@Override

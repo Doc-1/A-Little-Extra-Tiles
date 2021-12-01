@@ -15,13 +15,13 @@ import net.minecraft.init.SoundEvents;
 public class GuiTreePart extends GuiControl {
 	
 	public List<GuiTreePart> listOfParts = new ArrayList<GuiTreePart>();
+	GuiTreePart branchHeldIn;
 	private boolean isOpened = false;
 	boolean isRoot = false;
-	int heldIn;
+	int heldInRoot;
 	public final String CAPTION;
 	public String caption;
 	public GuiTree tree;
-	
 	private boolean flag = false;
 	public int originPosY;
 	public int originPosX;
@@ -51,8 +51,7 @@ public class GuiTreePart extends GuiControl {
 	
 	public GuiTreePart addMenu(GuiTreePart button) {
 		this.listOfParts.add(button);
-		if (this.listOfParts != null && !this.listOfParts.isEmpty())
-			System.out.println(this.CAPTION + " " + this.type + "  " + button.CAPTION + " " + button.type);
+		button.branchHeldIn = this;
 		if (!caption.contains("+")) {
 			this.caption = "+ " + caption;
 			this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
@@ -136,6 +135,10 @@ public class GuiTreePart extends GuiControl {
 		return null;
 	}
 	
+	public boolean isInView() {
+		return tree.has(this.name);
+	}
+	
 	/** @return
 	 *         The ID the part has. IDs are in same order as addMenus that create the tree */
 	public int getPartID() {
@@ -149,7 +152,7 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public int getBranchIDThisIsIn() {
-		return this.heldIn;
+		return this.heldInRoot;
 	}
 	
 	public boolean isOpened() {
@@ -200,17 +203,75 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public int getTotalOpenedBranchSize() {
-		int start = this.getPartID();
-		int total = this.getTotalBranchSize();
-		int end = start + total;
-		for (int i = start; i < end; i++) {
-			GuiTreePart checkPart = tree.listOfParts.get(i);
-			if (checkPart.isBranch() && !checkPart.isOpened()) {
-				int f = checkPart.getTotalBranchSize();
-				total -= f;
+		int start = this.getPartID() + 1;
+		int total = 0;
+		int end = start + this.getTotalBranchSize();
+		for (GuiTreePart part : this.getListOfPartsUp()) {
+			if (part.isInView()) {
+				total++;
 			}
 		}
 		return total;
+	}
+	
+	public List<GuiTreePart> getListOfPartsToMove() {
+		List<GuiTreePart> list = new ArrayList<GuiTreePart>();
+		int start = this.getBranchSize() + Integer.parseInt(this.name) - 1;
+		int end = tree.listOfParts.size();
+		for (int i = start; i < end; i++) {
+			GuiTreePart checkPart = tree.listOfParts.get(i);
+			if (!this.isInSameBranch(checkPart))
+				list.add(checkPart);
+		}
+		return list;
+	}
+	
+	public List<GuiTreePart> getListOfPartsUp() {
+		List<GuiTreePart> list = new ArrayList<GuiTreePart>();
+		
+		int start = this.getPartID() + 1;
+		int end = start + this.getTotalBranchSize();
+		for (int i = start; i < end; i++) {
+			GuiTreePart checkPart = tree.listOfParts.get(i);
+			list.add(checkPart);
+		}
+		return list;
+	}
+	
+	public List<GuiTreePart> getListOfPartsDown() {
+		List<GuiTreePart> list = new ArrayList<GuiTreePart>();
+		
+		int start = this.getPartID();
+		int end = this.getRootIDThisIsIn();
+		for (int i = start; i > end; i--) {
+			GuiTreePart checkPart = tree.listOfParts.get(i);
+			list.add(checkPart);
+		}
+		
+		return list;
+	}
+	
+	public List<GuiTreePart> getListOfBranchesUp() {
+		List<GuiTreePart> list = new ArrayList<GuiTreePart>();
+		
+		int start = this.getPartID() + 1;
+		int end = start + this.getTotalBranchSize();
+		for (int i = start; i < end; i++) {
+			GuiTreePart checkPart = tree.listOfParts.get(i);
+			if (checkPart.isBranch())
+				list.add(checkPart);
+		}
+		return list;
+	}
+	
+	public List<GuiTreePart> getListOfBranchesDown() {
+		List<GuiTreePart> list = new ArrayList<GuiTreePart>();
+		GuiTreePart branch = this;
+		while (branch.branchHeldIn != null) {
+			branch = branch.branchHeldIn;
+			list.add(branch);
+		}
+		return list;
 	}
 	
 	public boolean isInSameBranch(GuiTreePart part) {
@@ -240,13 +301,13 @@ public class GuiTreePart extends GuiControl {
 	/** @return
 	 *         true if the branch is opened but no longer in view. false if still in view or closed and not in view. */
 	public boolean isBranchHiddenAndOpened() {
-		return !tree.has(this.name) && this.isOpened;
+		return !this.isInView() && this.isOpened;
 	}
 	
 	/** @return
 	 *         true if the branch is closed but no longer in view. false if still in view or opened and not in view. */
 	public boolean isBranchHiddenAndClosed() {
-		return !tree.has(this.name) && !this.isOpened;
+		return !this.isInView() && !this.isOpened;
 	}
 	
 	public void onClicked(int x, int y, int mouseButton) {
@@ -259,8 +320,8 @@ public class GuiTreePart extends GuiControl {
 			} else {
 				isOpened = false;
 				this.caption = "+ " + this.CAPTION;
-				this.closeMenus();
 				tree.moveTreePartsUp(this);
+				this.closeMenus();
 			}
 		}
 		raiseEvent(new GuiControlChangedEvent(this));
