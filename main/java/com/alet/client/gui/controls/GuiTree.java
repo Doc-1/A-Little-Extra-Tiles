@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -47,7 +48,6 @@ public class GuiTree extends GuiParent {
 				public boolean onKeyPressed(char character, int key) {
 					boolean result = super.onKeyPressed(character, key);
 					if (result) {
-						System.out.println(character + " " + key);
 						displaySearchResult();
 					}
 					return result;
@@ -114,6 +114,17 @@ public class GuiTree extends GuiParent {
 	public void allButtons(GuiTreePart root, int j) {
 		for (int i = 0; i < root.listOfParts.size(); i++) {
 			GuiTreePart part = root.listOfParts.get(i);
+			if (!part.isRoot) {
+				part.posY = (14 * (i + 1)) + root.posY;
+				part.posX = 14 + root.posX;
+				if (part.isBranch())
+					part.posX = 18 + root.posX;
+				if (!part.flag) {
+					part.originPosX = new Integer(part.posX);
+					part.originPosY = new Integer(part.posY);
+					part.flag = true;
+				}
+			}
 			part.heldInRoot = Integer.parseInt(root.name);
 			part.name = indexPos++ + "";
 			part.tree = this;
@@ -137,13 +148,37 @@ public class GuiTree extends GuiParent {
 		                                   System.out.println(part.CAPTION);
 		                                   }
 		                                   }*/
-		System.out.println();
-		GuiTreePart branch = button;
-		for (GuiTreePart part : button.getListOfPartsToMove()) {
-			System.out.println(part.CAPTION + button.getTotalOpenedBranchSize());
-			part.posY = part.posY + (14 * button.getTotalOpenedBranchSize());
+		Map<GuiTreePart, Integer> movePartBy = new HashMap<GuiTreePart, Integer>();
+		for (GuiTreePart branch : this.listOfParts) {
+			if (branch.isBranch()) {
+				for (GuiTreePart part : branch.getListOfPartsToMove()) {
+					if (movePartBy.containsKey(part)) {
+						int add = movePartBy.get(part);
+						movePartBy.put(part, add + branch.getBranchSize());
+					} else {
+						movePartBy.put(part, branch.getBranchSize());
+					}
+					if (!branch.isOpened() || branch.isBranchHiddenAndOpened()) {
+						int add = movePartBy.get(part);
+						movePartBy.put(part, add - branch.getBranchSize());
+					}
+				}
+			}
+		}
+		for (Entry<GuiTreePart, Integer> entry : movePartBy.entrySet()) {
+			entry.getKey().posY = entry.getKey().originPosY + (14 * entry.getValue());
+			System.out.println(entry.getKey().CAPTION + " " + entry.getValue());
 		}
 		/*
+		 * 
+		for (GuiTreePart branch : button.getListOfBranchesUp()) {
+			System.out.println(branch.CAPTION + " " + branch.isOpened());
+			if (branch.isOpened()) {
+				for (GuiTreePart part : branch.getListOfPartsToMove()) {
+					part.posY = part.posY + (14 * branch.getBranchSize());
+				}
+			}
+		}
 		GuiTreePart branch = button;
 		GuiTreePart part = button;
 		do {
@@ -165,12 +200,14 @@ public class GuiTree extends GuiParent {
 		boolean flag = true;
 		int move = button.getBranchSize();
 		int start = button.getPartID() + 1;
-		System.out.println();
-		GuiTreePart branch = button;
-		for (GuiTreePart part : button.getListOfPartsToMove()) {
-			System.out.println(part.CAPTION + button.getTotalOpenedBranchSize());
-			part.posY = part.posY - (14 * button.getTotalOpenedBranchSize());
+		for (GuiTreePart branch : this.listOfParts) {
+			if (branch.isBranch()) {
+				for (GuiTreePart part : branch.getListOfPartsToMove()) {
+					part.posY = part.originPosY - (14 * branch.getBranchSize());
+				}
+			}
 		}
+		
 		/*
 		do {
 			if (button.isInSameBranch(branch)) {

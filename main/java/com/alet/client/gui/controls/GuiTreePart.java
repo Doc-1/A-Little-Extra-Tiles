@@ -22,7 +22,7 @@ public class GuiTreePart extends GuiControl {
 	public final String CAPTION;
 	public String caption;
 	public GuiTree tree;
-	private boolean flag = false;
+	boolean flag = false;
 	public int originPosY;
 	public int originPosX;
 	
@@ -316,31 +316,20 @@ public class GuiTreePart extends GuiControl {
 				isOpened = true;
 				this.caption = "- " + this.CAPTION;
 				this.openMenus();
-				tree.moveTreePartsDown(this);
 			} else {
 				isOpened = false;
 				this.caption = "+ " + this.CAPTION;
-				tree.moveTreePartsUp(this);
 				this.closeMenus();
 			}
+			tree.moveTreePartsDown(this);
 		}
 		raiseEvent(new GuiControlChangedEvent(this));
 	}
 	
-	// try adding mod when it reiterates this method
 	public void openMenus() {
 		for (int i = 0; i < listOfParts.size(); i++) {
 			GuiTreePart button = listOfParts.get(i);
 			if (!button.isRoot) {
-				button.posY = (14 * (i + 1)) + this.posY;
-				button.posX = 14 + this.posX;
-				if (button.isBranch())
-					button.posX = 18 + this.posX;
-				if (!button.flag) {
-					button.originPosX = new Integer(button.posX);
-					button.originPosY = new Integer(button.posY);
-					button.flag = true;
-				}
 				tree.addControl(button);
 				if (button.isBranch() && button.isOpened) {
 					button.openMenus();
