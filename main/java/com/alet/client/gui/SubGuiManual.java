@@ -26,7 +26,8 @@ public class SubGuiManual extends SubGui {
 	GuiScrollBox scrollBoxLeft;
 	GuiTreePart welcome = new GuiTreePart("Welcome to Little Tiles", EnumPartType.Title);
 	
-	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
+	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Leaf);
+	/*
 	GuiTreePart box = new GuiTreePart("Box", EnumPartType.Leaf);
 	GuiTreePart slices = new GuiTreePart("Slices", EnumPartType.Leaf);
 	GuiTreePart polygon = new GuiTreePart("Polygon", EnumPartType.Leaf);
@@ -38,7 +39,7 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart pyramid = new GuiTreePart("Pyramid", EnumPartType.Leaf);
 	GuiTreePart tile = new GuiTreePart("Tile", EnumPartType.Leaf);
 	GuiTreePart type = new GuiTreePart("Type", EnumPartType.Leaf);
-	GuiTreePart connected = new GuiTreePart("Connected", EnumPartType.Leaf);
+	GuiTreePart connected = new GuiTreePart("Connected", EnumPartType.Leaf);*/
 	
 	GuiTreePart tools = new GuiTreePart("Tools", EnumPartType.Branch);
 	GuiTreePart chisel = new GuiTreePart("Little Chisel", EnumPartType.Leaf);
@@ -64,9 +65,7 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart blankMatic = new GuiTreePart("Blank-o-matic", EnumPartType.Leaf);
 	GuiTreePart structureBuilder = new GuiTreePart("Structure Builder", EnumPartType.Leaf);
 	
-	GuiTreePart config = new GuiTreePart("Configuration", EnumPartType.Title);
-	GuiTreePart gridSize = new GuiTreePart("Grid Size", EnumPartType.Leaf);
-	GuiTreePart buildRestriction = new GuiTreePart("Build Restriction", EnumPartType.Leaf);
+	GuiTreePart config = new GuiTreePart("Configuration", EnumPartType.Leaf);
 	
 	GuiTreePart welcomeAlet = new GuiTreePart("Welcome To A Little Extra Tiles", EnumPartType.Title);
 	GuiTreePart drawshapeAlet = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
@@ -100,14 +99,10 @@ public class SubGuiManual extends SubGui {
 		panelLeft.controls.add(scrollBox);
 		
 		List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
-		
-		drawshape.addMenu(box).addMenu(slices).addMenu(polygon).addMenu(wall).addMenu(pillar).addMenu(curves).addMenu(cylinder).addMenu(sphere).addMenu(pyramid).addMenu(tile).addMenu(type).addMenu(connected);
-		
+		drawshape.setSearchKeywords("box", "slice");
 		control.addMenu(mark).addMenu(openConfig).addMenu(openConfigAdv).addMenu(undo).addMenu(movement);
 		
 		block.addMenu(importer).addMenu(exporter).addMenu(workbench).addMenu(partical).addMenu(blankMatic).addMenu(structureBuilder);
-		
-		config.addMenu(gridSize).addMenu(buildRestriction);
 		
 		drawshapeAlet.addMenu(centeredAlet).addMenu(magicWandAlet);
 		
@@ -165,7 +160,7 @@ public class SubGuiManual extends SubGui {
 			getTapeMeasureMsg();
 		if (caption.equals("Little Rope"))
 			getLittleRopeMsg();
-		if (caption.equals("Grid Size"))
+		if (caption.equals("Configuration"))
 			getGridSizeMsg();
 	}
 	
@@ -180,9 +175,9 @@ public class SubGuiManual extends SubGui {
 		        + TextFormatting.AQUA + TextFormatting.ITALIC + "Grid Sizes" + TextFormatting.RESET
 		        + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16, and 32."
 		        + " You can increase the smallest tile you can use in the configuration file. To learn how go to "
-		        + TextFormatting.ITALIC + TextFormatting.UNDERLINE + "Grid Size" + TextFormatting.RESET
-		        + ", under LittleTiles, Configuration.", 0, 25, 371, 1));
-		GuiButton button = (new GuiButton("", 193, 103, 41, 7) {
+		        + TextFormatting.ITALIC + TextFormatting.UNDERLINE + "Configuration" + TextFormatting.RESET
+		        + ", under LittleTiles.", 0, 25, 371, 1));
+		GuiButton button = (new GuiButton("", 193, 103, 63, 7) {
 			@Override
 			public boolean hasBorder() {
 				return false;
@@ -190,9 +185,9 @@ public class SubGuiManual extends SubGui {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				updateMessage("Grid Size");
-				gridSize.openToThis();
-				gridSize.tree.highlightPart(gridSize);
+				updateMessage("Configuration");
+				config.openToThis();
+				config.tree.highlightPart(config);
 			}
 			
 		});
@@ -232,8 +227,7 @@ public class SubGuiManual extends SubGui {
 	}
 	
 	public void getGridSizeMsg() {
-		scrollBoxLeft.addControl(new GuiScalableTextBox("", TextFormatting.BOLD + "Configuration: "
-		        + TextFormatting.RESET + "Grid Size", 0, 0, 371, 1.2));
+		scrollBoxLeft.addControl(new GuiScalableTextBox("", TextFormatting.BOLD + "Configuration", 0, 0, 371, 1.5));
 		scrollBoxLeft.addControl(new GuiScalableTextBox("", "   ", 0, 25, 371, 1));
 	}
 }

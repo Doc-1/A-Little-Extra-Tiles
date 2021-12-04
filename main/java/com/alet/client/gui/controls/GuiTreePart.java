@@ -16,6 +16,7 @@ import net.minecraft.init.SoundEvents;
 public class GuiTreePart extends GuiControl {
 	
 	public List<GuiTreePart> listOfParts = new ArrayList<GuiTreePart>();
+	public List<String> listOfSearchKeywords = new ArrayList<String>();
 	GuiTreePart branchHeldIn;
 	private boolean isOpened = false;
 	boolean isRoot = false;
@@ -107,6 +108,12 @@ public class GuiTreePart extends GuiControl {
 		GlStateManager.popMatrix();
 	}
 	
+	public void setSearchKeywords(String... keyword) {
+		for (int i = 0; i < keyword.length; i++) {
+			this.listOfSearchKeywords.add(keyword[i]);
+		}
+	}
+	
 	/** @return
 	 *         The previous part in the list. If there is no previous part returns null. */
 	public GuiTreePart previousPart() {
@@ -125,31 +132,15 @@ public class GuiTreePart extends GuiControl {
 		return tree.listOfParts.get(id);
 	}
 	
-	public boolean hasNextPart() {
-		return this != null;
-	}
-	
-	public boolean hasPreviousPart() {
-		return this != null;
-	}
-	
 	public GuiTreePart nextBranch() {
 		GuiTreePart part = this;
-		while (part.hasNextPart()) {
-			part = part.nextPart();
+		do {
 			if (part.isBranch()) {
 				return part;
 			}
-		}
+			part = part.nextPart();
+		} while (part != null);
 		return null;
-	}
-	
-	public boolean hasNextBranch() {
-		return this != null;
-	}
-	
-	public boolean hasPreviousBranch() {
-		return this != null;
 	}
 	
 	public GuiTreePart previousBranch() {
@@ -245,7 +236,6 @@ public class GuiTreePart extends GuiControl {
 	public void openToThis() {
 		GuiTreePart check = this;
 		do {
-			System.out.println(check.CAPTION + " " + tree.listOfParts.get(check.heldInRoot).type.isOpenable());
 			GuiTreePart part = tree.listOfParts.get(check.heldInRoot);
 			if (part.type.isOpenable()) {
 				part.openMenus();
@@ -255,13 +245,6 @@ public class GuiTreePart extends GuiControl {
 			}
 			check = check.previousBranch();
 		} while (check != null);
-	}
-	
-	public void openToPart(GuiTreePart part) {
-		do {
-			part = part.previousBranch();
-			System.out.println(part);
-		} while (part.hasPreviousBranch());
 	}
 	
 	public List<GuiTreePart> getListOfPartsToMove() {

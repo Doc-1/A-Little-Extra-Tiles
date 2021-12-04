@@ -69,11 +69,17 @@ public class GuiTree extends GuiParent {
 		
 		for (GuiTreePart part : listOfParts) {
 			
-			if (!part.isBranch()
-			        && Pattern.compile(Pattern.quote(searchBar.text), Pattern.CASE_INSENSITIVE).matcher(part.CAPTION).find()
-			        && !searchBar.text.equals("")) {
-				listOfPartsSearched.add(new GuiTreePart(part, EnumPartType.Searched));
+			if (!part.isBranch() && !searchBar.text.equals("")) {
+				if (Pattern.compile(Pattern.quote(searchBar.text), Pattern.CASE_INSENSITIVE).matcher(part.CAPTION).find()) {
+					listOfPartsSearched.add(new GuiTreePart(part, EnumPartType.Searched));
+				}
+				for (String keyword : part.listOfSearchKeywords) {
+					if (Pattern.compile(Pattern.quote(searchBar.text), Pattern.CASE_INSENSITIVE).matcher(keyword).find()) {
+						listOfPartsSearched.add(new GuiTreePart(part, EnumPartType.Searched));
+					}
+				}
 			}
+			
 			if (has(part.name)) {
 				listOfPartsRemoved.add(part);
 				removeControl(part);
@@ -154,6 +160,16 @@ public class GuiTree extends GuiParent {
 				part.setStyle(part.SELECTED_DISPLAY);
 			} else {
 				part.setStyle(this.defaultStyle);
+			}
+		}
+		if (this.listOfPartsSearched != null && !this.listOfPartsSearched.isEmpty()) {
+			for (GuiTreePart part : this.listOfPartsSearched) {
+				part.selected = part.equals(partToHighlight);
+				if (part.selected) {
+					part.setStyle(part.SELECTED_DISPLAY);
+				} else {
+					part.setStyle(this.defaultStyle);
+				}
 			}
 		}
 	}
