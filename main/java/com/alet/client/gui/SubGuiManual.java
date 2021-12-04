@@ -24,6 +24,63 @@ import net.minecraft.util.text.TextFormatting;
 public class SubGuiManual extends SubGui {
 	
 	GuiScrollBox scrollBoxLeft;
+	GuiTreePart welcome = new GuiTreePart("Welcome to Little Tiles", EnumPartType.Title);
+	
+	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
+	GuiTreePart box = new GuiTreePart("Box", EnumPartType.Leaf);
+	GuiTreePart slices = new GuiTreePart("Slices", EnumPartType.Leaf);
+	GuiTreePart polygon = new GuiTreePart("Polygon", EnumPartType.Leaf);
+	GuiTreePart wall = new GuiTreePart("Wall", EnumPartType.Leaf);
+	GuiTreePart pillar = new GuiTreePart("Pillar", EnumPartType.Leaf);
+	GuiTreePart curves = new GuiTreePart("Curves", EnumPartType.Leaf);
+	GuiTreePart cylinder = new GuiTreePart("Cylinder", EnumPartType.Leaf);
+	GuiTreePart sphere = new GuiTreePart("Sphere", EnumPartType.Leaf);
+	GuiTreePart pyramid = new GuiTreePart("Pyramid", EnumPartType.Leaf);
+	GuiTreePart tile = new GuiTreePart("Tile", EnumPartType.Leaf);
+	GuiTreePart type = new GuiTreePart("Type", EnumPartType.Leaf);
+	GuiTreePart connected = new GuiTreePart("Connected", EnumPartType.Leaf);
+	
+	GuiTreePart tools = new GuiTreePart("Tools", EnumPartType.Branch);
+	GuiTreePart chisel = new GuiTreePart("Little Chisel", EnumPartType.Leaf);
+	GuiTreePart hammer = new GuiTreePart("Little Hammer", EnumPartType.Leaf);
+	GuiTreePart glove = new GuiTreePart("Little Glove", EnumPartType.Leaf);
+	GuiTreePart paint = new GuiTreePart("Little Paint Brush", EnumPartType.Leaf);
+	GuiTreePart saw = new GuiTreePart("Little Saw", EnumPartType.Leaf);
+	GuiTreePart screwdriver = new GuiTreePart("Little Screwdriver", EnumPartType.Leaf);
+	GuiTreePart wrench = new GuiTreePart("Little Wrench", EnumPartType.Leaf);
+	
+	GuiTreePart control = new GuiTreePart("Controls", EnumPartType.Branch);
+	GuiTreePart mark = new GuiTreePart("Mark Mode", EnumPartType.Leaf);
+	GuiTreePart openConfig = new GuiTreePart("Open Configuration Menu", EnumPartType.Leaf);
+	GuiTreePart openConfigAdv = new GuiTreePart("Open Mode/Grid Menu", EnumPartType.Leaf);
+	GuiTreePart undo = new GuiTreePart("Undo/Redo", EnumPartType.Leaf);
+	GuiTreePart movement = new GuiTreePart("Moving A Structure", EnumPartType.Leaf);
+	
+	GuiTreePart block = new GuiTreePart("Blocks", EnumPartType.Branch);
+	GuiTreePart importer = new GuiTreePart("Little Importer", EnumPartType.Leaf);
+	GuiTreePart exporter = new GuiTreePart("Little Exporter", EnumPartType.Leaf);
+	GuiTreePart workbench = new GuiTreePart("Little Workbench", EnumPartType.Leaf);
+	GuiTreePart partical = new GuiTreePart("Particle Emitter", EnumPartType.Leaf);
+	GuiTreePart blankMatic = new GuiTreePart("Blank-o-matic", EnumPartType.Leaf);
+	GuiTreePart structureBuilder = new GuiTreePart("Structure Builder", EnumPartType.Leaf);
+	
+	GuiTreePart config = new GuiTreePart("Configuration", EnumPartType.Title);
+	GuiTreePart gridSize = new GuiTreePart("Grid Size", EnumPartType.Leaf);
+	GuiTreePart buildRestriction = new GuiTreePart("Build Restriction", EnumPartType.Leaf);
+	
+	GuiTreePart welcomeAlet = new GuiTreePart("Welcome To A Little Extra Tiles", EnumPartType.Title);
+	GuiTreePart drawshapeAlet = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
+	GuiTreePart magicWandAlet = new GuiTreePart("Magic Wand", EnumPartType.Leaf);
+	GuiTreePart centeredAlet = new GuiTreePart("Centered Draw Shapes", EnumPartType.Leaf);
+	
+	GuiTreePart blockAlet = new GuiTreePart("Blocks", EnumPartType.Branch);
+	GuiTreePart typewriterAlet = new GuiTreePart("Typewriter", EnumPartType.Leaf);
+	GuiTreePart photoAlet = new GuiTreePart("Photo Importer", EnumPartType.Leaf);
+	GuiTreePart fillingAlet = new GuiTreePart("Filling Cabinet", EnumPartType.Leaf);
+	
+	GuiTreePart toolsAlet = new GuiTreePart("Tools", EnumPartType.Branch);
+	GuiTreePart tapeMeasureAlet = new GuiTreePart("Little Tape Measure", EnumPartType.Leaf);
+	GuiTreePart littleRopeAlet = new GuiTreePart("Little Rope", EnumPartType.Leaf);
 	
 	public SubGuiManual() {
 		super(600, 400);
@@ -43,80 +100,21 @@ public class SubGuiManual extends SubGui {
 		panelLeft.controls.add(scrollBox);
 		
 		List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
-		GuiTreePart welcome = new GuiTreePart("Welcome to Little Tiles", EnumPartType.Title);
 		
-		GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
-		GuiTreePart box = new GuiTreePart("Box", EnumPartType.Leaf);
-		GuiTreePart slices = new GuiTreePart("Slices", EnumPartType.Branch);
-		GuiTreePart slice = new GuiTreePart("Slice", EnumPartType.Leaf);
-		GuiTreePart sliceInner = new GuiTreePart("Inner Corner Slice", EnumPartType.Leaf);
-		GuiTreePart sliceOuter = new GuiTreePart("Outer Corner Slice", EnumPartType.Leaf);
-		slices.addMenu(slice).addMenu(sliceInner).addMenu(sliceOuter);
+		drawshape.addMenu(box).addMenu(slices).addMenu(polygon).addMenu(wall).addMenu(pillar).addMenu(curves).addMenu(cylinder).addMenu(sphere).addMenu(pyramid).addMenu(tile).addMenu(type).addMenu(connected);
 		
-		GuiTreePart polygon = new GuiTreePart("Polygon", EnumPartType.Leaf);
-		GuiTreePart wall = new GuiTreePart("Wall", EnumPartType.Leaf);
-		GuiTreePart pillar = new GuiTreePart("Pillar", EnumPartType.Leaf);
-		GuiTreePart curves = new GuiTreePart("Curves", EnumPartType.Branch);
-		GuiTreePart curvedLine = new GuiTreePart("Curve", EnumPartType.Leaf);
-		GuiTreePart curvedWall = new GuiTreePart("Curved Wall", EnumPartType.Leaf);
-		curves.addMenu(curvedLine).addMenu(curvedWall);
-		
-		GuiTreePart cylinder = new GuiTreePart("Cylinder", EnumPartType.Leaf);
-		GuiTreePart pyramid = new GuiTreePart("Pyramid", EnumPartType.Leaf);
-		GuiTreePart tile = new GuiTreePart("Tile", EnumPartType.Leaf);
-		GuiTreePart type = new GuiTreePart("Type", EnumPartType.Leaf);
-		GuiTreePart connected = new GuiTreePart("Connected", EnumPartType.Leaf);
-		
-		GuiTreePart tools = new GuiTreePart("Tools", EnumPartType.Branch);
-		GuiTreePart chisel = new GuiTreePart("Little Chisel", EnumPartType.Leaf);
-		GuiTreePart hammer = new GuiTreePart("Little Hammer", EnumPartType.Leaf);
-		GuiTreePart glove = new GuiTreePart("Little Glove", EnumPartType.Leaf);
-		GuiTreePart paint = new GuiTreePart("Little Paint Brush", EnumPartType.Leaf);
-		GuiTreePart saw = new GuiTreePart("Little Saw", EnumPartType.Leaf);
-		GuiTreePart screwdriver = new GuiTreePart("Little Screwdriver", EnumPartType.Leaf);
-		GuiTreePart wrench = new GuiTreePart("Little Wrench", EnumPartType.Leaf);
-		
-		GuiTreePart control = new GuiTreePart("Controls", EnumPartType.Branch);
-		GuiTreePart mark = new GuiTreePart("Mark Mode", EnumPartType.Leaf);
-		GuiTreePart openConfig = new GuiTreePart("Open Configuration Menu", EnumPartType.Leaf);
-		GuiTreePart openConfigAdv = new GuiTreePart("Open Mode/Grid Menu", EnumPartType.Leaf);
-		GuiTreePart undo = new GuiTreePart("Undo/Redo", EnumPartType.Leaf);
-		GuiTreePart movement = new GuiTreePart("Moving A Structure", EnumPartType.Leaf);
 		control.addMenu(mark).addMenu(openConfig).addMenu(openConfigAdv).addMenu(undo).addMenu(movement);
 		
-		GuiTreePart block = new GuiTreePart("Blocks", EnumPartType.Branch);
-		GuiTreePart importer = new GuiTreePart("Little Importer", EnumPartType.Leaf);
-		GuiTreePart exporter = new GuiTreePart("Little Exporter", EnumPartType.Leaf);
-		GuiTreePart workbench = new GuiTreePart("Little Workbench", EnumPartType.Leaf);
-		GuiTreePart partical = new GuiTreePart("Particle Emitter", EnumPartType.Leaf);
-		GuiTreePart blankMatic = new GuiTreePart("Blank-o-matic", EnumPartType.Leaf);
-		GuiTreePart structureBuilder = new GuiTreePart("Structure Builder", EnumPartType.Leaf);
 		block.addMenu(importer).addMenu(exporter).addMenu(workbench).addMenu(partical).addMenu(blankMatic).addMenu(structureBuilder);
 		
-		GuiTreePart config = new GuiTreePart("Configuration", EnumPartType.Leaf);
+		config.addMenu(gridSize).addMenu(buildRestriction);
 		
-		GuiTreePart welcomeAlet = new GuiTreePart("Welcome To A Little Extra Tiles", EnumPartType.Title);
-		GuiTreePart drawshapeAlet = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
-		GuiTreePart magicWandAlet = new GuiTreePart("Magic Wand", EnumPartType.Leaf);
-		GuiTreePart centeredAlet = new GuiTreePart("Centered Draw Shapes", EnumPartType.Branch);
-		GuiTreePart centeredBox = new GuiTreePart("Centered Box", EnumPartType.Leaf);
-		GuiTreePart centeredCylinder = new GuiTreePart("Centered Cylinder", EnumPartType.Leaf);
-		GuiTreePart centeredSphere = new GuiTreePart("Centered Sphere", EnumPartType.Leaf);
-		centeredAlet.addMenu(centeredBox).addMenu(centeredCylinder).addMenu(centeredSphere);
 		drawshapeAlet.addMenu(centeredAlet).addMenu(magicWandAlet);
 		
-		GuiTreePart blockAlet = new GuiTreePart("Blocks", EnumPartType.Branch);
-		GuiTreePart typewriterAlet = new GuiTreePart("Typewriter", EnumPartType.Leaf);
-		GuiTreePart photoAlet = new GuiTreePart("Photo Importer", EnumPartType.Leaf);
-		GuiTreePart fillingAlet = new GuiTreePart("Filling Cabinet", EnumPartType.Leaf);
 		blockAlet.addMenu(typewriterAlet).addMenu(photoAlet).addMenu(fillingAlet);
 		
-		GuiTreePart toolsAlet = new GuiTreePart("Tools", EnumPartType.Branch);
-		GuiTreePart tapeMeasureAlet = new GuiTreePart("Little Tape Measure", EnumPartType.Leaf);
-		GuiTreePart littleRopeAlet = new GuiTreePart("Little Rope", EnumPartType.Leaf);
 		toolsAlet.addMenu(tapeMeasureAlet).addMenu(littleRopeAlet);
 		
-		drawshape.addMenu(box).addMenu(slices).addMenu(polygon).addMenu(wall).addMenu(pillar).addMenu(curves).addMenu(cylinder).addMenu(pyramid).addMenu(tile).addMenu(type).addMenu(connected);
 		tools.addMenu(chisel).addMenu(hammer).addMenu(glove).addMenu(paint).addMenu(saw).addMenu(screwdriver).addMenu(wrench);
 		
 		listOfMenus.add(welcome.addMenu(drawshape).addMenu(tools).addMenu(block).addMenu(control).addMenu(config));
@@ -130,7 +128,9 @@ public class SubGuiManual extends SubGui {
 		if (event.source instanceof GuiTreePart) {
 			GuiColorablePanel panel = (GuiColorablePanel) this.get("tableRight");
 			GuiTreePart part = (GuiTreePart) event.source;
-			updateMessage(part.CAPTION);
+			if (part.type.equals(EnumPartType.Leaf) || part.type.equals(EnumPartType.Searched)
+			        || part.type.equals(EnumPartType.Title) || part.type.equals(EnumPartType.Root))
+				updateMessage(part.CAPTION);
 		}
 	}
 	
@@ -165,6 +165,8 @@ public class SubGuiManual extends SubGui {
 			getTapeMeasureMsg();
 		if (caption.equals("Little Rope"))
 			getLittleRopeMsg();
+		if (caption.equals("Grid Size"))
+			getGridSizeMsg();
 	}
 	
 	public void getWelcomeLTMsg() {
@@ -178,9 +180,9 @@ public class SubGuiManual extends SubGui {
 		        + TextFormatting.AQUA + TextFormatting.ITALIC + "Grid Sizes" + TextFormatting.RESET
 		        + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16, and 32."
 		        + " You can increase the smallest tile you can use in the configuration file. To learn how go to "
-		        + TextFormatting.ITALIC + TextFormatting.UNDERLINE + "Configuration" + TextFormatting.RESET
-		        + ", under LittleTiles.", 0, 25, 371, 1));
-		GuiButton button = (new GuiButton("", 193, 103, 63, 7) {
+		        + TextFormatting.ITALIC + TextFormatting.UNDERLINE + "Grid Size" + TextFormatting.RESET
+		        + ", under LittleTiles, Configuration.", 0, 25, 371, 1));
+		GuiButton button = (new GuiButton("", 193, 103, 41, 7) {
 			@Override
 			public boolean hasBorder() {
 				return false;
@@ -188,7 +190,9 @@ public class SubGuiManual extends SubGui {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
-				updateMessage("* Configuration");
+				updateMessage("Grid Size");
+				gridSize.openToThis();
+				gridSize.tree.highlightPart(gridSize);
 			}
 			
 		});
@@ -227,4 +231,9 @@ public class SubGuiManual extends SubGui {
 	public void getLittleRopeMsg() {
 	}
 	
+	public void getGridSizeMsg() {
+		scrollBoxLeft.addControl(new GuiScalableTextBox("", TextFormatting.BOLD + "Configuration: "
+		        + TextFormatting.RESET + "Grid Size", 0, 0, 371, 1.2));
+		scrollBoxLeft.addControl(new GuiScalableTextBox("", "   ", 0, 25, 371, 1));
+	}
 }

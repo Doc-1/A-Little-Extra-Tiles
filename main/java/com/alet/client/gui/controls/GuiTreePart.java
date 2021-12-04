@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
+import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -29,10 +30,24 @@ public class GuiTreePart extends GuiControl {
 	public int tempPosY;
 	public int tempPosX;
 	
+	public boolean selected = false;
+	public final Style SELECTED_DISPLAY = new Style("selected", new ColoredDisplayStyle(50, 50, 50), new ColoredDisplayStyle(145, 201, 247), new ColoredDisplayStyle(145, 201, 247), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100));
+	
 	public EnumPartType type;
 	
 	public GuiTreePart(GuiTreePart part) {
-		this(part.caption, part.type);
+		this(part, part.type);
+		this.posX = part.posX;
+		this.posY = part.posY;
+		this.originPosX = part.originPosX;
+		this.originPosY = part.originPosY;
+		this.tempPosX = part.tempPosX;
+		this.tempPosY = part.tempPosY;
+		this.tree = part.tree;
+	}
+	
+	public GuiTreePart(GuiTreePart part, EnumPartType type) {
+		this(part.caption, type);
 		this.posX = part.posX;
 		this.posY = part.posY;
 		this.originPosX = part.originPosX;
@@ -52,9 +67,16 @@ public class GuiTreePart extends GuiControl {
 	public GuiTreePart addMenu(GuiTreePart button) {
 		this.listOfParts.add(button);
 		button.branchHeldIn = this;
-		if (!caption.contains("+")) {
-			this.caption = "+ " + caption;
-			this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
+		if (this.type.equals(EnumPartType.Branch)) {
+			if (!caption.contains("+")) {
+				this.caption = "+ " + caption;
+				this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
+			}
+		} else if (this.type.equals(EnumPartType.Title)) {
+			if (!caption.contains("*")) {
+				this.caption = "* " + caption;
+				this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
+			}
 		}
 		return this;
 	}
@@ -71,12 +93,18 @@ public class GuiTreePart extends GuiControl {
 		if (!this.isRoot) {
 			int off = this.posY - this.originPosY;
 			int count = (int) Math.floor(off / 14D);
+			
 			if (!this.isBranch())
-				helper.drawRect(-11, (off - (count * 14)) + 4, -2, (off - (count * 14)) + 5, ColorUtils.WHITE);
+				helper.drawRect(-12, (off - (count * 14)) + 4, -4, (off - (count * 14)) + 5, ColorUtils.WHITE);
 			else
-				helper.drawRect(-15, (off - (count * 14)) + 4, -2, (off - (count * 14)) + 5, ColorUtils.WHITE);
+				helper.drawRect(-12, (off - (count * 14)) + 4, -4, (off - (count * 14)) + 5, ColorUtils.WHITE);
 		}
+		
+		GlStateManager.pushMatrix();
+		if (this.type.equals(EnumPartType.Title))
+			GlStateManager.translate(1, 0, 0);
 		helper.drawStringWithShadow(caption, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), height, ColorUtils.WHITE);
+		GlStateManager.popMatrix();
 	}
 	
 	/** @return
@@ -98,11 +126,11 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public boolean hasNextPart() {
-		return this.nextPart() != null;
+		return this != null;
 	}
 	
 	public boolean hasPreviousPart() {
-		return this.previousPart() != null;
+		return this != null;
 	}
 	
 	public GuiTreePart nextBranch() {
@@ -117,21 +145,21 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public boolean hasNextBranch() {
-		return this.nextBranch() != null;
+		return this != null;
 	}
 	
 	public boolean hasPreviousBranch() {
-		return this.previousBranch() != null;
+		return this != null;
 	}
 	
 	public GuiTreePart previousBranch() {
 		GuiTreePart part = this;
-		while (part.hasPreviousPart()) {
-			part = part.previousPart();
-			if (part.isBranch()) {
+		do {
+			if (part.isBranch() && !part.equals(this)) {
 				return part;
 			}
-		}
+			part = part.previousPart();
+		} while (part != null);
 		return null;
 	}
 	
@@ -212,6 +240,28 @@ public class GuiTreePart extends GuiControl {
 			}
 		}
 		return total;
+	}
+	
+	public void openToThis() {
+		GuiTreePart check = this;
+		do {
+			System.out.println(check.CAPTION + " " + tree.listOfParts.get(check.heldInRoot).type.isOpenable());
+			GuiTreePart part = tree.listOfParts.get(check.heldInRoot);
+			if (part.type.isOpenable()) {
+				part.openMenus();
+				part.setState(true);
+				part.caption = "- " + part.CAPTION;
+				tree.moveTreePartsDown(part);
+			}
+			check = check.previousBranch();
+		} while (check != null);
+	}
+	
+	public void openToPart(GuiTreePart part) {
+		do {
+			part = part.previousBranch();
+			System.out.println(part);
+		} while (part.hasPreviousBranch());
 	}
 	
 	public List<GuiTreePart> getListOfPartsToMove() {
@@ -312,18 +362,27 @@ public class GuiTreePart extends GuiControl {
 	
 	public void onClicked(int x, int y, int mouseButton) {
 		if (this.listOfParts != null && !this.listOfParts.isEmpty()) {
-			if (!isOpened) {
-				isOpened = true;
-				this.caption = "- " + this.CAPTION;
-				this.openMenus();
-			} else {
-				isOpened = false;
-				this.caption = "+ " + this.CAPTION;
-				this.closeMenus();
+			if (this.type.isOpenable()) {
+				if (!isOpened) {
+					this.isOpened = true;
+					this.caption = "- " + this.CAPTION;
+					this.openMenus();
+				} else {
+					this.isOpened = false;
+					this.caption = "+ " + this.CAPTION;
+					this.closeMenus();
+				}
+				tree.moveTreePartsDown(this);
 			}
-			tree.moveTreePartsDown(this);
+		}
+		if (!this.type.isOpenable()) {
+			tree.highlightPart(this);
 		}
 		raiseEvent(new GuiControlChangedEvent(this));
+	}
+	
+	public void setState(boolean opened) {
+		this.isOpened = opened;
 	}
 	
 	public void openMenus() {
@@ -340,7 +399,7 @@ public class GuiTreePart extends GuiControl {
 	
 	public void closeMenus() {
 		List controls = tree.getControls();
-		for (GuiTreePart button : listOfParts) {
+		for (GuiTreePart button : this.listOfParts) {
 			if (button.isBranch()) {
 				button.closeMenus();
 			}
@@ -356,16 +415,30 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	@Override
-	public boolean hasBackground() {
-		return true;
-	}
-	
-	@Override
 	public boolean hasBorder() {
 		return false;
 	}
 	
 	public enum EnumPartType {
-		Title, Root, Branch, Leaf;
+		/** This is the first folder, or lowest point in the directory you can reach. It can hold Branches, and Leaves */
+		Root(true),
+		/** This, just like a root can hold other Branches or Leaves */
+		Branch(true),
+		/** A type of root or branch that remains open and does not close. */
+		Title(false),
+		/** This is a file. */
+		Leaf(false),
+		/** A type of Leaf that is used for when searching for a Leaf */
+		Searched(false);
+		
+		private boolean openable;
+		
+		private EnumPartType(boolean openable) {
+			this.openable = openable;
+		}
+		
+		public boolean isOpenable() {
+			return this.openable;
+		}
 	}
 }
