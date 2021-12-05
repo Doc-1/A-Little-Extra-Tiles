@@ -27,19 +27,6 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart welcome = new GuiTreePart("Welcome to Little Tiles", EnumPartType.Title);
 	
 	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Leaf);
-	/*
-	GuiTreePart box = new GuiTreePart("Box", EnumPartType.Leaf);
-	GuiTreePart slices = new GuiTreePart("Slices", EnumPartType.Leaf);
-	GuiTreePart polygon = new GuiTreePart("Polygon", EnumPartType.Leaf);
-	GuiTreePart wall = new GuiTreePart("Wall", EnumPartType.Leaf);
-	GuiTreePart pillar = new GuiTreePart("Pillar", EnumPartType.Leaf);
-	GuiTreePart curves = new GuiTreePart("Curves", EnumPartType.Leaf);
-	GuiTreePart cylinder = new GuiTreePart("Cylinder", EnumPartType.Leaf);
-	GuiTreePart sphere = new GuiTreePart("Sphere", EnumPartType.Leaf);
-	GuiTreePart pyramid = new GuiTreePart("Pyramid", EnumPartType.Leaf);
-	GuiTreePart tile = new GuiTreePart("Tile", EnumPartType.Leaf);
-	GuiTreePart type = new GuiTreePart("Type", EnumPartType.Leaf);
-	GuiTreePart connected = new GuiTreePart("Connected", EnumPartType.Leaf);*/
 	
 	GuiTreePart tools = new GuiTreePart("Tools", EnumPartType.Branch);
 	GuiTreePart chisel = new GuiTreePart("Little Chisel", EnumPartType.Leaf);
@@ -132,7 +119,6 @@ public class SubGuiManual extends SubGui {
 	public void updateMessage(String caption) {
 		int i = 0;
 		while (i < scrollBoxLeft.controls.size()) {
-			boolean canBeDeleted = true;
 			if (scrollBoxLeft.controls.get(i) instanceof CoreControl)
 				scrollBoxLeft.controls.remove(i);
 			else

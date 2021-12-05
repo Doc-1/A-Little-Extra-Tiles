@@ -49,6 +49,7 @@ public class GuiTreePart extends GuiControl {
 	
 	public GuiTreePart(GuiTreePart part, EnumPartType type) {
 		this(part.caption, type);
+		this.name = part.name;
 		this.posX = part.posX;
 		this.posY = part.posY;
 		this.originPosX = part.originPosX;

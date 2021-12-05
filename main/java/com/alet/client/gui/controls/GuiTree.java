@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
+import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
@@ -50,6 +51,11 @@ public class GuiTree extends GuiParent {
 					boolean result = super.onKeyPressed(character, key);
 					if (result) {
 						displaySearchResult();
+						if (this.text.equals(""))
+							for (GuiTreePart part : listOfParts) {
+								if (part.selected)
+									part.openToThis();
+							}
 					}
 					return result;
 				}
@@ -68,22 +74,25 @@ public class GuiTree extends GuiParent {
 		listOfPartsSearched.clear();
 		
 		for (GuiTreePart part : listOfParts) {
-			
+			if (has(part.name)) {
+				listOfPartsRemoved.add(part);
+				removeControl(part);
+			}
 			if (!part.isBranch() && !searchBar.text.equals("")) {
 				if (Pattern.compile(Pattern.quote(searchBar.text), Pattern.CASE_INSENSITIVE).matcher(part.CAPTION).find()) {
 					listOfPartsSearched.add(new GuiTreePart(part, EnumPartType.Searched));
 				}
 				for (String keyword : part.listOfSearchKeywords) {
 					if (Pattern.compile(Pattern.quote(searchBar.text), Pattern.CASE_INSENSITIVE).matcher(keyword).find()) {
-						listOfPartsSearched.add(new GuiTreePart(part, EnumPartType.Searched));
+						GuiTreePart searchedPart = new GuiTreePart(part, EnumPartType.Searched);
+						searchedPart.caption = searchedPart.CAPTION + ": " + keyword;
+						searchedPart.width = GuiRenderHelper.instance.getStringWidth(searchedPart.caption)
+						        + searchedPart.getContentOffset() * 2;
+						listOfPartsSearched.add(searchedPart);
 					}
 				}
 			}
 			
-			if (has(part.name)) {
-				listOfPartsRemoved.add(part);
-				removeControl(part);
-			}
 		}
 		
 		for (int i = 0; i < listOfPartsSearched.size(); i++) {
@@ -94,13 +103,13 @@ public class GuiTree extends GuiParent {
 		}
 		
 		if (searchBar.text.equals("")) {
-			for (GuiTreePart part : listOfPartsSearched) {
-				if (controls.contains(part))
-					removeControl(part);
-			}
-			for (GuiTreePart part : listOfPartsRemoved) {
+			for (GuiTreePart part : listOfPartsSearched)
+				removeControl(part);
+			
+			for (GuiTreePart part : listOfPartsRemoved)
 				addControl(part);
-			}
+			
+			this.refreshControls();
 			listOfPartsRemoved.clear();
 			listOfPartsSearched.clear();
 		}
@@ -165,9 +174,15 @@ public class GuiTree extends GuiParent {
 		if (this.listOfPartsSearched != null && !this.listOfPartsSearched.isEmpty()) {
 			for (GuiTreePart part : this.listOfPartsSearched) {
 				part.selected = part.equals(partToHighlight);
+				int index = Integer.parseInt(part.name);
+				GuiTreePart partFromList = this.listOfParts.get(index);
 				if (part.selected) {
+					partFromList.setStyle(part.SELECTED_DISPLAY);
+					partFromList.selected = true;
 					part.setStyle(part.SELECTED_DISPLAY);
 				} else {
+					partFromList.setStyle(this.defaultStyle);
+					partFromList.selected = false;
 					part.setStyle(this.defaultStyle);
 				}
 			}
