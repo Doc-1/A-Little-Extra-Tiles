@@ -28,6 +28,10 @@ public class GuiTreePart extends GuiControl {
 	public int originPosY;
 	public int originPosX;
 	
+	public boolean mousePressed = false;
+	public boolean counting = false;
+	public int tick = 0;
+	
 	public int tempPosY;
 	public int tempPosX;
 	
@@ -391,10 +395,45 @@ public class GuiTreePart extends GuiControl {
 		}
 	}
 	
+	public void onDoubleClick() {
+		if (this.type.equals(EnumPartType.Searched))
+			this.tree.updateSearchedDisplay("");
+	}
+	
+	@Override
+	public boolean isMouseOver(int posX, int posY) {
+		boolean result = super.isMouseOver(posX, posY);
+		if (result) {
+			//System.out.println(this.mousePressed + " " + this.counting + " " + tick);
+			if (this.mousePressed && !this.counting) {
+				this.mousePressed = false;
+				this.counting = true;
+			}
+			if (this.counting)
+				tick++;
+			if (tick > 80) {
+				tick = 0;
+				this.counting = false;
+			}
+			if (this.counting && this.mousePressed) {
+				this.onDoubleClick();
+				tick = 0;
+				this.counting = false;
+				this.mousePressed = false;
+			}
+		} else {
+			this.counting = false;
+			this.mousePressed = false;
+		}
+		return result;
+	}
+	
 	@Override
 	public boolean mousePressed(int x, int y, int button) {
 		playSound(SoundEvents.UI_BUTTON_CLICK);
 		onClicked(x, y, button);
+		
+		this.mousePressed = true;
 		return true;
 	}
 	
