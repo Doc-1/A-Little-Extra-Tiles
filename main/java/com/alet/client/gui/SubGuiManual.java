@@ -68,6 +68,8 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart tapeMeasureAlet = new GuiTreePart("Little Tape Measure", EnumPartType.Leaf);
 	GuiTreePart littleRopeAlet = new GuiTreePart("Little Rope", EnumPartType.Leaf);
 	
+	GuiTree tree;
+	
 	public SubGuiManual() {
 		super(600, 400);
 	}
@@ -101,7 +103,8 @@ public class SubGuiManual extends SubGui {
 		
 		listOfMenus.add(welcome.addMenu(drawshape).addMenu(tools).addMenu(block).addMenu(control).addMenu(config));
 		listOfMenus.add(welcomeAlet.addMenu(drawshapeAlet).addMenu(blockAlet).addMenu(toolsAlet));
-		scrollBox.controls.add(new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50));
+		tree = new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50);
+		scrollBox.controls.add(tree);
 		
 	}
 	
@@ -172,8 +175,8 @@ public class SubGuiManual extends SubGui {
 			@Override
 			public void onClicked(int x, int y, int button) {
 				updateMessage("Configuration");
-				config.openToThis();
-				config.tree.highlightPart(config);
+				tree.openTo(config);
+				tree.highlightPart(config);
 			}
 			
 		});

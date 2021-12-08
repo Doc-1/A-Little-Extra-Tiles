@@ -7,6 +7,7 @@ import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
@@ -20,7 +21,7 @@ public class GuiTreePart extends GuiControl {
 	GuiTreePart branchHeldIn;
 	private boolean isOpened = false;
 	boolean isRoot = false;
-	int heldInRoot;
+	int heldInID;
 	public final String CAPTION;
 	public String caption;
 	public GuiTree tree;
@@ -53,6 +54,7 @@ public class GuiTreePart extends GuiControl {
 	
 	public GuiTreePart(GuiTreePart part, EnumPartType type) {
 		this(part.caption, type);
+		this.heldInID = part.heldInID;
 		this.name = part.name;
 		this.posX = part.posX;
 		this.posY = part.posY;
@@ -176,11 +178,7 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public int getBranchIDThisIsIn() {
-		return this.heldInRoot;
-	}
-	
-	public boolean isOpened() {
-		return this.isOpened;
+		return this.heldInID;
 	}
 	
 	public boolean isRoot() {
@@ -236,20 +234,6 @@ public class GuiTreePart extends GuiControl {
 			}
 		}
 		return total;
-	}
-	
-	public void openToThis() {
-		GuiTreePart check = this;
-		do {
-			GuiTreePart part = tree.listOfParts.get(check.heldInRoot);
-			if (part.type.isOpenable()) {
-				part.openMenus();
-				part.setState(true);
-				part.caption = "- " + part.CAPTION;
-				tree.moveTreePartsDown(part);
-			}
-			check = check.previousBranch();
-		} while (check != null);
 	}
 	
 	public List<GuiTreePart> getListOfPartsToMove() {
@@ -360,7 +344,7 @@ public class GuiTreePart extends GuiControl {
 					this.caption = "+ " + this.CAPTION;
 					this.closeMenus();
 				}
-				tree.moveTreePartsDown(this);
+				tree.updatePartsPosition();
 			}
 		}
 		if (!this.type.isOpenable()) {
@@ -369,13 +353,17 @@ public class GuiTreePart extends GuiControl {
 		raiseEvent(new GuiControlChangedEvent(this));
 	}
 	
-	public void setState(boolean opened) {
+	public void setOpened(boolean opened) {
 		this.isOpened = opened;
 	}
 	
+	public boolean isOpened() {
+		return this.isOpened;
+	}
+	
 	public void openMenus() {
-		for (int i = 0; i < listOfParts.size(); i++) {
-			GuiTreePart button = listOfParts.get(i);
+		for (int i = 0; i < this.listOfParts.size(); i++) {
+			GuiTreePart button = this.listOfParts.get(i);
 			if (!button.isRoot) {
 				tree.addControl(button);
 				if (button.isBranch() && button.isOpened) {
@@ -396,15 +384,21 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public void onDoubleClick() {
-		if (this.type.equals(EnumPartType.Searched))
-			this.tree.updateSearchedDisplay("");
+		if (this.type.equals(EnumPartType.Searched)) {
+			System.out.println(this.heldInID + " " + this.CAPTION);
+			tree.wipePartControls();
+			tree.createRootControls();
+			tree.openTitles();
+			tree.openTo(this);
+			((GuiTextfield) tree.get("search")).text = "";
+			((GuiTextfield) tree.get("search")).cursorPosition = 0;
+		}
 	}
 	
 	@Override
 	public boolean isMouseOver(int posX, int posY) {
 		boolean result = super.isMouseOver(posX, posY);
 		if (result) {
-			//System.out.println(this.mousePressed + " " + this.counting + " " + tick);
 			if (this.mousePressed && !this.counting) {
 				this.mousePressed = false;
 				this.counting = true;
@@ -432,7 +426,6 @@ public class GuiTreePart extends GuiControl {
 	public boolean mousePressed(int x, int y, int button) {
 		playSound(SoundEvents.UI_BUTTON_CLICK);
 		onClicked(x, y, button);
-		
 		this.mousePressed = true;
 		return true;
 	}

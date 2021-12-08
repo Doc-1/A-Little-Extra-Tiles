@@ -117,6 +117,8 @@ public class SubGuiFillingCabinet extends SubGui {
 				}
 			}
 		});
+		GuiTree tree = (GuiTree) scrollBox.get("list");
+		tree.createSearchControls();
 	}
 	
 	public void updateTree() {
@@ -131,7 +133,6 @@ public class SubGuiFillingCabinet extends SubGui {
 		for (File file : d.listFiles()) {
 			listOfRoots.add(new GuiTreePart(file.getName(), EnumPartType.Root));
 		}
-		tree.createControls();
 		tree.allButtons();
 		tree.height = (tree.listOfParts.size() * 14) + 25;
 	}
