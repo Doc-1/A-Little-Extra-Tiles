@@ -28,10 +28,7 @@ config.alet.colorAccuracy.comment=This will change how many colors the printer h
 structure.tigger_box.name=Trigger Box
 structure.door_lock.name=Door Lock
 structure.state_activator.name=State Activator
-structure.music_composer.name=Music Composer
+structure.sound_player.name=Sound Player
 structure.cam_player.name=Cam Player
-
-structure.category.sound=Audio
-structure.category.advance=Advance
 
 alet.tapemeasure.tooltip='%s' to configure tool\n'%s', '%s' to change\nselected measurement\n'%s' to clear measurement

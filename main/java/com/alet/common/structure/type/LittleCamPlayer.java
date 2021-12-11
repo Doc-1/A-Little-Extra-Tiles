@@ -39,14 +39,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-public class LittleCamPlayerALET extends LittleStructure {
+public class LittleCamPlayer extends LittleStructure {
 	
 	public String camToPlay = "";
 	public boolean playerIsCamera = true;
 	public int duration = 0;
 	public int loop = 0;
 	
-	public LittleCamPlayerALET(LittleStructureType type, IStructureTileList mainBlock) {
+	public LittleCamPlayer(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
 		// TODO Auto-generated constructor stub
 	}
@@ -113,7 +113,7 @@ public class LittleCamPlayerALET extends LittleStructure {
 		protected void createControls(LittlePreviews previews, LittleStructure structure) {
 			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			
-			LittleCamPlayerALET camPlayer = structure instanceof LittleCamPlayerALET ? (LittleCamPlayerALET) structure : null;
+			LittleCamPlayer camPlayer = structure instanceof LittleCamPlayer ? (LittleCamPlayer) structure : null;
 			if (camPlayer != null)
 				PacketHandler.sendPacketToServer(new PacketGetServerCams(parent.getID(), camPlayer.camToPlay));
 			else
@@ -144,7 +144,7 @@ public class LittleCamPlayerALET extends LittleStructure {
 		
 		@Override
 		protected LittleStructure parseStructure(LittlePreviews previews) {
-			LittleCamPlayerALET structure = createStructure(LittleCamPlayerALET.class, null);
+			LittleCamPlayer structure = createStructure(LittleCamPlayer.class, null);
 			GuiComboBox cameras = (GuiComboBox) parent.get("cameras");
 			GuiCheckBox plyrCam = (GuiCheckBox) parent.get("plyrCam");
 			GuiTextfield duration = (GuiTextfield) parent.get("duration");
@@ -158,7 +158,7 @@ public class LittleCamPlayerALET extends LittleStructure {
 		
 		@Override
 		protected LittleStructureType getStructureType() {
-			return LittleStructureRegistry.getStructureType(LittleCamPlayerALET.class);
+			return LittleStructureRegistry.getStructureType(LittleCamPlayer.class);
 		}
 		
 	}
