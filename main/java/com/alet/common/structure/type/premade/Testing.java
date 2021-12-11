@@ -1,15 +1,7 @@
 package com.alet.common.structure.type.premade;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
-import com.creativemd.littletiles.common.action.block.LittleActionPlaceAbsolute;
-import com.creativemd.littletiles.common.action.block.LittleActionPlaceAbsolute.LittleActionPlaceAbsolutePremade;
-import com.creativemd.littletiles.common.packet.LittlePlacedAnimationPacket;
-import com.creativemd.littletiles.common.action.block.LittleActionPlaceStack;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
@@ -18,8 +10,6 @@ import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVecContext;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
-import com.creativemd.littletiles.common.tile.place.PlacePreview;
-import com.creativemd.littletiles.common.tile.preview.LittleAbsolutePreviews;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -79,7 +69,10 @@ public class Testing extends LittleStructurePremade {
 		LittleGridContext context = box.getContext();
 		BlockPos min = new BlockPos(context.toBlockOffset(minX), context.toBlockOffset(minY), context.toBlockOffset(minZ));
 		
-		LittleVecContext minVec = new LittleVecContext(new LittleVec((int) (minX - (long) min.getX() * (long) context.size), (int) (minY - (long) min.getY() * (long) context.size), (int) (minZ - (long) min.getZ() * (long) context.size)), context);
+		LittleVecContext minVec = new LittleVecContext(new LittleVec((int) (minX
+		        - (long) min.getX() * (long) context.size), (int) (minY
+		                - (long) min.getY() * (long) context.size), (int) (minZ
+		                        - (long) min.getZ() * (long) context.size)), context);
 		
 		LittlePreviews previews = getStructurePremadeEntry("photoimporter").previews.copy(); // Change this line to support different states
 		LittleVec previewMinVec = previews.getMinVec();
@@ -96,7 +89,7 @@ public class Testing extends LittleStructurePremade {
 		previews.getPlacePreviews(LittleVec.ZERO);
 		try {
 			PlacementPreview placePreview = new PlacementPreview(this.getWorld(), previews, PlacementMode.fill, preview.box, false, this.mainBlock.getPos(), LittleVec.ZERO, EnumFacing.DOWN);
-			this.removeStructure();
+			this.onLittleTileDestroy();
 			
 			Placement place = new Placement(Minecraft.getMinecraft().player, placePreview);
 			place.tryPlace();

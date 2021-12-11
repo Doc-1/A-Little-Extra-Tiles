@@ -239,7 +239,8 @@ public class ALET {
 				return new SubContainerBasic(player);
 			}
 		});
-		LittleStructureRegistry.registerStructureType("tigger_box", "simple", LittleTiggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTiggerBoxStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
+		LittleStructureRegistry.registerStructureType("tigger_box", "simple", LittleTiggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION
+		        | LittleStructureAttribute.COLLISION_LISTENER, LittleTiggerBoxStructureALET.LittleNoClipStructureParser.class).addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
 		LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("state_activator", "simple", LittleStateActivatorALET.class, LittleStructureAttribute.NONE, LittleStateActivatorALET.LittleStateActivatorParserALET.class).addOutput("activate", 1, SignalMode.TOGGLE, true);
 		LittleStructureRegistry.registerStructureType("sound_player", "simple", LittleSoundPlayerALET.class, LittleStructureAttribute.TICKING, LittleSoundPlayerALET.LittleSoundPlayerParserALET.class).addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
@@ -335,7 +336,10 @@ public class ALET {
 			if (!d.exists()) {
 				d.mkdir();
 				try {
-					String data = "Place any TrueTypeFont files in this folder to add them to the typewritter. \n" + "If you added any TrueTypeFont files while still in Minecraft you can run the commmand \n" + "/alet-updatefont to add the new fonts. Otherwise just launching Minecraft will gather \n" + "the new files.";
+					String data = "Place any TrueTypeFont files in this folder to add them to the typewritter. \n"
+					        + "If you added any TrueTypeFont files while still in Minecraft you can run the commmand \n"
+					        + "/alet-updatefont to add the new fonts. Otherwise just launching Minecraft will gather \n"
+					        + "the new files.";
 					File f1 = new File("./fonts/README.txt");
 					if (!f1.exists())
 						f1.createNewFile();
@@ -350,7 +354,8 @@ public class ALET {
 			for (File file : d.listFiles()) {
 				String fileName = file.getName();
 				if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-					if (fileName.substring(fileName.lastIndexOf(".") + 1).equals("ttf") || fileName.substring(fileName.lastIndexOf(".") + 1).equals("otf"))
+					if (fileName.substring(fileName.lastIndexOf(".") + 1).equals("ttf")
+					        || fileName.substring(fileName.lastIndexOf(".") + 1).equals("otf"))
 						ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
 			}
 		} catch (FontFormatException | IOException e) {
