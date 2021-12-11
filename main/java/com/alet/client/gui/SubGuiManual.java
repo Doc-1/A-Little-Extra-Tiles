@@ -26,7 +26,19 @@ public class SubGuiManual extends SubGui {
 	GuiScrollBox scrollBoxLeft;
 	GuiTreePart welcome = new GuiTreePart("Welcome to Little Tiles", EnumPartType.Title);
 	
-	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Leaf);
+	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
+	GuiTreePart box = new GuiTreePart("Box", EnumPartType.Leaf);
+	GuiTreePart slices = new GuiTreePart("Slices", EnumPartType.Leaf);
+	GuiTreePart polygon = new GuiTreePart("Polygon", EnumPartType.Leaf);
+	GuiTreePart wall = new GuiTreePart("Wall", EnumPartType.Leaf);
+	GuiTreePart pillar = new GuiTreePart("Pillar", EnumPartType.Leaf);
+	GuiTreePart curves = new GuiTreePart("Curves", EnumPartType.Leaf);
+	GuiTreePart cylinder = new GuiTreePart("Cylinder", EnumPartType.Leaf);
+	GuiTreePart sphere = new GuiTreePart("Sphere", EnumPartType.Leaf);
+	GuiTreePart pyramid = new GuiTreePart("Pyramid", EnumPartType.Leaf);
+	GuiTreePart tile = new GuiTreePart("Tile", EnumPartType.Leaf);
+	GuiTreePart type = new GuiTreePart("Type", EnumPartType.Leaf);
+	GuiTreePart connected = new GuiTreePart("Connected", EnumPartType.Leaf);
 	
 	GuiTreePart tools = new GuiTreePart("Tools", EnumPartType.Branch);
 	GuiTreePart chisel = new GuiTreePart("Little Chisel", EnumPartType.Leaf);
@@ -88,7 +100,20 @@ public class SubGuiManual extends SubGui {
 		panelLeft.controls.add(scrollBox);
 		
 		List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
-		drawshape.setSearchKeywords("box", "slice");
+		drawshape.addMenu(box).addMenu(slices).addMenu(polygon).addMenu(wall).addMenu(pillar).addMenu(curves).addMenu(cylinder).addMenu(sphere).addMenu(pyramid).addMenu(tile).addMenu(type).addMenu(connected);
+		box.setSearchKeywords("Draw Shape");
+		slices.setSearchKeywords("Draw Shape");
+		polygon.setSearchKeywords("Draw Shape");
+		wall.setSearchKeywords("Draw Shape");
+		pillar.setSearchKeywords("Draw Shape");
+		curves.setSearchKeywords("Draw Shape");
+		cylinder.setSearchKeywords("Draw Shape");
+		sphere.setSearchKeywords("Draw Shape");
+		pyramid.setSearchKeywords("Draw Shape");
+		tile.setSearchKeywords("Draw Shape");
+		type.setSearchKeywords("Draw Shape");
+		connected.setSearchKeywords("Draw Shape");
+		
 		control.addMenu(mark).addMenu(openConfig).addMenu(openConfigAdv).addMenu(undo).addMenu(movement);
 		
 		block.addMenu(importer).addMenu(exporter).addMenu(workbench).addMenu(partical).addMenu(blankMatic).addMenu(structureBuilder);
@@ -111,7 +136,6 @@ public class SubGuiManual extends SubGui {
 	@CustomEventSubscribe
 	public void changed(GuiControlChangedEvent event) {
 		if (event.source instanceof GuiTreePart) {
-			GuiColorablePanel panel = (GuiColorablePanel) this.get("tableRight");
 			GuiTreePart part = (GuiTreePart) event.source;
 			if (part.type.equals(EnumPartType.Leaf) || part.type.equals(EnumPartType.Searched)
 			        || part.type.equals(EnumPartType.Title) || part.type.equals(EnumPartType.Root))

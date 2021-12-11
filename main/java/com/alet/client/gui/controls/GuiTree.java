@@ -125,9 +125,9 @@ public class GuiTree extends GuiParent {
 				heldInPart.openMenus();
 				heldInPart.setOpened(true);
 				heldInPart.caption = "- " + heldInPart.CAPTION;
-				this.highlightPart(part);
 				this.updatePartsPosition();
 			}
+			this.highlightPart(part);
 			check = check.previousBranch();
 		} while (check != null);
 	}
@@ -177,7 +177,6 @@ public class GuiTree extends GuiParent {
 		
 		if (!partToHighlight.type.equals(EnumPartType.Searched)) {
 			for (GuiTreePart part : this.listOfParts) {
-				System.out.println(part.CAPTION + " " + partToHighlight.CAPTION);
 				part.selected = part.equals(partToHighlight);
 				if (part.selected) {
 					part.setStyle(part.SELECTED_DISPLAY);
@@ -238,63 +237,3 @@ public class GuiTree extends GuiParent {
 	}
 	
 }
-/*
-public void updateSearchedDisplay(String search) {
-	
-	for (GuiTreePart part : listOfPartsSearched) {
-		if (controls.contains(part))
-			removeControl(part);
-	}
-	
-	listOfPartsSearched.clear();
-	
-	for (GuiTreePart part : listOfParts) {
-		if (has(part.name)) {
-			listOfPartsRemoved.add(part);
-			removeControl(part);
-		}
-		if (!part.isBranch() && !search.equals("")) {
-			if (Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(part.CAPTION).find()) {
-				listOfPartsSearched.add(new GuiTreePart(part, EnumPartType.Searched));
-			}
-			for (String keyword : part.listOfSearchKeywords) {
-				if (Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(keyword).find()) {
-					GuiTreePart searchedPart = new GuiTreePart(part, EnumPartType.Searched);
-					searchedPart.caption = searchedPart.CAPTION + ": " + keyword;
-					searchedPart.width = GuiRenderHelper.instance.getStringWidth(searchedPart.caption)
-					        + searchedPart.getContentOffset() * 2;
-					listOfPartsSearched.add(searchedPart);
-				}
-			}
-		}
-		
-	}
-	
-	for (int i = 0; i < listOfPartsSearched.size(); i++) {
-		GuiTreePart button = listOfPartsSearched.get(i);
-		button.posY = (14 * i) + 20;
-		button.posX = 0;
-		addControl(button);
-	}
-	
-	if (search.equals("")) {
-		for (GuiTreePart part : listOfPartsSearched)
-			removeControl(part);
-		
-		for (GuiTreePart part : listOfPartsRemoved)
-			addControl(part);
-		
-		this.refreshControls();
-		if (search.equals(""))
-			for (GuiTreePart part : listOfParts) {
-				if (part.selected)
-					part.openToThis();
-			}
-		
-		((GuiTextfield) get("search")).text = "";
-		((GuiTextfield) get("search")).cursorPosition = 0;
-		listOfPartsRemoved.clear();
-		listOfPartsSearched.clear();
-	}
-}
-*/
