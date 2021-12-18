@@ -6,17 +6,17 @@ import java.util.List;
 import org.lwjgl.util.Color;
 
 import com.alet.client.gui.controls.GuiColorablePanel;
+import com.alet.client.gui.controls.GuiModifibleTextBox;
+import com.alet.client.gui.controls.GuiModifibleTextBox.ModifierAttribute;
 import com.alet.client.gui.controls.GuiScalableTextBox;
 import com.alet.client.gui.controls.GuiTree;
 import com.alet.client.gui.controls.GuiTreePart;
 import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
-import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.SubGui;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.util.text.TextFormatting;
@@ -177,36 +177,40 @@ public class SubGuiManual extends SubGui {
 			getGridSizeMsg();
 	}
 	
-	public void getWelcomeLTMsg() {
-		scrollBoxLeft.addControl(new GuiScalableTextBox("", TextFormatting.BOLD
-		        + "Welcome To LittleTiles", 0, 0, 371, 1.5));
-		scrollBoxLeft.addControl(new GuiScalableTextBox("", "    LittleTiles is a mod for anyone who wants to push the limit of building in Minecraft."
-		        + " This mod allows you to build with what are called " + TextFormatting.AQUA + TextFormatting.ITALIC
-		        + "Tiles" + TextFormatting.RESET
-		        + ". Tiles are smaller than a vanilia Minecraft block, with the default minimal"
-		        + " size being 1/32nd the size of a vanilia Minecraft block. You can place, remove, and modify tiles in several different sizes called "
-		        + TextFormatting.AQUA + TextFormatting.ITALIC + "Grid Sizes" + TextFormatting.RESET
-		        + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16, and 32."
-		        + " You can increase the smallest tile you can use in the configuration file. To learn how go to "
-		        + TextFormatting.ITALIC + TextFormatting.UNDERLINE + "Configuration" + TextFormatting.RESET
-		        + ", under LittleTiles.", 0, 25, 371, 1));
-		GuiButton button = (new GuiButton("", 193, 103, 63, 7) {
-			@Override
-			public boolean hasBorder() {
-				return false;
-			}
-			
-			@Override
-			public void onClicked(int x, int y, int button) {
-				updateMessage("Configuration");
-				tree.openTo(config);
-				tree.highlightPart(config);
-			}
-			
-		});
-		
-		button.setStyle(new Style("default", new ColoredDisplayStyle(0, 0, 0), new ColoredDisplayStyle(90, 90, 90), new ColoredDisplayStyle(140, 140, 140), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100)));
-		scrollBoxLeft.addControl(button);
+	public void getWelcomeLTMsg() {/*
+	                               scrollBoxLeft.addControl(new GuiScalableTextBox("", TextFormatting.BOLD
+	                               + "Welcome To LittleTiles", 0, 0, 371, 1.5));
+	                               scrollBoxLeft.addControl(new GuiScalableTextBox("", "    LittleTiles is a mod for anyone who wants to push the limit of building in Minecraft."
+	                               + " This mod allows you to build with what are called " + TextFormatting.AQUA + TextFormatting.ITALIC
+	                               + "Tiles" + TextFormatting.RESET
+	                               + ". Tiles are smaller than a vanilia Minecraft block, with the default minimal"
+	                               + " size being 1/32nd the size of a vanilia Minecraft block. You can place, remove, and modify tiles in several different sizes called "
+	                               + TextFormatting.AQUA + TextFormatting.ITALIC + "Grid Sizes" + TextFormatting.RESET
+	                               + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16, and 32."
+	                               + " You can increase the smallest tile you can use in the configuration file. To learn how go to "
+	                               + TextFormatting.ITALIC + TextFormatting.UNDERLINE + "Configuration" + TextFormatting.RESET
+	                               + ", under LittleTiles.", 0, 25, 371, 1));
+	                               GuiButton button = (new GuiButton("", 193, 103, 63, 7) {
+	                               @Override
+	                               public boolean hasBorder() {
+	                               return false;
+	                               }
+	                               
+	                               @Override
+	                               public void onClicked(int x, int y, int button) {
+	                               updateMessage("Configuration");
+	                               tree.openTo(config);
+	                               tree.highlightPart(config);
+	                               }
+	                               
+	                               });
+	                               
+	                               button.setStyle(new Style("default", new ColoredDisplayStyle(0, 0, 0), new ColoredDisplayStyle(90, 90, 90), new ColoredDisplayStyle(140, 140, 140), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100)));
+	                               scrollBoxLeft.addControl(button);*/
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(2) + "Testing"
+		        + ModifierAttribute.end() + ModifierAttribute.color(ColorUtils.GREEN) + ModifierAttribute.clickable()
+		        + ModifierAttribute.scale(1.5) + " words and stuff." + ModifierAttribute.end()
+		        + ModifierAttribute.scale(5) + "BIG WORD" + ModifierAttribute.end(), 0, 0, 100));
 	}
 	
 	public void getWelcomeAletMsg() {
