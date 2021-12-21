@@ -1,8 +1,6 @@
 package com.alet.client.gui.controls;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,9 +12,11 @@ import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
+import net.minecraft.client.renderer.GlStateManager;
+
 public class GuiModifibleTextBox extends GuiTextBox {
 	
-	public List<ModifyText> listOfText = new ArrayList<ModifyText>();
+	Map<String, ModifyText> map = new LinkedHashMap<String, ModifyText>();
 	public static final Pattern FORMATTING_SCALE_PATTERN = Pattern.compile("\\{scale:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
 	public static final Pattern FORMATTING_CLICKABLE_PATTERN = Pattern.compile("\\{clickable\\}");
 	public static final Pattern FORMATTING_COLOR_PATTERN = Pattern.compile("\\{color:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
@@ -31,7 +31,6 @@ public class GuiModifibleTextBox extends GuiTextBox {
 	private void readText() {
 		
 		String tempText = this.text;
-		Map<String, ModifyText> map = new LinkedHashMap<String, ModifyText>();
 		Matcher matcherScale = FORMATTING_SCALE_PATTERN.matcher(tempText);
 		Matcher matcherClickable = FORMATTING_CLICKABLE_PATTERN.matcher(tempText);
 		Matcher matcherColor = FORMATTING_COLOR_PATTERN.matcher(tempText);
@@ -44,7 +43,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 				temp.scale = d;
 				map.replace(s, temp);
 			} else {
-				map.put(s, new ModifyText(d, ColorUtils.BLACK, false, s));
+				map.put(s, new ModifyText(d, ColorUtils.WHITE, false, s));
 			}
 		}
 		
@@ -56,7 +55,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 				temp.clickable = b;
 				map.replace(s, temp);
 			} else {
-				map.put(s, new ModifyText(0, ColorUtils.BLACK, b, s));
+				map.put(s, new ModifyText(0, ColorUtils.WHITE, b, s));
 			}
 		}
 		
@@ -72,16 +71,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
 			}
 		}
 		ModifyText[] arr = map.values().toArray(new ModifyText[map.values().size()]);
-		for (int i = arr.length - 1; i >= 0; i--) {
-			if (i == arr.length - 1) {
-				System.out.println(arr[i]);
-			} else {
-				String z = arr[i].text.replaceAll(arr[i + 1].text, "");
-				arr[i + 1].text = z;
-				System.out.println(arr[i + 1]);
-			}
-			
-		}
+		for (int i = 0; i <= arr.length - 2; i++)
+			arr[i].text = arr[i].text.replaceAll(arr[i + 1].text, "");
+		
 	}
 	
 	public String cleanText(String text) {
@@ -97,8 +89,28 @@ public class GuiModifibleTextBox extends GuiTextBox {
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
 		
+		ModifyText[] arr = map.values().toArray(new ModifyText[map.values().size()]);
+		float xPos = 1.0F;
+		float yPos = 0.0F;
+		for (int i = 0; i <= arr.length - 1; i++) {
+			double scale = arr[i].scale - 1D;
+			double s = arr[i].scale;
+			double textWidth = font.getStringWidth(arr[i].text);
+			double textHeight = font.FONT_HEIGHT;
+			
+			GlStateManager.pushMatrix();
+			xPos += textWidth;
+			GlStateManager.scale(arr[i].scale, arr[i].scale, 1);
+			font.drawString(arr[i].text, xPos, 0, arr[i].color, true);
+			
+			GlStateManager.popMatrix();
+		}
 	}
 	
+	/*
+	 * 
+			
+	 */
 	public final static class ModifierAttribute {
 		
 		public static String scale(double scale) {
@@ -143,7 +155,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 	
 	private class ModifyText {
 		public double scale = 0;
-		public int color = ColorUtils.BLACK;
+		public int color = ColorUtils.WHITE;
 		public boolean clickable = false;
 		public String text = "";
 		

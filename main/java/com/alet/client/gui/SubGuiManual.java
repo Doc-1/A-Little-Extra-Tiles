@@ -207,10 +207,11 @@ public class SubGuiManual extends SubGui {
 	                               
 	                               button.setStyle(new Style("default", new ColoredDisplayStyle(0, 0, 0), new ColoredDisplayStyle(90, 90, 90), new ColoredDisplayStyle(140, 140, 140), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100)));
 	                               scrollBoxLeft.addControl(button);*/
-		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(2) + "Testing"
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(1) + "Testing "
 		        + ModifierAttribute.end() + ModifierAttribute.color(ColorUtils.GREEN) + ModifierAttribute.clickable()
-		        + ModifierAttribute.scale(1.5) + " words and stuff." + ModifierAttribute.end()
-		        + ModifierAttribute.scale(5) + "BIG WORD" + ModifierAttribute.end(), 0, 0, 100));
+		        + ModifierAttribute.scale(2) + "words and stuff. " + ModifierAttribute.end()
+		        + ModifierAttribute.scale(1) + ModifierAttribute.color(0x84ff2300) + "BIG WORD"
+		        + ModifierAttribute.end(), 0, 0, 100));
 	}
 	
 	public void getWelcomeAletMsg() {
