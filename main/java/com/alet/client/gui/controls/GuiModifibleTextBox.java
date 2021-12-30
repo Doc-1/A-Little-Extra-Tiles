@@ -1,7 +1,7 @@
 package com.alet.client.gui.controls;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +16,9 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class GuiModifibleTextBox extends GuiTextBox {
 	
-	Map<String, ModifyText> map = new LinkedHashMap<String, ModifyText>();
+	List<String> listOfText = new ArrayList<String>();
+	List<ModifyText> listOfModifyText = new ArrayList<ModifyText>();
+	public static final Pattern FORMATTING_NEWLINE_PATTERN = Pattern.compile("\\{newLines:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
 	public static final Pattern FORMATTING_SCALE_PATTERN = Pattern.compile("\\{scale:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
 	public static final Pattern FORMATTING_CLICKABLE_PATTERN = Pattern.compile("\\{clickable\\}");
 	public static final Pattern FORMATTING_COLOR_PATTERN = Pattern.compile("\\{color:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
@@ -25,92 +27,79 @@ public class GuiModifibleTextBox extends GuiTextBox {
 	
 	public GuiModifibleTextBox(String name, String text, int x, int y, int width) {
 		super(name, text, x, y, width);
+		textToArray(this.text);
 		readText();
+	}
+	
+	private void textToArray(String text) {
+		Matcher matcherEnd = FORMATTING_END_PATTERN.matcher(text);
+		if (matcherEnd.find()) {
+			String foundText = text.substring(0, matcherEnd.end());
+			listOfText.add(foundText);
+			System.out.println(text);
+			this.textToArray(text.replaceFirst(Pattern.quote(foundText), ""));
+		}
 	}
 	
 	private void readText() {
 		
-		String tempText = this.text;
-		Matcher matcherScale = FORMATTING_SCALE_PATTERN.matcher(tempText);
-		Matcher matcherClickable = FORMATTING_CLICKABLE_PATTERN.matcher(tempText);
-		Matcher matcherColor = FORMATTING_COLOR_PATTERN.matcher(tempText);
-		
-		while (matcherScale.find()) {
-			String s = cleanText(this.text.substring(matcherScale.start(), this.text.length()));
-			double d = ModifierAttribute.getScale(matcherScale.group());
-			if (map.containsKey(s)) {
-				ModifyText temp = map.get(s);
-				temp.scale = d;
-				map.replace(s, temp);
-			} else {
-				map.put(s, new ModifyText(d, ColorUtils.WHITE, false, s));
+		for (String text : listOfText) {
+			Matcher matcherScale = FORMATTING_SCALE_PATTERN.matcher(text);
+			Matcher matcherNewLine = FORMATTING_NEWLINE_PATTERN.matcher(text);
+			Matcher matcherClickable = FORMATTING_CLICKABLE_PATTERN.matcher(text);
+			Matcher matcherColor = FORMATTING_COLOR_PATTERN.matcher(text);
+			Matcher matcherEnd = FORMATTING_END_PATTERN.matcher(text);
+			
+			ModifyText modText = new ModifyText(0, ColorUtils.WHITE, false, 0, "");
+			
+			if (matcherScale.find()) {
+				modText.scale = ModifierAttribute.getScale(matcherScale.group());
+				text = text.replaceAll(FORMATTING_SCALE_PATTERN.pattern(), "");
 			}
+			
+			if (matcherNewLine.find()) {
+				modText.newLines = ModifierAttribute.getNewLines(matcherNewLine.group());
+				text = text.replaceAll(FORMATTING_NEWLINE_PATTERN.pattern(), "");
+			}
+			
+			if (matcherClickable.find()) {
+				modText.clickable = ModifierAttribute.isClickable(matcherClickable.group());
+				text = text.replaceAll(FORMATTING_CLICKABLE_PATTERN.pattern(), "");
+			}
+			
+			if (matcherColor.find()) {
+				modText.color = ModifierAttribute.getColor(matcherColor.group());
+				text = text.replaceAll(FORMATTING_COLOR_PATTERN.pattern(), "");
+			}
+			
+			if (matcherEnd.find()) {
+				text = text.replaceAll(FORMATTING_END_PATTERN.pattern(), "");
+				modText.text = text;
+			}
+			listOfModifyText.add(modText);
 		}
 		
-		while (matcherClickable.find()) {
-			String s = cleanText(this.text.substring(matcherClickable.start(), this.text.length()));
-			boolean b = ModifierAttribute.isClickable(matcherClickable.group());
-			if (map.containsKey(s)) {
-				ModifyText temp = map.get(s);
-				temp.clickable = b;
-				map.replace(s, temp);
-			} else {
-				map.put(s, new ModifyText(0, ColorUtils.WHITE, b, s));
-			}
-		}
-		
-		while (matcherColor.find()) {
-			String s = cleanText(this.text.substring(matcherColor.start(), this.text.length()));
-			int c = ModifierAttribute.getColor(matcherColor.group());
-			if (map.containsKey(s)) {
-				ModifyText temp = map.get(s);
-				temp.color = c;
-				map.replace(s, temp);
-			} else {
-				map.put(s, new ModifyText(0, c, false, s));
-			}
-		}
-		ModifyText[] arr = map.values().toArray(new ModifyText[map.values().size()]);
-		for (int i = 0; i <= arr.length - 2; i++)
-			arr[i].text = arr[i].text.replaceAll(arr[i + 1].text, "");
-		
-	}
-	
-	public String cleanText(String text) {
-		
-		text = text.replaceAll(FORMATTING_SCALE_PATTERN.pattern(), "");
-		text = text.replaceAll(FORMATTING_CLICKABLE_PATTERN.pattern(), "");
-		text = text.replaceAll(FORMATTING_COLOR_PATTERN.pattern(), "");
-		text = text.replaceAll(FORMATTING_END_PATTERN.pattern(), "");
-		
-		return text;
 	}
 	
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
 		
-		ModifyText[] arr = map.values().toArray(new ModifyText[map.values().size()]);
-		float xPos = 1.0F;
-		float yPos = 0.0F;
-		for (int i = 0; i <= arr.length - 1; i++) {
-			double scale = arr[i].scale - 1D;
-			double s = arr[i].scale;
-			double textWidth = font.getStringWidth(arr[i].text);
-			double textHeight = font.FONT_HEIGHT;
-			
+		float textHeight = font.FONT_HEIGHT;
+		float addY = 0.0F;
+		GlStateManager.pushMatrix();
+		for (int i = 0; i < listOfModifyText.size(); i++) {
+			float scale = (float) listOfModifyText.get(i).scale;
+			float textWidth = font.getStringWidth(listOfModifyText.get(i).text);
 			GlStateManager.pushMatrix();
-			xPos += textWidth;
-			GlStateManager.scale(arr[i].scale, arr[i].scale, 1);
-			font.drawString(arr[i].text, xPos, 0, arr[i].color, true);
-			
+			GlStateManager.scale(scale, scale, 1);
+			font.drawString(listOfModifyText.get(i).text, 0, 0, listOfModifyText.get(i).color, true);
 			GlStateManager.popMatrix();
+			double modX = (textWidth * scale);
+			GlStateManager.translate(modX, 0, 0);
 		}
+		GlStateManager.popMatrix();
 	}
 	
-	/*
-	 * 
-			
-	 */
 	public final static class ModifierAttribute {
 		
 		public static String scale(double scale) {
@@ -133,6 +122,18 @@ public class GuiModifibleTextBox extends GuiTextBox {
 			return "{end}";
 		}
 		
+		public static String newLines(int numberOf) {
+			return "{newLines:" + numberOf + "}";
+		}
+		
+		public static String space() {
+			return end() + scale(1) + " " + end();
+		}
+		
+		public static String tab() {
+			return end() + scale(1) + "     " + end();
+		}
+		
 		public static double getScale(String scale) {
 			Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(scale);
 			matcher.find();
@@ -142,6 +143,13 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		
 		public static int getColor(String color) {
 			Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(color);
+			matcher.find();
+			String s = matcher.group();
+			return Integer.parseInt(s);
+		}
+		
+		public static int getNewLines(String newLines) {
+			Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(newLines);
 			matcher.find();
 			String s = matcher.group();
 			return Integer.parseInt(s);
@@ -158,18 +166,28 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		public int color = ColorUtils.WHITE;
 		public boolean clickable = false;
 		public String text = "";
+		public int newLines = 0;
 		
-		public ModifyText(double scale, int color, boolean clickable, String text) {
+		public ModifyText(double scale, int color, boolean clickable, int newLines, String text) {
 			this.scale = scale;
 			this.color = color;
 			this.clickable = clickable;
 			this.text = text;
+			this.newLines = newLines;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			ModifyText text = ModifyText.class.cast(obj);
+			
+			return this.scale == text.scale && this.clickable == text.clickable && this.color == text.color
+			        && this.newLines == text.newLines && this.text.equals(text.text);
 		}
 		
 		@Override
 		public String toString() {
 			return this.text + ": {scale:" + this.scale + "}," + "{color:" + this.color + "}," + "{clickable:"
-			        + this.clickable + "}";
+			        + this.clickable + "}," + "{newLines:" + this.newLines + "}";
 		}
 	}
 	
