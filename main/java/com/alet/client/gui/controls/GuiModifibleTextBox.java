@@ -1,7 +1,11 @@
 package com.alet.client.gui.controls;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +22,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 	
 	List<String> listOfText = new ArrayList<String>();
 	List<ModifyText> listOfModifyText = new ArrayList<ModifyText>();
+	ModifyTextMap map = new ModifyTextMap();
 	public static final Pattern FORMATTING_NEWLINE_PATTERN = Pattern.compile("\\{newLines:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
 	public static final Pattern FORMATTING_SCALE_PATTERN = Pattern.compile("\\{scale:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
 	public static final Pattern FORMATTING_CLICKABLE_PATTERN = Pattern.compile("\\{clickable\\}");
@@ -36,7 +41,6 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		if (matcherEnd.find()) {
 			String foundText = text.substring(0, matcherEnd.end());
 			listOfText.add(foundText);
-			System.out.println(text);
 			this.textToArray(text.replaceFirst(Pattern.quote(foundText), ""));
 		}
 	}
@@ -78,24 +82,55 @@ public class GuiModifibleTextBox extends GuiTextBox {
 			}
 			listOfModifyText.add(modText);
 		}
+		int line = 0;
+		int totalWidth = 0;
+		for (ModifyText modText : listOfModifyText) {
+			totalWidth += font.getStringWidth(modText.text);
+			for (String s : font.listFormattedStringToWidth(modText.text, Math.max(10, this.width - totalWidth))) {
+				System.out.println(s);
+				totalWidth = 0;
+			}
+		}
 		
+		int i = 0;
 	}
 	
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
 		
+		int totalWidth = 0;
+		int y = 0;
+		for (ModifyText modText : listOfModifyText) {
+			totalWidth += font.getStringWidth(modText.text);
+			y += modText.newLines * font.FONT_HEIGHT;
+			for (String s : font.listFormattedStringToWidth(modText.text, Math.max(10, this.width - totalWidth))) {
+				
+				font.drawString(s, 0, y, modText.color, true);
+				totalWidth = 0;
+				y += font.FONT_HEIGHT;
+				
+			}
+		}
+		
 		float textHeight = font.FONT_HEIGHT;
 		float addY = 0.0F;
+		Iterator<Map.Entry<Integer, List<ModifyText>>> itr = map.entrySet().iterator();
 		GlStateManager.pushMatrix();
-		for (int i = 0; i < listOfModifyText.size(); i++) {
-			float scale = (float) listOfModifyText.get(i).scale;
-			float textWidth = font.getStringWidth(listOfModifyText.get(i).text);
+		while (itr.hasNext()) {
+			Entry<Integer, List<ModifyText>> entry = itr.next();
 			GlStateManager.pushMatrix();
-			GlStateManager.scale(scale, scale, 1);
-			font.drawString(listOfModifyText.get(i).text, 0, 0, listOfModifyText.get(i).color, true);
+			for (ModifyText modText : entry.getValue()) {
+				float scale = (float) modText.scale;
+				float textWidth = font.getStringWidth(modText.text);
+				GlStateManager.pushMatrix();
+				GlStateManager.scale(scale, scale, 1);
+				font.drawString(modText.text, 0, 0, modText.color, true);
+				GlStateManager.popMatrix();
+				double modX = (textWidth * scale);
+				GlStateManager.translate(modX, 0, 0);
+			}
 			GlStateManager.popMatrix();
-			double modX = (textWidth * scale);
-			GlStateManager.translate(modX, 0, 0);
+			GlStateManager.translate(0, map.maxHeight(entry.getKey()) * (entry.getKey() + 1), 0);
 		}
 		GlStateManager.popMatrix();
 	}
@@ -191,4 +226,24 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		}
 	}
 	
+	private class ModifyTextMap<K, V> extends LinkedHashMap<Integer, List<ModifyText>> {
+		
+		public void add(int key, ModifyText singleValue) {
+			if (this.containsKey(key)) {
+				this.get(key).add(singleValue);
+			} else {
+				List<ModifyText> modText = new ArrayList<ModifyText>();
+				modText.add(singleValue);
+				this.put(key, modText);
+			}
+		}
+		
+		public float maxHeight(int key) {
+			float max = font.FONT_HEIGHT;
+			for (ModifyText modText : this.get(key))
+				max = (float) Math.max(modText.scale * font.FONT_HEIGHT, max);
+			
+			return max;
+		}
+	}
 }
