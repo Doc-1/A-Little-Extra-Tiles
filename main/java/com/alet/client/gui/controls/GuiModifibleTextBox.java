@@ -1,6 +1,7 @@
 package com.alet.client.gui.controls;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class GuiModifibleTextBox extends GuiTextBox {
@@ -95,21 +97,47 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		int i = 0;
 	}
 	
+	protected List<String> listOfFormatedText(String text, double scale, int currentWidth) {
+		return Arrays.<String>asList(this.formatStringToWidth(text, scale, currentWidth).split("\n"));
+	}
+	
+	public String formatStringToWidth(String text, double scale, int currentWidth) {
+		int textWidth = (int) (font.getStringWidth(text) * scale);
+		if (textWidth > currentWidth) {
+			Matcher space = Pattern.compile(" ").matcher(text);
+			if (space.find()) {
+				int i = space.start();
+				String sub = text.substring(0, i);
+				char c0 = text.charAt(i);
+				boolean flag = c0 == ' ' || c0 == '\n';
+				String s1 = FontRenderer.getFormatFromString(sub) + text.substring(i + (flag ? 1 : 0));
+				
+				currentWidth = this.width;
+				currentWidth -= font.getStringWidth(sub);
+				return sub + "\n" + this.formatStringToWidth(s1, scale, currentWidth);
+			}
+		}
+		return text;
+	}
+	
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
-		
-		int totalWidth = 0;
 		int y = 0;
+		int currentWidth = this.width;
 		for (ModifyText modText : listOfModifyText) {
-			totalWidth += font.getStringWidth(modText.text);
+			float scale = (float) modText.scale;
+			int textWidth = (int) (font.getStringWidth(modText.text) * scale);
 			y += modText.newLines * font.FONT_HEIGHT;
-			for (String s : font.listFormattedStringToWidth(modText.text, Math.max(10, this.width - totalWidth))) {
-				
-				font.drawString(s, 0, y, modText.color, true);
-				totalWidth = 0;
-				y += font.FONT_HEIGHT;
-				
+			
+			for (String s : listOfFormatedText(modText.text, modText.scale, currentWidth)) {
+				GlStateManager.pushMatrix();
+				GlStateManager.scale(scale, scale, 1);
+				font.drawString(s, 0, y / scale, modText.color, true);
+				y += font.FONT_HEIGHT * scale;
+				GlStateManager.popMatrix();
 			}
+			currentWidth -= textWidth;
+			
 		}
 		
 		float textHeight = font.FONT_HEIGHT;

@@ -211,7 +211,7 @@ public class SubGuiManual extends SubGui {
 		        + ModifierAttribute.end() + ModifierAttribute.color(ColorUtils.GREEN) + ModifierAttribute.clickable()
 		        + ModifierAttribute.scale(1) + ModifierAttribute.newLines(2) + "words and stuff. "
 		        + ModifierAttribute.end() + ModifierAttribute.scale(1) + ModifierAttribute.color(0x84ff2300)
-		        + "BIG WORD" + ModifierAttribute.end(), 0, 0, 142));
+		        + "BIG WORD Test" + ModifierAttribute.end(), 0, 0, 142));
 	}
 	
 	public void getWelcomeAletMsg() {
