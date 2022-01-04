@@ -1,7 +1,6 @@
 package com.alet.client.gui.controls;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class GuiModifibleTextBox extends GuiTextBox {
@@ -36,6 +34,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		super(name, text, x, y, width);
 		textToArray(this.text);
 		readText();
+		breakDownText();
 	}
 	
 	private void textToArray(String text) {
@@ -84,83 +83,108 @@ public class GuiModifibleTextBox extends GuiTextBox {
 			}
 			listOfModifyText.add(modText);
 		}
-		int line = 0;
-		int totalWidth = 0;
+	}
+	
+	public void breakDownText() {
+		List<ModifyText> list = new ArrayList<ModifyText>();
 		for (ModifyText modText : listOfModifyText) {
-			totalWidth += font.getStringWidth(modText.text);
-			for (String s : font.listFormattedStringToWidth(modText.text, Math.max(10, this.width - totalWidth))) {
-				System.out.println(s);
-				totalWidth = 0;
+			boolean flag1 = false;
+			for (String s : modText.text.split("((?<= )|(?= ))")) {
+				ModifyText copy = modText.copy();
+				if (flag1)
+					copy.newLines = 0;
+				flag1 = true;
+				list.add(copy.setText(s));
 			}
 		}
+		int currentWidth = this.width;
+		int widthCount = 0;
+		float i = 0;
 		
-		int i = 0;
-	}
-	
-	protected List<String> listOfFormatedText(String text, double scale, int currentWidth) {
-		return Arrays.<String>asList(this.formatStringToWidth(text, scale, currentWidth).split("\n"));
-	}
-	
-	public String formatStringToWidth(String text, double scale, int currentWidth) {
-		int textWidth = (int) (font.getStringWidth(text) * scale);
-		if (textWidth > currentWidth) {
-			Matcher space = Pattern.compile(" ").matcher(text);
-			if (space.find()) {
-				int i = space.start();
-				String sub = text.substring(0, i);
-				char c0 = text.charAt(i);
-				boolean flag = c0 == ' ' || c0 == '\n';
-				String s1 = FontRenderer.getFormatFromString(sub) + text.substring(i + (flag ? 1 : 0));
-				
-				currentWidth = this.width;
-				currentWidth -= font.getStringWidth(sub);
-				return sub + "\n" + this.formatStringToWidth(s1, scale, currentWidth);
+		for (ModifyText modText : list) {
+			double scale = modText.scale;
+			widthCount += font.getStringWidth(modText.text) * scale;
+			i += modText.newLines;
+			if (modText.newLines != 0) {
+				widthCount = 0;
 			}
+			if (widthCount > currentWidth - 15) {
+				widthCount = 0;
+				i++;
+			}
+			System.out.println(i + " " + modText.text + " " + widthCount + " " + currentWidth);
+			this.map.add(i, modText);
 		}
-		return text;
+		//max w = 90
+		//"Little Tiles is a great mod!" w = 100
+		//"Little Tiles is a great" w = 90
+		//"mod!" w = 10
+		
+		/*
+		
+		for (ModifyText modText : listOfModifyText) {
+			
+			String storage = modText.text;
+			float scale = (float) modText.scale;
+			
+			while (!storage.equals("")) {
+				int textWidth = (int) Math.ceil((font.getStringWidth(storage) * scale));
+				if (textWidth > currentWidth) {
+					
+					
+				} else {
+					System.out.println(storage);
+					storage = "";
+				}
+			}
+		}*/
 	}
 	
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
-		int y = 0;
-		int currentWidth = this.width;
-		for (ModifyText modText : listOfModifyText) {
-			float scale = (float) modText.scale;
-			int textWidth = (int) (font.getStringWidth(modText.text) * scale);
-			y += modText.newLines * font.FONT_HEIGHT;
-			
-			for (String s : listOfFormatedText(modText.text, modText.scale, currentWidth)) {
-				GlStateManager.pushMatrix();
-				GlStateManager.scale(scale, scale, 1);
-				font.drawString(s, 0, y / scale, modText.color, true);
-				y += font.FONT_HEIGHT * scale;
-				GlStateManager.popMatrix();
-			}
-			currentWidth -= textWidth;
-			
-		}
 		
-		float textHeight = font.FONT_HEIGHT;
-		float addY = 0.0F;
-		Iterator<Map.Entry<Integer, List<ModifyText>>> itr = map.entrySet().iterator();
-		GlStateManager.pushMatrix();
+		Iterator<Map.Entry<Float, List<ModifyText>>> itr = map.entrySet().iterator();
+		float y = 0;
 		while (itr.hasNext()) {
-			Entry<Integer, List<ModifyText>> entry = itr.next();
-			GlStateManager.pushMatrix();
-			for (ModifyText modText : entry.getValue()) {
-				float scale = (float) modText.scale;
-				float textWidth = font.getStringWidth(modText.text);
+			Entry<Float, List<ModifyText>> entry = itr.next();
+			float key = entry.getKey();
+			int x = 0;
+			List<ModifyText> modTextList = entry.getValue();
+			for (ModifyText modText : modTextList) {
 				GlStateManager.pushMatrix();
-				GlStateManager.scale(scale, scale, 1);
-				font.drawString(modText.text, 0, 0, modText.color, true);
+				GlStateManager.scale(modText.scale, modText.scale, 1);
+				//System.out.println(heightPos + " " + maxHeight + " " + modText.text + " " + addY);
+				float textHeight = (float) (font.FONT_HEIGHT * modText.scale);
+				float maxTextHeight = map.maxHeight(key);
+				float addY = textHeight - maxTextHeight;
+				font.drawString(modText.text, (float) (x / modText.scale), (float) ((y - addY)
+				        / modText.scale), modText.color, true);
+				x += font.getStringWidth(modText.text) * modText.scale;
 				GlStateManager.popMatrix();
-				double modX = (textWidth * scale);
-				GlStateManager.translate(modX, 0, 0);
 			}
-			GlStateManager.popMatrix();
-			GlStateManager.translate(0, map.maxHeight(entry.getKey()) * (entry.getKey() + 1), 0);
+			y += map.maxHeight(key);
+			
 		}
-		GlStateManager.popMatrix();
+		/*
+		int textWidth = (int) (font.getStringWidth(modText.text) * scale);
+		y += modText.newLines * font.FONT_HEIGHT;
+		
+		int count = 0;
+		
+		
+		for (String s : listOfFormatedText(modText.text, scale, currentWidth)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(scale, scale, 1);
+			y += (font.FONT_HEIGHT * scale);
+			font.drawString(s, (x / scale), y / scale, modText.color, true);
+			
+			x += (font.getStringWidth(s) * scale);
+			GlStateManager.popMatrix();
+			count++;
+		}
+		currentWidth -= textWidth;
+		*/
+		
 	}
 	
 	public final static class ModifierAttribute {
@@ -230,6 +254,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		public boolean clickable = false;
 		public String text = "";
 		public int newLines = 0;
+		public int linePos = 0;
 		
 		public ModifyText(double scale, int color, boolean clickable, int newLines, String text) {
 			this.scale = scale;
@@ -237,6 +262,15 @@ public class GuiModifibleTextBox extends GuiTextBox {
 			this.clickable = clickable;
 			this.text = text;
 			this.newLines = newLines;
+		}
+		
+		public ModifyText setText(String text) {
+			this.text = text;
+			return this;
+		}
+		
+		public ModifyText copy() {
+			return new ModifyText(this.scale, this.color, this.clickable, this.newLines, this.text);
 		}
 		
 		@Override
@@ -254,9 +288,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		}
 	}
 	
-	private class ModifyTextMap<K, V> extends LinkedHashMap<Integer, List<ModifyText>> {
+	private class ModifyTextMap<K, V> extends LinkedHashMap<Float, List<ModifyText>> {
 		
-		public void add(int key, ModifyText singleValue) {
+		public void add(float key, ModifyText singleValue) {
 			if (this.containsKey(key)) {
 				this.get(key).add(singleValue);
 			} else {
@@ -266,7 +300,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 			}
 		}
 		
-		public float maxHeight(int key) {
+		public float maxHeight(float key) {
 			float max = font.FONT_HEIGHT;
 			for (ModifyText modText : this.get(key))
 				max = (float) Math.max(modText.scale * font.FONT_HEIGHT, max);

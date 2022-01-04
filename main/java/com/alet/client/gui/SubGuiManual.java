@@ -16,7 +16,6 @@ import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
-import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.util.text.TextFormatting;
@@ -207,11 +206,20 @@ public class SubGuiManual extends SubGui {
 	                               
 	                               button.setStyle(new Style("default", new ColoredDisplayStyle(0, 0, 0), new ColoredDisplayStyle(90, 90, 90), new ColoredDisplayStyle(140, 140, 140), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100)));
 	                               scrollBoxLeft.addControl(button);*/
-		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(1) + "Testing "
-		        + ModifierAttribute.end() + ModifierAttribute.color(ColorUtils.GREEN) + ModifierAttribute.clickable()
-		        + ModifierAttribute.scale(1) + ModifierAttribute.newLines(2) + "words and stuff. "
-		        + ModifierAttribute.end() + ModifierAttribute.scale(1) + ModifierAttribute.color(0x84ff2300)
-		        + "BIG WORD Test" + ModifierAttribute.end(), 0, 0, 142));
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(2) + "Welcome To LittleTiles"
+		        + ModifierAttribute.end() + ModifierAttribute.newLines(1) + "" + ModifierAttribute.end()
+		        + ModifierAttribute.clickable() + ModifierAttribute.scale(1) + ModifierAttribute.newLines(1)
+		        + "    LittleTiles is a mod for anyone who wants to push the limit of building in Minecraft. This mod allows you to build with what are called "
+		        + ModifierAttribute.end() + TextFormatting.ITALIC + ModifierAttribute.scale(1.1)
+		        + ModifierAttribute.color(0x00FFFF) + "  Tiles" + ModifierAttribute.end() + ModifierAttribute.scale(1)
+		        + ". Tiles are smaller than a vanilia Minecraft block, with the default minimal size being 1/32nd the size of a vanilia Minecraft block. You can place, remove, and modify tiles in several different sizes called "
+		        + ModifierAttribute.end() + TextFormatting.ITALIC + ModifierAttribute.scale(1.1)
+		        + ModifierAttribute.color(0x00FFFF) + "Grid Size" + ModifierAttribute.end() + ModifierAttribute.scale(1)
+		        + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16,"
+		        + " and 32. You can increase the smallest tile you can use in the configuration file. To learn how go to "
+		        + ModifierAttribute.end() + TextFormatting.ITALIC + TextFormatting.UNDERLINE
+		        + ModifierAttribute.scale(1) + "Configuration" + ModifierAttribute.end() + ModifierAttribute.scale(1)
+		        + ", under LittleTiles." + ModifierAttribute.end(), 0, 0, 350));
 	}
 	
 	public void getWelcomeAletMsg() {
