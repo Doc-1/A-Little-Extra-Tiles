@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.util.Color;
 
 import com.alet.client.gui.controls.GuiColorablePanel;
+import com.alet.client.gui.controls.GuiGIF;
 import com.alet.client.gui.controls.GuiModifibleTextBox;
 import com.alet.client.gui.controls.GuiModifibleTextBox.ModifierAttribute;
 import com.alet.client.gui.controls.GuiScalableTextBox;
@@ -16,6 +17,7 @@ import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.util.text.TextFormatting;
@@ -23,7 +25,7 @@ import net.minecraft.util.text.TextFormatting;
 public class SubGuiManual extends SubGui {
 	
 	GuiScrollBox scrollBoxLeft;
-	GuiTreePart welcome = new GuiTreePart("Welcome to Little Tiles", EnumPartType.Title);
+	GuiTreePart welcome = new GuiTreePart("Welcome to LittleTiles", EnumPartType.Title);
 	
 	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
 	GuiTreePart box = new GuiTreePart("Box", EnumPartType.Leaf);
@@ -136,9 +138,7 @@ public class SubGuiManual extends SubGui {
 	public void changed(GuiControlChangedEvent event) {
 		if (event.source instanceof GuiTreePart) {
 			GuiTreePart part = (GuiTreePart) event.source;
-			if (part.type.equals(EnumPartType.Leaf) || part.type.equals(EnumPartType.Searched)
-			        || part.type.equals(EnumPartType.Title) || part.type.equals(EnumPartType.Root))
-				updateMessage(part.CAPTION);
+			updateMessage(part.CAPTION);
 		}
 	}
 	
@@ -150,8 +150,10 @@ public class SubGuiManual extends SubGui {
 			else
 				i++;
 		}
-		if (caption.equals("Welcome to Little Tiles"))
+		if (caption.equals("Welcome to LittleTiles"))
 			getWelcomeLTMsg();
+		if (caption.equals("Draw Shapes"))
+			getDrawShape();
 		if (caption.equals("Welcome To A Little Extra Tiles"))
 			getWelcomeAletMsg();
 		if (caption.equals("Magic Wand"))
@@ -176,20 +178,7 @@ public class SubGuiManual extends SubGui {
 			getGridSizeMsg();
 	}
 	
-	public void getWelcomeLTMsg() {/*
-	                               scrollBoxLeft.addControl(new GuiScalableTextBox("", TextFormatting.BOLD
-	                               + "Welcome To LittleTiles", 0, 0, 371, 1.5));
-	                               scrollBoxLeft.addControl(new GuiScalableTextBox("", "    LittleTiles is a mod for anyone who wants to push the limit of building in Minecraft."
-	                               + " This mod allows you to build with what are called " + TextFormatting.AQUA + TextFormatting.ITALIC
-	                               + "Tiles" + TextFormatting.RESET
-	                               + ". Tiles are smaller than a vanilia Minecraft block, with the default minimal"
-	                               + " size being 1/32nd the size of a vanilia Minecraft block. You can place, remove, and modify tiles in several different sizes called "
-	                               + TextFormatting.AQUA + TextFormatting.ITALIC + "Grid Sizes" + TextFormatting.RESET
-	                               + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16, and 32."
-	                               + " You can increase the smallest tile you can use in the configuration file. To learn how go to "
-	                               + TextFormatting.ITALIC + TextFormatting.UNDERLINE + "Configuration" + TextFormatting.RESET
-	                               + ", under LittleTiles.", 0, 25, 371, 1));
-	                               GuiButton button = (new GuiButton("", 193, 103, 63, 7) {
+	public void getWelcomeLTMsg() {/*GuiButton button = (new GuiButton("", 193, 103, 63, 7) {
 	                               @Override
 	                               public boolean hasBorder() {
 	                               return false;
@@ -202,27 +191,42 @@ public class SubGuiManual extends SubGui {
 	                               tree.highlightPart(config);
 	                               }
 	                               
-	                               });
-	                               
-	                               button.setStyle(new Style("default", new ColoredDisplayStyle(0, 0, 0), new ColoredDisplayStyle(90, 90, 90), new ColoredDisplayStyle(140, 140, 140), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100)));
-	                               scrollBoxLeft.addControl(button);*/
-		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(2) + "Welcome To LittleTiles"
-		        + ModifierAttribute.end() + ModifierAttribute.newLines(1) + "" + ModifierAttribute.end()
-		        + ModifierAttribute.clickable() + ModifierAttribute.scale(1) + ModifierAttribute.newLines(1)
+	                               });*/
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(2) + ModifierAttribute.bold()
+		        + "Welcome To LittleTiles" + ModifierAttribute.end() + ModifierAttribute.scale(1)
+		        + ModifierAttribute.newLines(2)
 		        + "    LittleTiles is a mod for anyone who wants to push the limit of building in Minecraft. This mod allows you to build with what are called "
-		        + ModifierAttribute.end() + TextFormatting.ITALIC + ModifierAttribute.scale(1.1)
+		        + ModifierAttribute.end() + ModifierAttribute.scale(1.1) + ModifierAttribute.italic()
 		        + ModifierAttribute.color(0x00FFFF) + "  Tiles" + ModifierAttribute.end() + ModifierAttribute.scale(1)
 		        + ". Tiles are smaller than a vanilia Minecraft block, with the default minimal size being 1/32nd the size of a vanilia Minecraft block. You can place, remove, and modify tiles in several different sizes called "
-		        + ModifierAttribute.end() + TextFormatting.ITALIC + ModifierAttribute.scale(1.1)
+		        + ModifierAttribute.end() + ModifierAttribute.scale(1.1) + ModifierAttribute.italic()
 		        + ModifierAttribute.color(0x00FFFF) + "Grid Size" + ModifierAttribute.end() + ModifierAttribute.scale(1)
 		        + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16,"
 		        + " and 32. You can increase the smallest tile you can use in the configuration file. To learn how go to "
-		        + ModifierAttribute.end() + TextFormatting.ITALIC + TextFormatting.UNDERLINE
-		        + ModifierAttribute.scale(1) + "Configuration" + ModifierAttribute.end() + ModifierAttribute.scale(1)
-		        + ", under LittleTiles." + ModifierAttribute.end(), 0, 0, 350));
+		        + ModifierAttribute.end() + ModifierAttribute.italic() + ModifierAttribute.underline()
+		        + ModifierAttribute.scale(1) + ModifierAttribute.clickable() + "Configuration" + ModifierAttribute.end()
+		        + ModifierAttribute.scale(1) + ", under LittleTiles." + ModifierAttribute.end(), 0, 0, 350) {
+			
+			@Override
+			public void clickedOn(String text) {
+				if (text.contains("Configuration")) {
+					updateMessage("Configuration");
+					tree.openTo(config);
+					tree.highlightPart(config);
+				}
+			}
+		});
 	}
 	
 	public void getWelcomeAletMsg() {
+	}
+	
+	public void getDrawShape() {
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Draw Shapes", false, true, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "   A ", false, false, false)
+		        + ModifierAttribute.addText(1.1, 0x00FFFF, false, 0, "Draw Shape", true, false, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 0, ", is the type of shape that the little tools can use. The draw shape can remove,add or edit tiles, depending on the tool and placement mode that is used.", false, false, false), 0, 0, 350));
+		scrollBoxLeft.addControl(new GuiGIF("", "", 0, 0, 1));
 	}
 	
 	public void getMagicWandMsg() {

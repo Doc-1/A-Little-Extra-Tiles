@@ -53,7 +53,6 @@ public class GuiImage extends GuiControl {
 			fontType = "Arial";
 		if (fontSize == 0)
 			fontSize = 48;
-		//System.out.println(this.textAttributeMap);
 		image = FontReader.fontToPhoto(text, fontType, textAttributeMap, fontSize, fontColor, rotation);
 		this.width = (image.getWidth() / 3);
 		this.height = (image.getHeight() / 3);
@@ -62,19 +61,13 @@ public class GuiImage extends GuiControl {
 	
 	@Override
 	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
-		//this.mc.getTextureManager().getDynamicTextureLocation(ALET.MODID, texture)
 		if (image != null) {
-			//GlStateManager.scale(0.0F, 1.0F, 0.0F);
 			ResourceLocation location = this.mc.getTextureManager().getDynamicTextureLocation(ALET.MODID, texture);
 			
 			this.mc.getTextureManager().bindTexture(location);
 			int i = 3;
 			GuiIngame.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, image.getWidth() / i, image.getHeight()
 			        / i, image.getWidth() / i, image.getHeight() / i);
-			//this.drawTexturedModalRect(location, 0, 50, 0, 0, image.getWidth(), image.getHeight(), image.getWidth(), image.getHeight());
-			//TextureStretchDisplayStyle backgroundPlate = new TextureStretchDisplayStyle(this.mc.getTextureManager().getDynamicTextureLocation(ALET.MODID, texture), 200, 200, image.getWidth(), image.getHeight());
-			//backgroundPlate.renderStyle(helper, width, height);
-			//texture.deleteGlTexture();
 		}
 	}
 	

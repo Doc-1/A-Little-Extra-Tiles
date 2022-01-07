@@ -347,9 +347,8 @@ public class GuiTreePart extends GuiControl {
 				tree.updatePartsPosition();
 			}
 		}
-		if (!this.type.isOpenable()) {
-			tree.highlightPart(this);
-		}
+		tree.highlightPart(this);
+		
 		raiseEvent(new GuiControlChangedEvent(this));
 	}
 	
