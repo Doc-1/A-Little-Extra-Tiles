@@ -45,7 +45,8 @@ public class SubGuiFillingCabinet extends SubGui {
 	public String selectedFile;
 	
 	public SubGuiFillingCabinet(LittleStructure structure) {
-		super(332, 282);
+		super(382, 282);
+		createTreeList();
 	}
 	
 	@Override
@@ -57,12 +58,15 @@ public class SubGuiFillingCabinet extends SubGui {
 		GuiRightClickMenu rightClick = new GuiRightClickMenu("rightClick", listOfOptions, this.width, this.height, 80);
 		rightClick.listenFor.add(GuiTreePart.class);
 		addControl(rightClick);
-		GuiScrollBox scrollBox = new GuiScrollBox("scrollBox", 0, 15, 160, 222);
+		GuiScrollBox scrollBox = new GuiScrollBox("scrollBox", 0, 15, 210, 222);
 		rightClick.localizedControl = scrollBox;
-		scrollBox.addControl(new GuiTree("list", 0, 0, 150, listOfRoots, true, 0, 0, 116));
+		GuiTree tree = new GuiTree("list", 0, 0, 210, listOfRoots, true, 0, 0, 116);
+		scrollBox.addControl(tree);
+		tree.allButtons();
+		tree.createSearchControls();
+		tree.height = (tree.listOfParts.size() * 14) + 25;
 		addControl(scrollBox);
-		updateTree();
-		GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 171, 15, 155, 154);
+		GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 221, 15, 155, 154);
 		viewer.moveViewPort(0, 92);
 		addControl(viewer);
 		
@@ -98,13 +102,12 @@ public class SubGuiFillingCabinet extends SubGui {
 				updateTree();
 			}
 		});
-		addControl(new GuiButton("Import", 195, 177) {
+		addControl(new GuiButton("Import", 243, 177) {
 			
 			@Override
 			public void onClicked(int x, int y, int button) {
 				try {
 					NBTTagCompound nbt = JsonToNBT.getTagFromJson(getBlueprintFromFile());
-					System.out.println(nbt);
 					try {
 						LittleGridContext.get(nbt);
 						sendPacketToServer(nbt);
@@ -117,8 +120,30 @@ public class SubGuiFillingCabinet extends SubGui {
 				}
 			}
 		});
-		GuiTree tree = (GuiTree) scrollBox.get("list");
-		tree.createSearchControls();
+	}
+	
+	public void createTreeList() {
+		File d = new File("./little_structures");
+		for (File file : d.listFiles()) {
+			GuiTreePart root = new GuiTreePart(file.getName(), EnumPartType.Root);
+			if (file.isDirectory()) {
+				collectFilesInDir(file, root);
+			}
+			listOfRoots.add(root);
+		}
+	}
+	
+	public void collectFilesInDir(File dir, GuiTreePart part) {
+		for (File file : dir.listFiles()) {
+			if (file.isDirectory()) {
+				GuiTreePart branch = new GuiTreePart(file.getName(), EnumPartType.Branch);
+				part.addMenu(branch);
+				collectFilesInDir(file, branch);
+			} else if (file.isFile()) {
+				part.addMenu(new GuiTreePart(file.getName(), EnumPartType.Leaf));
+			}
+		}
+		
 	}
 	
 	public void updateTree() {

@@ -10,6 +10,7 @@ import com.alet.client.gui.controls.GuiGIF;
 import com.alet.client.gui.controls.GuiModifibleTextBox;
 import com.alet.client.gui.controls.GuiModifibleTextBox.ModifierAttribute;
 import com.alet.client.gui.controls.GuiScalableTextBox;
+import com.alet.client.gui.controls.GuiTable;
 import com.alet.client.gui.controls.GuiTree;
 import com.alet.client.gui.controls.GuiTreePart;
 import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
@@ -23,6 +24,8 @@ import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 import net.minecraft.util.text.TextFormatting;
 
 public class SubGuiManual extends SubGui {
+	
+	String selected = "";
 	
 	GuiScrollBox scrollBoxLeft;
 	GuiTreePart welcome = new GuiTreePart("Welcome to LittleTiles", EnumPartType.Title);
@@ -64,6 +67,34 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart partical = new GuiTreePart("Particle Emitter", EnumPartType.Leaf);
 	GuiTreePart blankMatic = new GuiTreePart("Blank-o-matic", EnumPartType.Leaf);
 	GuiTreePart structureBuilder = new GuiTreePart("Structure Builder", EnumPartType.Leaf);
+	
+	GuiTreePart signaling = new GuiTreePart("Signaling", EnumPartType.Branch);
+	GuiTreePart gates = new GuiTreePart("Logic Gates", EnumPartType.Branch);
+	GuiTreePart and = new GuiTreePart("and", EnumPartType.Leaf);
+	GuiTreePart nand = new GuiTreePart("nand", EnumPartType.Leaf);
+	GuiTreePart or = new GuiTreePart("or", EnumPartType.Leaf);
+	GuiTreePart xor = new GuiTreePart("xor", EnumPartType.Leaf);
+	GuiTreePart not = new GuiTreePart("not", EnumPartType.Leaf);
+	
+	GuiTreePart math = new GuiTreePart("Math Operators", EnumPartType.Branch);
+	GuiTreePart add = new GuiTreePart("add", EnumPartType.Leaf);
+	GuiTreePart sub = new GuiTreePart("sub", EnumPartType.Leaf);
+	GuiTreePart multi = new GuiTreePart("multi", EnumPartType.Leaf);
+	GuiTreePart div = new GuiTreePart("div", EnumPartType.Leaf);
+	
+	GuiTreePart structuresSingal = new GuiTreePart("Structures", EnumPartType.Branch);
+	GuiTreePart storage = new GuiTreePart("Storage", EnumPartType.Leaf);
+	GuiTreePart noclip = new GuiTreePart("No-Clip", EnumPartType.Leaf);
+	GuiTreePart bed = new GuiTreePart("Bed", EnumPartType.Leaf);
+	GuiTreePart chair = new GuiTreePart("Chair", EnumPartType.Leaf);
+	GuiTreePart door = new GuiTreePart("Doors", EnumPartType.Leaf);
+	GuiTreePart message = new GuiTreePart("Message", EnumPartType.Leaf);
+	GuiTreePart light = new GuiTreePart("Light", EnumPartType.Leaf);
+	
+	GuiTreePart example = new GuiTreePart("Signal Examples", EnumPartType.Branch);
+	GuiTreePart button = new GuiTreePart("Button", EnumPartType.Leaf);
+	GuiTreePart lever = new GuiTreePart("Lever", EnumPartType.Leaf);
+	GuiTreePart pressure = new GuiTreePart("Pressure Plate", EnumPartType.Leaf);
 	
 	GuiTreePart config = new GuiTreePart("Configuration", EnumPartType.Leaf);
 	
@@ -123,11 +154,19 @@ public class SubGuiManual extends SubGui {
 		
 		blockAlet.addMenu(typewriterAlet).addMenu(photoAlet).addMenu(fillingAlet);
 		
+		gates.addMenu(and).addMenu(nand).addMenu(or).addMenu(xor).addMenu(not);
+		
+		math.addMenu(add).addMenu(sub).addMenu(div).addMenu(multi);
+		
+		structuresSingal.addMenu(bed).addMenu(chair).addMenu(storage).addMenu(noclip).addMenu(light).addMenu(message).addMenu(door);
+		
+		signaling.addMenu(gates).addMenu(math).addMenu(structuresSingal);
+		
 		toolsAlet.addMenu(tapeMeasureAlet).addMenu(littleRopeAlet);
 		
 		tools.addMenu(chisel).addMenu(hammer).addMenu(glove).addMenu(paint).addMenu(saw).addMenu(screwdriver).addMenu(wrench);
 		
-		listOfMenus.add(welcome.addMenu(drawshape).addMenu(tools).addMenu(block).addMenu(control).addMenu(config));
+		listOfMenus.add(welcome.addMenu(drawshape).addMenu(tools).addMenu(block).addMenu(control).addMenu(signaling).addMenu(config));
 		listOfMenus.add(welcomeAlet.addMenu(drawshapeAlet).addMenu(blockAlet).addMenu(toolsAlet));
 		tree = new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50);
 		scrollBox.controls.add(tree);
@@ -138,60 +177,67 @@ public class SubGuiManual extends SubGui {
 	public void changed(GuiControlChangedEvent event) {
 		if (event.source instanceof GuiTreePart) {
 			GuiTreePart part = (GuiTreePart) event.source;
-			updateMessage(part.CAPTION);
+			updateMessage(part.CAPTION, part.getBranchIDThisIsIn());
 		}
 	}
 	
-	public void updateMessage(String caption) {
-		int i = 0;
-		while (i < scrollBoxLeft.controls.size()) {
-			if (scrollBoxLeft.controls.get(i) instanceof CoreControl)
-				scrollBoxLeft.controls.remove(i);
-			else
-				i++;
+	public void updateMessage(String caption, int id) {
+		if (!this.selected.equals(caption)) {
+			int i = 0;
+			while (i < scrollBoxLeft.controls.size()) {
+				if (scrollBoxLeft.controls.get(i) instanceof CoreControl) {
+					if (scrollBoxLeft.controls.get(i) instanceof GuiGIF)
+						((GuiGIF) scrollBoxLeft.controls.get(i)).onClosed();
+					scrollBoxLeft.controls.remove(i);
+				} else
+					i++;
+			}
+			System.out.println(caption + " " + id);
+			if (caption.equals("Welcome to LittleTiles"))
+				getWelcomeLTMsg();
+			if (caption.equals("Draw Shapes"))
+				getDrawShape();
+			if (caption.equals("Box"))
+				getDrawShapeBox();
+			if (caption.equals("Slices"))
+				getDrawShapeSlice();
+			if (caption.equals("and"))
+				getAndMsg();
+			if (caption.equals("nand"))
+				getNandMsg();
+			if (caption.equals("or"))
+				getOrMsg();
+			if (caption.equals("xor"))
+				getXorMsg();
+			if (caption.equals("not"))
+				getNotMsg();
+			if (caption.equals("Welcome To A Little Extra Tiles"))
+				getWelcomeAletMsg();
+			if (caption.equals("Magic Wand"))
+				getMagicWandMsg();
+			if (caption.equals("Centered Box"))
+				getCenteredBoxMsg();
+			if (caption.equals("Centered Cylinder"))
+				getCenteredCylinderMsg();
+			if (caption.equals("Centered Sphere"))
+				getCenteredSphereMsg();
+			if (caption.equals("Typewriter"))
+				getTypewriterMsg();
+			if (caption.equals("Photo Importer"))
+				getPhotoImporterMsg();
+			if (caption.equals("Filling Cabinet"))
+				getFillingCabinetMsg();
+			if (caption.equals("Little Tape Measure"))
+				getTapeMeasureMsg();
+			if (caption.equals("Little Rope"))
+				getLittleRopeMsg();
+			if (caption.equals("Configuration"))
+				getGridSizeMsg();
 		}
-		if (caption.equals("Welcome to LittleTiles"))
-			getWelcomeLTMsg();
-		if (caption.equals("Draw Shapes"))
-			getDrawShape();
-		if (caption.equals("Welcome To A Little Extra Tiles"))
-			getWelcomeAletMsg();
-		if (caption.equals("Magic Wand"))
-			getMagicWandMsg();
-		if (caption.equals("Centered Box"))
-			getCenteredBoxMsg();
-		if (caption.equals("Centered Cylinder"))
-			getCenteredCylinderMsg();
-		if (caption.equals("Centered Sphere"))
-			getCenteredSphereMsg();
-		if (caption.equals("Typewriter"))
-			getTypewriterMsg();
-		if (caption.equals("Photo Importer"))
-			getPhotoImporterMsg();
-		if (caption.equals("Filling Cabinet"))
-			getFillingCabinetMsg();
-		if (caption.equals("Little Tape Measure"))
-			getTapeMeasureMsg();
-		if (caption.equals("Little Rope"))
-			getLittleRopeMsg();
-		if (caption.equals("Configuration"))
-			getGridSizeMsg();
+		this.selected = caption;
 	}
 	
-	public void getWelcomeLTMsg() {/*GuiButton button = (new GuiButton("", 193, 103, 63, 7) {
-	                               @Override
-	                               public boolean hasBorder() {
-	                               return false;
-	                               }
-	                               
-	                               @Override
-	                               public void onClicked(int x, int y, int button) {
-	                               updateMessage("Configuration");
-	                               tree.openTo(config);
-	                               tree.highlightPart(config);
-	                               }
-	                               
-	                               });*/
+	public void getWelcomeLTMsg() {
 		scrollBoxLeft.addControl(new GuiModifibleTextBox("t", ModifierAttribute.scale(2) + ModifierAttribute.bold()
 		        + "Welcome To LittleTiles" + ModifierAttribute.end() + ModifierAttribute.scale(1)
 		        + ModifierAttribute.newLines(2)
@@ -210,8 +256,7 @@ public class SubGuiManual extends SubGui {
 			@Override
 			public void clickedOn(String text) {
 				if (text.contains("Configuration")) {
-					updateMessage("Configuration");
-					tree.openTo(config);
+					raiseEvent(new GuiControlChangedEvent(config));
 					tree.highlightPart(config);
 				}
 			}
@@ -223,10 +268,52 @@ public class SubGuiManual extends SubGui {
 	
 	public void getDrawShape() {
 		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Draw Shapes", false, true, false)
-		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "   A ", false, false, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    A ", false, false, false)
 		        + ModifierAttribute.addText(1.1, 0x00FFFF, false, 0, "Draw Shape", true, false, false)
 		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 0, ", is the type of shape that the little tools can use. The draw shape can remove,add or edit tiles, depending on the tool and placement mode that is used.", false, false, false), 0, 0, 350));
-		scrollBoxLeft.addControl(new GuiGIF("", "", 0, 0, 1));
+	}
+	
+	public void getDrawShapeBox() {
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Draw Shape: Box", false, true, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    The Box draw shape is a simple shape. As the name implies this draw shape allows you draw a squares, rectangles, or cubes. To draw with this shape right click to set point A then right click again to set point B. This will then place the cube.", false, false, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 1, "    There are two settings with the box draw shape, Hallow and Thinkness. Hallow lets you place a cube with a hallow center and thickness is how thick the walls will be. The thickness is based off of the grid size. If you are using grid size 32 than thickness of 16 would mean the wall is 16/32 or 1/2 the size of block.", false, false, false), 0, 0, 350));
+		scrollBoxLeft.addControl(new GuiGIF("", "assets/alet/gif/box.gif", 0, 110, 1));
+	}
+	
+	public void getDrawShapeSlice() {
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Draw Shape: Slice", false, true, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    The Slice draw shape allows you to draw a slice or slope."
+		                + " To draw with this shape right click to set point A then right click again to set point B. This will then place the slice. You can use the arrow keys to change the"
+		                + " facing of the slope.", false, false, false), 0, 0, 350));
+		scrollBoxLeft.addControl(new GuiGIF("", "assets/alet/gif/slice.gif", 0, 65, 1));
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Draw Shape: Slice Corner", false, true, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    The Corner Slices draw shape allows you to draw a slice or sloped corner."
+		                + " To draw with this shape right click to set point A then right click again to set point B. This will then place the corner slice. You can use the arrow keys to change the"
+		                + " facing of the slope.", false, false, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 1, "    There is a setting for both Inner and Outer Corner Slice called second-type that will switch it to an alternate "
+		                + "corner slope. The type of corner you want to use will depend on the shape you are going for.", false, false, false), 0, 255, 350));
+		scrollBoxLeft.addControl(new GuiGIF("", "assets/alet/gif/sliceIn.gif", 0, 348, 1));
+		scrollBoxLeft.addControl(new GuiGIF("", "assets/alet/gif/sliceOut.gif", 0, 535, 1));
+	}
+	
+	public void getAndMsg() {
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Logic Gate: And", false, true, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    The logic gate, And, compares two values to see if they are equal. For example, if"
+		                + " you have one signal with the value of 1 and another with the value of 1 then the And gate will return with true. However, if one of those"
+		                + " signals is 0 and the other is 1 then the And gate will return false.", false, false, false), 0, 0, 350));
+		scrollBoxLeft.addControl(new GuiTable("", "", 0, 100, 50, 15, 5, 3, false));
+	}
+	
+	public void getNandMsg() {
+	}
+	
+	public void getOrMsg() {
+	}
+	
+	public void getXorMsg() {
+	}
+	
+	public void getNotMsg() {
 	}
 	
 	public void getMagicWandMsg() {

@@ -197,7 +197,6 @@ public class GuiModifibleTextBox extends GuiTextBox {
 		for (ModifyText modText : this.locationClickableMap.values()) {
 			if (modText.mouseOver) {
 				playSound(SoundEvents.UI_BUTTON_CLICK);
-				
 				clickedOn(modText.text);
 			}
 		}
@@ -230,6 +229,16 @@ public class GuiModifibleTextBox extends GuiTextBox {
 				font.drawString(modText.text, x, y, modText.color, true);
 			GlStateManager.popMatrix();
 		}
+	}
+	
+	@Override
+	public boolean hasBackground() {
+		return false;
+	}
+	
+	@Override
+	public boolean hasBorder() {
+		return false;
 	}
 	
 	public final static class ModifierAttribute {

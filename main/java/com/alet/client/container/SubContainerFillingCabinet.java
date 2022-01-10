@@ -29,8 +29,8 @@ public class SubContainerFillingCabinet extends SubContainer {
 	@Override
 	public void createControls() {
 		addSlotToContainer(new Slot(input, 0, 0, 245));
-		addSlotToContainer(new Slot(output, 0, 170, 177));
-		addPlayerSlotsToContainer(player, 170, 206);
+		addSlotToContainer(new Slot(output, 0, 221, 177));
+		addPlayerSlotsToContainer(player, 220, 206);
 	}
 	
 	@Override
