@@ -169,7 +169,6 @@ public class ItemPremadePlaceable extends Item implements ILittlePlacer, ICreati
 			if (stack.hasTagCompound() && nbt.hasKey("heldItem"))
 				if (!nbt.getString("heldItem").equals(""))
 					id = getPremadeId(LittleStructurePremade.tryGetPremadeStack(nbt.getString("heldItem")));
-				
 		}
 		if (cachedPreviews.containsKey(id))
 			return cachedPreviews.get(id).copy();

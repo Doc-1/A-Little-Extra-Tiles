@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.alet.client.gui.SubGuiBlock;
 import com.alet.client.gui.SubGuiFillingCabinet;
 import com.alet.client.gui.SubGuiMagnitudeComparator;
 import com.alet.client.gui.SubGuiManual;
+import com.alet.client.gui.SubGuiMicroProcessor;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
@@ -48,14 +50,18 @@ import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.structure.type.premade.PickupItemPremade;
 import com.alet.common.structure.type.premade.signal.LittleCircuitClock;
 import com.alet.common.structure.type.premade.signal.LittleCircuitClockAdvanced;
+import com.alet.common.structure.type.premade.signal.LittleCircuitColoredDisplay16;
 import com.alet.common.structure.type.premade.signal.LittleCircuitConverterFourToOne;
 import com.alet.common.structure.type.premade.signal.LittleCircuitConverterFourToSixteen;
 import com.alet.common.structure.type.premade.signal.LittleCircuitConverterOneToFour;
 import com.alet.common.structure.type.premade.signal.LittleCircuitConverterSixteenToFour;
+import com.alet.common.structure.type.premade.signal.LittleCircuitDisplay16;
 import com.alet.common.structure.type.premade.signal.LittleCircuitRandomNumberOne;
+import com.alet.common.structure.type.premade.signal.LittleCircuitTFlipFlop;
 import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator;
 import com.alet.common.structure.type.premade.signal.LittlePremadeSignalInputQuickOne;
 import com.alet.common.structure.type.premade.signal.LittlePremadeSignalOutputQuickOne;
+import com.alet.common.structure.type.premade.signal.LittleSignalColoredDisplay;
 import com.alet.common.structure.type.premade.signal.LittleSignalInputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalInputQuick.LittleStructureTypeInputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalOutputQuick;
@@ -69,6 +75,7 @@ import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemLittleManual;
 import com.alet.items.ItemLittleRope;
 import com.alet.items.ItemTapeMeasure;
+import com.alet.items.premade.ItemPremadePlaceable;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -83,10 +90,17 @@ import com.creativemd.littletiles.common.structure.registry.LittleStructureRegis
 import com.creativemd.littletiles.common.structure.registry.StructureIngredientRule.StructureIngredientScalerVolume;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalMode;
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
+import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalCable;
+import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalCable.LittleStructureTypeCable;
+import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalInput;
+import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalInput.LittleStructureTypeInput;
+import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
+import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput.LittleStructureTypeOutput;
 import com.creativemd.littletiles.common.util.ingredient.StackIngredient;
 import com.creativemd.littletiles.server.LittleTilesServer;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -158,6 +172,10 @@ public class ALET {
 	public static Item Convert4to16;
 	public static Item Convert16to4;
 	
+	public static Item magCompare1;
+	public static Item magCompare4;
+	public static Item magCompare16;
+	
 	public static Item randomGen1Bit;
 	public static Item randomGen4Bit;
 	public static Item randomGen16Bit;
@@ -194,6 +212,11 @@ public class ALET {
 		
 		smoothBrick = new BasicBlock("smoothbrick");
 		smoothGroutBrick = new BasicBlock("smoothgroutbrick");
+		
+		magCompare1 = new ItemPremadePlaceable("magnitude_comparator_1", true);
+		magCompare4 = new ItemPremadePlaceable("magnitude_comparator_4", true);
+		magCompare16 = new ItemPremadePlaceable("magnitude_comparator_16", true);
+		
 		if (event.getSide().equals(Side.CLIENT)) {
 			ALETClient.addItemToRenderTiles(jumpRod);
 			createStructureFolder();
@@ -270,6 +293,19 @@ public class ALET {
 				return new SubContainerBasic(player);
 			}
 		});
+		GuiHandler.registerGuiHandler("programmer", new LittleStructureGuiHandler() {
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+				return new SubGuiMicroProcessor(structure);
+			}
+			
+			@Override
+			public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+				return new SubContainerBasic(player);
+			}
+		});
 		GuiHandler.registerGuiHandler("manual", new CustomGuiHandler() {
 			
 			@Override
@@ -318,7 +354,7 @@ public class ALET {
 	
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(transparent).setRegistryName(transparent.getRegistryName()), new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
+		event.getRegistry().registerAll(magCompare1, magCompare4, magCompare16, manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(transparent).setRegistryName(transparent.getRegistryName()), new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick).setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank).setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank).setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank).setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank).setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
 		proxy.loadSide();
 	}
 	
@@ -326,6 +362,9 @@ public class ALET {
 	public static void registerRenders(ModelRegistryEvent event) {
 		registerRender(littleRope);
 		registerRender(manual);
+		registerRender(magCompare1);
+		registerRender(magCompare4);
+		registerRender(magCompare16);
 		registerRender(tapeMeasure);
 		registerRender(Item.getItemFromBlock(smoothGroutBrick));
 		registerRender(Item.getItemFromBlock(smoothBrick));
@@ -354,24 +393,35 @@ public class ALET {
 			CreativeCorePacket.registerPacket(PacketSendServerCams.class);
 			CreativeCorePacket.registerPacket(PacketGetServerCams.class);
 		}
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeInput("single_input17", "premade", LittleSignalInput.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 17));
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeOutput("single_output17", "premade", LittleSignalOutput.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 17));
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCable("single_cable17", "premade", LittleSignalCable.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 17));
+		
+		LittleStructurePremade.registerPremadeStructureType("signal_color_display_16", ALET.MODID, LittleSignalColoredDisplay.class, LittleStructureAttribute.TICK_RENDERING).addOutput("pixel0", 4, SignalMode.EQUAL, true).addOutput("pixel1", 4, SignalMode.EQUAL, true).addOutput("pixel2", 4, SignalMode.EQUAL, true).addOutput("pixel3", 4, SignalMode.EQUAL, true).addOutput("pixel4", 4, SignalMode.EQUAL, true).addOutput("pixel5", 4, SignalMode.EQUAL, true).addOutput("pixel6", 4, SignalMode.EQUAL, true).addOutput("pixel7", 4, SignalMode.EQUAL, true).addOutput("pixel8", 4, SignalMode.EQUAL, true).addOutput("pixel9", 4, SignalMode.EQUAL, true).addOutput("pixel10", 4, SignalMode.EQUAL, true).addOutput("pixel11", 4, SignalMode.EQUAL, true).addOutput("pixel12", 4, SignalMode.EQUAL, true).addOutput("pixel13", 4, SignalMode.EQUAL, true).addOutput("pixel14", 4, SignalMode.EQUAL, true).addOutput("pixel15", 4, SignalMode.EQUAL, true);
 		
 		CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
 		LittleStructurePremade.registerPremadeStructureType("item_export", ALET.MODID, LittleTransferItemExport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid().addOutput("drop", 16, SignalMode.EQUAL, true);
 		LittleStructurePremade.registerPremadeStructureType("item_import", ALET.MODID, LittleTransferItemImport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid().addOutput("block", 16, SignalMode.EQUAL, true);
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("magnitude_comparator", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
 		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("clock_simple", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("clock_advanced", ALET.MODID, LittleCircuitClockAdvanced.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("1_16Bit_To_4_4Bits", ALET.MODID, LittleCircuitConverterSixteenToFour.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("4_4Bits_To_1_16Bit", ALET.MODID, LittleCircuitConverterFourToSixteen.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("1_4Bit_To_4_1Bits", ALET.MODID, LittleCircuitConverterFourToOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("4_1Bits_To_1_4Bit", ALET.MODID, LittleCircuitConverterOneToFour.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_1bit", ALET.MODID, LittleCircuitRandomNumberOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("clock_advanced", ALET.MODID, LittleCircuitClockAdvanced.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("display_16", ALET.MODID, LittleCircuitDisplay16.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("colored_display_16", ALET.MODID, LittleCircuitColoredDisplay16.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
+		
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("1_16Bit_To_4_4Bits", ALET.MODID, LittleCircuitConverterSixteenToFour.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("4_4Bits_To_1_16Bit", ALET.MODID, LittleCircuitConverterFourToSixteen.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("1_4Bit_To_4_1Bits", ALET.MODID, LittleCircuitConverterFourToOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("magnitude_comparator_1", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("magnitude_comparator_4", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("magnitude_comparator_16", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("4_1Bits_To_1_4Bit", ALET.MODID, LittleCircuitConverterOneToFour.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_1bit", ALET.MODID, LittleCircuitRandomNumberOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("t_flip_flop", ALET.MODID, LittleCircuitTFlipFlop.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
 		
 		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("premade_quick_input1", ALET.MODID, LittlePremadeSignalInputQuickOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid().addOutput("SignalMode", 1, SignalMode.PULSE);
 		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeCircuit("premade_quick_output1", ALET.MODID, LittlePremadeSignalOutputQuickOne.class, LittleStructureAttribute.TICKING, ALET.MODID)).setNotSnapToGrid();
 		
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output1", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid().setNotShowCreativeTab();
-		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input1", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid().setNotShowCreativeTab();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output1", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid();
+		LittleStructurePremade.registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input1", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 1)).setNotSnapToGrid();
 		
 		LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
 		LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
@@ -399,8 +449,10 @@ public class ALET {
 	public static List<String> getFonts() {
 		fontTypeNames = new ArrayList<>();
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		
+		ResourceLocation pressStart2P = new ResourceLocation(ALET.MODID, "font/PressStart2P-Regular.ttf");
 		try {
+			InputStream font = Minecraft.getMinecraft().getClass().getClassLoader().getResourceAsStream("assets/alet/font/PressStart2P-Regular.ttf");
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, font));
 			File d = new File("./fonts");
 			if (!d.exists()) {
 				d.mkdir();

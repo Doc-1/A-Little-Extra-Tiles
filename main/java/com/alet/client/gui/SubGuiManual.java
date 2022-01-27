@@ -30,6 +30,8 @@ public class SubGuiManual extends SubGui {
 	GuiScrollBox scrollBoxLeft;
 	GuiTreePart welcome = new GuiTreePart("Welcome to LittleTiles", EnumPartType.Title);
 	
+	GuiTreePart building = new GuiTreePart("Building with Tiles", EnumPartType.Branch);
+	
 	GuiTreePart drawshape = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
 	GuiTreePart box = new GuiTreePart("Box", EnumPartType.Leaf);
 	GuiTreePart slices = new GuiTreePart("Slices", EnumPartType.Leaf);
@@ -43,6 +45,8 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart tile = new GuiTreePart("Tile", EnumPartType.Leaf);
 	GuiTreePart type = new GuiTreePart("Type", EnumPartType.Leaf);
 	GuiTreePart connected = new GuiTreePart("Connected", EnumPartType.Leaf);
+	GuiTreePart magicWandAlet = new GuiTreePart("Magic Wand", EnumPartType.Leaf);
+	GuiTreePart centeredAlet = new GuiTreePart("Centered Draw Shapes", EnumPartType.Leaf);
 	
 	GuiTreePart tools = new GuiTreePart("Tools", EnumPartType.Branch);
 	GuiTreePart chisel = new GuiTreePart("Little Chisel", EnumPartType.Leaf);
@@ -51,7 +55,37 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart paint = new GuiTreePart("Little Paint Brush", EnumPartType.Leaf);
 	GuiTreePart saw = new GuiTreePart("Little Saw", EnumPartType.Leaf);
 	GuiTreePart screwdriver = new GuiTreePart("Little Screwdriver", EnumPartType.Leaf);
-	GuiTreePart wrench = new GuiTreePart("Little Wrench", EnumPartType.Leaf);
+	GuiTreePart bluePrint = new GuiTreePart("Blue Print", EnumPartType.Leaf);
+	
+	GuiTreePart structureTypes = new GuiTreePart("Types of Structures", EnumPartType.Branch);
+	GuiTreePart staticTypes = new GuiTreePart("Static Structures", EnumPartType.Branch);
+	GuiTreePart fixedType = new GuiTreePart("Fixed", EnumPartType.Leaf);
+	GuiTreePart ladderType = new GuiTreePart("Ladder", EnumPartType.Leaf);
+	GuiTreePart bedType = new GuiTreePart("Bed", EnumPartType.Leaf);
+	GuiTreePart chairType = new GuiTreePart("Chair", EnumPartType.Leaf);
+	GuiTreePart storageType = new GuiTreePart("Storage", EnumPartType.Leaf);
+	GuiTreePart noClipType = new GuiTreePart("No-Clip", EnumPartType.Leaf);
+	GuiTreePart lightType = new GuiTreePart("Light", EnumPartType.Leaf);
+	GuiTreePart messageType = new GuiTreePart("Message", EnumPartType.Leaf);
+	GuiTreePart alwaysOnLightType = new GuiTreePart("Allows On Light", EnumPartType.Leaf);
+	GuiTreePart ropeConnectorType = new GuiTreePart("Rope Connector", EnumPartType.Leaf);
+	GuiTreePart doorTypes = new GuiTreePart("Door Structures", EnumPartType.Branch);
+	GuiTreePart axisDoorType = new GuiTreePart("Axis Door", EnumPartType.Leaf);
+	GuiTreePart slidingDoorType = new GuiTreePart("Sliding Door", EnumPartType.Leaf);
+	GuiTreePart advDoorType = new GuiTreePart("Advanced Door", EnumPartType.Leaf);
+	GuiTreePart doorActivatorType = new GuiTreePart("Door Activator", EnumPartType.Leaf);
+	GuiTreePart doorLockType = new GuiTreePart("Door Lock", EnumPartType.Leaf);
+	GuiTreePart advTypes = new GuiTreePart("Advanced Structures", EnumPartType.Branch);
+	GuiTreePart triggerType = new GuiTreePart("Trigger", EnumPartType.Leaf);
+	GuiTreePart stateMutatorType = new GuiTreePart("State Mutator", EnumPartType.Leaf);
+	GuiTreePart camPlayer = new GuiTreePart("Cam Player", EnumPartType.Leaf);
+	GuiTreePart audioTypes = new GuiTreePart("Audio Structures", EnumPartType.Branch);
+	GuiTreePart musicComposserType = new GuiTreePart("Music Composer", EnumPartType.Leaf);
+	GuiTreePart soundPlayerType = new GuiTreePart("Sound Player", EnumPartType.Leaf);
+	
+	GuiTreePart importExport = new GuiTreePart("Import/Export Structures", EnumPartType.Branch);
+	GuiTreePart importer = new GuiTreePart("Little Importer", EnumPartType.Leaf);
+	GuiTreePart exporter = new GuiTreePart("Little Exporter", EnumPartType.Leaf);
 	
 	GuiTreePart control = new GuiTreePart("Controls", EnumPartType.Branch);
 	GuiTreePart mark = new GuiTreePart("Mark Mode", EnumPartType.Leaf);
@@ -61,8 +95,6 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart movement = new GuiTreePart("Moving A Structure", EnumPartType.Leaf);
 	
 	GuiTreePart block = new GuiTreePart("Blocks", EnumPartType.Branch);
-	GuiTreePart importer = new GuiTreePart("Little Importer", EnumPartType.Leaf);
-	GuiTreePart exporter = new GuiTreePart("Little Exporter", EnumPartType.Leaf);
 	GuiTreePart workbench = new GuiTreePart("Little Workbench", EnumPartType.Leaf);
 	GuiTreePart partical = new GuiTreePart("Particle Emitter", EnumPartType.Leaf);
 	GuiTreePart blankMatic = new GuiTreePart("Blank-o-matic", EnumPartType.Leaf);
@@ -96,12 +128,8 @@ public class SubGuiManual extends SubGui {
 	GuiTreePart lever = new GuiTreePart("Lever", EnumPartType.Leaf);
 	GuiTreePart pressure = new GuiTreePart("Pressure Plate", EnumPartType.Leaf);
 	
+	GuiTreePart wrench = new GuiTreePart("Little Wrench", EnumPartType.Leaf);
 	GuiTreePart config = new GuiTreePart("Configuration", EnumPartType.Leaf);
-	
-	GuiTreePart welcomeAlet = new GuiTreePart("Welcome To A Little Extra Tiles", EnumPartType.Title);
-	GuiTreePart drawshapeAlet = new GuiTreePart("Draw Shapes", EnumPartType.Branch);
-	GuiTreePart magicWandAlet = new GuiTreePart("Magic Wand", EnumPartType.Leaf);
-	GuiTreePart centeredAlet = new GuiTreePart("Centered Draw Shapes", EnumPartType.Leaf);
 	
 	GuiTreePart blockAlet = new GuiTreePart("Blocks", EnumPartType.Branch);
 	GuiTreePart typewriterAlet = new GuiTreePart("Typewriter", EnumPartType.Leaf);
@@ -132,7 +160,8 @@ public class SubGuiManual extends SubGui {
 		panelLeft.controls.add(scrollBox);
 		
 		List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
-		drawshape.addMenu(box).addMenu(slices).addMenu(polygon).addMenu(wall).addMenu(pillar).addMenu(curves).addMenu(cylinder).addMenu(sphere).addMenu(pyramid).addMenu(tile).addMenu(type).addMenu(connected);
+		drawshape.addMenu(box).addMenu(slices).addMenu(polygon).addMenu(wall).addMenu(pillar).addMenu(curves).addMenu(cylinder).addMenu(sphere).addMenu(pyramid).addMenu(tile).addMenu(type).addMenu(connected).addMenu(centeredAlet).addMenu(magicWandAlet);
+		
 		box.setSearchKeywords("Draw Shape");
 		slices.setSearchKeywords("Draw Shape");
 		polygon.setSearchKeywords("Draw Shape");
@@ -146,11 +175,21 @@ public class SubGuiManual extends SubGui {
 		type.setSearchKeywords("Draw Shape");
 		connected.setSearchKeywords("Draw Shape");
 		
-		control.addMenu(mark).addMenu(openConfig).addMenu(openConfigAdv).addMenu(undo).addMenu(movement);
+		tools.addMenu(chisel).addMenu(hammer).addMenu(glove).addMenu(paint).addMenu(saw).addMenu(screwdriver).addMenu(tapeMeasureAlet).addMenu(littleRopeAlet);
 		
-		block.addMenu(importer).addMenu(exporter).addMenu(workbench).addMenu(partical).addMenu(blankMatic).addMenu(structureBuilder);
+		staticTypes.addMenu(fixedType).addMenu(ladderType).addMenu(bedType).addMenu(chairType).addMenu(storageType).addMenu(noClipType).addMenu(lightType).addMenu(messageType).addMenu(alwaysOnLightType).addMenu(ropeConnectorType);
 		
-		drawshapeAlet.addMenu(centeredAlet).addMenu(magicWandAlet);
+		doorTypes.addMenu(axisDoorType).addMenu(slidingDoorType).addMenu(advDoorType).addMenu(doorActivatorType).addMenu(doorLockType);
+		
+		advTypes.addMenu(triggerType).addMenu(stateMutatorType).addMenu(camPlayer).addMenu(button);
+		
+		audioTypes.addMenu(musicComposserType).addMenu(soundPlayerType);
+		
+		structureTypes.addMenu(staticTypes).addMenu(doorTypes).addMenu(advTypes);
+		
+		importExport.addMenu(importer).addMenu(exporter);
+		
+		building.addMenu(openConfig).addMenu(openConfigAdv).addMenu(mark).addMenu(undo).addMenu(tools).addMenu(drawshape).addMenu(structureTypes).addMenu(movement);
 		
 		blockAlet.addMenu(typewriterAlet).addMenu(photoAlet).addMenu(fillingAlet);
 		
@@ -162,12 +201,7 @@ public class SubGuiManual extends SubGui {
 		
 		signaling.addMenu(gates).addMenu(math).addMenu(structuresSingal);
 		
-		toolsAlet.addMenu(tapeMeasureAlet).addMenu(littleRopeAlet);
-		
-		tools.addMenu(chisel).addMenu(hammer).addMenu(glove).addMenu(paint).addMenu(saw).addMenu(screwdriver).addMenu(wrench);
-		
-		listOfMenus.add(welcome.addMenu(drawshape).addMenu(tools).addMenu(block).addMenu(control).addMenu(signaling).addMenu(config));
-		listOfMenus.add(welcomeAlet.addMenu(drawshapeAlet).addMenu(blockAlet).addMenu(toolsAlet));
+		listOfMenus.add(welcome.addMenu(building).addMenu(importExport).addMenu(signaling).addMenu(config));
 		tree = new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50);
 		scrollBox.controls.add(tree);
 		
@@ -177,11 +211,11 @@ public class SubGuiManual extends SubGui {
 	public void changed(GuiControlChangedEvent event) {
 		if (event.source instanceof GuiTreePart) {
 			GuiTreePart part = (GuiTreePart) event.source;
-			updateMessage(part.CAPTION, part.getBranchIDThisIsIn());
+			updateMessage(part.CAPTION, part.getBranchThisIsIn().CAPTION);
 		}
 	}
 	
-	public void updateMessage(String caption, int id) {
+	public void updateMessage(String caption, String branchHeldIn) {
 		if (!this.selected.equals(caption)) {
 			int i = 0;
 			while (i < scrollBoxLeft.controls.size()) {
@@ -192,7 +226,7 @@ public class SubGuiManual extends SubGui {
 				} else
 					i++;
 			}
-			System.out.println(caption + " " + id);
+			System.out.println(caption + " " + branchHeldIn);
 			if (caption.equals("Welcome to LittleTiles"))
 				getWelcomeLTMsg();
 			if (caption.equals("Draw Shapes"))
@@ -201,6 +235,8 @@ public class SubGuiManual extends SubGui {
 				getDrawShapeBox();
 			if (caption.equals("Slices"))
 				getDrawShapeSlice();
+			if (caption.equals("Logic Gates"))
+				getLogicGateMsg();
 			if (caption.equals("and"))
 				getAndMsg();
 			if (caption.equals("nand"))
@@ -243,11 +279,12 @@ public class SubGuiManual extends SubGui {
 		        + ModifierAttribute.newLines(2)
 		        + "    LittleTiles is a mod for anyone who wants to push the limit of building in Minecraft. This mod allows you to build with what are called "
 		        + ModifierAttribute.end() + ModifierAttribute.scale(1.1) + ModifierAttribute.italic()
-		        + ModifierAttribute.color(0x00FFFF) + "  Tiles" + ModifierAttribute.end() + ModifierAttribute.scale(1)
-		        + ". Tiles are smaller than a vanilia Minecraft block, with the default minimal size being 1/32nd the size of a vanilia Minecraft block. You can place, remove, and modify tiles in several different sizes called "
+		        + ModifierAttribute.color(0x00FFFF) + "Tiles." + ModifierAttribute.end() + ModifierAttribute.scale(1)
+		        + " Tiles are smaller than a vanilia Minecraft block, with the default minimal size being 1/32nd the size of a vanilia Minecraft block. You can place, remove, and modify tiles in several different sizes called "
 		        + ModifierAttribute.end() + ModifierAttribute.scale(1.1) + ModifierAttribute.italic()
-		        + ModifierAttribute.color(0x00FFFF) + "Grid Size" + ModifierAttribute.end() + ModifierAttribute.scale(1)
-		        + ". By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16,"
+		        + ModifierAttribute.color(0x00FFFF) + "Grid Size." + ModifierAttribute.end()
+		        + ModifierAttribute.scale(1)
+		        + " By default the grid sizes avaliable for you to use are as follows: 1, 2, 4, 8, 16,"
 		        + " and 32. You can increase the smallest tile you can use in the configuration file. To learn how go to "
 		        + ModifierAttribute.end() + ModifierAttribute.italic() + ModifierAttribute.underline()
 		        + ModifierAttribute.scale(1) + ModifierAttribute.clickable() + "Configuration" + ModifierAttribute.end()
@@ -296,11 +333,22 @@ public class SubGuiManual extends SubGui {
 		scrollBoxLeft.addControl(new GuiGIF("", "assets/alet/gif/sliceOut.gif", 0, 535, 1));
 	}
 	
+	public void getLogicGateMsg() {
+		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Logic Gates", false, true, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    Logic gates are fundemental to digital circuits. They are used in majority of electronic devices in some way."
+		                + " Within a circuit the gate will determine the output by either recieving two or one signal input(s). With the results being created by boolean algebra."
+		                + " A boolean is either two values, true being 1 or false being 0. Each gate will result in a differet boolean value.", false, false, false)
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    With LittleTile's signaling logic gates too are fundemental to any opperation you wish preform."
+		                + " Signals in LittleTiles can be thought of as redstone. If you are familiar with redstone then you'd know of RS-Latch, T Flip-Flop, Counters, Radomizers, and more."
+		                + " All of these can be done with signaling however, it is completely different from redstone. As with signaling you are directly working with the logic gates"
+		                + " that are used to accomplish these circuits. Whereas, with redstone you can place some dust and pistons and you have a T Flip-Flop done. But, for those that"
+		                + " may be discuraged by this. There are premade circuits for these common redstone circuits.", false, false, false), 0, 0, 350));
+		
+	}
+	
 	public void getAndMsg() {
 		scrollBoxLeft.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Logic Gate: And", false, true, false)
-		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    The logic gate, And, compares two values to see if they are equal. For example, if"
-		                + " you have one signal with the value of 1 and another with the value of 1 then the And gate will return with true. However, if one of those"
-		                + " signals is 0 and the other is 1 then the And gate will return false.", false, false, false), 0, 0, 350));
+		        + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2, "    The logic gate, And, compares two values to see if they are true.", false, false, false), 0, 0, 350));
 		scrollBoxLeft.addControl(new GuiTable("", "", 0, 100, 50, 15, 5, 3, false));
 	}
 	

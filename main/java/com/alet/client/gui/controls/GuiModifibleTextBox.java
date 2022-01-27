@@ -117,25 +117,27 @@ public class GuiModifibleTextBox extends GuiTextBox {
 				if (flag1)
 					copy.newLines = 0;
 				flag1 = true;
+				
 				list.add(copy.setText(s));
 			}
 		}
-		int currentWidth = this.width;
 		int widthCount = 0;
 		int i = 0;
 		
 		for (ModifyText modText : list) {
 			double scale = modText.scale;
-			widthCount += font.getStringWidth(modText.text) * scale;
 			i += modText.newLines;
 			if (modText.newLines != 0) {
 				widthCount = 0;
 			}
-			if (widthCount >= currentWidth - 15) {
+			if (widthCount >= this.width - 15) {
+				if (modText.text.charAt(0) == ' ')
+					modText.text = "";
 				widthCount = 0;
 				i++;
 			}
 			
+			widthCount += font.getStringWidth(modText.text) * scale;
 			if (modText.bold)
 				modText.text = TextFormatting.BOLD + modText.text + TextFormatting.RESET;
 			if (modText.italic)
@@ -160,6 +162,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
 				float textHeight = (float) (font.FONT_HEIGHT * modText.scale);
 				float maxTextHeight = map.maxHeight(key);
 				float addY = textHeight - maxTextHeight;
+				
 				if (modText.clickable)
 					this.locationClickableMap.put(new Float[] { (float) (x / modText.scale), (float) ((y - addY)
 					        / modText.scale) }, modText);

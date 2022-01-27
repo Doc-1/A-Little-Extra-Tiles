@@ -4,10 +4,12 @@ import java.util.UUID;
 
 import org.lwjgl.util.Color;
 
+import com.alet.ALET;
 import com.alet.entity.EntityLeadConnection;
 import com.alet.entity.LeadConnectionData;
 import com.creativemd.creativecore.common.utils.math.vec.Vec3;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.creativemd.littletiles.client.render.overlay.PreviewRenderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelLeashKnot;
@@ -27,7 +29,7 @@ import net.minecraft.world.World;
 
 public class RenderLeashConnection extends Render<EntityLeadConnection> {
 	
-	private static final ResourceLocation LEASH_KNOT_TEXTURES = new ResourceLocation("textures/entity/lead_knot.png");
+	private static final ResourceLocation CHAIN_TEXTURES = new ResourceLocation(ALET.MODID, "textures/test_1.png");
 	private final ModelLeashKnot leashKnotModel = new ModelLeashKnot();
 	private final World world;
 	
@@ -113,12 +115,6 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 	
-	/** Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture. */
-	@Override
-	protected ResourceLocation getEntityTexture(EntityLeadConnection entity) {
-		return LEASH_KNOT_TEXTURES;
-	}
-	
 	private double interpolateValue(double start, double end, double pct) {
 		return start + (end - start) * pct;
 	}
@@ -134,9 +130,12 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
 		if (entity != null) {
 			//System.out.println(entity);
 			//point 0
-			double p0_0 = entityConnection.prevPosX + (entityConnection.posX - entityConnection.prevPosX) * (double) partialTicks;
-			double p0_1 = entityConnection.prevPosY + (entityConnection.posY - entityConnection.prevPosY) * (double) partialTicks;
-			double p0_2 = entityConnection.prevPosZ + (entityConnection.posZ - entityConnection.prevPosZ) * (double) partialTicks;
+			double p0_0 = entityConnection.prevPosX
+			        + (entityConnection.posX - entityConnection.prevPosX) * (double) partialTicks;
+			double p0_1 = entityConnection.prevPosY
+			        + (entityConnection.posY - entityConnection.prevPosY) * (double) partialTicks;
+			double p0_2 = entityConnection.prevPosZ
+			        + (entityConnection.posZ - entityConnection.prevPosZ) * (double) partialTicks;
 			
 			//point 1
 			double p1_0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
@@ -169,18 +168,22 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
 			
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder bufferbuilder = tessellator.getBuffer();
-			GlStateManager.disableTexture2D();
-			GlStateManager.enableAlpha();
-			GlStateManager.disableLighting();
-			GlStateManager.disableCull();
-			bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
-			
 			Vec3 drawPoint = new Vec3(0, 0, 0);
 			Color c = ColorUtils.IntToRGBA(color);
 			float red = c.getRed() / 255F;
 			float green = c.getGreen() / 255F;
 			float blue = c.getBlue() / 255F;
 			float alpha = c.getAlpha() / 255F;
+			GlStateManager.enableTexture2D();
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			
+			GlStateManager.color(red, green, blue, alpha);
+			PreviewRenderer.mc.renderEngine.bindTexture(PreviewRenderer.WHITE_TEXTURE);
+			GlStateManager.enableAlpha();
+			GlStateManager.disableLighting();
+			GlStateManager.disableCull();
+			bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
 			
 			double distance = 0;
 			Vec3d prevVec = new Vec3d(startPoint.x, startPoint.y, startPoint.z);
@@ -192,8 +195,10 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
 				Vec3d vec = new Vec3d(drawPoint.x, drawPoint.y, drawPoint.z);
 				distance += vec.distanceTo(prevVec);
 				prevVec = vec;
-				bufferbuilder.pos(drawPoint.x - thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
-				bufferbuilder.pos(drawPoint.x + thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
+				bufferbuilder.pos(drawPoint.x
+				        - thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
+				bufferbuilder.pos(drawPoint.x
+				        + thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
 			}
 			//System.out.println(distance);
 			tessellator.draw();
@@ -204,8 +209,10 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
 				float f3 = (float) k / 24.0F;
 				
 				bezier(drawPoint, startPoint, midPoint, endPoint, f3);
-				bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z - thickness).color(red, green, blue, alpha).endVertex();
-				bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z + thickness).color(red, green, blue, alpha).endVertex();
+				bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z
+				        - thickness).color(red, green, blue, alpha).endVertex();
+				bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z
+				        + thickness).color(red, green, blue, alpha).endVertex();
 			}
 			
 			tessellator.draw();
@@ -216,16 +223,22 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
 				float f3 = (float) k / 24.0F;
 				
 				bezier(drawPoint, startPoint, midPoint, endPoint, f3);
-				bufferbuilder.pos(drawPoint.x, drawPoint.y - thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
-				bufferbuilder.pos(drawPoint.x, drawPoint.y + thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
+				bufferbuilder.pos(drawPoint.x, drawPoint.y
+				        - thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
+				bufferbuilder.pos(drawPoint.x, drawPoint.y
+				        + thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
 			}
 			
 			tessellator.draw();
 			GlStateManager.enableLighting();
 			GlStateManager.disableAlpha();
-			GlStateManager.enableTexture2D();
 			GlStateManager.enableCull();
 		}
+	}
+	
+	@Override
+	protected ResourceLocation getEntityTexture(EntityLeadConnection entity) {
+		return CHAIN_TEXTURES;
 	}
 }
 

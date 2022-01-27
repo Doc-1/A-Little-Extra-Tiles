@@ -32,7 +32,7 @@ public class SubGuiLittleRope extends SubGuiConfigure {
 		
 		controls.add(new GuiAnalogeSlider("thickness", 94, 0, 100, 10, thickness, 0, 0.5));
 		controls.add(new GuiAnalogeSlider("tautness", 94, 20, 100, 10, tautness, 0, 10));
-		controls.add(new GuiColorPickerAlet("color", 0, 40, ColorUtils.IntToRGBA(color), false, 255));
+		controls.add(new GuiColorPickerAlet("color", 0, 40, ColorUtils.IntToRGBA(color), true, 0));
 	}
 	
 	@Override

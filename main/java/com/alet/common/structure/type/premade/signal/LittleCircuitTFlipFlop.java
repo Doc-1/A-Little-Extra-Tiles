@@ -2,7 +2,6 @@ package com.alet.common.structure.type.premade.signal;
 
 import javax.annotation.Nullable;
 
-import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
@@ -23,12 +22,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class LittleMagnitudeComparator extends LittleStructurePremade {
+public class LittleCircuitTFlipFlop extends LittleStructurePremade {
 	
-	private String output = "1111";
-	private String logic = "equals";
+	public boolean clock = false;
+	public boolean hasChanged = false;
 	
-	public LittleMagnitudeComparator(LittleStructureType type, IStructureTileList mainBlock) {
+	public LittleCircuitTFlipFlop(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
 	}
 	
@@ -37,59 +36,33 @@ public class LittleMagnitudeComparator extends LittleStructurePremade {
 		if (!isClient()) {
 			
 			try {
+				LittleSignalInput clear = (LittleSignalInput) this.children.get(0).getStructure();
+				LittleSignalInput clock = (LittleSignalInput) this.children.get(1).getStructure();
+				LittleSignalInput t = (LittleSignalInput) this.children.get(2).getStructure();
+				LittleSignalInput preset = (LittleSignalInput) this.children.get(3).getStructure();
+				LittleSignalOutput q = (LittleSignalOutput) this.children.get(4).getStructure();
+				LittleSignalOutput qNot = (LittleSignalOutput) this.children.get(5).getStructure();
 				
-				LittleSignalOutput out = (LittleSignalOutput) this.children.get(0).getStructure();
-				LittleSignalInput k1 = (LittleSignalInput) this.children.get(1).getStructure();
-				LittleSignalInput k2 = (LittleSignalInput) this.children.get(2).getStructure();
-				int rBits = 0;
-				int bBits = 0;
-				rBits = BooleanUtils.toNumber(k1.getState());
-				bBits = BooleanUtils.toNumber(k2.getState());
+				if (this.clock != clock.getState()[0])
+					hasChanged = true;
+				else
+					hasChanged = false;
 				
-				boolean result = false;
+				this.clock = clock.getState()[0];
 				
-				switch (logic) {
-				case "less than":
-					if (bBits < rBits)
-						result = true;
-					break;
-				case "greater than":
-					if (bBits > rBits)
-						result = true;
-					break;
-				case "less than or equal to":
-					if (bBits <= rBits)
-						result = true;
-					break;
-				case "greater than or equal to":
-					if (bBits >= rBits)
-						result = true;
-					break;
-				case "equals":
-					if (bBits == rBits)
-						result = true;
-					break;
-				default:
-					break;
-				}
-				if (result)
-					out.updateState(BooleanUtils.toBits(0, k1.getBandwidth()));
-				/*
-				if (result) {
-					boolean[] state = { false, false, false, false };
-					for (int i = 0; i < output.toCharArray().length; i++) {
-						if (output.toCharArray()[i] == '1')
-							state[i] = true;
-						else
-							state[i] = false;
+				if (preset.getState()[0]) {
+					if (hasChanged && clock.getState()[0] && t.getState()[0]) {
+						q.updateState(new boolean[] { !q.getState()[0] });
+						qNot.updateState(new boolean[] { !q.getState()[0] });
 					}
-					out.updateState(state);
-				} else {
-					boolean[] state = { false, false, false, false };
-					out.updateState(state);
-				}*/
+					if (!clear.getState()[0]) {
+						q.updateState(new boolean[] { false });
+						qNot.updateState(new boolean[] { !q.getState()[0] });
+					}
+				}
 			} catch (CorruptedConnectionException | NotYetConnectedException e) {
 				e.printStackTrace();
+				
 			}
 			
 		}
@@ -97,17 +70,14 @@ public class LittleMagnitudeComparator extends LittleStructurePremade {
 	
 	@Override
 	protected void loadFromNBTExtra(NBTTagCompound nbt) {
-		if (nbt.hasKey("logic"))
-			logic = nbt.getString("logic");
-		if (nbt.hasKey("output"))
-			output = nbt.getString("output");
+		if (nbt.hasKey("clock"))
+			clock = nbt.getBoolean("clock");
 		
 	}
 	
 	@Override
 	protected void writeToNBTExtra(NBTTagCompound nbt) {
-		nbt.setString("logic", logic);
-		nbt.setString("output", output);
+		nbt.setBoolean("clock", clock);
 	}
 	
 	@Override

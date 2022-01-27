@@ -75,18 +75,19 @@ public class GuiTreePart extends GuiControl {
 	public GuiTreePart addMenu(GuiTreePart button) {
 		this.listOfParts.add(button);
 		button.branchHeldIn = this;
-		if (this.type.equals(EnumPartType.Branch)) {
-			if (!caption.contains("+")) {
-				this.caption = "+ " + caption;
-				this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
-			}
-		} else if (this.type.equals(EnumPartType.Title)) {
+		this.width = GuiRenderHelper.instance.getStringWidth(caption) + 15;
+		
+		if (this.type.equals(EnumPartType.Title)) {
 			if (!caption.contains("*")) {
 				this.caption = "* " + caption;
-				this.width = GuiRenderHelper.instance.getStringWidth(caption) + 8;
+				this.width = GuiRenderHelper.instance.getStringWidth(caption);
 			}
 		}
 		return this;
+	}
+	
+	public GuiTreePart getBranchThisIsIn() {
+		return this.tree.listOfParts.get(this.getBranchIDThisIsIn());
 	}
 	
 	@Override
@@ -101,16 +102,36 @@ public class GuiTreePart extends GuiControl {
 		if (!this.isRoot) {
 			int off = this.posY - this.originPosY;
 			int count = (int) Math.floor(off / 14D);
-			
+			int y = (off - (count * 14));
 			if (!this.isBranch())
-				helper.drawRect(-12, (off - (count * 14)) + 4, -4, (off - (count * 14)) + 5, ColorUtils.WHITE);
-			else
-				helper.drawRect(-12, (off - (count * 14)) + 4, -4, (off - (count * 14)) + 5, ColorUtils.WHITE);
+				helper.drawRect(-12, y + 4, -4, y + 5, ColorUtils.WHITE);
+			else {
+				helper.drawRect(-12, y + 4, -4, y + 5, ColorUtils.WHITE);
+				helper.drawRect(-1, y, 7, y + 8, ColorUtils.WHITE);
+				if (!this.isOpened) {
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(0.4, 0, 0);
+					helper.drawRect(2, y + 1, 3, y + 7, ColorUtils.BLACK);
+					GlStateManager.popMatrix();
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(0, 0.4, 0);
+					helper.drawRect(0, y + 3, 6, y + 4, ColorUtils.BLACK);
+					GlStateManager.popMatrix();
+				} else {
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(0, 0.4, 0);
+					helper.drawRect(0, y + 3, 6, y + 4, ColorUtils.BLACK);
+					GlStateManager.popMatrix();
+				}
+				
+			}
 		}
 		
 		GlStateManager.pushMatrix();
 		if (this.type.equals(EnumPartType.Title))
 			GlStateManager.translate(1, 0, 0);
+		if (this.type.openable)
+			GlStateManager.translate(10, 0, 0);
 		helper.drawStringWithShadow(caption, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), height, ColorUtils.WHITE);
 		GlStateManager.popMatrix();
 	}
@@ -333,22 +354,23 @@ public class GuiTreePart extends GuiControl {
 	}
 	
 	public void onClicked(int x, int y, int mouseButton) {
-		if (this.listOfParts != null && !this.listOfParts.isEmpty()) {
-			if (this.type.isOpenable()) {
-				if (!isOpened) {
-					this.isOpened = true;
-					this.caption = "- " + this.CAPTION;
-					this.openMenus();
-				} else {
-					this.isOpened = false;
-					this.caption = "+ " + this.CAPTION;
-					this.closeMenus();
+		int xPos = (x - this.posX);
+		int yPos = (y - this.posY);
+		if ((xPos >= 2 && xPos <= 10) && (yPos >= 3 && yPos <= 10)) {
+			if (this.listOfParts != null && !this.listOfParts.isEmpty()) {
+				if (this.type.isOpenable()) {
+					if (!isOpened) {
+						this.isOpened = true;
+						this.openMenus();
+					} else {
+						this.isOpened = false;
+						this.closeMenus();
+					}
+					tree.updatePartsPosition();
 				}
-				tree.updatePartsPosition();
 			}
 		}
 		tree.highlightPart(this);
-		
 		raiseEvent(new GuiControlChangedEvent(this));
 	}
 	
@@ -392,6 +414,20 @@ public class GuiTreePart extends GuiControl {
 			((GuiTextfield) tree.get("search")).text = "";
 			((GuiTextfield) tree.get("search")).cursorPosition = 0;
 		}
+		if (this.listOfParts != null && !this.listOfParts.isEmpty()) {
+			if (this.type.isOpenable()) {
+				if (!isOpened) {
+					this.isOpened = true;
+					this.openMenus();
+				} else {
+					this.isOpened = false;
+					this.closeMenus();
+				}
+				tree.updatePartsPosition();
+			}
+		}
+		tree.highlightPart(this);
+		raiseEvent(new GuiControlChangedEvent(this));
 	}
 	
 	@Override
@@ -408,12 +444,15 @@ public class GuiTreePart extends GuiControl {
 				tick = 0;
 				this.counting = false;
 			}
-			if (this.counting && this.mousePressed) {
+			int xPos = (posX - this.posX);
+			int yPos = (posY - this.posY);
+			if (this.counting && this.mousePressed && !((xPos >= 2 && xPos <= 10) && (yPos >= 2 && yPos <= 10))) {
 				this.onDoubleClick();
 				tick = 0;
 				this.counting = false;
 				this.mousePressed = false;
 			}
+			
 		} else {
 			this.counting = false;
 			this.mousePressed = false;
