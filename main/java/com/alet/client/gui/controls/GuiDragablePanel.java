@@ -82,7 +82,7 @@ public class GuiDragablePanel extends GuiParent {
 		scrolledX.tick();
 		scrolledY.tick();
 		zoom.tick();
-		super.renderContent(helper, style, width, height);
+		
 	}
 	
 	@Override

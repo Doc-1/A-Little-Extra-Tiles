@@ -7,106 +7,170 @@ import org.lwjgl.util.glu.Project;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
+import com.creativemd.creativecore.common.utils.math.SmoothValue;
 import com.creativemd.creativecore.common.utils.mc.TickUtils;
 import com.creativemd.littletiles.client.gui.controls.GuiAnimationViewer;
 import com.creativemd.littletiles.client.world.LittleAnimationHandlerClient;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 
 public class GuiAnimationViewerAlet extends GuiAnimationViewer {
-	
-	private int moveX;
-	private int moveY;
-	
-	public GuiAnimationViewerAlet(String name, int x, int y, int width, int height) {
-		super(name, x, y, width, height);
-		
-	}
-	
-	public void moveViewPort(int x, int y) {
-		moveX = x;
-		moveY = y;
-	}
-	
-	@Override
-	protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
-		if (animation == null)
-			return;
-		
-		makeLightBright();
-		
-		rotX.tick();
-		rotY.tick();
-		rotZ.tick();
-		distance.tick();
-		
-		GlStateManager.disableDepth();
-		
-		GlStateManager.cullFace(GlStateManager.CullFace.BACK);
-		GlStateManager.translate(width / 2D, height / 2D, 0);
-		
-		GlStateManager.pushMatrix();
-		
-		//mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		//mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.alphaFunc(516, 0.1F);
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		
-		int x = getPixelOffsetX();
-		int y = getPixelOffsetY() - 1;
-		int scale = getGuiScale();
-		GlStateManager.viewport((x + moveX) * scale, (y + moveY) * scale, width * scale, height * scale);
-		GlStateManager.matrixMode(5889);
-		GlStateManager.loadIdentity();
-		Project.gluPerspective(90, (float) width / (float) height, 0.05F, 16 * 16);
-		GlStateManager.matrixMode(5888);
-		GlStateManager.loadIdentity();
-		//GlStateManager.matrixMode(5890);
-		GlStateManager.translate(0, 0, -distance.current());
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableDepth();
-		
-		Vector3d rotationCenter = new Vector3d(animation.center.rotationCenter);
-		rotationCenter.y -= 75;
-		GlStateManager.rotate((float) rotX.current(), 1, 0, 0);
-		GlStateManager.rotate((float) rotY.current(), 0, 1, 0);
-		GlStateManager.rotate((float) rotZ.current(), 0, 0, 1);
-		
-		GlStateManager.translate(-min.getPosX(context), -min.getPosY(context), -min.getPosZ(context));
-		
-		GlStateManager.translate(-rotationCenter.x, -rotationCenter.y, -rotationCenter.z);
-		
-		GlStateManager.pushMatrix();
-		
-		GlStateManager.translate(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
-		GlStateManager.translate(0, -75, 0);
-		
-		LittleAnimationHandlerClient.render.doRender(animation, 0, 0, 0, 0, TickUtils.getPartialTickTime());
-		
-		GlStateManager.popMatrix();
-		
-		GlStateManager.matrixMode(5888);
-		
-		GlStateManager.popMatrix();
-		
-		GlStateManager.disableLighting();
-		GlStateManager.cullFace(GlStateManager.CullFace.BACK);
-		GlStateManager.disableRescaleNormal();
-		GlStateManager.disableBlend();
-		GlStateManager.disableDepth();
-		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-		
-		GlStateManager.viewport(0, 0, GuiControl.mc.displayWidth, GuiControl.mc.displayHeight);
-		GlStateManager.matrixMode(5889);
-		GlStateManager.loadIdentity();
-		GlStateManager.matrixMode(5888);
-		GlStateManager.loadIdentity();
-		mc.entityRenderer.setupOverlayRendering();
-		GlStateManager.disableDepth();
-	}
+    
+    private int moveX;
+    private int moveY;
+    public SmoothValue tranX = new SmoothValue(200);
+    public SmoothValue tranY = new SmoothValue(200);
+    public boolean rightGrabbed = false;
+    
+    public GuiAnimationViewerAlet(String name, int x, int y, int width, int height) {
+        super(name, x, y, width, height);
+        
+    }
+    
+    public void moveViewPort(int x, int y) {
+        moveX = x;
+        moveY = y;
+    }
+    
+    @Override
+    public void mouseMove(int x, int y, int button) {
+        if (grabbed) {
+            rotY.set(rotY.aimed() + x - grabX);
+            rotX.set(rotX.aimed() + y - grabY);
+            grabX = x;
+            grabY = y;
+        }
+        if (rightGrabbed) {
+            tranY.set(tranY.aimed() + y - grabY);
+            tranX.set(tranX.aimed() + x - grabX);
+            grabX = x;
+            grabY = y;
+        }
+        
+    }
+    
+    @Override
+    public boolean mousePressed(int x, int y, int button) {
+        if (button == 0) {
+            grabbed = true;
+            grabX = x;
+            grabY = y;
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public void mouseReleased(int x, int y, int button) {
+        if (button == 0)
+            grabbed = false;
+    }
+    
+    @Override
+    public boolean onKeyPressed(char character, int key) {
+        System.out.println(key);
+        double mod = 1D;
+        if (GuiScreen.isShiftKeyDown()) {
+            mod = 5D;
+        }
+        if (key == 17 && !GuiScreen.isCtrlKeyDown()) {
+            distance.set(distance.current() - (0.2D * mod));
+        } else if (key == 31 && !GuiScreen.isCtrlKeyDown()) {
+            distance.set(distance.current() + (0.2D * mod));
+        } else if (key == 32) {
+            tranX.set(tranX.current() - (mod));
+        } else if (key == 30) {
+            tranX.set(tranX.current() + (mod));
+        } else if (key == 17 && GuiScreen.isCtrlKeyDown() && !GuiScreen.isAltKeyDown()) {
+            tranY.set(tranY.current() + (mod));
+        } else if (key == 31 && GuiScreen.isCtrlKeyDown() && !GuiScreen.isAltKeyDown()) {
+            tranY.set(tranY.current() - (mod));
+        }
+        return true;
+    }
+    
+    @Override
+    protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
+        if (animation == null)
+            return;
+        
+        makeLightBright();
+        tranX.tick();
+        tranY.tick();
+        rotX.tick();
+        rotY.tick();
+        distance.tick();
+        
+        GlStateManager.disableDepth();
+        
+        GlStateManager.cullFace(GlStateManager.CullFace.BACK);
+        GlStateManager.translate(width / 2D, height / 2D, 0);
+        
+        GlStateManager.pushMatrix();
+        
+        //mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        //mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.enableBlend();
+        GlStateManager
+                .tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        
+        int x = getPixelOffsetX();
+        int y = getPixelOffsetY() - 1;
+        int scale = getGuiScale();
+        GlStateManager.viewport((x + moveX) * scale, (y + moveY) * scale, width * scale, height * scale);
+        GlStateManager.matrixMode(5889);
+        GlStateManager.loadIdentity();
+        Project.gluPerspective(90, (float) width / (float) height, 0.05F, 16 * 16);
+        GlStateManager.matrixMode(5888);
+        GlStateManager.loadIdentity();
+        //GlStateManager.matrixMode(5890);
+        GlStateManager.translate(0, 0, -distance.current());
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.enableDepth();
+        
+        Vector3d rotationCenter = new Vector3d(animation.center.rotationCenter);
+        rotationCenter.y -= 75;
+        GlStateManager.translate(tranX.current() / 10, -tranY.current() / 10, 0);
+        GlStateManager.rotate((float) rotX.current(), 1, 0, 0);
+        GlStateManager.rotate((float) rotY.current(), 0, 1, 0);
+        //GlStateManager.rotate((float) rotZ.current(), 0, 0, 1);
+        
+        GlStateManager.translate(-min.getPosX(context), -min.getPosY(context), -min.getPosZ(context));
+        
+        GlStateManager.translate(-rotationCenter.x, -rotationCenter.y, -rotationCenter.z);
+        
+        GlStateManager.pushMatrix();
+        
+        GlStateManager.translate(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
+        GlStateManager.translate(0, -75, 0);
+        
+        LittleAnimationHandlerClient.render.doRender(animation, 0, 0, 0, 0, TickUtils.getPartialTickTime());
+        
+        GlStateManager.popMatrix();
+        
+        GlStateManager.matrixMode(5888);
+        
+        GlStateManager.popMatrix();
+        
+        GlStateManager.disableLighting();
+        GlStateManager.cullFace(GlStateManager.CullFace.BACK);
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.disableBlend();
+        GlStateManager.disableDepth();
+        mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+        
+        GlStateManager.viewport(0, 0, GuiControl.mc.displayWidth, GuiControl.mc.displayHeight);
+        GlStateManager.matrixMode(5889);
+        GlStateManager.loadIdentity();
+        GlStateManager.matrixMode(5888);
+        GlStateManager.loadIdentity();
+        mc.entityRenderer.setupOverlayRendering();
+        GlStateManager.disableDepth();
+    }
 }

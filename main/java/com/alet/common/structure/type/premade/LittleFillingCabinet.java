@@ -26,61 +26,58 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class LittleFillingCabinet extends LittleStructurePremade {
-	
-	private List<SubContainerFillingCabinet> openContainers = new ArrayList<SubContainerFillingCabinet>();
-	
-	public LittleFillingCabinet(LittleStructureType type, IStructureTileList mainBlock) {
-		super(type, mainBlock);
-	}
-	
-	@Override
-	protected void loadFromNBTExtra(NBTTagCompound nbt) {
-		
-	}
-	
-	@Override
-	protected void writeToNBTExtra(NBTTagCompound nbt) {
-		
-	}
-	
-	@Override
-	public void tick() {
-		if (!this.getWorld().isRemote) {
-			try {
-				LittleDoorBase door = (LittleDoorBase) this.getChild(0).getStructure();
-				door.getOutput(0).updateState(getInput(0).getState());
-			} catch (CorruptedConnectionException | NotYetConnectedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public void openContainer(SubContainerFillingCabinet container) {
-		openContainers.add(container);
-		updateInput();
-	}
-	
-	public void closeContainer(SubContainerFillingCabinet container) {
-		openContainers.remove(container);
-		updateInput();
-	}
-	
-	public boolean hasPlayerOpened(EntityPlayer player) {
-		for (SubContainerFillingCabinet container : openContainers)
-			if (container.getPlayer() == player)
-				return true;
-		return false;
-	}
-	
-	protected void updateInput() {
-		getInput(0).updateState(new boolean[] { !openContainers.isEmpty() });
-	}
-	
-	@Override
-	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
-		if (!worldIn.isRemote && !hasPlayerOpened(playerIn))
-			LittleStructureGuiHandler.openGui("filling_cabinet", new NBTTagCompound(), playerIn, this);
-		return true;
-	}
+    
+    private List<SubContainerFillingCabinet> openContainers = new ArrayList<SubContainerFillingCabinet>();
+    
+    public LittleFillingCabinet(LittleStructureType type, IStructureTileList mainBlock) {
+        super(type, mainBlock);
+    }
+    
+    @Override
+    protected void loadFromNBTExtra(NBTTagCompound nbt) {
+        
+    }
+    
+    @Override
+    protected void writeToNBTExtra(NBTTagCompound nbt) {
+        
+    }
+    
+    @Override
+    public void tick() {
+        if (!this.getWorld().isRemote) {
+            try {
+                LittleDoorBase door = (LittleDoorBase) this.getChild(0).getStructure();
+                door.getOutput(0).updateState(getInput(0).getState());
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+        }
+    }
+    
+    public void openContainer(SubContainerFillingCabinet container) {
+        openContainers.add(container);
+        updateInput();
+    }
+    
+    public void closeContainer(SubContainerFillingCabinet container) {
+        openContainers.remove(container);
+        updateInput();
+    }
+    
+    public boolean hasPlayerOpened(EntityPlayer player) {
+        for (SubContainerFillingCabinet container : openContainers)
+            if (container.getPlayer() == player)
+                return true;
+        return false;
+    }
+    
+    protected void updateInput() {
+        getInput(0).updateState(new boolean[] { !openContainers.isEmpty() });
+    }
+    
+    @Override
+    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+        if (!worldIn.isRemote && !hasPlayerOpened(playerIn))
+            LittleStructureGuiHandler.openGui("filling_cabinet", new NBTTagCompound(), playerIn, this);
+        return true;
+    }
 }

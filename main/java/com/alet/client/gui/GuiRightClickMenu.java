@@ -12,12 +12,9 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
-import net.minecraft.util.math.Vec3d;
-
-public class GuiRightClickMenu extends GuiParent {
+public abstract class GuiRightClickMenu extends GuiParent {
 	
 	public List<String> listOfOptions = new ArrayList<String>();
-	public List<Class> listenFor = new ArrayList<Class>();
 	public GuiControl controlSelected;
 	public GuiControl localizedControl;
 	public GuiButton buttonSelected;
@@ -37,7 +34,7 @@ public class GuiRightClickMenu extends GuiParent {
 		int i = 0;
 		int width = 0;
 		for (String caption : listOfOptions) {
-			GuiButton button = (new GuiButton("", caption, 0, (i * 14) - 1) {
+			GuiButton button = (new GuiButton(caption, caption, 0, (i * 14) - 1) {
 				@Override
 				public void onClicked(int x, int y, int button) {
 					if (button == 0) {
@@ -78,35 +75,36 @@ public class GuiRightClickMenu extends GuiParent {
 		this.width = width + 2;
 	}
 	
+	public abstract void buttonActiveManager(int x, int y, int button);
+	
+	public GuiControl getControlSelected() {
+		return controlSelected;
+	}
+	
 	@Override
 	public void mouseReleased(int x, int y, int button) {
 		super.mouseReleased(x, y, button);
-		Vec3d mouse = this.getGui().getMousePos();
-		if (localizedControl != null) {
-			if (mouse.x > 0 && mouse.x < localizedControl.width && mouse.y > 0 && mouse.y < localizedControl.height) {
-				mouseAction(mouse, button);
+		if (localizedControl != null && button == 1) {
+			if (x > 0 && x < localizedControl.width && y > 0 && y < localizedControl.height) {
+				mouseAction(x, y, button);
+				this.buttonActiveManager(x, y, button);
 			} else {
 				this.posX = this.getGui().width + 5;
 				this.posY = this.getGui().height + 5;
-				disableOptions();
 			}
 		} else {
-			mouseAction(mouse, button);
+			mouseAction(x, y, button);
 		}
 	}
 	
-	private void mouseAction(Vec3d mouse, int button) {
+	private void mouseAction(int x, int y, int button) {
 		GuiControl controlOver = getControlMouseIsOver();
 		if (button == 1 && controlOver != null) {
-			this.posX = (int) mouse.x;
-			this.posY = (int) mouse.y;
+			this.posX = (int) x;
+			this.posY = (int) y;
 			this.controlSelected = controlOver;
-			for (Class clazz : this.listenFor) {
-				if (this.controlSelected.getClass().equals(clazz))
-					enableOptions();
-				else
-					disableOptions();
-			}
+			enableOptions();
+			this.buttonActiveManager(x, y, button);
 		} else {
 			hideOptions();
 		}
@@ -130,6 +128,17 @@ public class GuiRightClickMenu extends GuiParent {
 		for (GuiControl control : this.controls) {
 			control.enabled = true;
 		}
+	}
+	
+	/** disables the button on the menu */
+	public void disableOption(String name) {
+		this.get(name).enabled = false;
+	}
+	
+	/** enables the button on the menu */
+	public void enableOptions(String name) {
+		this.get(name).enabled = true;
+		
 	}
 	
 	/** @return
