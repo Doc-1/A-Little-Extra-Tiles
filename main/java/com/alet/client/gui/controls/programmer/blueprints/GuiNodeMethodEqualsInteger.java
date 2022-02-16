@@ -11,7 +11,7 @@ public class GuiNodeMethodEqualsInteger extends GuiBluePrintNode {
     private BluePrintConnection<Integer> integerB = new BluePrintConnection<Integer>("integer2", "Integer B", this, 2, BluePrintConnection.PARAMETER_CONNECTION);
     
     public GuiNodeMethodEqualsInteger(String name, int x, int y) {
-        super(name, "Integer Is Equal To", x, y);
+        super(name, "Integer Is Equal To", GuiBluePrintNode.FLOW_NODE, x, y);
         methodReceiverNode.setValue(false);
         addNode(methodReceiverNode);
         methodSenderNode.setValue(false);

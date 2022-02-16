@@ -4,4 +4,9 @@ public interface IFunction {
     
     public void run();
     
+    public boolean completedRun();
+    
+    public boolean isEvent();
+    
+    public IFunction setValues(Object... values);
 }

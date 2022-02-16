@@ -17,6 +17,16 @@ public abstract class GuiBluePrintNode extends GuiParent {
     public boolean selected = false;
     public BluePrintConnection methodSenderConn;
     public final int nodeType;
+    public static final int EVENT_NODE = 0;
+    /** This node does not activate nor is activated by another node.
+     * For example,
+     * A getter node connected to a is equal node. The getter
+     * is connected to the is equal node's parameter connection.
+     * The getter node be triggered when the is equal node is
+     * triggered. */
+    public static final int FLOWLESS_NODE = 1;
+    public static final int FLOW_NODE = 2;
+    public static final int GETTER_NODE = 3;
     
     public GuiBluePrintNode(String name, String title, int nodeType, int x, int y) {
         super(name, x, y, 0, 0);

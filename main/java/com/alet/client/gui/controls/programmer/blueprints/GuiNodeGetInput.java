@@ -12,7 +12,7 @@ public class GuiNodeGetInput extends GuiBluePrintNode {
     private BluePrintConnection<Boolean[]> input = new BluePrintConnection<Boolean[]>("input", "Input", this, 1, BluePrintConnection.RETURN_CONNECTION);
     
     public GuiNodeGetInput(String name, int x, int y) {
-        super(name, "Get Input", x, y);
+        super(name, "Get Input", GuiBluePrintNode.GETTER_NODE, x, y);
         this.addNode(input);
         input.setValue(new Boolean[] { false });
         this.height = 42;

@@ -12,7 +12,7 @@ public class GuiNodeMethodEqualsInput extends GuiBluePrintNode {
     private BluePrintConnection<Boolean[]> inputB = new BluePrintConnection<Boolean[]>("input2", "input B", this, 2, BluePrintConnection.PARAMETER_CONNECTION);
     
     public GuiNodeMethodEqualsInput(String name, int x, int y) {
-        super(name, "Input Is Equal To", x, y);
+        super(name, "Input Is Equal To", GuiBluePrintNode.FLOW_NODE, x, y);
         methodReceiverNode.setValue(false);
         addNode(methodReceiverNode);
         methodSenderNode.setValue(false);

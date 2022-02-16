@@ -18,7 +18,7 @@ public class GuiNodeMethodSetColorDisplay extends GuiBluePrintNode {
     private BluePrintConnection<Integer> blue = new BluePrintConnection<Integer>("blue", "Blue", this, 7, BluePrintConnection.PARAMETER_CONNECTION);
     
     public GuiNodeMethodSetColorDisplay(String name, int x, int y) {
-        super(name, "Set Color Monitor", x, y);
+        super(name, "Set Color Monitor", GuiBluePrintNode.FLOW_NODE, x, y);
         addNode(methodReceiverNode);
         methodReceiverNode.setValue(false);
         addNode(methodSenderNode);

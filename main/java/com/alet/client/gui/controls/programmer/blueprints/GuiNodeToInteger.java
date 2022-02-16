@@ -8,7 +8,7 @@ public class GuiNodeToInteger extends GuiBluePrintNode {
     private BluePrintConnection<Integer> integer = new BluePrintConnection<Integer>("int", "Integer", this, 1, BluePrintConnection.RETURN_CONNECTION);
     
     public GuiNodeToInteger(String name, int x, int y) {
-        super(name, "To Integer", x, y);
+        super(name, "To Integer", GuiBluePrintNode.FLOWLESS_NODE, x, y);
         this.addNode(input);
         input.setValue(new Boolean[] { false });
         this.addNode(integer);

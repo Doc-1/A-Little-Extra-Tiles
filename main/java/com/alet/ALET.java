@@ -59,6 +59,7 @@ import com.alet.common.structure.type.premade.signal.LittleCircuitConverterFourT
 import com.alet.common.structure.type.premade.signal.LittleCircuitConverterOneToFour;
 import com.alet.common.structure.type.premade.signal.LittleCircuitConverterSixteenToFour;
 import com.alet.common.structure.type.premade.signal.LittleCircuitDisplay16;
+import com.alet.common.structure.type.premade.signal.LittleCircuitMicroprocessor;
 import com.alet.common.structure.type.premade.signal.LittleCircuitRandomNumberOne;
 import com.alet.common.structure.type.premade.signal.LittleCircuitTFlipFlop;
 import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator;
@@ -302,7 +303,7 @@ public class ALET {
             @Override
             @SideOnly(Side.CLIENT)
             public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
-                return new SubGuiMicroProcessor(structure);
+                return new SubGuiMicroProcessor((LittleCircuitMicroprocessor) structure);
             }
             
             @Override
@@ -346,7 +347,7 @@ public class ALET {
             
             @Override
             public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
-                return new SubContainerAnimatorWorkbench(player);
+                return new SubContainerAnimatorWorkbench(player, (LittleCircuitMicroprocessor) structure);
             }
         });
         LittleStructureRegistry
@@ -451,6 +452,9 @@ public class ALET {
                 .addOutput("block", 16, SignalMode.EQUAL, true);
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_simple", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("microprocessor_10_1bit", ALET.MODID, LittleCircuitMicroprocessor.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_advanced", ALET.MODID, LittleCircuitClockAdvanced.class, LittleStructureAttribute.TICKING, ALET.MODID))

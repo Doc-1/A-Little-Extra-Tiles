@@ -12,7 +12,7 @@ public class GuiNodeSetInteger extends GuiBluePrintNode {
     private BluePrintConnection<Integer> integer = new BluePrintConnection<Integer>("integer", "Integer", this, 2, BluePrintConnection.PARAMETER_CONNECTION);
     
     public GuiNodeSetInteger(String name, int x, int y) {
-        super(name, "Set Integer", x, y);
+        super(name, "Set Integer", GuiBluePrintNode.FLOW_NODE, x, y);
         
         methodReceiverNode.setValue(false);
         addNode(methodReceiverNode);

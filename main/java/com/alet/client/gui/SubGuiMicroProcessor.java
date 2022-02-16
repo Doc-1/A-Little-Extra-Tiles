@@ -13,8 +13,10 @@ import com.alet.client.gui.controls.GuiTree;
 import com.alet.client.gui.controls.GuiTreePart;
 import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.programmer.BluePrintConnection;
+import com.alet.client.gui.controls.programmer.BlueprintCompiler;
 import com.alet.client.gui.controls.programmer.blueprints.GuiBluePrintNode;
 import com.alet.client.gui.controls.programmer.blueprints.GuiNodeBranch;
+import com.alet.client.gui.controls.programmer.blueprints.GuiNodeEventPulse;
 import com.alet.client.gui.controls.programmer.blueprints.GuiNodeGetInput;
 import com.alet.client.gui.controls.programmer.blueprints.GuiNodeGetOutput;
 import com.alet.client.gui.controls.programmer.blueprints.GuiNodeMethodEqualsInput;
@@ -22,32 +24,46 @@ import com.alet.client.gui.controls.programmer.blueprints.GuiNodeMethodEqualsInt
 import com.alet.client.gui.controls.programmer.blueprints.GuiNodeMethodSetColorDisplay;
 import com.alet.client.gui.controls.programmer.blueprints.GuiNodeSetInteger;
 import com.alet.client.gui.controls.programmer.blueprints.GuiNodeToInteger;
-import com.alet.client.gui.controls.programmer.blueprints.GuiNodeTriggerSignal;
+import com.alet.common.packet.PacketUpdateStructureFromClient;
+import com.alet.common.structure.type.premade.signal.LittleCircuitMicroprocessor;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
-import com.creativemd.littletiles.common.structure.LittleStructure;
+import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 public class SubGuiMicroProcessor extends SubGui {
-    GuiDragablePanel drag = new GuiDragablePanel("drag", 208, 0, 380, 388, 1000, 1000);
+    GuiDragablePanel drag = new GuiDragablePanel("drag", 208, 0, 580, 388, 1000, 1000);
     public List<GuiBluePrintNode> bluePrint = new ArrayList<GuiBluePrintNode>();
     public GuiBluePrintNode eventNode;
     public BluePrintConnection selectedNode;
     GuiScrollBox scrollBoxLeft;
-    NBTTagCompound nbt = new NBTTagCompound();
+    public NBTTagCompound scriptNBT = new NBTTagCompound();
+    public NBTTagCompound structureNBT = new NBTTagCompound();
+    public LittleCircuitMicroprocessor structure;
     
     GuiTree tree;
     
-    public SubGuiMicroProcessor(LittleStructure structure) {
-        this.width = 600;
+    public SubGuiMicroProcessor(LittleCircuitMicroprocessor structure) {
+        this.structure = structure;
+        this.width = 800;
         this.height = 400;
+    }
+    
+    public void openedGui() {
+        structure.writeToNBT(structureNBT);
+    }
+    
+    @Override
+    public void closeGui() {
+        structureNBT.setTag("script", this.scriptNBT);
+        PacketHandler.sendPacketToServer(new PacketUpdateStructureFromClient(structure.getStructureLocation(), structureNBT));
+        super.closeGui();
     }
     
     @Override
@@ -66,7 +82,7 @@ public class SubGuiMicroProcessor extends SubGui {
             } else if (caption.contains("Input Is Equal")) {
                 var = new GuiNodeMethodEqualsInput("eqInput" + count, 0, 0);
             } else if (caption.contains("Event Pulse Recieved")) {
-                var = new GuiNodeTriggerSignal("evPulse" + count, 0, 0);
+                var = new GuiNodeEventPulse("evPulse" + count, 0, 0);
                 eventNode = var;
             } else if (caption.contains("Get Input")) {
                 var = new GuiNodeGetInput("getInput" + count, 0, 0);
@@ -166,110 +182,10 @@ public class SubGuiMicroProcessor extends SubGui {
             
             @Override
             public void onClicked(int x, int y, int button) {
-                NBTTagList nbtListObject = new NBTTagList();
-                NBTTagList nbtListSender = new NBTTagList();
-                SubGuiMicroProcessor subGui = ((SubGuiMicroProcessor) this.getGui());
-                subGui.nbt = new NBTTagCompound();
-                if (!subGui.eventNode.methodSenderConn.receiver.isEmpty()) {
-                    NBTTagCompound nbtSender = new NBTTagCompound();
-                    NBTTagCompound nbtReturn = new NBTTagCompound();
-                    BluePrintConnection conn = (BluePrintConnection) subGui.eventNode.methodSenderConn.receiver.get(0);
-                    GuiBluePrintNode receiver = conn.parentNode;
-                    for (BluePrintConnection c : subGui.eventNode.connections) {
-                        if (BluePrintConnection.METHOD_SENDER_CONNECTION == c.connectionType) {
-                            if (c.receiver.size() != 0) {
-                                BluePrintConnection cRec = (BluePrintConnection) c.receiver.get(0);
-                                nbtSender.setString(c.name, cRec.parentNode.name + "." + cRec.name);
-                            }
-                        }
-                        
-                    }
-                    nbtListSender.appendTag(nbtSender);
-                    
-                    nbtListObject.appendTag(nbtListSender);
-                    
-                    subGui.nbt.setTag(subGui.eventNode.name, nbtListObject);
-                    nextNode(receiver, nbtListObject);
-                }
-                System.out.println(subGui.nbt);
+                BlueprintCompiler.compileScriptToNBT((SubGuiMicroProcessor) this.getGui());
             }
-            
-            public String getValue(Object value) {
-                if (value instanceof Boolean[]) {
-                    Boolean[] io = (Boolean[]) value;
-                    String v = "[";
-                    
-                    for (int i = 0; i < io.length; i++) {
-                        v += String.valueOf(io[i]);
-                        if (i != io.length - 1)
-                            v += ",";
-                    }
-                    
-                    return v + "]";
-                }
-                if (value instanceof Integer) {
-                    Integer i = (Integer) value;
-                    return String.valueOf(i.intValue());
-                }
-                return "";
-            }
-            
-            public void nextNode(GuiBluePrintNode node, NBTTagList ignore) {
-                NBTTagList nbtListObject = new NBTTagList();
-                NBTTagList nbtListSender = new NBTTagList();
-                NBTTagList nbtListParameter = new NBTTagList();
-                SubGuiMicroProcessor subGui = ((SubGuiMicroProcessor) this.getGui());
-                NBTTagCompound nbtSender = new NBTTagCompound();
-                NBTTagCompound nbtParameter = new NBTTagCompound();
-                for (BluePrintConnection c : node.connections) {
-                    if (BluePrintConnection.METHOD_SENDER_CONNECTION == c.connectionType) {
-                        if (c.receiver.size() != 0) {
-                            BluePrintConnection cRec = (BluePrintConnection) c.receiver.get(0);
-                            nbtSender.setString(c.name, cRec.parentNode.name + "." + cRec.name);
-                        }
-                    }
-                    if (BluePrintConnection.PARAMETER_CONNECTION == c.connectionType) {
-                        if (c.sender != null) {
-                            BluePrintConnection cSend = (BluePrintConnection) c.sender;
-                            nbtParameter.setString(c.name, cSend.parentNode.name + "." + cSend.name);
-                        } else {
-                            nbtParameter.setString(c.name, getValue(c.value));
-                        }
-                    }
-                }
-                nbtListSender.appendTag(nbtSender);
-                nbtListParameter.appendTag(nbtParameter);
-                
-                nbtListObject.appendTag(nbtListSender);
-                nbtListObject.appendTag(nbtListParameter);
-                subGui.nbt.setTag(node.name, nbtListObject);
-                
-            }
-            
-            public void connections(GuiBluePrintNode node) {
-                
-                NBTTagList nbtListObject = new NBTTagList();
-                NBTTagList nbtListParameter = new NBTTagList();
-                SubGuiMicroProcessor subGui = ((SubGuiMicroProcessor) this.getGui());
-                NBTTagCompound nbtParameter = new NBTTagCompound();
-                for (BluePrintConnection c : node.connections) {
-                    if (BluePrintConnection.PARAMETER_CONNECTION == c.connectionType) {
-                        if (c.sender != null) {
-                            BluePrintConnection cSend = (BluePrintConnection) c.sender;
-                            nbtParameter.setString(c.name, cSend.parentNode.name + "." + cSend.name);
-                        } else {
-                            nbtParameter.setString(c.name, getValue(c.value));
-                        }
-                    }
-                }
-                nbtListParameter.appendTag(nbtParameter);
-                
-                nbtListObject.appendTag(nbtListParameter);
-                subGui.nbt.setTag(node.name, nbtListObject);
-                
-            }
-            
         });
+        openedGui();
     }
     
 }

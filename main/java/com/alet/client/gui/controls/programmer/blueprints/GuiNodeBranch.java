@@ -10,7 +10,7 @@ public class GuiNodeBranch extends GuiBluePrintNode {
     private BluePrintConnection<Boolean> bool = new BluePrintConnection<Boolean>("boolean", "Condition", this, 1, BluePrintConnection.PARAMETER_CONNECTION);
     
     public GuiNodeBranch(String name, int x, int y) {
-        super(name, "Branch", x, y);
+        super(name, "Branch", GuiBluePrintNode.FLOW_NODE, x, y);
         this.addNode(receiver);
         receiver.setValue(false);
         this.addNode(t);

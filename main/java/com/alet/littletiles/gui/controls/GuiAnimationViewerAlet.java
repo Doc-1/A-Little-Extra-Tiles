@@ -44,8 +44,8 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
             grabY = y;
         }
         if (rightGrabbed) {
-            tranY.set(tranY.aimed() + y - grabY);
-            tranX.set(tranX.aimed() + x - grabX);
+            tranY.set((tranY.aimed()) + (y / 10) - (grabY / 10));
+            tranX.set((tranX.aimed()) + (x / 10) - (grabX / 10));
             grabX = x;
             grabY = y;
         }
@@ -60,6 +60,12 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
             grabY = y;
             return true;
         }
+        if (button == 1) {
+            rightGrabbed = true;
+            grabX = x;
+            grabY = y;
+            return true;
+        }
         return false;
     }
     
@@ -67,11 +73,12 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
     public void mouseReleased(int x, int y, int button) {
         if (button == 0)
             grabbed = false;
+        if (button == 1)
+            rightGrabbed = false;
     }
     
     @Override
     public boolean onKeyPressed(char character, int key) {
-        System.out.println(key);
         double mod = 1D;
         if (GuiScreen.isShiftKeyDown()) {
             mod = 5D;
@@ -118,7 +125,6 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         GlStateManager.enableBlend();
         GlStateManager
                 .tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        
         int x = getPixelOffsetX();
         int y = getPixelOffsetY() - 1;
         int scale = getGuiScale();
@@ -132,13 +138,12 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         GlStateManager.translate(0, 0, -distance.current());
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableDepth();
-        
         Vector3d rotationCenter = new Vector3d(animation.center.rotationCenter);
         rotationCenter.y -= 75;
         GlStateManager.translate(tranX.current() / 10, -tranY.current() / 10, 0);
         GlStateManager.rotate((float) rotX.current(), 1, 0, 0);
         GlStateManager.rotate((float) rotY.current(), 0, 1, 0);
-        //GlStateManager.rotate((float) rotZ.current(), 0, 0, 1);
+        GlStateManager.rotate((float) rotZ.current(), 0, 0, 1);
         
         GlStateManager.translate(-min.getPosX(context), -min.getPosY(context), -min.getPosZ(context));
         
