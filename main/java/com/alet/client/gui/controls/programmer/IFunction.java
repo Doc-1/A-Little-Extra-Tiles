@@ -1,5 +1,7 @@
 package com.alet.client.gui.controls.programmer;
 
+import java.util.List;
+
 public interface IFunction {
     
     public void run();
@@ -8,5 +10,5 @@ public interface IFunction {
     
     public boolean isEvent();
     
-    public IFunction setValues(Object... values);
+    public Function setValues(List<Object> values);
 }

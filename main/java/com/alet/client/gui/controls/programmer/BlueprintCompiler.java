@@ -1,22 +1,28 @@
 package com.alet.client.gui.controls.programmer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.alet.client.gui.SubGuiMicroProcessor;
 import com.alet.client.gui.controls.programmer.blueprints.GuiBluePrintNode;
-import com.alet.client.gui.controls.programmer.functions.FunctionEventPulseReceived;
+import com.alet.client.programmer.functions.FunctionBranch;
+import com.alet.client.programmer.functions.FunctionEventPulseReceived;
+import com.alet.client.programmer.functions.FunctionIsInputEqual;
+import com.alet.client.programmer.functions.FunctionSetOutput;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 public class BlueprintCompiler {
     
-    public static List<IFunction> functions = new ArrayList<IFunction>();
+    public static Map<String, Function> functions = new LinkedHashMap<String, Function>();
     
-    public static List<IFunction> readScript(NBTTagCompound script) {
-        List<IFunction> functions = new ArrayList<IFunction>();
-        functions.add(new FunctionEventPulseReceived().setValues(new boolean[] { false }));
+    public static Map<String, Function> readScript(NBTTagCompound script) {
+        functions.put("event1", new FunctionEventPulseReceived("isEqual2", "i0").setFunctionList(functions));
+        functions.put("isEqual2", new FunctionIsInputEqual("branch3", "i1", "i2").setFunctionList(functions));
+        functions.put("branch3", new FunctionBranch("", "isEqual2", "setOutput4", "setOutput5").setFunctionList(functions));
+        functions.put("setOutput4", new FunctionSetOutput("", "true", "o10").setFunctionList(functions));
+        functions.put("setOutput5", new FunctionSetOutput("", "false", "o10").setFunctionList(functions));
         return functions;
     }
     

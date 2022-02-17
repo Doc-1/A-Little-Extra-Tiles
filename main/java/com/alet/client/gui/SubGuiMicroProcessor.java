@@ -177,7 +177,6 @@ public class SubGuiMicroProcessor extends SubGui {
         tree = new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50);
         scrollBox.controls.add(tree);
         this.controls.add(drag);
-        
         drag.addControl(new GuiButton("test", 0, 0) {
             
             @Override

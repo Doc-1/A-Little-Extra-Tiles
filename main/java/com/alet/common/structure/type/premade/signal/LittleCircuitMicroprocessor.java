@@ -21,8 +21,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class LittleCircuitMicroprocessor extends LittleStructurePremade {
+    
     NBTTagCompound scriptNBT = new NBTTagCompound();
-    Integer tick = 1;
+    BlueprintExecutor executor;
     
     public LittleCircuitMicroprocessor(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -31,11 +32,8 @@ public class LittleCircuitMicroprocessor extends LittleStructurePremade {
     @Override
     public void tick() {
         if (!isClient()) {
-            if (tick == Integer.MAX_VALUE)
-                tick = 0;
-            tick++;
-            BlueprintExecutor executor = new BlueprintExecutor(this, BlueprintCompiler.readScript(scriptNBT));
-            executor.run(tick);
+            if (!executor.equals(null))
+                executor.run();
         }
     }
     
@@ -43,6 +41,7 @@ public class LittleCircuitMicroprocessor extends LittleStructurePremade {
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
         if (nbt.hasKey("script"))
             scriptNBT = nbt.getCompoundTag("script");
+        this.executor = new BlueprintExecutor(this, BlueprintCompiler.readScript(scriptNBT));
     }
     
     @Override
