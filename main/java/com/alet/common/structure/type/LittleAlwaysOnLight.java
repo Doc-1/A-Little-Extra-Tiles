@@ -17,59 +17,60 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleAlwaysOnLight extends LittleStructure {
-	
-	public int level;
-	
-	public LittleAlwaysOnLight(LittleStructureType type, IStructureTileList mainBlock) {
-		super(type, mainBlock);
-	}
-	
-	@Override
-	protected void loadFromNBTExtra(NBTTagCompound nbt) {
-		level = nbt.getInteger("level");
-	}
-	
-	@Override
-	protected void writeToNBTExtra(NBTTagCompound nbt) {
-		nbt.setInteger("level", level);
-	}
-	
-	@Override
-	public int getLightValue(BlockPos pos) {
-		return level;
-	}
-	
-	@Override
-	public int getAttribute() {
-		return super.getAttribute() | LittleStructureAttribute.EMISSIVE;
-	}
-	
-	public static class LittleAlwaysOnLightStructureParser extends LittleStructureGuiParser {
-		
-		public LittleAlwaysOnLightStructureParser(GuiParent parent, AnimationGuiHandler handler) {
-			super(parent, handler);
-		}
-		
-		@Override
-		@SideOnly(Side.CLIENT)
-		public void createControls(LittlePreviews previews, LittleStructure structure) {
-			parent.addControl(new GuiSteppedSlider("level", 0, 0, 100, 12, structure instanceof LittleAlwaysOnLight ? ((LittleAlwaysOnLight) structure).level : 15, 0, 15));
-		}
-		
-		@Override
-		@SideOnly(Side.CLIENT)
-		public LittleAlwaysOnLight parseStructure(LittlePreviews previews) {
-			LittleAlwaysOnLight structure = createStructure(LittleAlwaysOnLight.class, null);
-			GuiSteppedSlider slider = (GuiSteppedSlider) parent.get("level");
-			structure.level = (int) slider.value;
-			return structure;
-		}
-		
-		@Override
-		@SideOnly(Side.CLIENT)
-		protected LittleStructureType getStructureType() {
-			return LittleStructureRegistry.getStructureType(LittleAlwaysOnLight.class);
-		}
-	}
-	
+    
+    public int level;
+    
+    public LittleAlwaysOnLight(LittleStructureType type, IStructureTileList mainBlock) {
+        super(type, mainBlock);
+    }
+    
+    @Override
+    protected void loadFromNBTExtra(NBTTagCompound nbt) {
+        level = nbt.getInteger("level");
+    }
+    
+    @Override
+    protected void writeToNBTExtra(NBTTagCompound nbt) {
+        nbt.setInteger("level", level);
+    }
+    
+    @Override
+    public int getLightValue(BlockPos pos) {
+        return level;
+    }
+    
+    @Override
+    public int getAttribute() {
+        return super.getAttribute() | LittleStructureAttribute.EMISSIVE;
+    }
+    
+    public static class LittleAlwaysOnLightStructureParser extends LittleStructureGuiParser {
+        
+        public LittleAlwaysOnLightStructureParser(GuiParent parent, AnimationGuiHandler handler) {
+            super(parent, handler);
+        }
+        
+        @Override
+        @SideOnly(Side.CLIENT)
+        public void createControls(LittlePreviews previews, LittleStructure structure) {
+            
+            parent.addControl(new GuiSteppedSlider("level", 0, 0, 100, 12, structure instanceof LittleAlwaysOnLight ? ((LittleAlwaysOnLight) structure).level : 15, 0, 15));
+        }
+        
+        @Override
+        @SideOnly(Side.CLIENT)
+        public LittleAlwaysOnLight parseStructure(LittlePreviews previews) {
+            LittleAlwaysOnLight structure = createStructure(LittleAlwaysOnLight.class, null);
+            GuiSteppedSlider slider = (GuiSteppedSlider) parent.get("level");
+            structure.level = (int) slider.value;
+            return structure;
+        }
+        
+        @Override
+        @SideOnly(Side.CLIENT)
+        protected LittleStructureType getStructureType() {
+            return LittleStructureRegistry.getStructureType(LittleAlwaysOnLight.class);
+        }
+    }
+    
 }

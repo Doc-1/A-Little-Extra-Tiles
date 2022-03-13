@@ -15,6 +15,9 @@ public class BlueprintExecutor {
     public Map<String, Function> functions;
     public LittleStructure structure;
     public String pastFunction;
+    public int ticksPaused = 0;
+    public int pauseFor = 0;
+    public boolean paused = false;
     
     public BlueprintExecutor(LittleStructure structure, Map<String, Function> functions) {
         this.structure = structure;
@@ -22,26 +25,30 @@ public class BlueprintExecutor {
     }
     
     public void run() {
-        
-        updateValues();
-        String[] arr = (String[]) functions.keySet().toArray(new String[] {});
-        if (functions.get(arr[0]).isEvent()) {
-            Function event = functions.get(arr[0]);
-            pastFunction = arr[0];
-            event.run();
-            if (event.completedRun()) {
-                String next = event.nextFunction;
-                int b = 0;
-                while (!next.equals("")) {
-                    b++;
-                    Function nextFunction = functions.get(next);
-                    nextFunction.run();
-                    if (nextFunction.completedRun())
-                        next = nextFunction.nextFunction;
-                    if (b == 10)
-                        break;
+        if (!paused) {
+            updateValues();
+            String[] arr = (String[]) functions.keySet().toArray(new String[] {});
+            if (functions.get(arr[0]).isEvent()) {
+                Function event = functions.get(arr[0]);
+                pastFunction = arr[0];
+                event.run();
+                if (event.completedRun()) {
+                    String next = event.nextFunction;
+                    int b = 0;
+                    while (!next.equals("")) {
+                        b++;
+                        Function nextFunction = functions.get(next);
+                        nextFunction.run();
+                        if (nextFunction.completedRun())
+                            next = nextFunction.nextFunction;
+                        if (b == 1000)//In case of emergency
+                            break;
+                        
+                    }
                 }
             }
+        } else {
+            ticksPaused++;
         }
     }
     

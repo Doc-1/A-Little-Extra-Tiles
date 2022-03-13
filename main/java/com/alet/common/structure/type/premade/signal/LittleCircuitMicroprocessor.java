@@ -30,11 +30,12 @@ public class LittleCircuitMicroprocessor extends LittleStructurePremade {
     }
     
     @Override
-    public void tick() {
-        if (!isClient()) {
-            if (!executor.equals(null))
-                executor.run();
+    public boolean queueTick() {
+        if (!executor.equals(null)) {
+            executor.run();
+            queueForNextTick();
         }
+        return !this.executor.equals(null);
     }
     
     @Override
@@ -42,6 +43,7 @@ public class LittleCircuitMicroprocessor extends LittleStructurePremade {
         if (nbt.hasKey("script"))
             scriptNBT = nbt.getCompoundTag("script");
         this.executor = new BlueprintExecutor(this, BlueprintCompiler.readScript(scriptNBT));
+        queueForNextTick();
     }
     
     @Override

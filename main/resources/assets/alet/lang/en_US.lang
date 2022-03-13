@@ -32,6 +32,7 @@ structure.music_composer.name=Music Composer
 structure.allows_on_light.name=Allows On Light
 structure.lead_connection.name=Rope Connector
 structure.cam_player.name=Cam Player
+structure.gui_linker.name=Gui Linker
 
 structure.category.sound=Audio
 structure.category.advance=Advance

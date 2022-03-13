@@ -75,9 +75,9 @@ public class LittleFillingCabinet extends LittleStructurePremade {
     }
     
     @Override
-    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
-        if (!worldIn.isRemote && !hasPlayerOpened(playerIn))
-            LittleStructureGuiHandler.openGui("filling_cabinet", new NBTTagCompound(), playerIn, this);
+    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+        if (!worldIn.isRemote && hasPlayerOpened(player))
+            LittleStructureGuiHandler.openGui("filling_cabinet", new NBTTagCompound(), player, this);
         return true;
     }
 }

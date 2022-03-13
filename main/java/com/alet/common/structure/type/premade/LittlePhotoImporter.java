@@ -19,24 +19,26 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class LittlePhotoImporter extends LittleStructurePremade {
-	
-	public LittlePhotoImporter(LittleStructureType type, IStructureTileList mainBlock) {
-		super(type, mainBlock);
-	}
-	
-	@Override
-	protected void loadFromNBTExtra(NBTTagCompound nbt) {
-	}
-	
-	@Override
-	protected void writeToNBTExtra(NBTTagCompound nbt) {
-	}
-	
-	@Override
-	public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
-		if (!worldIn.isRemote)
-			LittleStructureGuiHandler.openGui("photo-import", new NBTTagCompound(), playerIn, this);
-		return true;
-	}
-	
+    
+    public LittlePhotoImporter(LittleStructureType type, IStructureTileList mainBlock) {
+        super(type, mainBlock);
+    }
+    
+    @Override
+    protected void loadFromNBTExtra(NBTTagCompound nbt) {}
+    
+    @Override
+    protected void writeToNBTExtra(NBTTagCompound nbt) {}
+    
+    @Override
+    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+        if (!worldIn.isRemote) {
+            LittleStructureGuiHandler.openGui("photo-import", new NBTTagCompound(), playerIn, this);
+        } else {
+            System.out.println(pos);
+            System.out.println(worldIn.getTileEntity(pos).getClass());
+        }
+        return true;
+    }
+    
 }

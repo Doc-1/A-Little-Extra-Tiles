@@ -3,8 +3,8 @@ package com.alet.common.packet;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.alet.entity.EntityLeadConnection;
-import com.alet.entity.LeadConnectionData;
+import com.alet.common.entity.EntityLeadConnection;
+import com.alet.common.entity.LeadConnectionData;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 
 import io.netty.buffer.ByteBuf;

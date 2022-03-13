@@ -64,12 +64,13 @@ public class SubGuiFillingCabinet extends SubGui {
             @Override
             public void buttonActiveManager(int x, int y, int button) {
                 GuiControl control = this.getControlSelected();
-                if (!(control instanceof GuiTree || control instanceof GuiTreePart || control instanceof GuiScrollBox || control instanceof SubGuiFillingCabinet)) {
-                    this.disableOptions();
-                }
-                if (control instanceof GuiTree) {
-                    this.disableOption("Rename");
-                    this.disableOption("Delete");
+                this.disableOptions();
+                if (control instanceof GuiTreePart) {
+                    this.enableOptions("Rename");
+                    this.enableOptions("Add New Group");
+                    this.enableOptions("Delete");
+                } else if (control instanceof GuiScrollBox || control instanceof GuiTree) {
+                    this.enableOptions("Add New Group");
                 }
             }
             
@@ -234,7 +235,6 @@ public class SubGuiFillingCabinet extends SubGui {
                 }
             }
             if (rightClickMenu.buttonSelected.getCaption().equals("Add New Group")) {
-                System.out.println(rightClickMenu.controlSelected);
                 if (rightClickMenu.controlSelected instanceof GuiTree) {
                     File d = new File("./little_structures/" + "New Group");
                     if (!d.exists()) {

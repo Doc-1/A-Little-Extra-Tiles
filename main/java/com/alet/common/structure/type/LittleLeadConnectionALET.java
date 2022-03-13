@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import javax.vecmath.Vector3d;
 
-import com.alet.entity.EntityLeadConnection;
-import com.alet.entity.LeadConnectionData;
+import com.alet.common.entity.EntityLeadConnection;
+import com.alet.common.entity.LeadConnectionData;
 import com.alet.items.ItemLittleRope;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;

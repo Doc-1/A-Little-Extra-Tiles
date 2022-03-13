@@ -14,9 +14,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
     }
     
     @Override
-    public void modifyControls(SubGui gui) {
-        
-    }
+    public void modifyControls(SubGui gui) {}
     
     @Override
     public void updateControls(SubGui gui) {
@@ -24,12 +22,13 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
         GuiComboBoxCategory typesComboBox = (GuiComboBoxCategory) recipeGui.get("types");
         String name = (String) typesComboBox.getSelected().key;
         int index = typesComboBox.index;
-        
         if (!name.equals(oldName)) {
             hasUpdated = false;
             reload(gui, recipeGui);
         }
         if (!hasUpdated) {
+            recipeGui.get("types").width = 115;
+            recipeGui.get("hierarchy").posX = 120;
             recipeGui.controls.remove(recipeGui.get("renderer"));
             GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 208, 30, 136, 135);
             recipeGui.controls.add(4, viewer);
@@ -37,6 +36,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 viewer.onLoaded(recipeGui.animationPreview);
                 
             } catch (NullPointerException e) {}
+            
             recipeGui.refreshControls();
             if (name.equals("structure.music_composer.name")) {
                 gui.height = 270;
@@ -52,7 +52,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("name").posY = 243;
                 recipeGui.get("clear").posY = 243;
                 
-                //viewer.moveViewPort(-25, 30);
+                viewer.moveViewPort(-25, 30);
                 
                 recipeGui.refreshControls();
                 typesComboBox.select(index);
@@ -66,7 +66,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("stop").posX = 338;
                 recipeGui.get("panel").width = 256;
                 
-                //viewer.moveViewPort(-25, 0);
+                viewer.moveViewPort(-25, 0);
                 
                 recipeGui.refreshControls();
                 typesComboBox.select(index);
@@ -79,14 +79,12 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("play").posX = 368;
                 recipeGui.get("stop").posX = 388;
                 recipeGui.get("panel").width = 306;
-                // viewer.moveViewPort(-50, 0);
-                
+                viewer.moveViewPort(-50, 0);
+                viewer.posX = 308;
                 recipeGui.refreshControls();
                 typesComboBox.select(index);
                 hasUpdated = true;
             } else if (name.equals("structure.tigger_box.name")) {
-                //GuiPanel panel = (GuiPanel) recipeGui.get("panel");
-                //panel.get("signal").posY = 192;
                 gui.height = 270;
                 gui.width = 456;
                 recipeGui.get("tilescount").posX = 308;
@@ -99,8 +97,8 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("save").posY = 243;
                 recipeGui.get("name").posY = 243;
                 recipeGui.get("clear").posY = 243;
-                //viewer.moveViewPort(-50, 30);
-                
+                viewer.posX = 308;
+                viewer.moveViewPort(-50, 30);
                 recipeGui.refreshControls();
                 
                 typesComboBox.select(index);
@@ -110,14 +108,12 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 reload(gui, recipeGui);
                 hasUpdated = true;
             }
-            
             oldName = new String(name);
         }
     }
     
     public void reload(SubGui gui, SubGuiRecipe recipeGui) {
-        recipeGui.get("types").width = 115;
-        recipeGui.get("hierarchy").posX = 120;
+        
         gui.width = 356;
         gui.height = 206;
         recipeGui.get("tilescount").posX = 208;

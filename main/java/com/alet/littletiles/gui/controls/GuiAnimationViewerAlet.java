@@ -79,6 +79,8 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
     
     @Override
     public boolean onKeyPressed(char character, int key) {
+        if (!isMouseOver())
+            return false;
         double mod = 1D;
         if (GuiScreen.isShiftKeyDown()) {
             mod = 5D;

@@ -1,4 +1,4 @@
-package com.alet.entity;
+package com.alet.common.entity;
 
 import java.util.HashSet;
 import java.util.Set;

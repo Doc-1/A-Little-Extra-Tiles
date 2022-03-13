@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
-import com.alet.entity.EntityLeadConnection;
-import com.alet.entity.LeadConnectionData;
+import com.alet.common.entity.EntityLeadConnection;
+import com.alet.common.entity.LeadConnectionData;
 import com.creativemd.creativecore.common.utils.math.vec.Vec3;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.client.render.overlay.PreviewRenderer;
