@@ -5,10 +5,11 @@ import java.util.Map;
 
 import com.alet.client.gui.SubGuiMicroProcessor;
 import com.alet.client.gui.controls.programmer.blueprints.GuiBluePrintNode;
-import com.alet.client.programmer.functions.FunctionBranch;
-import com.alet.client.programmer.functions.FunctionEventPulseReceived;
-import com.alet.client.programmer.functions.FunctionIsInputEqual;
-import com.alet.client.programmer.functions.FunctionSetOutput;
+import com.alet.common.programmer.functions.FunctionBranch;
+import com.alet.common.programmer.functions.FunctionEventPulseReceived;
+import com.alet.common.programmer.functions.FunctionIsInputEqual;
+import com.alet.common.programmer.functions.FunctionSetOutput;
+import com.alet.common.programmer.functions.FunctionSleep;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,10 +20,11 @@ public class BlueprintCompiler {
     
     public static Map<String, Function> readScript(NBTTagCompound script) {
         functions.put("event1", new FunctionEventPulseReceived("isEqual2", "i0").setFunctionList(functions));
-        functions.put("isEqual2", new FunctionIsInputEqual("branch3", "i1", "i2").setFunctionList(functions));
-        functions.put("branch3", new FunctionBranch("", "isEqual2", "setOutput4", "setOutput5").setFunctionList(functions));
-        functions.put("setOutput4", new FunctionSetOutput("", "true", "o10").setFunctionList(functions));
-        functions.put("setOutput5", new FunctionSetOutput("", "false", "o10").setFunctionList(functions));
+        functions.put("isEqual2", new FunctionIsInputEqual("sleep3", "i1", "i2").setFunctionList(functions));
+        functions.put("sleep3", new FunctionSleep("branch4", "50").setFunctionList(functions));
+        functions.put("branch4", new FunctionBranch("", "isEqual2", "setOutput4", "setOutput5").setFunctionList(functions));
+        functions.put("setOutput5", new FunctionSetOutput("", "true", "o10").setFunctionList(functions));
+        functions.put("setOutput6", new FunctionSetOutput("", "false", "o10").setFunctionList(functions));
         return functions;
     }
     

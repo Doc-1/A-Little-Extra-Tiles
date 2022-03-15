@@ -1,4 +1,4 @@
-package com.alet.client.programmer.functions;
+package com.alet.common.programmer.functions;
 
 import java.util.List;
 
@@ -17,14 +17,14 @@ public class FunctionEventPulseReceived extends Function {
     
     @Override
     public void run() {
-        completed = BooleanUtils.equals(state, oldState);
-        oldState = state;
+        //if (oldState == null)
+        //    oldState = new boolean[] { false };
+        completed = !BooleanUtils.equals(state, BooleanUtils.asArray(true));
     }
     
     @Override
     public Function setValues(List<Object> values) {
         this.state = (boolean[]) values.get(0);
-        this.oldState = this.state;
         return this;
     }
     

@@ -37,6 +37,7 @@ import com.alet.common.packet.PacketGetServerCams;
 import com.alet.common.packet.PacketSendGuiToClient;
 import com.alet.common.packet.PacketSendServerCams;
 import com.alet.common.packet.PacketSendSound;
+import com.alet.common.packet.PacketUpdateMutateFromServer;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.LittleAlwaysOnLight;
@@ -368,7 +369,7 @@ public class ALET {
         LittleStructureRegistry
                 .registerStructureType("lead_connection", "simple", LittleLeadConnectionALET.class, LittleStructureAttribute.NONE, LittleLeadConnectionALET.LittleLeadConnectionParserALET.class);
         LittleStructureRegistry
-                .registerStructureType("gui_linker", "advanced", LittleGuiLinkerALET.class, LittleStructureAttribute.NONE, LittleGuiLinkerALET.LittleGuiLinkerParserALET.class);
+                .registerStructureType("gui_linker", "advance", LittleGuiLinkerALET.class, LittleStructureAttribute.NONE, LittleGuiLinkerALET.LittleGuiLinkerParserALET.class);
         
         //LittleStructureRegistry.registerStructureType(new LittleAxisDoorType("loop_door", "door", LittleAxisLoopDoor.class, LittleStructureAttribute.NONE).addOutput("state", 1, SignalMode.TOGGLE), LittleAxisLoopDoorParser.class);
         if (Loader.isModLoaded("cmdcam"))
@@ -428,6 +429,7 @@ public class ALET {
         CreativeCorePacket.registerPacket(PacketSendGuiToClient.class);
         CreativeCorePacket.registerPacket(PacketDropItem.class);
         CreativeCorePacket.registerPacket(PacketConnectLead.class);
+        CreativeCorePacket.registerPacket(PacketUpdateMutateFromServer.class);
         
         if (Loader.isModLoaded("cmdcam")) {
             CreativeCorePacket.registerPacket(PacketSendServerCams.class);

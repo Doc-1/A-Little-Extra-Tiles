@@ -6,9 +6,11 @@ import javax.annotation.Nullable;
 
 import com.alet.client.gui.controls.GuiStackSelectorAllMutator;
 import com.alet.client.gui.mutator.controls.GuiButtonAddMutationType;
+import com.alet.common.packet.PacketUpdateMutateFromServer;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
+import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.BlockUtils;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
 import com.creativemd.littletiles.common.action.LittleActionException;
@@ -134,41 +136,40 @@ public class LittleStateMutatorALET extends LittleStructure {
     
     public void changeMaterialState() throws CorruptedConnectionException, NotYetConnectedException {
         for (IStructureTileList tileList : this.blocksList()) {
-            
-            StructureTileList s = (StructureTileList) tileList;
-            for (LittleTile tile : tileList) {
-                
-                for (int i = 0; i < mutateMaterial.size() / 2; i++) {
-                    MutatorData dataA = mutateMaterial.get("a" + i);
-                    MutatorData dataB = mutateMaterial.get("b" + i);
-                    int colorA = dataA.color;
-                    int colorB = dataB.color;
+            tileList.getTe().updateTiles(x -> {
+                StructureTileList s = x.get(tileList);
+                for (LittleTile tile : tileList) {
                     
-                    if (tile instanceof LittleTileColored) {
-                        LittleTileColored coloredTile = (LittleTileColored) tile;
-                        if (coloredTile.getBlockState().equals(dataA.state) && coloredTile.color == dataA.color) {
-                            coloredTile.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
-                            LittleTile temp = LittleTileColored.setColor(tile.copy(), dataB.color);
-                            s.remove(coloredTile);
-                            s.add(temp);
-                            
-                        }
-                    } else if (tile.getBlockState().equals(dataA.state)) {
-                        tile.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
-                        LittleTile coloredTile = LittleTileColored.setColor(tile.copy(), dataB.color);
-                        s.remove(tile);
-                        s.add(coloredTile);
+                    for (int i = 0; i < mutateMaterial.size() / 2; i++) {
+                        MutatorData dataA = mutateMaterial.get("a" + i);
+                        MutatorData dataB = mutateMaterial.get("b" + i);
+                        int colorA = dataA.color;
+                        int colorB = dataB.color;
                         
-                        break;
+                        if (tile instanceof LittleTileColored) {
+                            LittleTileColored coloredTile = (LittleTileColored) tile;
+                            if (coloredTile.getBlockState().equals(dataA.state) && coloredTile.color == dataA.color) {
+                                coloredTile.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
+                                LittleTile temp = LittleTileColored.setColor(tile.copy(), dataB.color);
+                                s.remove(coloredTile);
+                                s.add(temp);
+                                
+                            }
+                        } else if (tile.getBlockState().equals(dataA.state)) {
+                            tile.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
+                            LittleTile coloredTile = LittleTileColored.setColor(tile.copy(), dataB.color);
+                            s.remove(tile);
+                            s.add(coloredTile);
+                            
+                            break;
+                        }
                     }
+                    
                 }
-                
-            }
-            tileList.getTe().updateBlock();
-            tileList.getTe().updateNeighbour();
+            });
         }
-        this.updateStructure();
-        this.sendUpdatePacket();
+        if (!this.getWorld().isRemote)
+            PacketHandler.sendPacketToTrackingPlayers(new PacketUpdateMutateFromServer(this.getStructureLocation()), this.getWorld(), this.getPos(), null);
     }
     
     public void changeCollisionState() throws CorruptedConnectionException, NotYetConnectedException {

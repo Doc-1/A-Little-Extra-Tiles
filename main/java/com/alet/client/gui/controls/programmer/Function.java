@@ -7,7 +7,7 @@ import java.util.Map;
 
 public abstract class Function implements IFunction {
     
-    public boolean completed = false;
+    protected boolean completed = false;
     public boolean results;
     public final List<String> values;
     public String nextFunction;

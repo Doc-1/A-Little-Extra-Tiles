@@ -24,6 +24,8 @@ public class LittleCircuitMicroprocessor extends LittleStructurePremade {
     
     NBTTagCompound scriptNBT = new NBTTagCompound();
     BlueprintExecutor executor;
+    int tick = 0;
+    int executorReturn = 0;
     
     public LittleCircuitMicroprocessor(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -32,10 +34,25 @@ public class LittleCircuitMicroprocessor extends LittleStructurePremade {
     @Override
     public boolean queueTick() {
         if (!executor.equals(null)) {
-            executor.run();
-            queueForNextTick();
+            if (this.isStillAvailable()) {
+                if (executor.pause) {
+                    tick++;
+                    if (tick > executor.pausedFor) {
+                        executor.pause = false;
+                        executor.pausedFor = 0;
+                        tick = 0;
+                    }
+                } else {
+                    int start = 0;
+                    if (executorReturn > 0) {
+                        start = executorReturn;
+                    }
+                    System.out.println(executorReturn = executor.run(start));
+                }
+                queueForNextTick();
+            }
         }
-        return !this.executor.equals(null);
+        return !this.executor.equals(null) && this.isStillAvailable();
     }
     
     @Override
