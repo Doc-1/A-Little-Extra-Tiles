@@ -22,11 +22,16 @@ public class BlueprintExecutor {
     public BlueprintExecutor(LittleStructure structure, Map<String, Function> functions) {
         this.structure = structure;
         this.functions = functions;
+        for (Function f : this.functions.values()) {
+            f.executor = this;
+        }
         functionNames = (String[]) functions.keySet().toArray(new String[] {});
     }
     
     /** @param index
      * @return
+     *         >0 -> a sleep has been triggered. And the number is the index to resume at.
+     *         <br>
      *         0 -> is a successful run
      *         <br>
      *         -1 -> is a failure of completing the trigger

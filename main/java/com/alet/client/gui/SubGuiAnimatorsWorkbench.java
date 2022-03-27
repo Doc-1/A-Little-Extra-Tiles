@@ -3,6 +3,14 @@ package com.alet.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.client.gui.controls.GuiTimelineALET;
+import com.alet.client.gui.controls.GuiTimelineALET.KeyALETDeselectedEvent;
+import com.alet.client.gui.controls.GuiTimelineALET.KeyALETSelectedEvent;
+import com.alet.client.gui.controls.GuiTree;
+import com.alet.client.gui.controls.GuiTreePart;
+import com.alet.client.gui.controls.KeyControlALET;
+import com.alet.client.gui.controls.TimelineChannelALET;
+import com.alet.client.gui.controls.TimelineChannelALET.TimelineChannelDoorData;
 import com.alet.common.structure.type.premade.LittleAnimatorBench;
 import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
 import com.creativemd.creativecore.common.gui.ContainerControl;
@@ -10,19 +18,25 @@ import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.container.SlotControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
-import com.creativemd.creativecore.common.gui.controls.gui.timeline.GuiTimeline;
-import com.creativemd.creativecore.common.gui.controls.gui.timeline.TimelineChannel;
-import com.creativemd.creativecore.common.gui.controls.gui.timeline.TimelineChannel.TimelineChannelDouble;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiIconButton;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.littletiles.common.entity.AnimationPreview;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
+import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SubGuiAnimatorsWorkbench extends SubGui {
     LittleAnimatorBench structure;
     public AnimationGuiHandler handler = new AnimationGuiHandler();
+    private KeyControlALET selected = null;
     
     public SubGuiAnimatorsWorkbench(LittleStructure structure) {
         this.structure = (LittleAnimatorBench) structure;
@@ -30,19 +44,189 @@ public class SubGuiAnimatorsWorkbench extends SubGui {
         this.height = 300;
     }
     
+    @CustomEventSubscribe
+    public void controlChanged(GuiControlChangedEvent event) {
+        if (event.source.name.equals("maxTick")) {
+            String dur = ((GuiTextfield) this.get("maxTick")).text;
+            int duration = 1;
+            if (!dur.equals(""))
+                duration = Integer.parseInt(dur);
+            ((GuiTimelineALET) this.get("timeline")).setDuration(duration);
+        }
+        if (event.source instanceof GuiTextfield) {
+            GuiTextfield text = (GuiTextfield) event.source;
+            if (selected != null) {
+                double[] data = (double[]) selected.value;
+                if (!text.text.equals(""))
+                    if (text.name.equals("offX"))
+                        data[0] = Double.parseDouble(text.text);
+                    else if (text.name.equals("offY"))
+                        data[1] = Double.parseDouble(text.text);
+                    else if (text.name.equals("offZ"))
+                        data[2] = Double.parseDouble(text.text);
+                    else if (text.name.equals("rotX"))
+                        data[3] = Double.parseDouble(text.text);
+                    else if (text.name.equals("rotY"))
+                        data[4] = Double.parseDouble(text.text);
+                    else if (text.name.equals("rotZ"))
+                        data[5] = Double.parseDouble(text.text);
+            }
+        }
+    }
+    
+    @CustomEventSubscribe
+    @SideOnly(Side.CLIENT)
+    public void onKeySelected(KeyALETSelectedEvent event) {
+        KeyControlALET key = (KeyControlALET) event.source;
+        selected = key;
+        System.out.println(key.value.hashCode());
+        double[] data = (double[]) key.value;
+        GuiTextfield offX = (GuiTextfield) get("offX");
+        GuiTextfield offY = (GuiTextfield) get("offY");
+        GuiTextfield offZ = (GuiTextfield) get("offZ");
+        
+        GuiTextfield rotX = (GuiTextfield) get("rotX");
+        GuiTextfield rotY = (GuiTextfield) get("rotY");
+        GuiTextfield rotZ = (GuiTextfield) get("rotZ");
+        offX.text = data[0] + "";
+        offY.text = data[1] + "";
+        offZ.text = data[2] + "";
+        
+        rotX.text = data[3] + "";
+        rotY.text = data[4] + "";
+        rotZ.text = data[5] + "";
+        
+        offX.setCursorPositionEnd();
+        offY.setCursorPositionEnd();
+        offZ.setCursorPositionEnd();
+        rotX.setCursorPositionEnd();
+        rotY.setCursorPositionEnd();
+        rotZ.setCursorPositionEnd();
+        offX.enabled = true;
+        offY.enabled = true;
+        offZ.enabled = true;
+        
+        rotX.enabled = true;
+        rotY.enabled = true;
+        rotZ.enabled = true;
+    }
+    
+    @CustomEventSubscribe
+    @SideOnly(Side.CLIENT)
+    public void onKeyDeselected(KeyALETDeselectedEvent event) {
+        selected = null;
+        GuiTextfield offX = (GuiTextfield) get("offX");
+        GuiTextfield offY = (GuiTextfield) get("offY");
+        GuiTextfield offZ = (GuiTextfield) get("offZ");
+        
+        GuiTextfield rotX = (GuiTextfield) get("rotX");
+        GuiTextfield rotY = (GuiTextfield) get("rotY");
+        GuiTextfield rotZ = (GuiTextfield) get("rotZ");
+        offX.text = "";
+        offY.text = "";
+        offZ.text = "";
+        
+        rotX.text = "";
+        rotY.text = "";
+        rotZ.text = "";
+        
+        offX.setCursorPositionEnd();
+        offY.setCursorPositionEnd();
+        offZ.setCursorPositionEnd();
+        rotX.setCursorPositionEnd();
+        rotY.setCursorPositionEnd();
+        rotZ.setCursorPositionEnd();
+        offX.enabled = false;
+        offY.enabled = false;
+        offZ.enabled = false;
+        
+        rotX.enabled = false;
+        rotY.enabled = false;
+        rotZ.enabled = false;
+    }
+    
     @Override
     public void createControls() {
         SubContainer container = this.container;
         
-        GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 263, 0, 225, 224);
+        GuiAnimationViewerAlet viewer = new GuiAnimationViewerAlet("renderer", 307, 0, 181, 180);
         controls.add(viewer);
-        viewer.moveViewPort(0, 50);
+        viewer.moveViewPort(0, 109);
+        GuiScrollBox scroll = new GuiScrollBox("scroll", 0, 0, 135, 180);
+        controls.add(scroll);
+        List<GuiTreePart> list = new ArrayList<GuiTreePart>();
+        GuiTreePart parent = new GuiTreePart("Body", GuiTreePart.EnumPartType.Branch);
+        GuiTreePart head = new GuiTreePart("Head", GuiTreePart.EnumPartType.Leaf);
+        GuiTreePart lleg = new GuiTreePart("Left Leg", GuiTreePart.EnumPartType.Leaf);
+        GuiTreePart rleg = new GuiTreePart("Right Leg", GuiTreePart.EnumPartType.Leaf);
+        GuiTreePart larm = new GuiTreePart("Left Arm", GuiTreePart.EnumPartType.Leaf);
+        GuiTreePart rarm = new GuiTreePart("Right Arm", GuiTreePart.EnumPartType.Leaf);
+        list.add(parent.addMenu(head).addMenu(lleg).addMenu(rleg).addMenu(larm).addMenu(rarm));
+        scroll.controls.add(new GuiTree("", 0, 0, 130, list, true, 0, 0, 50));
         
-        List<TimelineChannel> channels = new ArrayList<>();
-        channels.add(new TimelineChannelDouble("door1 X"));
+        List<TimelineChannelALET> channels = new ArrayList<>();
+        channels.add(new TimelineChannelDoorData("Head"));
+        channels.add(new TimelineChannelDoorData("Body"));
+        channels.add(new TimelineChannelDoorData("Left Leg"));
+        channels.add(new TimelineChannelDoorData("Right Leg"));
+        channels.add(new TimelineChannelDoorData("Left Arm"));
+        channels.add(new TimelineChannelDoorData("Right Arm"));
+        controls.add(new GuiTimelineALET("timeline", 20, 187, 468, 101, 10, channels, handler).setSidebarWidth(32));
         
-        controls.add(new GuiTimeline("timeline", 0, 0, 255, 67, 10, channels, handler).setSidebarWidth(30));
-        addControl(new GuiButton("refresh", "Refresh", 0, 265, 0, 10) {
+        controls.add(new GuiLabel("Tick At:", 219, 173));
+        controls.add(new GuiTextfield("tickAt", "", 258, 174, 40, 6));
+        
+        controls.add(new GuiLabel("Ticks:", 140, 173));
+        controls.add(new GuiTextfield("maxTick", "10", 172, 174, 40, 6));
+        
+        controls.add(new GuiLabel("Offset(X):", 203, 83));
+        controls.add(new GuiLabel("Offset(Y):", 203, 97));
+        controls.add(new GuiLabel("Offset(Z):", 203, 110));
+        //13
+        controls.add(new GuiTextfield("offX", "", 258, 84, 40, 6).setFloatOnly());
+        controls.add(new GuiTextfield("offY", "", 258, 98, 40, 6).setFloatOnly());
+        controls.add(new GuiTextfield("offZ", "", 258, 111, 40, 6).setFloatOnly());
+        
+        controls.add(new GuiLabel("Rotate(X):", 203, 127));
+        controls.add(new GuiLabel("Rotate(Y):", 203, 140));
+        controls.add(new GuiLabel("Rotate(Z):", 203, 153));
+        
+        controls.add(new GuiTextfield("rotX", "", 258, 128, 40, 6).setFloatOnly());
+        controls.add(new GuiTextfield("rotY", "", 258, 141, 40, 6).setFloatOnly());
+        controls.add(new GuiTextfield("rotZ", "", 258, 154, 40, 6).setFloatOnly());
+        
+        controls.add(new GuiIconButton("play", 0, 228, 10) {
+            
+            @Override
+            public void onClicked(int x, int y, int button) {
+                handler.play();
+            }
+        });
+        controls.add(new GuiIconButton("pause", 0, 252, 9) {
+            
+            @Override
+            public void onClicked(int x, int y, int button) {
+                handler.pause();
+            }
+        });
+        controls.add(new GuiIconButton("stop", 0, 276, 11) {
+            
+            @Override
+            public void onClicked(int x, int y, int button) {
+                handler.stop();
+            }
+        });
+        
+        addControl(new GuiButton("save", "Save", 144, 122, 40) {
+            
+            @Override
+            public void onClicked(int x, int y, int button) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
+        
+        addControl(new GuiButton("refresh", "Refresh", 144, 100, 40) {
             
             @Override
             public void onClicked(int x, int y, int button) {

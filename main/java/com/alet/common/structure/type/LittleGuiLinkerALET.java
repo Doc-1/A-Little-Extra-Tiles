@@ -14,6 +14,7 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -51,6 +52,8 @@ public class LittleGuiLinkerALET extends LittleStructure {
             float f1 = (float) (hitY - (double) newPos.getY());
             float f2 = (float) (hitZ - (double) newPos.getZ());
             IBlockState iblockstate = worldIn.getBlockState(newPos);
+            if (worldIn.getTileEntity(newPos) instanceof IInventory)
+                System.out.println(((IInventory) worldIn.getTileEntity(newPos)));
             boolean result = iblockstate.getBlock().onBlockActivated(worldIn, newPos, iblockstate, playerIn, hand, side, f, f1, f2);
             if (result == false)
                 playerIn.sendMessage(new TextComponentString("Block: " + iblockstate + " at " + newPos + " failed to open."));

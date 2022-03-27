@@ -1,6 +1,7 @@
 package com.alet.client.gui.controls.programmer.blueprints;
 
 import com.alet.client.gui.controls.programmer.BluePrintConnection;
+import com.creativemd.creativecore.common.gui.CoreControl;
 
 public class GuiNodeMethodEqualsInput extends GuiBluePrintNode {
     
@@ -11,8 +12,8 @@ public class GuiNodeMethodEqualsInput extends GuiBluePrintNode {
     private BluePrintConnection<Boolean[]> inputA = new BluePrintConnection<Boolean[]>("EqInput1", "Input A", this, 1, BluePrintConnection.PARAMETER_CONNECTION);
     private BluePrintConnection<Boolean[]> inputB = new BluePrintConnection<Boolean[]>("input2", "input B", this, 2, BluePrintConnection.PARAMETER_CONNECTION);
     
-    public GuiNodeMethodEqualsInput(String name, int x, int y) {
-        super(name, "Input Is Equal To", GuiBluePrintNode.FLOW_NODE, x, y);
+    public GuiNodeMethodEqualsInput(int index) {
+        super("eqInput" + index, "Input Is Equal To", GuiBluePrintNode.FLOW_NODE);
         methodReceiverNode.setValue(false);
         addNode(methodReceiverNode);
         methodSenderNode.setValue(false);
@@ -27,6 +28,12 @@ public class GuiNodeMethodEqualsInput extends GuiBluePrintNode {
     
     @Override
     public void createControls() {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public void updateValue(CoreControl control) {
         // TODO Auto-generated method stub
         
     }

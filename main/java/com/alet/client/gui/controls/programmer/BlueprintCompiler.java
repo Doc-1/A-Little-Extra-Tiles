@@ -1,5 +1,6 @@
 package com.alet.client.gui.controls.programmer;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -7,25 +8,64 @@ import com.alet.client.gui.SubGuiMicroProcessor;
 import com.alet.client.gui.controls.programmer.blueprints.GuiBluePrintNode;
 import com.alet.common.programmer.functions.FunctionBranch;
 import com.alet.common.programmer.functions.FunctionEventPulseReceived;
+import com.alet.common.programmer.functions.FunctionGetter;
 import com.alet.common.programmer.functions.FunctionIsInputEqual;
+import com.alet.common.programmer.functions.FunctionSetInteger;
 import com.alet.common.programmer.functions.FunctionSetOutput;
 import com.alet.common.programmer.functions.FunctionSleep;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 public class BlueprintCompiler {
     
     public static Map<String, Function> functions = new LinkedHashMap<String, Function>();
+    public static Map<String, Class<? extends Function>> registeredFunctions = new LinkedHashMap<String, Class<? extends Function>>();
+    
+    static {
+        registerFunction("evPulse", FunctionEventPulseReceived.class);
+        registerFunction("eqInput", FunctionIsInputEqual.class);
+        registerFunction("setInteger", FunctionSetInteger.class);
+        registerFunction("getOutput", FunctionGetter.class);
+        registerFunction("sleep", FunctionSleep.class);
+        registerFunction("branch", FunctionBranch.class);
+        registerFunction("setOut", FunctionSetOutput.class);
+    }
+    
+    public static void registerFunction(String name, Class<? extends Function> function) {
+        if (!registeredFunctions.containsKey(name))
+            registeredFunctions.put(name, function);
+    }
     
     public static Map<String, Function> readScript(NBTTagCompound script) {
+        for (String key : script.getKeySet())
+            for (NBTBase nbt : script.getTagList(key, Constants.NBT.TAG_LIST)) {
+                nbtKeyToFunction(key, nbt);
+            }
+        /*
         functions.put("event1", new FunctionEventPulseReceived("isEqual2", "i0").setFunctionList(functions));
         functions.put("isEqual2", new FunctionIsInputEqual("sleep3", "i1", "i2").setFunctionList(functions));
         functions.put("sleep3", new FunctionSleep("branch4", "50").setFunctionList(functions));
         functions.put("branch4", new FunctionBranch("", "isEqual2", "setOutput4", "setOutput5").setFunctionList(functions));
         functions.put("setOutput5", new FunctionSetOutput("", "true", "o10").setFunctionList(functions));
         functions.put("setOutput6", new FunctionSetOutput("", "false", "o10").setFunctionList(functions));
+        */
         return functions;
+    }
+    
+    public static Function nbtKeyToFunction(String key, NBTBase nbt) {
+        String functionName = key.replaceAll("\\d", "");
+        System.out.println(key + " " + nbt);
+        try {
+            NBTTagCompound tags = (NBTTagCompound) ((NBTTagList) nbt).get(0);
+            for (String name : tags.getKeySet()) {}
+            registeredFunctions.get(functionName).getConstructor(String.class, String[].class).newInstance("", new String[] { "" });
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     public static String getValue(Object value) {
@@ -40,6 +80,11 @@ public class BlueprintCompiler {
             }
             
             return v + "]";
+        }
+        
+        if (value instanceof String) {
+            String s = (String) value;
+            return s;
         }
         if (value instanceof Integer) {
             Integer i = (Integer) value;
@@ -65,7 +110,6 @@ public class BlueprintCompiler {
                         nbtSender.setString(c.name, cRec.parentNode.name + "." + cRec.name);
                     }
                 }
-                
             }
             nbtListSender.appendTag(nbtSender);
             
@@ -126,7 +170,7 @@ public class BlueprintCompiler {
                     nbtParameter.setString(c.name, getValue(c.value));
                 }
             
-            if (node.nodeType == GuiBluePrintNode.GETTER_NODE && BluePrintConnection.RETURN_CONNECTION == c.connectionType)
+            if (node.nodeType == GuiBluePrintNode.GETTER_NODE || BluePrintConnection.RETURN_CONNECTION == c.connectionType)
                 nbtParameter.setString(c.name, getValue(c.value));
             
         }

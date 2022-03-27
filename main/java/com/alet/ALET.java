@@ -349,7 +349,7 @@ public class ALET {
             
             @Override
             public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
-                return new SubContainerAnimatorWorkbench(player, (LittleCircuitMicroprocessor) structure);
+                return new SubContainerAnimatorWorkbench(player, (LittleAnimatorBench) structure);
             }
         });
         LittleStructureRegistry

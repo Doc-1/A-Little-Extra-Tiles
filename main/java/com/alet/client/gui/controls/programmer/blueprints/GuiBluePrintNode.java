@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.programmer.BluePrintConnection;
+import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -28,8 +29,8 @@ public abstract class GuiBluePrintNode extends GuiParent {
     public static final int FLOW_NODE = 2;
     public static final int GETTER_NODE = 3;
     
-    public GuiBluePrintNode(String name, String title, int nodeType, int x, int y) {
-        super(name, x, y, 0, 0);
+    public GuiBluePrintNode(String name, String title, int nodeType) {
+        super(name, 0, 0, 0, 0);
         this.nodeType = nodeType;
         this.title = title;
         this.width = font.getStringWidth(title) + 25;
@@ -95,6 +96,8 @@ public abstract class GuiBluePrintNode extends GuiParent {
     public boolean canOverlap() {
         return false;
     }
+    
+    public abstract void updateValue(CoreControl control);
     
     @Override
     public boolean mousePressed(int x, int y, int button) {

@@ -33,7 +33,7 @@ public class LittleCircuitMicroprocessor extends LittleStructurePremade {
     
     @Override
     public boolean queueTick() {
-        if (!executor.equals(null)) {
+        if (!executor.equals(null) && !executor.functions.isEmpty()) {
             if (this.isStillAvailable()) {
                 if (executor.pause) {
                     tick++;

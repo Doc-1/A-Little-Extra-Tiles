@@ -1,9 +1,9 @@
 package com.alet.client.gui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.lwjgl.util.Color;
 
 import com.alet.client.gui.controls.GuiBezierCurve;
@@ -12,6 +12,7 @@ import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.GuiTree;
 import com.alet.client.gui.controls.GuiTreePart;
 import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
+import com.alet.client.gui.controls.GuiTreePartNode;
 import com.alet.client.gui.controls.programmer.BluePrintConnection;
 import com.alet.client.gui.controls.programmer.BlueprintCompiler;
 import com.alet.client.gui.controls.programmer.blueprints.GuiBluePrintNode;
@@ -31,6 +32,7 @@ import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
@@ -72,35 +74,30 @@ public class SubGuiMicroProcessor extends SubGui {
     }
     
     @CustomEventSubscribe
+    public void updateValue(GuiControlChangedEvent event) {
+        if (event.source.parent instanceof GuiBluePrintNode) {
+            GuiBluePrintNode parent = (GuiBluePrintNode) event.source.parent;
+            parent.updateValue(event.source);
+        }
+    }
+    
+    @CustomEventSubscribe
     public void controlClicked(GuiControlClickEvent event) {
-        if (NumberUtils.isCreatable(event.source.name)) {
+        if (event.source instanceof GuiTreePartNode) {
             int count = bluePrint.size();
-            String caption = tree.listOfParts.get(Integer.parseInt(event.source.name)).caption;
-            GuiBluePrintNode var = null;
-            if (caption.contains("Integer Is Equal")) {
-                var = new GuiNodeMethodEqualsInteger("eqInt" + count, 0, 0);
-            } else if (caption.contains("Input Is Equal")) {
-                var = new GuiNodeMethodEqualsInput("eqInput" + count, 0, 0);
-            } else if (caption.contains("Event Pulse Recieved")) {
-                var = new GuiNodeEventPulse("evPulse" + count, 0, 0);
-                eventNode = var;
-            } else if (caption.contains("Get Input")) {
-                var = new GuiNodeGetInput("getInput" + count, 0, 0);
-            } else if (caption.contains("Get Output")) {
-                var = new GuiNodeGetOutput("getOutput" + count, 0, 0);
-            } else if (caption.contains("Branch")) {
-                var = new GuiNodeBranch("branch" + count, 0, 0);
-            } else if (caption.contains("Set Color Monitor")) {
-                var = new GuiNodeMethodSetColorDisplay("setCMonitor" + count, 0, 0);
-            } else if (caption.contains("Set Integer")) {
-                var = new GuiNodeSetInteger("setInteger" + count, 0, 0);
-            } else if (caption.contains("Input to Integer")) {
-                var = new GuiNodeToInteger("inputToInt" + count, 0, 0);
-            }
-            if (var != null) {
-                drag.addControl(var);
-                bluePrint.add(var);
-                var.selected = true;
+            
+            try {
+                GuiBluePrintNode var = ((GuiTreePartNode) event.source).nodeClass.getConstructor(int.class).newInstance(count);
+                if (var != null) {
+                    if (var.nodeType == GuiBluePrintNode.EVENT_NODE)
+                        eventNode = var;
+                    drag.addControl(var);
+                    bluePrint.add(var);
+                    var.selected = true;
+                }
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
             
         }
@@ -135,41 +132,41 @@ public class SubGuiMicroProcessor extends SubGui {
         List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
         GuiTreePart blueprint = new GuiTreePart("Blueprints", EnumPartType.Title);
         GuiTreePart events = new GuiTreePart("Events", EnumPartType.Branch);
-        GuiTreePart eventPulse = new GuiTreePart("Event Pulse Recieved", EnumPartType.Leaf);
+        GuiTreePartNode eventPulse = new GuiTreePartNode("Event Pulse Recieved", EnumPartType.Leaf, GuiNodeEventPulse.class);
         blueprint.addMenu(events.addMenu(eventPulse));
         
         GuiTreePart math = new GuiTreePart("Math", EnumPartType.Branch);
         GuiTreePart equals = new GuiTreePart("Equals", EnumPartType.Branch);
-        GuiTreePart intEquals = new GuiTreePart("Integer Is Equal", EnumPartType.Leaf);
-        GuiTreePart boolEquals = new GuiTreePart("Boolean Is Equal", EnumPartType.Leaf);
-        GuiTreePart inputEquals = new GuiTreePart("Input Is Equal", EnumPartType.Leaf);
-        equals.addMenu(intEquals).addMenu(boolEquals).addMenu(inputEquals);
+        GuiTreePartNode intEquals = new GuiTreePartNode("Integer Is Equal", EnumPartType.Leaf, GuiNodeMethodEqualsInteger.class);
+        //GuiTreePartNode boolEquals = new GuiTreePartNode("Boolean Is Equal", EnumPartType.Leaf, guinodeeq);
+        GuiTreePartNode inputEquals = new GuiTreePartNode("Input Is Equal", EnumPartType.Leaf, GuiNodeMethodEqualsInput.class);
+        equals.addMenu(intEquals).addMenu(inputEquals);
         math.addMenu(equals);
         blueprint.addMenu(math);
         
         GuiTreePart wrapper = new GuiTreePart("Wrapper", EnumPartType.Branch);
         GuiTreePart wrapperInput = new GuiTreePart("Input Wrappers", EnumPartType.Branch);
-        GuiTreePart inputToInteger = new GuiTreePart("Input to Integer", EnumPartType.Leaf);
-        GuiTreePart inputToBoolean = new GuiTreePart("Input to Boolean", EnumPartType.Leaf);
-        blueprint.addMenu(wrapper.addMenu(wrapperInput.addMenu(inputToInteger).addMenu(inputToBoolean)));
+        GuiTreePartNode inputToInteger = new GuiTreePartNode("Input to Integer", EnumPartType.Leaf, GuiNodeToInteger.class);
+        //GuiTreePartNode inputToBoolean = new GuiTreePartNode("Input to Boolean", EnumPartType.Leaf, GuiNodeToInteger);
+        blueprint.addMenu(wrapper.addMenu(wrapperInput.addMenu(inputToInteger)));
         
         GuiTreePart var = new GuiTreePart("Variable", EnumPartType.Branch);
         GuiTreePart get = new GuiTreePart("Getter", EnumPartType.Branch);
-        GuiTreePart getInput = new GuiTreePart("Get Input", EnumPartType.Leaf);
-        GuiTreePart getOutput = new GuiTreePart("Get Output", EnumPartType.Leaf);
+        GuiTreePartNode getInput = new GuiTreePartNode("Get Input", EnumPartType.Leaf, GuiNodeGetInput.class);
+        GuiTreePartNode getOutput = new GuiTreePartNode("Get Output", EnumPartType.Leaf, GuiNodeGetOutput.class);
         var.addMenu(get.addMenu(getInput).addMenu(getOutput));
         
         GuiTreePart set = new GuiTreePart("Setter", EnumPartType.Branch);
-        GuiTreePart setInteger = new GuiTreePart("Set Integer", EnumPartType.Leaf);
+        GuiTreePartNode setInteger = new GuiTreePartNode("Set Integer", EnumPartType.Leaf, GuiNodeSetInteger.class);
         var.addMenu(set.addMenu(setInteger));
         
         GuiTreePart flow = new GuiTreePart("Flow Control", EnumPartType.Branch);
-        GuiTreePart branch = new GuiTreePart("Branch", EnumPartType.Leaf);
+        GuiTreePartNode branch = new GuiTreePartNode("Branch", EnumPartType.Leaf, GuiNodeBranch.class);
         
         blueprint.addMenu(flow.addMenu(branch));
         
         GuiTreePart display = new GuiTreePart("Display", EnumPartType.Branch);
-        GuiTreePart color = new GuiTreePart("Set Color Monitor", EnumPartType.Leaf);
+        GuiTreePartNode color = new GuiTreePartNode("Set Color Monitor", EnumPartType.Leaf, GuiNodeMethodSetColorDisplay.class);
         blueprint.addMenu(display.addMenu(color));
         blueprint.addMenu(var);
         

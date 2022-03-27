@@ -120,7 +120,7 @@ public class BluePrintConnection<V> extends GuiControl {
         if (this.value instanceof Boolean[]) {
             helper.drawRect(-3, -3, 4, 4, 0xff0066cc);
         }
-        if (this.value instanceof Integer[]) {
+        if (this.value instanceof String) {
             helper.drawRect(-3, -3, 4, 4, 0xffFF9933);
         }
         if (this.value instanceof Integer) {

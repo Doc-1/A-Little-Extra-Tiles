@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.client.gui.controls.programmer.BluePrintConnection;
+import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
@@ -17,8 +18,8 @@ public class GuiNodeMethodSetColorDisplay extends GuiBluePrintNode {
     private BluePrintConnection<Integer> green = new BluePrintConnection<Integer>("green", "Green", this, 5, BluePrintConnection.PARAMETER_CONNECTION);
     private BluePrintConnection<Integer> blue = new BluePrintConnection<Integer>("blue", "Blue", this, 7, BluePrintConnection.PARAMETER_CONNECTION);
     
-    public GuiNodeMethodSetColorDisplay(String name, int x, int y) {
-        super(name, "Set Color Monitor", GuiBluePrintNode.FLOW_NODE, x, y);
+    public GuiNodeMethodSetColorDisplay(int index) {
+        super("setCMonitor" + index, "Set Color Monitor", GuiBluePrintNode.FLOW_NODE);
         addNode(methodReceiverNode);
         methodReceiverNode.setValue(false);
         addNode(methodSenderNode);
@@ -69,6 +70,12 @@ public class GuiNodeMethodSetColorDisplay extends GuiBluePrintNode {
         this.addControl(red);
         this.addControl(green);
         this.addControl(blue);
+    }
+    
+    @Override
+    public void updateValue(CoreControl control) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

@@ -29,7 +29,7 @@ public class FunctionBranch extends Function {
     
     @Override
     public Function setValues(List<Object> values) {
-        Function function = functions.get((String) values.get(0));
+        Function function = executor.functions.get((String) values.get(0));
         condition = function.results;
         trueFunction = (String) values.get(1);
         falseFunction = (String) values.get(2);

@@ -1,6 +1,7 @@
 package com.alet.client.gui.controls.programmer.blueprints;
 
 import com.alet.client.gui.controls.programmer.BluePrintConnection;
+import com.creativemd.creativecore.common.gui.CoreControl;
 
 public class GuiNodeBranch extends GuiBluePrintNode {
     
@@ -9,8 +10,8 @@ public class GuiNodeBranch extends GuiBluePrintNode {
     private BluePrintConnection<Boolean> f = new BluePrintConnection<Boolean>("f", "False", this, 2, BluePrintConnection.METHOD_SENDER_CONNECTION);
     private BluePrintConnection<Boolean> bool = new BluePrintConnection<Boolean>("boolean", "Condition", this, 1, BluePrintConnection.PARAMETER_CONNECTION);
     
-    public GuiNodeBranch(String name, int x, int y) {
-        super(name, "Branch", GuiBluePrintNode.FLOW_NODE, x, y);
+    public GuiNodeBranch(int index) {
+        super("branch" + index, "Branch", GuiBluePrintNode.FLOW_NODE);
         this.addNode(receiver);
         receiver.setValue(false);
         this.addNode(t);
@@ -24,6 +25,12 @@ public class GuiNodeBranch extends GuiBluePrintNode {
     
     @Override
     public void createControls() {
+        
+    }
+    
+    @Override
+    public void updateValue(CoreControl control) {
+        // TODO Auto-generated method stub
         
     }
     
