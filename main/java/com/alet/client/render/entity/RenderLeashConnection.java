@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelLeashKnot;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
@@ -28,218 +29,209 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class RenderLeashConnection extends Render<EntityLeadConnection> {
-	
-	private static final ResourceLocation CHAIN_TEXTURES = new ResourceLocation(ALET.MODID, "textures/test_1.png");
-	private final ModelLeashKnot leashKnotModel = new ModelLeashKnot();
-	private final World world;
-	
-	public RenderLeashConnection(RenderManager renderManagerIn) {
-		super(renderManagerIn);
-		world = Minecraft.getMinecraft().world;
-	}
-	
-	@Override
-	public boolean shouldRender(EntityLeadConnection entityConnection, ICamera camera, double camX, double camY, double camZ) {
-		AxisAlignedBB axisalignedbb = entityConnection.getRenderBoundingBox().grow(10.5D);
-		return true;
-		//return entityConnection.isInRangeToRender3d(camX, camY, camZ) && (entityConnection.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(axisalignedbb));
-	}
-	
-	/** Renders the desired {@code T} type Entity. */
-	@Override
-	public void doRender(EntityLeadConnection entity, double x, double y, double z, float entityYaw, float partialTicks) {
-		//System.out.println(entity.getDataManager().get(entity.CONNECTIONS));
-		
-		entity.entityFollowDoor();
-		World world = entity.getWorld();
-		for (LeadConnectionData data : entity.connectionsMap) {
-			for (UUID uuid : data.uuidsConnected) {
-				for (Entity loadedEntity : world.loadedEntityList) {
-					if (uuid.equals(loadedEntity.getPersistentID())) {
-						data.idsConnected.add(loadedEntity.getEntityId());
-					}
-				}
-			}
-			for (int id : data.idsConnected)
-				renderLeash(entity, world.getEntityByID(id), x, y, z, data.color, data.thickness, data.tautness, partialTicks);
-		}
-		
-		/*
-		 * 
-			NBTTagCompound nbt = (NBTTagCompound) nb;
-			long L = nbt.getLong("L");
-			long M = nbt.getLong("M");
-			UUID uuid = new UUID(M, L);
-			for (Entity en : world.loadedEntityList) {
-				if (uuid.equals(en.getPersistentID())) {
-					int color = nbt.getInteger("color");
-					double thickness = nbt.getDouble("thickness");
-					double tautness = nbt.getDouble("tautness");
-					renderLeash(entity, world.getEntityByID(en.getEntityId()), x, y, z, color, thickness, tautness, partialTicks);
-					break;
-				}
-			}
-		 */
-		
-		/*
-		//System.out.println(nbt.getTagList("c", Constants.NBT.TAG_COMPOUND));
-		if (entity.data.connectIDs != null) {
-			for (int id : entity.data.connectIDs) {
-				Entity en = entity.getWorld().getEntityByID(id);
-				renderLeash(entity, en, x, y, z, entityYaw, partialTicks);
-			}
-		}
-		*/
-		/*
-		GlStateManager.pushMatrix();
-		GlStateManager.disableCull();
-		GlStateManager.translate((float) x, (float) y, (float) z);
-		float f = 0.0625F;
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.scale(-1.0F, -1.0F, 1.0F);
-		GlStateManager.enableAlpha();
-		this.bindEntityTexture(entity);
-		
-		if (this.renderOutlines) {
-			GlStateManager.enableColorMaterial();
-			GlStateManager.enableOutlineMode(this.getTeamColor(entity));
-		}
-		
-		this.leashKnotModel.render(entity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
-		if (this.renderOutlines) {
-			GlStateManager.disableOutlineMode();
-			GlStateManager.disableColorMaterial();
-		}
-		
-		GlStateManager.popMatrix();*/
-		super.doRender(entity, x, y, z, entityYaw, partialTicks);
-	}
-	
-	private double interpolateValue(double start, double end, double pct) {
-		return start + (end - start) * pct;
-	}
-	
-	public void bezier(Vec3 pFinal, Vec3 p0, Vec3 p1, Vec3 p2, float t) {
-		pFinal.x = Math.pow(1 - t, 2) * p0.x + (1 - t) * 2 * t * p1.x + t * t * p2.x;
-		pFinal.y = Math.pow(1 - t, 2) * p0.y + (1 - t) * 2 * t * p1.y + t * t * p2.y;
-		pFinal.z = Math.pow(1 - t, 2) * p0.z + (1 - t) * 2 * t * p1.z + t * t * p2.z;
-	}
-	
-	protected void renderLeash(EntityLeadConnection entityConnection, Entity entity, double x, double y, double z, int color, double thickness, double tautness, float partialTicks) {
-		
-		if (entity != null) {
-			//System.out.println(entity);
-			//point 0
-			double p0_0 = entityConnection.prevPosX
-			        + (entityConnection.posX - entityConnection.prevPosX) * (double) partialTicks;
-			double p0_1 = entityConnection.prevPosY
-			        + (entityConnection.posY - entityConnection.prevPosY) * (double) partialTicks;
-			double p0_2 = entityConnection.prevPosZ
-			        + (entityConnection.posZ - entityConnection.prevPosZ) * (double) partialTicks;
-			
-			//point 1
-			double p1_0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
-			double p1_1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks;
-			double p1_2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
-			
-			//End point
-			double g0 = p0_0 - p1_0;
-			double g1 = p0_1 - p1_1;
-			double g2 = p0_2 - p1_2;
-			
-			if (entity instanceof EntityPlayer) {
-				g1 -= 0.9;
-			}
-			//center point between point 0 and 1 point 2
-			double p2_0 = p0_0 - (g0 * 0.5D);
-			double p2_1 = p0_1 - (g1 * 0.5D) + tautness;
-			double p2_2 = p0_2 - (g2 * 0.5D);
-			
-			//Mid point
-			double k0 = p2_0 - p1_0;
-			double k1 = p2_1 - p1_1;
-			double k2 = p2_2 - p1_2;
-			
-			Vec3 startPoint = new Vec3(x, y, z);
-			Vec3 midPoint = new Vec3(x - k0, y - k1, z - k2);
-			Vec3 endPoint = new Vec3(x - g0, y - g1, z - g2);
-			
-			//System.out.println(startPoint + " " + endPoint);
-			
-			Tessellator tessellator = Tessellator.getInstance();
-			BufferBuilder bufferbuilder = tessellator.getBuffer();
-			Vec3 drawPoint = new Vec3(0, 0, 0);
-			Color c = ColorUtils.IntToRGBA(color);
-			float red = c.getRed() / 255F;
-			float green = c.getGreen() / 255F;
-			float blue = c.getBlue() / 255F;
-			float alpha = c.getAlpha() / 255F;
-			GlStateManager.enableTexture2D();
-			GlStateManager.enableBlend();
-			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-			
-			GlStateManager.color(red, green, blue, alpha);
-			PreviewRenderer.mc.renderEngine.bindTexture(PreviewRenderer.WHITE_TEXTURE);
-			GlStateManager.enableAlpha();
-			GlStateManager.disableLighting();
-			GlStateManager.disableCull();
-			bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
-			
-			double distance = 0;
-			Vec3d prevVec = new Vec3d(startPoint.x, startPoint.y, startPoint.z);
-			
-			for (int j = 0; j <= 24; ++j) {
-				
-				float f3 = (float) j / 24.0F;
-				bezier(drawPoint, startPoint, midPoint, endPoint, f3);
-				Vec3d vec = new Vec3d(drawPoint.x, drawPoint.y, drawPoint.z);
-				distance += vec.distanceTo(prevVec);
-				prevVec = vec;
-				bufferbuilder.pos(drawPoint.x
-				        - thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
-				bufferbuilder.pos(drawPoint.x
-				        + thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
-			}
-			//System.out.println(distance);
-			tessellator.draw();
-			bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
-			
-			for (int k = 0; k <= 24; ++k) {
-				
-				float f3 = (float) k / 24.0F;
-				
-				bezier(drawPoint, startPoint, midPoint, endPoint, f3);
-				bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z
-				        - thickness).color(red, green, blue, alpha).endVertex();
-				bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z
-				        + thickness).color(red, green, blue, alpha).endVertex();
-			}
-			
-			tessellator.draw();
-			bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
-			
-			for (int k = 0; k <= 24; ++k) {
-				
-				float f3 = (float) k / 24.0F;
-				
-				bezier(drawPoint, startPoint, midPoint, endPoint, f3);
-				bufferbuilder.pos(drawPoint.x, drawPoint.y
-				        - thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
-				bufferbuilder.pos(drawPoint.x, drawPoint.y
-				        + thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
-			}
-			
-			tessellator.draw();
-			GlStateManager.enableLighting();
-			GlStateManager.disableAlpha();
-			GlStateManager.enableCull();
-		}
-	}
-	
-	@Override
-	protected ResourceLocation getEntityTexture(EntityLeadConnection entity) {
-		return CHAIN_TEXTURES;
-	}
+    
+    private static final ResourceLocation CHAIN_TEXTURES = new ResourceLocation(ALET.MODID, "textures/test_1.png");
+    private final ModelLeashKnot leashKnotModel = new ModelLeashKnot();
+    private final World world;
+    
+    public RenderLeashConnection(RenderManager renderManagerIn) {
+        super(renderManagerIn);
+        world = Minecraft.getMinecraft().world;
+    }
+    
+    @Override
+    public boolean shouldRender(EntityLeadConnection entityConnection, ICamera camera, double camX, double camY, double camZ) {
+        AxisAlignedBB axisalignedbb = entityConnection.getRenderBoundingBox().grow(10.5D);
+        return true;
+        //return entityConnection.isInRangeToRender3d(camX, camY, camZ) && (entityConnection.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(axisalignedbb));
+    }
+    
+    /** Renders the desired {@code T} type Entity. */
+    @Override
+    public void doRender(EntityLeadConnection entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        //System.out.println(entity.getDataManager().get(entity.CONNECTIONS));
+        
+        entity.entityFollowDoor();
+        World world = entity.getWorld();
+        for (LeadConnectionData data : entity.connectionsMap) {
+            for (UUID uuid : data.uuidsConnected) {
+                for (Entity loadedEntity : world.loadedEntityList) {
+                    if (uuid.equals(loadedEntity.getPersistentID())) {
+                        data.idsConnected.add(loadedEntity.getEntityId());
+                    }
+                }
+            }
+            for (int id : data.idsConnected)
+                renderLeash(entity, world.getEntityByID(id), x, y, z, data.color, data.thickness, data.tautness, partialTicks);
+        }
+        
+        /*
+         * 
+        	NBTTagCompound nbt = (NBTTagCompound) nb;
+        	long L = nbt.getLong("L");
+        	long M = nbt.getLong("M");
+        	UUID uuid = new UUID(M, L);
+        	for (Entity en : world.loadedEntityList) {
+        		if (uuid.equals(en.getPersistentID())) {
+        			int color = nbt.getInteger("color");
+        			double thickness = nbt.getDouble("thickness");
+        			double tautness = nbt.getDouble("tautness");
+        			renderLeash(entity, world.getEntityByID(en.getEntityId()), x, y, z, color, thickness, tautness, partialTicks);
+        			break;
+        		}
+        	}
+         */
+        
+        /*
+        //System.out.println(nbt.getTagList("c", Constants.NBT.TAG_COMPOUND));
+        if (entity.data.connectIDs != null) {
+        	for (int id : entity.data.connectIDs) {
+        		Entity en = entity.getWorld().getEntityByID(id);
+        		renderLeash(entity, en, x, y, z, entityYaw, partialTicks);
+        	}
+        }
+        */
+        /*
+        GlStateManager.pushMatrix();
+        GlStateManager.disableCull();
+        GlStateManager.translate((float) x, (float) y, (float) z);
+        float f = 0.0625F;
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.scale(-1.0F, -1.0F, 1.0F);
+        GlStateManager.enableAlpha();
+        this.bindEntityTexture(entity);
+        
+        if (this.renderOutlines) {
+        	GlStateManager.enableColorMaterial();
+        	GlStateManager.enableOutlineMode(this.getTeamColor(entity));
+        }
+        
+        this.leashKnotModel.render(entity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+        if (this.renderOutlines) {
+        	GlStateManager.disableOutlineMode();
+        	GlStateManager.disableColorMaterial();
+        }
+        
+        GlStateManager.popMatrix();*/
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+    }
+    
+    private double interpolateValue(double start, double end, double pct) {
+        return start + (end - start) * pct;
+    }
+    
+    public void bezier(Vec3 pFinal, Vec3 p0, Vec3 p1, Vec3 p2, float t) {
+        pFinal.x = Math.pow(1 - t, 2) * p0.x + (1 - t) * 2 * t * p1.x + t * t * p2.x;
+        pFinal.y = Math.pow(1 - t, 2) * p0.y + (1 - t) * 2 * t * p1.y + t * t * p2.y;
+        pFinal.z = Math.pow(1 - t, 2) * p0.z + (1 - t) * 2 * t * p1.z + t * t * p2.z;
+    }
+    
+    protected void renderLeash(EntityLeadConnection entityConnection, Entity entity, double x, double y, double z, int color, double thickness, double tautness, float partialTicks) {
+        
+        if (entity != null) {
+            //System.out.println(entity);
+            //point 0
+            double p0_0 = entityConnection.prevPosX + (entityConnection.posX - entityConnection.prevPosX) * (double) partialTicks;
+            double p0_1 = entityConnection.prevPosY + (entityConnection.posY - entityConnection.prevPosY) * (double) partialTicks;
+            double p0_2 = entityConnection.prevPosZ + (entityConnection.posZ - entityConnection.prevPosZ) * (double) partialTicks;
+            
+            //point 1
+            double p1_0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
+            double p1_1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks;
+            double p1_2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
+            
+            //End point
+            double g0 = p0_0 - p1_0;
+            double g1 = p0_1 - p1_1;
+            double g2 = p0_2 - p1_2;
+            
+            if (entity instanceof EntityPlayer) {
+                g1 -= 0.9;
+            }
+            //center point between point 0 and 1 point 2
+            double p2_0 = p0_0 - (g0 * 0.5D);
+            double p2_1 = p0_1 - (g1 * 0.5D) + tautness;
+            double p2_2 = p0_2 - (g2 * 0.5D);
+            
+            //Mid point
+            double k0 = p2_0 - p1_0;
+            double k1 = p2_1 - p1_1;
+            double k2 = p2_2 - p1_2;
+            
+            Vec3 startPoint = new Vec3(x, y, z);
+            Vec3 midPoint = new Vec3(x - k0, y - k1, z - k2);
+            Vec3 endPoint = new Vec3(x - g0, y - g1, z - g2);
+            
+            //System.out.println(startPoint + " " + endPoint);
+            
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            Vec3 drawPoint = new Vec3(0, 0, 0);
+            Color c = ColorUtils.IntToRGBA(color);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+            float red = c.getRed() / 255F;
+            float green = c.getGreen() / 255F;
+            float blue = c.getBlue() / 255F;
+            float alpha = c.getAlpha() / 255F;
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager
+                    .tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            
+            GlStateManager.color(red, green, blue, alpha);
+            PreviewRenderer.mc.renderEngine.bindTexture(PreviewRenderer.WHITE_TEXTURE);
+            GlStateManager.enableAlpha();
+            GlStateManager.disableCull();
+            bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+            
+            double distance = 0;
+            Vec3d prevVec = new Vec3d(startPoint.x, startPoint.y, startPoint.z);
+            
+            for (int j = 0; j <= 24; ++j) {
+                
+                float f3 = (float) j / 24.0F;
+                bezier(drawPoint, startPoint, midPoint, endPoint, f3);
+                Vec3d vec = new Vec3d(drawPoint.x, drawPoint.y, drawPoint.z);
+                distance += vec.distanceTo(prevVec);
+                prevVec = vec;
+                bufferbuilder.pos(drawPoint.x - thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x + thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
+            }
+            //System.out.println(distance);
+            tessellator.draw();
+            bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+            
+            for (int k = 0; k <= 24; ++k) {
+                
+                float f3 = (float) k / 24.0F;
+                
+                bezier(drawPoint, startPoint, midPoint, endPoint, f3);
+                bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z - thickness).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z + thickness).color(red, green, blue, alpha).endVertex();
+            }
+            
+            tessellator.draw();
+            bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+            
+            for (int k = 0; k <= 24; ++k) {
+                
+                float f3 = (float) k / 24.0F;
+                
+                bezier(drawPoint, startPoint, midPoint, endPoint, f3);
+                bufferbuilder.pos(drawPoint.x, drawPoint.y - thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x, drawPoint.y + thickness, drawPoint.z).color(red, green, blue, alpha).endVertex();
+            }
+            
+            tessellator.draw();
+            GlStateManager.disableAlpha();
+            GlStateManager.enableCull();
+        }
+    }
+    
+    @Override
+    protected ResourceLocation getEntityTexture(EntityLeadConnection entity) {
+        return CHAIN_TEXTURES;
+    }
 }
 
 /*
