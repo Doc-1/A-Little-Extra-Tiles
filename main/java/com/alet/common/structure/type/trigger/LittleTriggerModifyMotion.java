@@ -21,7 +21,7 @@ public class LittleTriggerModifyMotion extends LittleTriggerEvent {
     public double zStrength = 0;
     public double forward = 0;
     
-    public LittleTriggerModifyMotion(String id, String name) {
+    public LittleTriggerModifyMotion(String id) {
         super(id);
     }
     
@@ -42,6 +42,15 @@ public class LittleTriggerModifyMotion extends LittleTriggerEvent {
         nbt.setDouble("zStrength", zStrength);
         nbt.setDouble("forward", forward);
         return nbt;
+    }
+    
+    @Override
+    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+        this.xStrength = nbt.getDouble("xStrength");
+        this.yStrength = nbt.getDouble("yStrength");
+        this.zStrength = nbt.getDouble("zStrength");
+        this.forward = nbt.getDouble("forward");
+        return this;
     }
     
     @Override
@@ -116,4 +125,5 @@ public class LittleTriggerModifyMotion extends LittleTriggerEvent {
     public String getName() {
         return "Modify Motion";
     }
+    
 }

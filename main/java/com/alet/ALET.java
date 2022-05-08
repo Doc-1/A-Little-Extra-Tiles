@@ -37,6 +37,7 @@ import com.alet.common.packet.PacketGetServerCams;
 import com.alet.common.packet.PacketSendGuiToClient;
 import com.alet.common.packet.PacketSendServerCams;
 import com.alet.common.packet.PacketSendSound;
+import com.alet.common.packet.PacketUpdateBreakBlock;
 import com.alet.common.packet.PacketUpdateMutateFromServer;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
@@ -357,7 +358,7 @@ public class ALET {
                 .addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
         LittleStructureRegistry
                 .registerStructureType("tigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class)
-                .addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE);
+                .addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE).addInput("left click", 1);
         LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class)
                 .addOutput("lock", 1, SignalMode.TOGGLE, true);
         LittleStructureRegistry
@@ -429,6 +430,7 @@ public class ALET {
         CreativeCorePacket.registerPacket(PacketSendGuiToClient.class);
         CreativeCorePacket.registerPacket(PacketDropItem.class);
         CreativeCorePacket.registerPacket(PacketConnectLead.class);
+        CreativeCorePacket.registerPacket(PacketUpdateBreakBlock.class);
         CreativeCorePacket.registerPacket(PacketUpdateMutateFromServer.class);
         
         if (Loader.isModLoaded("cmdcam")) {

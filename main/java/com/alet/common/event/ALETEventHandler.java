@@ -1,10 +1,21 @@
 package com.alet.common.event;
 
 import com.alet.client.gui.override.HandlerSubGuiOverride;
+import com.alet.common.structure.type.ILeftClickListener;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.mc.ContainerSub;
+import com.creativemd.littletiles.client.event.LeftClick;
+import com.creativemd.littletiles.common.block.BlockTile;
+import com.creativemd.littletiles.common.block.BlockTile.TEResult;
+import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
+import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -39,4 +50,32 @@ public class ALETEventHandler {
             }
         }
     }
+    
+    @SubscribeEvent
+    public void onLeftClick(LeftClick event) {
+        if (event.result.typeOfHit.equals(Type.BLOCK)) {
+            Block block = event.world.getBlockState(event.result.getBlockPos()).getBlock();
+            isStructure(event.world, event.result.getBlockPos(), event.player);
+            
+        }
+    }
+    
+    private boolean isStructure(World world, BlockPos pos, EntityPlayer player) {
+        Block block = world.getBlockState(pos).getBlock();
+        if (block instanceof BlockTile) {
+            try {
+                BlockTile blockTile = (BlockTile) block;
+                TEResult result = blockTile.loadTeAndTile(world, pos, player);
+                if (result.isComplete() && result.parent.isStructure() && result.parent.getStructure() instanceof ILeftClickListener) {
+                    ((ILeftClickListener) result.parent.getStructure()).onLeftClick(player);
+                    return true;
+                }
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                e.printStackTrace();
+            }
+            
+        }
+        return false;
+    }
+    
 }

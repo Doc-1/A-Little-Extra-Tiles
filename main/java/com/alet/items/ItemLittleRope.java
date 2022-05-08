@@ -15,37 +15,36 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 public class ItemLittleRope extends Item implements ILittleTool {
-	
-	public ItemLittleRope() {
-		
-	}
-	
-	public ItemLittleRope(String name) {
-		setUnlocalizedName(name);
-		setRegistryName(name);
-		setCreativeTab(LittleTiles.littleTab);
-	}
-	
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		
-		return super.onItemRightClick(worldIn, playerIn, handIn);
-	}
-	
-	@Override
-	public SubGuiConfigure getConfigureGUI(EntityPlayer player, ItemStack stack) {
-		return new SubGuiLittleRope(stack);
-	}
-	
-	@Override
-	public void rotate(EntityPlayer player, ItemStack stack, Rotation rotation, boolean client) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void flip(EntityPlayer player, ItemStack stack, Axis axis, boolean client) {
-		// TODO Auto-generated method stub
-		
-	}
+    
+    public ItemLittleRope() {}
+    
+    public ItemLittleRope(String name) {
+        setUnlocalizedName(name);
+        setRegistryName(name);
+        setCreativeTab(LittleTiles.littleTab);
+        
+    }
+    
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        
+        return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
+    
+    @Override
+    public SubGuiConfigure getConfigureGUI(EntityPlayer player, ItemStack stack) {
+        return new SubGuiLittleRope(stack);
+    }
+    
+    @Override
+    public void rotate(EntityPlayer player, ItemStack stack, Rotation rotation, boolean client) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public void flip(EntityPlayer player, ItemStack stack, Axis axis, boolean client) {
+        // TODO Auto-generated method stub
+        
+    }
 }

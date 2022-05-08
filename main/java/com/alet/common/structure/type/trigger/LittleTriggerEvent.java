@@ -23,6 +23,8 @@ public abstract class LittleTriggerEvent {
         registerEvent("Modify Motion", LittleTriggerModifyMotion.class);
         registerEvent("Modify Scoreboard", LittleTriggerEventModifyScoreboard.class);
         registerEvent("Execute Command", LittleTriggerExecuteCommand.class);
+        registerEvent("Set Spawn", LittleTriggerSetSpawn.class);
+        
     }
     
     public LittleTriggerEvent(String id) {
@@ -36,23 +38,29 @@ public abstract class LittleTriggerEvent {
             registeredEvents.put(name, event);
         else
             System.err.println("Warning name, " + name + "already exists");
+        
     }
     
     public static LittleTriggerEvent getLittleTrigger(String name, String id) {
         try {
+            System.out.println(registeredEvents.get(name).getConstructor(String.class).newInstance(id));
             return registeredEvents.get(name).getConstructor(String.class).newInstance(id);
-        } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException e) {}
+        } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return null;
     }
     
-    public static LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public static LittleTriggerEvent getFromNBT(NBTTagCompound nbt) {
         
         String id = nbt.getString("trigger");
-        String[] split = id.split("(?<=\\D)(?=\\d)");
-        String name = split[0];
-        
-        return null;
+        String name = id.replaceAll("\\d", "");
+        LittleTriggerEvent event = getLittleTrigger(name, id);
+        event.createFromNBT(nbt);
+        return event;
     }
+    
+    public abstract LittleTriggerEvent createFromNBT(NBTTagCompound nbt);
     
     public abstract NBTTagCompound createNBT();
     

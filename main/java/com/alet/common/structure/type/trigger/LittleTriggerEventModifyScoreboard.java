@@ -55,6 +55,14 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
+    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+        this.value = nbt.getInteger("value");
+        this.scoreName = nbt.getString("scoreName");
+        this.tick = nbt.getInteger("tick");
+        return this;
+    }
+    
+    @Override
     public void updateControls(GuiParent parent) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         Scoreboard score = world.getScoreboard();
@@ -189,4 +197,5 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     public String getName() {
         return "Modify Scoreboard";
     }
+    
 }

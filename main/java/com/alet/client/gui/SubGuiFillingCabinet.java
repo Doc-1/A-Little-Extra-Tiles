@@ -9,14 +9,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-
 import com.alet.client.gui.controls.GuiTree;
 import com.alet.client.gui.controls.GuiTreePart;
 import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
-import com.alet.client.gui.controls.Layer;
+import com.alet.client.gui.controls.menu.GuiMenu;
+import com.alet.client.gui.controls.menu.GuiMenuBar;
+import com.alet.client.gui.controls.menu.GuiMenuItem;
 import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
-import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.container.SlotControl;
@@ -55,29 +54,36 @@ public class SubGuiFillingCabinet extends SubGui {
     @Override
     public void createControls() {
         SubContainer contain = this.container;
-        List<String> listOfOptions = new ArrayList<String>();
-        listOfOptions.add("Rename");
-        listOfOptions.add("Add New Group");
-        listOfOptions.add("Delete");
-        GuiRightClickMenu rightClick = (new GuiRightClickMenu("rightClick", listOfOptions, this.width, this.height, 80) {
-            
-            @Override
-            public void buttonActiveManager(int x, int y, int button) {
-                GuiControl control = this.getControlSelected();
-                this.disableOptions();
-                if (control instanceof GuiTreePart) {
-                    this.enableOptions("Rename");
-                    this.enableOptions("Add New Group");
-                    this.enableOptions("Delete");
-                } else if (control instanceof GuiScrollBox || control instanceof GuiTree) {
-                    this.enableOptions("Add New Group");
-                }
-            }
-            
-        });
-        addControl(rightClick);
+        GuiMenuBar menuBar = new GuiMenuBar("menuBar");
+        GuiMenu test = new GuiMenu("Test");
+        test.add(new GuiMenuItem("Hello"));
+        GuiMenu comma = new GuiMenu(",");
+        comma.add(new GuiMenuItem("bla"));
+        test.add(comma);
+        test.add(new GuiMenuItem("World"));
+        menuBar.add(test);
+        menuBar.add(new GuiMenu("Testing"));
+        menuBar.add(new GuiMenu("Test"));
+        menuBar.addMenuTo(this);
+        /*
+        file.add(new GuiMenuItem("New"));
+        GuiMenuItem openRecent = new GuiMenuItem("Open-Recent");
+        openRecent.add(new GuiMenuItem("Test"));
+        openRecent.add(new GuiMenuItem("Test2"));
+        GuiMenuItem hello = new GuiMenuItem("Hello");
+        GuiMenuItem ping = new GuiMenuItem("Ping");
+        ping.add(new GuiMenuItem("another one"));
+        hello.add(ping);
+        openRecent.add(hello);
+        file.add(openRecent);
+        menuBar.add(file);
+        GuiMenuItem edit = new GuiMenuItem("Edit");
+        edit.add(new GuiMenuItem("Transform"));
+        menuBar.add(edit);
+        menuBar.add(new GuiMenuItem("Help"));
+        menuBar.setGuiParent(this);*/
         GuiScrollBox scrollBox = new GuiScrollBox("scrollBox", 0, 15, 210, 222);
-        rightClick.localizedControl = scrollBox;
+        
         GuiTree tree = new GuiTree("list", 0, 0, 210, listOfRoots, true, 0, 0, 116);
         scrollBox.addControl(tree);
         tree.height = (tree.listOfParts.size() * 14) + 25;
@@ -226,8 +232,9 @@ public class SubGuiFillingCabinet extends SubGui {
             } catch (NBTException | NullPointerException e) {}
             
         }
-        if (event.source instanceof GuiRightClickMenu) {
-            GuiRightClickMenu rightClickMenu = (GuiRightClickMenu) event.source;
+        /*
+        if (event.source instanceof GuiMenu) {
+            GuiMenu rightClickMenu = (GuiMenu) event.source;
             if (rightClickMenu.buttonSelected.getCaption().equals("Rename")) {
                 if (rightClickMenu.controlSelected instanceof GuiTreePart) {
                     GuiTreePart part = (GuiTreePart) rightClickMenu.controlSelected;
@@ -271,6 +278,6 @@ public class SubGuiFillingCabinet extends SubGui {
                     
                 }
             }
-        }
+        }*/
     }
 }

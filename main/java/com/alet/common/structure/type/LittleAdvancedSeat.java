@@ -1,21 +1,15 @@
 package com.alet.common.structure.type;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import javax.vecmath.Vector3d;
-
-import com.alet.common.entity.EntityLeadConnection;
-import com.alet.common.entity.LeadConnectionData;
-import com.alet.items.ItemLittleRope;
+import com.alet.common.entity.EntitySit;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiIconButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiStateButton;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
-import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.creativecore.common.world.CreativeWorld;
 import com.creativemd.creativecore.common.world.IOrientatedWorld;
 import com.creativemd.creativecore.common.world.SubWorld;
@@ -34,6 +28,7 @@ import com.creativemd.littletiles.common.structure.relative.StructureRelative;
 import com.creativemd.littletiles.common.structure.type.door.LittleAdvancedDoor;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
+import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -42,94 +37,40 @@ import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class LittleLeadConnectionALET extends LittleAdvancedDoor {
+public class LittleAdvancedSeat extends LittleAdvancedDoor {
     
-    private UUID connectionUUID;
+    private UUID sitUUID;
     private EntityPlayer player;
     
-    public LittleLeadConnectionALET(LittleStructureType type, IStructureTileList mainBlock) {
+    public LittleAdvancedSeat(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
     }
     
     @Override
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
         if (nbt.hasKey("connection"))
-            connectionUUID = UUID.fromString(nbt.getString("connection"));
+            sitUUID = UUID.fromString(nbt.getString("connection"));
         else
-            connectionUUID = null;
+            sitUUID = null;
     }
     
     @Override
     protected void writeToNBTExtra(NBTTagCompound nbt) {
-        if (connectionUUID != null)
-            nbt.setString("connection", connectionUUID.toString());
+        if (sitUUID != null)
+            nbt.setString("connection", sitUUID.toString());
         else
             nbt.removeTag("connection");
-    }
-    
-    @Override
-    protected void afterPlaced() {
-        super.afterPlaced();
-        if (connectionUUID != null) {
-            World world = getWorld();
-            if (world instanceof IOrientatedWorld) {
-                if (world instanceof CreativeWorld && ((CreativeWorld) world).parent == null)
-                    return;
-                world = ((IOrientatedWorld) world).getRealWorld();
-            }
-            for (Entity entity : world.loadedEntityList)
-                if (entity.getUniqueID().equals(connectionUUID) && entity instanceof EntityLeadConnection) {
-                    EntityLeadConnection connection = (EntityLeadConnection) entity;
-                    StructureChildConnection temp = this.generateConnection(connection);
-                    connection.getDataManager().set(EntityLeadConnection.CONNECTION, temp.writeToNBT(new NBTTagCompound()));
-                    break;
-                }
-        } else {
-            
-        }
-    }
-    
-    public List<Entity> sortEntityList(List<Entity> entityList) {
-        List<Entity> sortedEntityList = new ArrayList<Entity>();
-        List<Entity> playerList = new ArrayList<Entity>();
-        List<Entity> leadList = new ArrayList<Entity>();
-        List<Entity> otherList = new ArrayList<Entity>();
-        for (Entity entity : entityList) {
-            if (entity instanceof EntityPlayer)
-                playerList.add(entity);
-            else if (entity instanceof EntityLeadConnection)
-                leadList.add(entity);
-            else if (entity instanceof IMob)
-                otherList.add(entity);
-        }
-        
-        if (leadList != null)
-            for (Entity en : leadList) {
-                sortedEntityList.add(en);
-            }
-        if (otherList != null)
-            for (Entity en : otherList) {
-                sortedEntityList.add(en);
-            }
-        if (playerList != null)
-            for (Entity en : playerList) {
-                sortedEntityList.add(en);
-            }
-        return sortedEntityList;
     }
     
     @Override
@@ -137,147 +78,52 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         if (!world.isRemote) {
             if (this.player != null)
                 return true;
-            Vector3d vec3D = this.axisCenter.getCenter();
-            if (vec3D != null && heldItem.getItem() instanceof ItemLittleRope) {
-                System.out.println(heldItem.getTagCompound());
-                if (world instanceof IOrientatedWorld)
-                    world = ((IOrientatedWorld) world).getRealWorld();
-                double i1 = vec3D.x;
-                double j1 = vec3D.y;
-                double k1 = vec3D.z;
-                double i2 = this.getStructureLocation().pos.getX() + i1;
-                double j2 = this.getStructureLocation().pos.getY() + j1;
-                double k2 = this.getStructureLocation().pos.getZ() + k1;
-                WorldServer serverWorld = (WorldServer) world;
-                
-                EntityLeadConnection connection;
-                
-                if (serverWorld.getEntityFromUuid(connectionUUID) == null) {
-                    connection = new EntityLeadConnection(this, world, i2, j2, k2);
-                    world.spawnEntity(connection);
-                    this.connectionUUID = connection.getPersistentID();
+            try {
+                LittleAbsoluteVec vec = getHighestCenterPoint();
+                if (vec != null) {
+                    if (world instanceof IOrientatedWorld)
+                        world = ((IOrientatedWorld) world).getRealWorld();
+                    EntitySit sit = new EntitySit(this, world, vec.getPosX(), vec.getPosY() - 0.25, vec.getPosZ());
+                    sitUUID = sit.getPersistentID();
+                    player.startRiding(sit);
+                    world.spawnEntity(sit);
+                    setPlayer(player);
                 }
-                connection = (EntityLeadConnection) serverWorld.getEntityFromUuid(connectionUUID);
-                
-                NBTTagCompound nbt = new NBTTagCompound();
-                boolean sameConnectionID = false;
-                int selectedID = -1;
-                int prevSelectedID = -1;
-                
-                if (heldItem.hasTagCompound()) {
-                    nbt = heldItem.getTagCompound();
-                    if (nbt.hasKey("selectedID")) {
-                        sameConnectionID = nbt.getInteger("selectedID") == connection.getEntityId();
-                        nbt.setInteger("prevSelectedID", nbt.getInteger("selectedID"));
-                    }
-                } else {
-                    nbt.setBoolean("playerIsHolding", false);
-                    heldItem.setTagCompound(nbt);
-                }
-                nbt.setInteger("selectedID", connection.getEntityId());
-                selectedID = connection.getEntityId();
-                if (nbt.hasKey("prevSelectedID"))
-                    prevSelectedID = nbt.getInteger("prevSelectedID");
-                
-                EntityLeadConnection en0 = (EntityLeadConnection) world.getEntityByID(selectedID);
-                EntityLeadConnection en1 = (EntityLeadConnection) world.getEntityByID(prevSelectedID);
-                
-                if (en1 == null)
-                    en1 = (EntityLeadConnection) world.getEntityByID(selectedID);
-                boolean playerIsHolding = nbt.getBoolean("playerIsHolding");
-                
-                List<Entity> entityList = sortEntityList(world
-                        .getEntitiesWithinAABB(Entity.class, new AxisAlignedBB((double) i2 - 7.0D, (double) j2 - 7.0D, (double) k2 - 7.0D, (double) i2 + 7.0D, (double) j2 + 7.0D, (double) k2 + 7.0D)));
-                for (Entity entity : entityList) {
-                    int color = ColorUtils.BLACK;
-                    double thickness = 0.3D;
-                    double tautness = 0.5D;
-                    float lightLevel = 240F;
-                    
-                    if (nbt.hasKey("color")) {
-                        color = nbt.getInteger("color");
-                        thickness = nbt.getDouble("thickness");
-                        tautness = nbt.getDouble("tautness");
-                        lightLevel = nbt.getFloat("light");
-                    }
-                    LeadConnectionData data = null;
-                    if (playerIsHolding) {
-                        if (!sameConnectionID) {
-                            
-                            System.out.println("212 " + lightLevel);
-                            for (LeadConnectionData d : en1.connectionsMap) {
-                                if (d.equals(new LeadConnectionData(color, thickness, tautness, lightLevel))) {
-                                    data = d;
-                                    break;
-                                }
-                            }
-                            if (data == null) {
-                                LeadConnectionData newData = new LeadConnectionData(color, thickness, tautness, lightLevel);
-                                newData.uuidsConnected.add(en0.getPersistentID());
-                                newData.idsConnected.add(en0.getEntityId());
-                                en1.connectionsMap.add(newData);
-                            } else {
-                                data.uuidsConnected.add(en0.getPersistentID());
-                                data.uuidsConnected.remove(player.getPersistentID());
-                                data.idsConnected.add(en0.getEntityId());
-                                data.idsConnected.remove(player.getEntityId());
-                            }
-                            nbt.setBoolean("playerIsHolding", false);
-                        } else {
-                            //remove player from en0
-                            boolean hasMatch = false;
-                            for (LeadConnectionData d : en0.connectionsMap)
-                                for (UUID uuid : d.uuidsConnected) {
-                                    if (uuid.equals(player.getPersistentID())) {
-                                        data = d;
-                                        hasMatch = true;
-                                        break;
-                                    }
-                                }
-                            if (hasMatch) {
-                                data.uuidsConnected.remove(player.getPersistentID());
-                                data.idsConnected.remove(player.getEntityId());
-                            }
-                            nbt.setBoolean("playerIsHolding", false);
-                        }
-                    } else {
-                        System.out.println("255 " + lightLevel);
-                        for (LeadConnectionData d : en0.connectionsMap) {
-                            if (d.equals(new LeadConnectionData(color, thickness, tautness, lightLevel))) {
-                                data = d;
-                                break;
-                            }
-                        }
-                        if (data == null) {
-                            LeadConnectionData newData = new LeadConnectionData(color, thickness, tautness, lightLevel);
-                            newData.uuidsConnected.add(player.getPersistentID());
-                            newData.idsConnected.add(player.getEntityId());
-                            en0.connectionsMap.add(newData);
-                        } else {
-                            data.uuidsConnected.add(player.getPersistentID());
-                            data.idsConnected.add(player.getEntityId());
-                        }
-                        nbt.setBoolean("playerIsHolding", true);
-                    }
-                }
-                
-                en0.updateLeashHolders((EntityPlayerMP) player, true);
-                en1.updateLeashHolders((EntityPlayerMP) player, true);
-                System.out.println(heldItem.getTagCompound());
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                e.printStackTrace();
             }
             
         }
         return true;
-        
     }
     
-    /*connections:{group4:[
-     * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
-     * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
-     * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
-     * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}],
-     * [{tautness:8.699999809265137d,color:-16777216,thickness:0.4399999976158142d},{L:-4822490291572358863L,M:-6434875717049955617L}]]}}
-    */
+    public void setPlayer(EntityPlayer player) {
+        this.player = player;
+        if (!getWorld().isRemote)
+            getInput(0).updateState(BooleanUtils.asArray(player != null));
+        if (this.player == null)
+            sitUUID = null;
+    }
+    
+    @Override
+    protected void afterPlaced() {
+        super.afterPlaced();
+        if (sitUUID != null) {
+            World world = getWorld();
+            if (world instanceof IOrientatedWorld) {
+                if (world instanceof CreativeWorld && ((CreativeWorld) world).parent == null)
+                    return;
+                world = ((IOrientatedWorld) world).getRealWorld();
+            }
+            for (Entity entity : world.loadedEntityList)
+                if (entity.getUniqueID().equals(sitUUID) && entity instanceof EntitySit) {
+                    EntitySit sit = (EntitySit) entity;
+                    StructureChildConnection temp = this.generateConnection(sit);
+                    sit.getDataManager().set(EntitySit.CONNECTION, temp.writeToNBT(new NBTTagCompound()));
+                    break;
+                }
+        }
+    }
     
     @Override
     public void removeStructure(LittleNeighborUpdateCollector neighbor) throws CorruptedConnectionException, NotYetConnectedException {
@@ -292,9 +138,9 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
                 serverWorld = (WorldServer) this.getWorld();
             
             if (serverWorld != null) {
-                Entity entity = serverWorld.getEntityFromUuid(connectionUUID);
-                if (entity != null && entity instanceof EntityLeadConnection) {
-                    EntityLeadConnection connection = (EntityLeadConnection) entity;
+                Entity entity = serverWorld.getEntityFromUuid(sitUUID);
+                if (entity != null && entity instanceof EntitySit) {
+                    EntitySit connection = (EntitySit) entity;
                     connection.setDead();
                 }
             }
@@ -308,9 +154,9 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         super.onStructureDestroyed();
     }
     
-    public static class LittleLeadConnectionParserALET extends LittleStructureGuiParser {
+    public static class LittleAdvancedSeatParserALET extends LittleStructureGuiParser {
         
-        public LittleLeadConnectionParserALET(GuiParent parent, AnimationGuiHandler handler) {
+        public LittleAdvancedSeatParserALET(GuiParent parent, AnimationGuiHandler handler) {
             super(parent, handler);
         }
         
@@ -459,7 +305,7 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         
         @Override
         protected LittleStructure parseStructure(LittlePreviews previews) {
-            LittleLeadConnectionALET structure = createStructure(LittleLeadConnectionALET.class, null);
+            LittleAdvancedSeat structure = createStructure(LittleAdvancedSeat.class, null);
             GuiTileViewer viewer = ((GuiTileViewer) parent.get("tileviewer"));
             structure.axisCenter = new StructureRelative(viewer.getBox(), viewer.getAxisContext());
             
@@ -468,7 +314,7 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         
         @Override
         protected LittleStructureType getStructureType() {
-            return LittleStructureRegistry.getStructureType(LittleLeadConnectionALET.class);
+            return LittleStructureRegistry.getStructureType(LittleAdvancedSeat.class);
         }
         
     }
@@ -478,8 +324,8 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 /*
  * 
 							
-							if (entity instanceof EntityLeadConnection) {
-								EntityLeadConnection lead = (EntityLeadConnection) entity;
+							if (entity instanceof EntitySit) {
+								EntitySit lead = (EntitySit) entity;
 								if (nbt.getInteger("connectionID") != connection.getEntityId()) {
 									if (entity.getEntityId() != connection.getEntityId()) {
 										nbt.setBoolean("playerIsHolding", false);
@@ -514,9 +360,9 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
 /*
  * 
 					for (Entity entity : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB((double) i2 - 7.0D, (double) j2 - 7.0D, (double) k2 - 7.0D, (double) i2 + 7.0D, (double) j2 + 7.0D, (double) k2 + 7.0D))) {
-						EntityLeadConnection entityToConnect = null;
-						if (entity instanceof EntityLeadConnection) {
-							entityToConnect = (EntityLeadConnection) entity;
+						EntitySit entityToConnect = null;
+						if (entity instanceof EntitySit) {
+							entityToConnect = (EntitySit) entity;
 							if (!entityToConnect.equals(connection)) {
 								if (entityToConnect.leashHolder != null)
 									System.out.println("not Null");

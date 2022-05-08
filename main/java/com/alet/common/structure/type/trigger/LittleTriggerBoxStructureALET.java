@@ -1,21 +1,29 @@
 package com.alet.common.structure.type.trigger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.alet.common.packet.PacketUpdateBreakBlock;
+import com.alet.common.structure.type.ILeftClickListener;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
+import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
+import com.creativemd.littletiles.common.action.LittleAction;
+import com.creativemd.littletiles.common.entity.EntityAnimation;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
+import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
+import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureGuiParser;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
@@ -31,16 +39,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class LittleTriggerBoxStructureALET extends LittleStructure {
+public class LittleTriggerBoxStructureALET extends LittleStructure implements ILeftClickListener {
     
     public HashSet<Entity> entities = new HashSet<>();
     
+    public boolean breakBlock = false;
     public boolean listen = true;
     public List<LittleTriggerEvent> triggers = new ArrayList<LittleTriggerEvent>();
     
@@ -55,7 +65,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         for (NBTBase base : list) {
             if (base instanceof NBTTagCompound) {
                 NBTTagCompound n = (NBTTagCompound) base;
-                triggers.add(LittleTriggerEvent.createFromNBT((NBTTagCompound) n.getTag(i + "")));
+                triggers.add(LittleTriggerEvent.getFromNBT((NBTTagCompound) n.getTag(i + "")));
                 i++;
             }
             
@@ -76,6 +86,12 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         }
         nbt.setTag("triggers", list);
         nbt.setBoolean("listening", listen);
+    }
+    
+    @Override
+    public void onLittleTileDestroy() throws CorruptedConnectionException, NotYetConnectedException {
+        if (this.breakBlock)
+            super.onLittleTileDestroy();
     }
     
     @Override
@@ -104,6 +120,15 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             
             queueForNextTick();
         }
+    }
+    
+    @Override
+    public void checkForAnimationCollision(EntityAnimation animation, HashMap<Entity, AxisAlignedBB> entities) throws CorruptedConnectionException, NotYetConnectedException {
+        if (animation.world.isRemote)
+            return;
+        
+        this.entities.addAll(entities.keySet());
+        queueForNextTick();
     }
     
     private void tickWhileCollided() {
@@ -177,7 +202,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             System.out.println(triggers);
             if (triggers != null && !triggers.isEmpty()) {
                 for (int i = 0; i < triggers.size(); i++) {
-                    //box.addControl(new GuiTriggerEventButton(this, triggers.get(i).getName() + i, triggers.get(i).getName(), 0, i * 17, 119, 12));
+                    box.addControl(new GuiTriggerEventButton(this, triggers.get(i).getName() + i, triggers.get(i).getName(), 0, i * 17, 119, 12));
                 }
             }
         }
@@ -186,9 +211,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         @SideOnly(Side.CLIENT)
         public LittleTriggerBoxStructureALET parseStructure(LittlePreviews previews) {
             LittleTriggerBoxStructureALET structure = createStructure(LittleTriggerBoxStructureALET.class, null);
-            
             structure.triggers = this.triggers;
-            
             return structure;
         }
         
@@ -203,6 +226,13 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             if (trigger != null)
                 trigger.updateValues(event.source);
         }
+    }
+    
+    @Override
+    public void onLeftClick(EntityPlayer player) {
+        this.breakBlock = LittleAction.isUsingSecondMode(player);
+        PacketHandler.sendPacketToServer(new PacketUpdateBreakBlock(this.getStructureLocation()));
+        
     }
     
 }

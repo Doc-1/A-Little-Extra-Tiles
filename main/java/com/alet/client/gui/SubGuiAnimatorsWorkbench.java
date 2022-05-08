@@ -8,12 +8,12 @@ import com.alet.client.gui.controls.GuiTimelineALET.KeyALETDeselectedEvent;
 import com.alet.client.gui.controls.GuiTimelineALET.KeyALETSelectedEvent;
 import com.alet.client.gui.controls.GuiTree;
 import com.alet.client.gui.controls.GuiTreePart;
+import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.KeyControlALET;
 import com.alet.client.gui.controls.TimelineChannelALET;
 import com.alet.client.gui.controls.TimelineChannelALET.TimelineChannelDoorData;
 import com.alet.common.structure.type.premade.LittleAnimatorBench;
 import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
-import com.creativemd.creativecore.common.gui.ContainerControl;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.container.SlotControl;
@@ -27,6 +27,7 @@ import com.creativemd.littletiles.common.entity.AnimationPreview;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
 import com.creativemd.littletiles.common.tile.preview.LittlePreview;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.item.ItemStack;
@@ -155,23 +156,12 @@ public class SubGuiAnimatorsWorkbench extends SubGui {
         GuiScrollBox scroll = new GuiScrollBox("scroll", 0, 0, 135, 180);
         controls.add(scroll);
         List<GuiTreePart> list = new ArrayList<GuiTreePart>();
-        GuiTreePart parent = new GuiTreePart("Body", GuiTreePart.EnumPartType.Branch);
-        GuiTreePart head = new GuiTreePart("Head", GuiTreePart.EnumPartType.Leaf);
-        GuiTreePart lleg = new GuiTreePart("Left Leg", GuiTreePart.EnumPartType.Leaf);
-        GuiTreePart rleg = new GuiTreePart("Right Leg", GuiTreePart.EnumPartType.Leaf);
-        GuiTreePart larm = new GuiTreePart("Left Arm", GuiTreePart.EnumPartType.Leaf);
-        GuiTreePart rarm = new GuiTreePart("Right Arm", GuiTreePart.EnumPartType.Leaf);
-        list.add(parent.addMenu(head).addMenu(lleg).addMenu(rleg).addMenu(larm).addMenu(rarm));
-        scroll.controls.add(new GuiTree("", 0, 0, 130, list, true, 0, 0, 50));
+        scroll.controls.add(new GuiTree("tree", 0, 0, 130, list, true, 0, 0, 50));
         
+        GuiScrollBox scrollTimeline = new GuiScrollBox("scrollTimeline", 20, 187, 468, 101);
+        controls.add(scrollTimeline);
         List<TimelineChannelALET> channels = new ArrayList<>();
-        channels.add(new TimelineChannelDoorData("Head"));
-        channels.add(new TimelineChannelDoorData("Body"));
-        channels.add(new TimelineChannelDoorData("Left Leg"));
-        channels.add(new TimelineChannelDoorData("Right Leg"));
-        channels.add(new TimelineChannelDoorData("Left Arm"));
-        channels.add(new TimelineChannelDoorData("Right Arm"));
-        controls.add(new GuiTimelineALET("timeline", 20, 187, 468, 101, 10, channels, handler).setSidebarWidth(32));
+        scrollTimeline.controls.add(new GuiTimelineALET("timeline", -1, -1, 462, 1000, 10, channels, handler).setSidebarWidth(32));
         
         controls.add(new GuiLabel("Tick At:", 219, 173));
         controls.add(new GuiTextfield("tickAt", "", 258, 174, 40, 6));
@@ -231,14 +221,45 @@ public class SubGuiAnimatorsWorkbench extends SubGui {
             @Override
             public void onClicked(int x, int y, int button) {
                 SlotControl slot = (SlotControl) container.get("input0");
-                for (ContainerControl c : container.controls) {
-                    System.out.println(c.name);
-                }
                 ItemStack stack = slot.slot.getStack();
                 if (stack != null) {
-                    System.out.println(stack);
-                    viewer.onLoaded(new AnimationPreview(LittlePreview.getPreview(stack)));
+                    GuiTree tree = (GuiTree) this.parent.get("tree");
+                    GuiTimelineALET timeline = (GuiTimelineALET) this.parent.get("timeline");
+                    LittlePreviews previews = LittlePreview.getPreview(stack);
+                    viewer.onLoaded(new AnimationPreview(previews));
+                    String partName = addField(previews, timeline, tree, null);
+                    GuiTreePart part = new GuiTreePart(partName, EnumPartType.Title);
+                    for (LittlePreviews child : previews.getChildren()) {
+                        String childPartName = addField(child, timeline, tree, part);
+                        GuiTreePart childPart = new GuiTreePart(childPartName, EnumPartType.Branch);
+                        part.addMenu(childPart);
+                        collectStructures(child, timeline, tree, childPart);
+                    }
+                    List<GuiTreePart> list = new ArrayList<GuiTreePart>();
+                    list.add(part);
+                    tree.replaceTree(list);
                 }
+            }
+            
+            public String addField(LittlePreviews previews, GuiTimelineALET timeline, GuiTree tree, GuiTreePart part) {
+                if (previews.getStructureName() != null) {
+                    timeline.channels.add(new TimelineChannelDoorData(previews.getStructureName()));
+                    return previews.getStructureName();
+                } else {
+                    timeline.channels.add(new TimelineChannelDoorData(previews.getStructureId()));
+                    return previews.getStructureId();
+                }
+            }
+            
+            public void collectStructures(LittlePreviews child, GuiTimelineALET timeline, GuiTree tree, GuiTreePart part) {
+                if (child.hasChildren()) {
+                    for (LittlePreviews child2 : child.getChildren()) {
+                        String childPartName = addField(child2, timeline, tree, part);
+                        GuiTreePart childPart = new GuiTreePart(childPartName, EnumPartType.Leaf);
+                        part.addMenu(childPart);
+                    }
+                }
+                
             }
         });
         

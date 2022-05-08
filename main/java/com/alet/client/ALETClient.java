@@ -14,6 +14,7 @@ import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.common.util.shape.DragShapeCenteredBox;
 import com.alet.common.util.shape.DragShapeCenteredCylinder;
 import com.alet.common.util.shape.DragShapeCenteredSphere;
+import com.alet.common.util.shape.DragShapePixel;
 import com.alet.common.util.shape.LittleShapeMagicWand;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.creativemd.creativecore.client.CreativeCoreClient;
@@ -44,69 +45,70 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ALETClient extends LittleTilesServer {
-	
-	public static KeyBinding clearMeasurment;
-	Minecraft mc = Minecraft.getMinecraft();
-	private static ArrayList<Item> renderedItems = new ArrayList<Item>();
-	
-	@SideOnly(Side.CLIENT)
-	public static void addItemToRenderTiles(Item... items) {
-		for (Item item : items) {
-			renderedItems.add(item);
-		}
-	}
-	
-	@Override
-	public void loadSidePre() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityLeadConnection.class, new IRenderFactory<EntityLeadConnection>() {
-			
-			@Override
-			public Render<? super EntityLeadConnection> createRenderFor(RenderManager manager) {
-				return new RenderLeashConnection(manager);
-			}
-		});
-	}
-	
-	@Override
-	public void loadSide() {
-		
-		for (Item item : renderedItems) {
-			if (item.getHasSubtypes()) {
-				registerItemRenderer(item);
-				CreativeBlockRenderHelper.registerCreativeRenderedItem(item);
-			} else {
-				CreativeCoreClient.registerItemRenderer(item);
-				CreativeBlockRenderHelper.registerCreativeRenderedItem(item);
-			}
-		}
-	}
-	
-	@Override
-	public void loadSidePost() {
-		clearMeasurment = new KeyBinding("Clear Measurement", net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL, KeyModifier.ALT, Keyboard.KEY_C, "key.categories.littletiles");
-		ClientRegistry.registerKeyBinding(clearMeasurment);
-		ShapeRegistry.registerShape("magic_wand", new LittleShapeMagicWand(), ShapeType.SELECTOR);
-		ShapeRegistry.registerShape("centered_box", new DragShapeCenteredBox(), ShapeType.SELECTOR);
-		ShapeRegistry.registerShape("centered_cylider", new DragShapeCenteredCylinder(), ShapeType.SELECTOR);
-		ShapeRegistry.registerShape("centered_sphere", new DragShapeCenteredSphere(), ShapeType.SELECTOR);
-		
-		ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
-		
-		MinecraftForge.EVENT_BUS.register(new TapeRenderer());
-		MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
-		MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
-		
-		LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
-		LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
-		
-		for (Item item : renderedItems) {
-			CreativeCoreClient.registerItemColorHandler(item);
-		}
-	}
-	
-	public static void registerItemRenderer(Item item) {
-		for (int i = 0; i <= 18; i++) {
-			ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(item.getRegistryName(), "inventory"));
-		}
-	}
+    
+    public static KeyBinding clearMeasurment;
+    Minecraft mc = Minecraft.getMinecraft();
+    private static ArrayList<Item> renderedItems = new ArrayList<Item>();
+    
+    @SideOnly(Side.CLIENT)
+    public static void addItemToRenderTiles(Item... items) {
+        for (Item item : items) {
+            renderedItems.add(item);
+        }
+    }
+    
+    @Override
+    public void loadSidePre() {
+        RenderingRegistry.registerEntityRenderingHandler(EntityLeadConnection.class, new IRenderFactory<EntityLeadConnection>() {
+            
+            @Override
+            public Render<? super EntityLeadConnection> createRenderFor(RenderManager manager) {
+                return new RenderLeashConnection(manager);
+            }
+        });
+    }
+    
+    @Override
+    public void loadSide() {
+        
+        for (Item item : renderedItems) {
+            if (item.getHasSubtypes()) {
+                registerItemRenderer(item);
+                CreativeBlockRenderHelper.registerCreativeRenderedItem(item);
+            } else {
+                CreativeCoreClient.registerItemRenderer(item);
+                CreativeBlockRenderHelper.registerCreativeRenderedItem(item);
+            }
+        }
+    }
+    
+    @Override
+    public void loadSidePost() {
+        clearMeasurment = new KeyBinding("Clear Measurement", net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL, KeyModifier.ALT, Keyboard.KEY_C, "key.categories.littletiles");
+        ClientRegistry.registerKeyBinding(clearMeasurment);
+        ShapeRegistry.registerShape("magic_wand", new LittleShapeMagicWand(), ShapeType.SELECTOR);
+        ShapeRegistry.registerShape("centered_box", new DragShapeCenteredBox(), ShapeType.SHAPE);
+        ShapeRegistry.registerShape("centered_cylider", new DragShapeCenteredCylinder(), ShapeType.SHAPE);
+        ShapeRegistry.registerShape("centered_sphere", new DragShapeCenteredSphere(), ShapeType.SHAPE);
+        ShapeRegistry.registerShape("pixel", new DragShapePixel(), ShapeType.SHAPE);
+        
+        ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
+        
+        MinecraftForge.EVENT_BUS.register(new TapeRenderer());
+        MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
+        MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
+        
+        LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
+        LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
+        
+        for (Item item : renderedItems) {
+            CreativeCoreClient.registerItemColorHandler(item);
+        }
+    }
+    
+    public static void registerItemRenderer(Item item) {
+        for (int i = 0; i <= 18; i++) {
+            ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+        }
+    }
 }

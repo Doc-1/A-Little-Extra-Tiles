@@ -44,4 +44,10 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+        // TODO Auto-generated method stub
+        return this;
+    }
 }

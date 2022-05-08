@@ -62,7 +62,7 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
                 }
             }
             for (int id : data.idsConnected)
-                renderLeash(entity, world.getEntityByID(id), x, y, z, data.color, data.thickness, data.tautness, partialTicks);
+                renderLeash(entity, world.getEntityByID(id), x, y, z, data.color, data.thickness, data.tautness, data.lightLevel, partialTicks);
         }
         
         /*
@@ -126,7 +126,7 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
         pFinal.z = Math.pow(1 - t, 2) * p0.z + (1 - t) * 2 * t * p1.z + t * t * p2.z;
     }
     
-    protected void renderLeash(EntityLeadConnection entityConnection, Entity entity, double x, double y, double z, int color, double thickness, double tautness, float partialTicks) {
+    protected void renderLeash(EntityLeadConnection entityConnection, Entity entity, double x, double y, double z, int color, double thickness, double tautness, float lightLevel, float partialTicks) {
         
         if (entity != null) {
             //System.out.println(entity);
@@ -168,7 +168,8 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             Vec3 drawPoint = new Vec3(0, 0, 0);
             Color c = ColorUtils.IntToRGBA(color);
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightLevel, lightLevel);
+            //System.out.println(lightLevel);
             float red = c.getRed() / 255F;
             float green = c.getGreen() / 255F;
             float blue = c.getBlue() / 255F;

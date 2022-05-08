@@ -27,7 +27,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-public class Line extends Shapes {
+public class Line extends TapeMeasureShape {
 	
 	public Line(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
 		super(x1, y1, z1, x2, y2, z2, contextSize);

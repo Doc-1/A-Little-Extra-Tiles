@@ -51,8 +51,8 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("save").posY = 243;
                 recipeGui.get("name").posY = 243;
                 recipeGui.get("clear").posY = 243;
-                
-                viewer.moveViewPort(-25, 30);
+                viewer.moveViewPort(-25, 32);
+                viewer.posX = 258;
                 
                 recipeGui.refreshControls();
                 typesComboBox.select(index);

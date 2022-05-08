@@ -81,6 +81,17 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
+    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+        this.heal = nbt.getBoolean("heal");
+        this.harm = nbt.getBoolean("harm");
+        this.damageAmount = nbt.getFloat("damageAmount");
+        this.damageType = nbt.getString("damageType");
+        this.effectPerTick = nbt.getInteger("effectPerTick");
+        this.healAmount = nbt.getFloat("healAmount");
+        return this;
+    }
+    
+    @Override
     public void updateControls(GuiParent parent) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         List<String> sourceList = new ArrayList<String>();

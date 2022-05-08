@@ -38,6 +38,24 @@ public class GuiTree extends GuiParent {
         this.height = (listOfParts.size() * 14) + 25;
     }
     
+    public void addToTree(GuiTreePart part) {
+        this.listOfRoots.add(part);
+        createRootControls();
+        createSearchControls();
+        allButtons();
+        openTitles();
+        this.height = (listOfParts.size() * 14) + 25;
+    }
+    
+    public void replaceTree(List<GuiTreePart> listOfRoots) {
+        this.listOfRoots = listOfRoots;
+        createRootControls();
+        createSearchControls();
+        allButtons();
+        openTitles();
+        this.height = (listOfParts.size() * 14) + 25;
+    }
+    
     public void createRootControls() {
         for (int i = 0; i < listOfRoots.size(); i++) {
             GuiTreePart root = listOfRoots.get(i);

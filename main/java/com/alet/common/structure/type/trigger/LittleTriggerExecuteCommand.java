@@ -32,6 +32,12 @@ public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
     }
     
     @Override
+    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+        this.command = nbt.getString("command");
+        return this;
+    }
+    
+    @Override
     public void updateControls(GuiParent parent) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         wipeControls(panel);
@@ -57,4 +63,5 @@ public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
     public String getName() {
         return "Execute Command";
     }
+    
 }

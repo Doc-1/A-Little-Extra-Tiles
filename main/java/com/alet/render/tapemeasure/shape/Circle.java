@@ -1,49 +1,46 @@
 package com.alet.render.tapemeasure.shape;
 
-import com.alet.render.tapemeasure.TapeRenderer;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 
-public class Circle extends Shapes {
-	
-	public Circle(Vec3d p, Vec3d p2, int contextSz) {
-		super(p, p2, contextSz);
-	}
-	
-	public static void drawCircle(Vec3d pos, Vec3d pos2, float red, float green, float blue, float alpha) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
-		//radius = context.toVanillaGrid(radius);
-		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * mc.getRenderPartialTicks();
-		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * mc.getRenderPartialTicks();
-		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * mc.getRenderPartialTicks();
-		
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		
-		//int pointsToDraw = (int) Math.max(50, radius*20);
-		/*
-		double anglePerPoint = (Math.PI/pointsToDraw)*2;
-		for(int i = 0; i < pointsToDraw; i++) {
-			double angle = anglePerPoint * i;
-			double x = Math.sin(angle)*radius;
-			double y = Math.cos(angle)*radius;
-			bufferbuilder.pos((x + pos.x) - d0 -0.001, (y + pos.y) - d1, pos.z - d2).color(red, green, blue, alpha).endVertex();
-		}*/
-	}
-	
-	@Override
-	protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {
-	}
-	
+public class Circle extends TapeMeasureShape {
+    
+    public Circle(Vec3d p, Vec3d p2, int contextSz) {
+        super(p, p2, contextSz);
+    }
+    
+    public static void drawCircle(Vec3d pos, Vec3d pos2, float red, float green, float blue, float alpha) {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
+        //radius = context.toVanillaGrid(radius);
+        double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * mc.getRenderPartialTicks();
+        double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * mc.getRenderPartialTicks();
+        double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * mc.getRenderPartialTicks();
+        
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        
+        //int pointsToDraw = (int) Math.max(50, radius*20);
+        
+        /*
+        double anglePerPoint = (Math.PI/pointsToDraw)*2;
+        for(int i = 0; i < pointsToDraw; i++) {
+        	double angle = anglePerPoint * i;
+        	double x = Math.sin(angle)*radius;
+        	double y = Math.cos(angle)*radius;
+        	bufferbuilder.pos((x + pos.x) - d0 -0.001, (y + pos.y) - d1, pos.z - d2).color(red, green, blue, alpha).endVertex();
+        }*/
+    }
+    
+    @Override
+    protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {}
+    
 }
 
 /*

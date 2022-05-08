@@ -28,6 +28,7 @@ public class GuiTriggerEventButton extends GuiButton {
                 b.color = ColorUtils.WHITE;
             }
             this.color = ColorUtils.YELLOW;
+            System.out.println(this.name);
             updateControls(this.name);
         } else if (button == 1) {
             
