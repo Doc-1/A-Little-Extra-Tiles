@@ -7,9 +7,14 @@ item.LTPremade.magnitude_comparator.name=Magnitude Comparator (4-bit)
 item.LTPremade.clock_simple.name=Clock 10Hz (1-bit)
 item.LTPremade.clock_advanced.name=Clock 10Hz Toggleable (1-bit)
 
+item.LTPremade.single_cable32.name=Single Cable (32-bit)
+item.LTPremade.single_input32.name=Single Input (32-bit)
+item.LTPremade.single_output32.name=Single Output (32-bit)
+
 itemGroup.alet=Little Circuits
 
 item.tapemeasure.name=Tape Measure
+item.little_rope.name=Little Rope
 tile.smoothbrick.name=Borderless Brick
 tile.smoothgroutbrick.name=Borderless Brick Grout
 tile.smoothoakplank.name=Borderless Oak Planks
@@ -32,7 +37,7 @@ structure.music_composer.name=Music Composer
 structure.allows_on_light.name=Allows On Light
 structure.lead_connection.name=Rope Connector
 structure.cam_player.name=Cam Player
-structure.gui_linker.name=Gui Linker
+structure.remote_activator.name=Remote Activator
 
 structure.category.sound=Audio
 structure.category.advance=Advance

@@ -23,12 +23,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class LittleMagnitudeComparator extends LittleStructurePremade {
+public class LittleMagnitudeComparator16 extends LittleStructurePremade {
 	
 	private String output = "1111";
 	private String logic = "equals";
 	
-	public LittleMagnitudeComparator(LittleStructureType type, IStructureTileList mainBlock) {
+	public LittleMagnitudeComparator16(LittleStructureType type, IStructureTileList mainBlock) {
 		super(type, mainBlock);
 	}
 	

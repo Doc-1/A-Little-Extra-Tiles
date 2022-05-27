@@ -32,7 +32,7 @@ public class LittleTransferItemImport extends LittleStructurePremade {
 	@StructureDirectional
 	public Vector3f topRight;
 	
-	public boolean dropped = false;
+	public boolean added = false;
 	
 	int counter = 0;
 	
@@ -74,8 +74,8 @@ public class LittleTransferItemImport extends LittleStructurePremade {
 	@Override
 	public void performInternalOutputChange(InternalSignalOutput output) {
 		if (output.component.is("drop")) {
-			if (!dropped) {
-				dropped = true;
+			if (!added) {
+				added = true;
 				counter = 0;
 			}
 		}

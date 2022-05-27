@@ -25,6 +25,7 @@ public class SubContainerPhotoImport extends SubContainer {
     
     @Override
     public void createControls() {
+        
         addSlotToContainer(new Slot(slot, 0, 0, 0));
         addPlayerSlotsToContainer(player, 0, 124);
     }

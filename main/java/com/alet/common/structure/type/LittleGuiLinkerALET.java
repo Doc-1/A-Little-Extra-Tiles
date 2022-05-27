@@ -1,6 +1,7 @@
 package com.alet.common.structure.type;
 
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.structure.LittleStructure;
@@ -56,7 +57,7 @@ public class LittleGuiLinkerALET extends LittleStructure {
                 System.out.println(((IInventory) worldIn.getTileEntity(newPos)));
             boolean result = iblockstate.getBlock().onBlockActivated(worldIn, newPos, iblockstate, playerIn, hand, side, f, f1, f2);
             if (result == false)
-                playerIn.sendMessage(new TextComponentString("Block: " + iblockstate + " at " + newPos + " failed to open."));
+                playerIn.sendMessage(new TextComponentString("Block: " + iblockstate + " at " + newPos + " failed to activate."));
         }
         return true;
     }
@@ -71,9 +72,12 @@ public class LittleGuiLinkerALET extends LittleStructure {
         @Override
         protected void createControls(LittlePreviews previews, LittleStructure structure) {
             LittleGuiLinkerALET guiLinker = structure instanceof LittleGuiLinkerALET ? (LittleGuiLinkerALET) structure : null;
-            GuiTextfield x = new GuiTextfield("x", "0", 0, 0, 25, 15);
-            GuiTextfield y = new GuiTextfield("y", "0", 33, 0, 25, 15);
-            GuiTextfield z = new GuiTextfield("z", "0", 100, 0, 25, 15);
+            parent.addControl(new GuiLabel("Pos X:", 0, 0));
+            parent.addControl(new GuiLabel("Pos Y:", 0, 18));
+            parent.addControl(new GuiLabel("Pos Z:", 0, 36));
+            GuiTextfield x = new GuiTextfield("x", "0", 35, 0, 25, 10);
+            GuiTextfield y = new GuiTextfield("y", "0", 35, 18, 25, 10);
+            GuiTextfield z = new GuiTextfield("z", "0", 35, 36, 25, 10);
             if (guiLinker != null) {
                 x.text = guiLinker.linkedBlock.getX() + "";
                 y.text = guiLinker.linkedBlock.getY() + "";

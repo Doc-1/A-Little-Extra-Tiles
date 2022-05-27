@@ -8,7 +8,7 @@ import com.alet.client.gui.overlay.GuiAxisIndicatorAletControl;
 import com.alet.client.gui.overlay.GuiDisplayMeasurements;
 import com.alet.client.render.entity.RenderLeashConnection;
 import com.alet.common.command.UpdateFontsCommand;
-import com.alet.common.entity.EntityLeadConnection;
+import com.alet.common.entity.EntityRopeConnection;
 import com.alet.common.event.ALETEventHandler;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.common.util.shape.DragShapeCenteredBox;
@@ -59,10 +59,10 @@ public class ALETClient extends LittleTilesServer {
     
     @Override
     public void loadSidePre() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityLeadConnection.class, new IRenderFactory<EntityLeadConnection>() {
+        RenderingRegistry.registerEntityRenderingHandler(EntityRopeConnection.class, new IRenderFactory<EntityRopeConnection>() {
             
             @Override
-            public Render<? super EntityLeadConnection> createRenderFor(RenderManager manager) {
+            public Render<? super EntityRopeConnection> createRenderFor(RenderManager manager) {
                 return new RenderLeashConnection(manager);
             }
         });

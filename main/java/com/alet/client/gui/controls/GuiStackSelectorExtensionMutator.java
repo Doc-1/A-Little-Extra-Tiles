@@ -87,9 +87,9 @@ public class GuiStackSelectorExtensionMutator extends GuiStackSelectorExtension 
         GuiColorPickerAlet color = new GuiColorPickerAlet("color", 0, height, ColorUtils.IntToRGBA(comboBoxMutator.color), true, 0);
         controls.add(color);
         height += color.height;
-        GuiCheckBox noclip = new GuiCheckBox("noclip", "No Colision", 0, height, comboBoxMutator.noclip);
-        controls.add(noclip);
-        height += noclip.height;
+        //GuiCheckBox noclip = new GuiCheckBox("noclip", "No Colision", 0, height, comboBoxMutator.noclip);
+        //controls.add(noclip);
+        // height += noclip.height;
         for (Entry<String, ArrayList<ItemStack>> entry : stacks.entrySet()) {
             GuiLabel label = new GuiLabel(translate(entry.getKey()), 3, height);
             label.width = width - 20;

@@ -56,9 +56,7 @@ public class GuiButtonAddMutationType extends GuiButton {
     }
     
     public void addColorMutation() {
-        System.out.println(depth);
         box.controls.add(new GuiColorPickerAlet("a", 0, depth, ColorUtils.IntToRGBA(ColorUtils.WHITE), true, 0));
-        System.out.println(depth);
         box.controls.add(new GuiColorPickerAlet("b", 157, depth, ColorUtils.IntToRGBA(ColorUtils.WHITE), true, 0));
         box.controls.add(new GuiLabel("To", 137, (depth) + 18));
         box.refreshControls();

@@ -67,6 +67,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("panel").width = 256;
                 
                 viewer.moveViewPort(-25, 0);
+                viewer.posX = 258;
                 
                 recipeGui.refreshControls();
                 typesComboBox.select(index);

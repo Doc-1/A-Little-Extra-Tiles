@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
-import com.alet.common.entity.EntityLeadConnection;
+import com.alet.common.entity.EntityRopeConnection;
 import com.alet.common.entity.LeadConnectionData;
 import com.creativemd.creativecore.common.utils.math.vec.Vec3;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -28,7 +28,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class RenderLeashConnection extends Render<EntityLeadConnection> {
+public class RenderLeashConnection extends Render<EntityRopeConnection> {
     
     private static final ResourceLocation CHAIN_TEXTURES = new ResourceLocation(ALET.MODID, "textures/test_1.png");
     private final ModelLeashKnot leashKnotModel = new ModelLeashKnot();
@@ -40,7 +40,7 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
     }
     
     @Override
-    public boolean shouldRender(EntityLeadConnection entityConnection, ICamera camera, double camX, double camY, double camZ) {
+    public boolean shouldRender(EntityRopeConnection entityConnection, ICamera camera, double camX, double camY, double camZ) {
         AxisAlignedBB axisalignedbb = entityConnection.getRenderBoundingBox().grow(10.5D);
         return true;
         //return entityConnection.isInRangeToRender3d(camX, camY, camZ) && (entityConnection.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(axisalignedbb));
@@ -48,7 +48,7 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
     
     /** Renders the desired {@code T} type Entity. */
     @Override
-    public void doRender(EntityLeadConnection entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(EntityRopeConnection entity, double x, double y, double z, float entityYaw, float partialTicks) {
         //System.out.println(entity.getDataManager().get(entity.CONNECTIONS));
         
         entity.entityFollowDoor();
@@ -126,7 +126,7 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
         pFinal.z = Math.pow(1 - t, 2) * p0.z + (1 - t) * 2 * t * p1.z + t * t * p2.z;
     }
     
-    protected void renderLeash(EntityLeadConnection entityConnection, Entity entity, double x, double y, double z, int color, double thickness, double tautness, float lightLevel, float partialTicks) {
+    protected void renderLeash(EntityRopeConnection entityConnection, Entity entity, double x, double y, double z, int color, double thickness, double tautness, float lightLevel, float partialTicks) {
         
         if (entity != null) {
             //System.out.println(entity);
@@ -230,7 +230,7 @@ public class RenderLeashConnection extends Render<EntityLeadConnection> {
     }
     
     @Override
-    protected ResourceLocation getEntityTexture(EntityLeadConnection entity) {
+    protected ResourceLocation getEntityTexture(EntityRopeConnection entity) {
         return CHAIN_TEXTURES;
     }
 }

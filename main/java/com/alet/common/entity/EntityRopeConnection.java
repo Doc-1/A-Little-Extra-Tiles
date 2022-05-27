@@ -39,19 +39,19 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
-public class EntityLeadConnection extends Entity implements IWorldPositionProvider, INoPushEntity, IEntityAdditionalSpawnData {
+public class EntityRopeConnection extends Entity implements IWorldPositionProvider, INoPushEntity, IEntityAdditionalSpawnData {
     
-    public static final DataParameter<NBTTagCompound> CONNECTION = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.COMPOUND_TAG);
-    public static final DataParameter<Float> CONNECTIONX = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
-    public static final DataParameter<Float> CONNECTIONY = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
-    public static final DataParameter<Float> CONNECTIONZ = EntityDataManager.createKey(EntityLeadConnection.class, DataSerializers.FLOAT);
+    public static final DataParameter<NBTTagCompound> CONNECTION = EntityDataManager.createKey(EntityRopeConnection.class, DataSerializers.COMPOUND_TAG);
+    public static final DataParameter<Float> CONNECTIONX = EntityDataManager.createKey(EntityRopeConnection.class, DataSerializers.FLOAT);
+    public static final DataParameter<Float> CONNECTIONY = EntityDataManager.createKey(EntityRopeConnection.class, DataSerializers.FLOAT);
+    public static final DataParameter<Float> CONNECTIONZ = EntityDataManager.createKey(EntityRopeConnection.class, DataSerializers.FLOAT);
     private StructureChildConnection temp;
     
     public Set<LeadConnectionData> connectionsMap = new HashSet<LeadConnectionData>();
     public float prevRenderYawOffset;
     public float renderYawOffset;
     
-    public EntityLeadConnection(World worldIn) {
+    public EntityRopeConnection(World worldIn) {
         super(worldIn);
         noClip = true;
         preventEntitySpawning = true;
@@ -69,7 +69,7 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
     	this.forceSpawn = true;
     }
     */
-    public EntityLeadConnection(LittleLeadConnectionALET connection, World world, double x, double y, double z) {
+    public EntityRopeConnection(LittleLeadConnectionALET connection, World world, double x, double y, double z) {
         super(world);
         //EntityLeashKnot
         dataManager.set(CONNECTIONX, (float) x);
@@ -298,7 +298,6 @@ public class EntityLeadConnection extends Entity implements IWorldPositionProvid
     public void writeSpawnData(ByteBuf buf) {
         buf.writeByte(this.connectionsMap.size());
         for (LeadConnectionData data : this.connectionsMap) {
-            System.out.println(data.color + " " + data.thickness + " " + data.tautness + " " + data.lightLevel);
             buf.writeByte(data.uuidsConnected.size());
             buf.writeInt(data.color);
             buf.writeDouble(data.thickness);

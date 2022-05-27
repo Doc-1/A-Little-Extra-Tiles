@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import javax.vecmath.Vector3d;
 
-import com.alet.common.entity.EntityLeadConnection;
+import com.alet.common.entity.EntityRopeConnection;
 import com.alet.common.entity.LeadConnectionData;
 import com.alet.items.ItemLittleRope;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -92,10 +92,10 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
                 world = ((IOrientatedWorld) world).getRealWorld();
             }
             for (Entity entity : world.loadedEntityList)
-                if (entity.getUniqueID().equals(connectionUUID) && entity instanceof EntityLeadConnection) {
-                    EntityLeadConnection connection = (EntityLeadConnection) entity;
+                if (entity.getUniqueID().equals(connectionUUID) && entity instanceof EntityRopeConnection) {
+                    EntityRopeConnection connection = (EntityRopeConnection) entity;
                     StructureChildConnection temp = this.generateConnection(connection);
-                    connection.getDataManager().set(EntityLeadConnection.CONNECTION, temp.writeToNBT(new NBTTagCompound()));
+                    connection.getDataManager().set(EntityRopeConnection.CONNECTION, temp.writeToNBT(new NBTTagCompound()));
                     break;
                 }
         } else {
@@ -111,7 +111,7 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         for (Entity entity : entityList) {
             if (entity instanceof EntityPlayer)
                 playerList.add(entity);
-            else if (entity instanceof EntityLeadConnection)
+            else if (entity instanceof EntityRopeConnection)
                 leadList.add(entity);
             else if (entity instanceof IMob)
                 otherList.add(entity);
@@ -150,14 +150,14 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
                 double k2 = this.getStructureLocation().pos.getZ() + k1;
                 WorldServer serverWorld = (WorldServer) world;
                 
-                EntityLeadConnection connection;
+                EntityRopeConnection connection;
                 
                 if (serverWorld.getEntityFromUuid(connectionUUID) == null) {
-                    connection = new EntityLeadConnection(this, world, i2, j2, k2);
+                    connection = new EntityRopeConnection(this, world, i2, j2, k2);
                     world.spawnEntity(connection);
                     this.connectionUUID = connection.getPersistentID();
                 }
-                connection = (EntityLeadConnection) serverWorld.getEntityFromUuid(connectionUUID);
+                connection = (EntityRopeConnection) serverWorld.getEntityFromUuid(connectionUUID);
                 
                 NBTTagCompound nbt = new NBTTagCompound();
                 boolean sameConnectionID = false;
@@ -179,11 +179,11 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
                 if (nbt.hasKey("prevSelectedID"))
                     prevSelectedID = nbt.getInteger("prevSelectedID");
                 
-                EntityLeadConnection en0 = (EntityLeadConnection) world.getEntityByID(selectedID);
-                EntityLeadConnection en1 = (EntityLeadConnection) world.getEntityByID(prevSelectedID);
+                EntityRopeConnection en0 = (EntityRopeConnection) world.getEntityByID(selectedID);
+                EntityRopeConnection en1 = (EntityRopeConnection) world.getEntityByID(prevSelectedID);
                 
                 if (en1 == null)
-                    en1 = (EntityLeadConnection) world.getEntityByID(selectedID);
+                    en1 = (EntityRopeConnection) world.getEntityByID(selectedID);
                 boolean playerIsHolding = nbt.getBoolean("playerIsHolding");
                 
                 List<Entity> entityList = sortEntityList(world
@@ -293,8 +293,8 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
             
             if (serverWorld != null) {
                 Entity entity = serverWorld.getEntityFromUuid(connectionUUID);
-                if (entity != null && entity instanceof EntityLeadConnection) {
-                    EntityLeadConnection connection = (EntityLeadConnection) entity;
+                if (entity != null && entity instanceof EntityRopeConnection) {
+                    EntityRopeConnection connection = (EntityRopeConnection) entity;
                     connection.setDead();
                 }
             }

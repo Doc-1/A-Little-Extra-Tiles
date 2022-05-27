@@ -3,7 +3,7 @@ package com.alet.common.packet;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.alet.common.entity.EntityLeadConnection;
+import com.alet.common.entity.EntityRopeConnection;
 import com.alet.common.entity.LeadConnectionData;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 
@@ -26,7 +26,7 @@ public class PacketConnectLead extends CreativeCorePacket {
         
     }
     
-    public PacketConnectLead(EntityLeadConnection connection, LeadConnectionData data, int index) {
+    public PacketConnectLead(EntityRopeConnection connection, LeadConnectionData data, int index) {
         this.connectionID = connection.getEntityId();
         this.size = data.idsConnected.size();
         this.connectors = data.idsConnected;
@@ -63,7 +63,7 @@ public class PacketConnectLead extends CreativeCorePacket {
     @Override
     public void executeClient(EntityPlayer player) {
         WorldClient world = (WorldClient) player.getEntityWorld();
-        EntityLeadConnection connection = (EntityLeadConnection) world.getEntityByID(this.connectionID);
+        EntityRopeConnection connection = (EntityRopeConnection) world.getEntityByID(this.connectionID);
         LeadConnectionData data = new LeadConnectionData(color, thickness, tautness, lightLevel);
         System.out.println("cli " + data.lightLevel);
         for (int id : connectors)

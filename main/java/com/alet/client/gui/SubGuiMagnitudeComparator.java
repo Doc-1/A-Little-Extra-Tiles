@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.common.packet.PacketUpdateStructureFromClient;
-import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator;
+import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator4;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
@@ -30,7 +30,7 @@ public class SubGuiMagnitudeComparator extends SubGui {
 	@Override
 	public void onOpened() {
 		super.onOpened();
-		LittleMagnitudeComparator magComparator = (LittleMagnitudeComparator) structure;
+		LittleMagnitudeComparator4 magComparator = (LittleMagnitudeComparator4) structure;
 		magComparator.writeToNBT(nbt);
 		System.out.println(nbt);
 		if (nbt.hasKey("logic")) {
@@ -56,7 +56,7 @@ public class SubGuiMagnitudeComparator extends SubGui {
 	public void onClosed() {
 		GuiComboBox logicBox = (GuiComboBox) get("logic");
 		
-		LittleMagnitudeComparator magComparator = (LittleMagnitudeComparator) structure;
+		LittleMagnitudeComparator4 magComparator = (LittleMagnitudeComparator4) structure;
 		nbt.setString("logic", logicBox.getCaption());
 		
 		GuiComboBox bit1Box = (GuiComboBox) get("bit1");
