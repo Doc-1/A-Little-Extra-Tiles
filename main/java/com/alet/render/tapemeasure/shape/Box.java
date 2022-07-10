@@ -1,6 +1,9 @@
 package com.alet.render.tapemeasure.shape;
 
+import java.util.List;
+
 import com.alet.ALETConfig;
+import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.tiles.SelectLittleTile;
 
@@ -12,9 +15,13 @@ import net.minecraft.util.math.Vec3d;
 
 public class Box extends TapeMeasureShape {
     
-    public Box(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
-        super(x1, y1, z1, x2, y2, z2, contextSize);
+    public Box(List<Vec3d> listOfPoints, int contextSize) {
+        super(listOfPoints, contextSize);
         calculateDistance();
+    }
+    
+    public Box() {
+        
     }
     
     public static String xString = "";
@@ -71,13 +78,13 @@ public class Box extends TapeMeasureShape {
         double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * mc.getRenderPartialTicks();
         double conDiv = 0.5 / contextSize;
         
-        double minX = tilePos.centerX - conDiv;
-        double minY = tilePos.centerY - conDiv;
-        double minZ = tilePos.centerZ - conDiv;
+        double minX = (tilePos.centerX - conDiv) + 0.005;
+        double minY = (tilePos.centerY - conDiv) + 0.005;
+        double minZ = (tilePos.centerZ - conDiv) + 0.005;
         
-        double maxX = tilePos.centerX + conDiv;
-        double maxY = tilePos.centerY + conDiv;
-        double maxZ = tilePos.centerZ + conDiv;
+        double maxX = (tilePos.centerX + conDiv) - 0.005;
+        double maxY = (tilePos.centerY + conDiv) - 0.005;
+        double maxZ = (tilePos.centerZ + conDiv) - 0.005;
         
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -85,135 +92,10 @@ public class Box extends TapeMeasureShape {
         drawBoundingBox(bufferbuilder, minX - d0 - 0.001, minY - d1 - 0.001, minZ - d2 - 0.001, maxX + 0.001 - d0, maxY - d1 + 0.001, maxZ - d2 + 0.001, red, green, blue, alpha);
     }
     
-    public static void drawBox(SelectLittleTile tilePosMin, SelectLittleTile tilePosMax, float red, float green, float blue, float alpha) {
-        
-        double centerX_1 = tilePosMin.centerX;
-        double centerY_1 = tilePosMin.centerY;
-        double centerZ_1 = tilePosMin.centerZ;
-        
-        double centerX_2 = tilePosMax.centerX;
-        double centerY_2 = tilePosMax.centerY;
-        double centerZ_2 = tilePosMax.centerZ;
-        
-        //System.out.println(new LittleAbsoluteVec(new BlockPos(centerX_1, centerY_1, centerZ_1), LittleGridContext.get(contextSize)));
-        if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_6, tilePosMax.corner_2, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_3, tilePosMax.corner_7, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_4, tilePosMax.corner_8, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        }
-        if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_7, tilePosMax.corner_3, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_2, tilePosMax.corner_6, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_8, tilePosMax.corner_4, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        }
-        if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        }
-        if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_4, tilePosMax.corner_8, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_8, tilePosMax.corner_4, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        }
-        if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_2, tilePosMax.corner_6, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_7, tilePosMax.corner_3, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        }
-        if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_8, tilePosMax.corner_4, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_3, tilePosMax.corner_7, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_6, tilePosMax.corner_2, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        } else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
-            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMin.corner_1, tilePosMin.corner_5, red, green, blue, alpha);
-            drawBoundingBox(tilePosMax.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
-        }
-    }
-    
     @Override
-    protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {
+    protected void calculateDistance(List<Vec3d> listOfPoints, int contextSize) {
+        Vec3d pos = listOfPoints.get(0);
+        Vec3d pos2 = listOfPoints.get(1);
         double xDistence = getDistence(pos.x, pos2.x, contextSize);
         double yDistence = getDistence(pos.y, pos2.y, contextSize);
         double zDistence = getDistence(pos.z, pos2.z, contextSize);
@@ -264,5 +146,89 @@ public class Box extends TapeMeasureShape {
             yString = cleanDouble(changeMesurmentType((Math.abs(pos.y - pos2.y) + contDecimal))) + " " + measurementName;
             zString = cleanDouble(changeMesurmentType((Math.abs(pos.z - pos2.z) + contDecimal))) + " " + measurementName;
         }
+    }
+    
+    @Override
+    public void getText(GuiOverlayTextList textList, int colorInt) {
+        textList.addText("X: " + xString, colorInt);
+        textList.addText("Y: " + yString, colorInt);
+        textList.addText("Z: " + zString, colorInt);
+    }
+    
+    @Override
+    public void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha) {
+        SelectLittleTile tilePosMin = listOfTilePos.get(0);
+        SelectLittleTile tilePosMax = listOfTilePos.get(1);
+        double centerX_1 = tilePosMin.centerX;
+        double centerY_1 = tilePosMin.centerY;
+        double centerZ_1 = tilePosMin.centerZ;
+        
+        double centerX_2 = tilePosMax.centerX;
+        double centerY_2 = tilePosMax.centerY;
+        double centerZ_2 = tilePosMax.centerZ;
+        drawBox(tilePosMin, contextSize, 1.0F, 0.0F, 0.0F, alpha);
+        drawBox(tilePosMax, contextSize, 0.0F, 1.0F, 0.0F, alpha);
+        //System.out.println(new LittleAbsoluteVec(new BlockPos(centerX_1, centerY_1, centerZ_1), LittleGridContext.get(contextSize)));
+        if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_6, tilePosMax.corner_2, red, green, blue, alpha);
+        } else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_3, tilePosMax.corner_7, red, green, blue, alpha);
+        } else if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
+        } else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_4, tilePosMax.corner_8, red, green, blue, alpha);
+        }
+        if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_7, tilePosMax.corner_3, red, green, blue, alpha);
+        } else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_2, tilePosMax.corner_6, red, green, blue, alpha);
+        } else if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_8, tilePosMax.corner_4, red, green, blue, alpha);
+        } else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        }
+        if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        } else if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
+        } else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        } else if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
+        } else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        } else if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        } else if (centerX_1 == centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
+        }
+        if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
+        } else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_4, tilePosMax.corner_8, red, green, blue, alpha);
+        } else if (centerX_1 == centerX_2 && centerY_1 > centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_8, tilePosMax.corner_4, red, green, blue, alpha);
+        } else if (centerX_1 == centerX_2 && centerY_1 < centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        }
+        if (centerX_1 > centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_5, tilePosMax.corner_1, red, green, blue, alpha);
+        } else if (centerX_1 > centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_2, tilePosMax.corner_6, red, green, blue, alpha);
+        } else if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_7, tilePosMax.corner_3, red, green, blue, alpha);
+        } else if (centerX_1 < centerX_2 && centerY_1 < centerY_2 && centerZ_1 == centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        }
+        if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_8, tilePosMax.corner_4, red, green, blue, alpha);
+        } else if (centerX_1 > centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_3, tilePosMax.corner_7, red, green, blue, alpha);
+        } else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 > centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_6, tilePosMax.corner_2, red, green, blue, alpha);
+        } else if (centerX_1 < centerX_2 && centerY_1 == centerY_2 && centerZ_1 < centerZ_2) {
+            drawBoundingBox(tilePosMin.corner_1, tilePosMax.corner_5, red, green, blue, alpha);
+        }
+        
     }
 }

@@ -1,15 +1,15 @@
 package com.alet.client.gui.overlay;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.alet.ALET;
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.items.ItemTapeMeasure.PosData;
-import com.alet.render.tapemeasure.shape.Box;
-import com.alet.render.tapemeasure.shape.Line;
+import com.alet.render.tapemeasure.shape.TapeMeasureShape;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
@@ -52,7 +52,6 @@ public class GuiDisplayMeasurements extends GuiControl {
         posY = 0;
         
         ItemStack stack = ItemStack.EMPTY;
-        ItemStack ingredient = new ItemStack(ALET.tapeMeasure, 1);
         LittleInventory inventory = new LittleInventory(player);
         
         for (int i = 0; i < inventory.size(); i++) {
@@ -82,31 +81,45 @@ public class GuiDisplayMeasurements extends GuiControl {
                     for (int i = 0; i < 10; i++) {
                         list = stackNBT.getTagList("measurement_" + i, NBT.TAG_COMPOUND);
                         NBTTagCompound nbt = list.getCompoundTagAt(0);
-                        int contextSize = ItemTapeMeasure.getContext(nbt);
-                        
-                        int colorInt = nbt.hasKey("shape") ? nbt.getInteger("color") : ColorUtils.WHITE;
-                        LittleAbsoluteVec pos = new LittleAbsoluteVec(data.result, LittleGridContext.get(contextSize));
-                        
-                        Vec3d vec1 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                        Vec3d vec2 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                        if (nbt.hasKey("x1"))
-                            vec1 = new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1"));
-                        if (nbt.hasKey("x2"))
-                            vec2 = new Vec3d(nbt.getDouble("x2"), nbt.getDouble("y2"), nbt.getDouble("z2"));
-                        if (nbt.hasKey("x1") || nbt.hasKey("x2"))
-                            if (nbt.getInteger("shape") == 0) {
-                                Box box = new Box(vec1.x, vec1.y, vec1.z, vec2.x, vec2.y, vec2.z, contextSize);
-                                textList.addText("Measurment " + (i + 1), ColorUtils.WHITE);
-                                
-                                textList.addText("X: " + box.xString, colorInt);
-                                textList.addText("Y: " + box.yString, colorInt);
-                                textList.addText("Z: " + box.zString, colorInt);
-                                
-                            } else if (nbt.getInteger("shape") == 1) {
-                                Line line = new Line(vec1.x, vec1.y, vec1.z, vec2.x, vec2.y, vec2.z, contextSize);
-                                textList.addText("Measurment " + (i + 1), ColorUtils.WHITE);
-                                textList.addText("Line: " + line.distance, colorInt);
+                        String shapeName = nbt.getString("shape");
+                        if (!shapeName.equals("")) {
+                            int contextSize = ItemTapeMeasure.getContext(nbt);
+                            
+                            int colorInt = nbt.hasKey("shape") ? nbt.getInteger("color") : ColorUtils.WHITE;
+                            LittleAbsoluteVec pos = new LittleAbsoluteVec(data.result, LittleGridContext.get(contextSize));
+                            
+                            Vec3d vec1 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec2 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec3 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec4 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            
+                            if (nbt.hasKey("x1"))
+                                vec1 = new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1"));
+                            if (nbt.hasKey("x2"))
+                                vec2 = new Vec3d(nbt.getDouble("x2"), nbt.getDouble("y2"), nbt.getDouble("z2"));
+                            
+                            if (nbt.hasKey("x3"))
+                                vec3 = new Vec3d(nbt.getDouble("x3"), nbt.getDouble("y3"), nbt.getDouble("z3"));
+                            if (nbt.hasKey("x4"))
+                                vec4 = new Vec3d(nbt.getDouble("x4"), nbt.getDouble("y4"), nbt.getDouble("z4"));
+                            
+                            if (nbt.hasKey("x1") || nbt.hasKey("x2") || nbt.hasKey("x3") || nbt.hasKey("x4")) {
+                                try {
+                                    List<Vec3d> listOfPoints = new ArrayList<Vec3d>();
+                                    listOfPoints.add(vec1);
+                                    listOfPoints.add(vec2);
+                                    listOfPoints.add(vec3);
+                                    listOfPoints.add(vec4);
+                                    TapeMeasureShape shape = TapeMeasureShape.registeredShapes.get(shapeName).getConstructor(List.class, int.class)
+                                            .newInstance(listOfPoints, contextSize);
+                                    textList.addText("Measurment " + (i + 1), ColorUtils.WHITE);
+                                    shape.getText(textList, colorInt);
+                                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
                             }
+                        }
                     }
                     
                     textList.renderControl(helper, 0, getRect());
@@ -187,7 +200,6 @@ public class GuiDisplayMeasurements extends GuiControl {
      * @param maxDistance
      * @return */
     public static AxisAlignedBB getBox(Vec3d playerPos, Vec3d playerLookVector, List<AxisAlignedBB> boxes, double maxDistance) {
-        double resultDistance = maxDistance;
         AxisAlignedBB result = null;
         AxisAlignedBB box = null;
         Vec3d startPos = null;

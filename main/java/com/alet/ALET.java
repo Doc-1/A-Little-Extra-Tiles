@@ -510,12 +510,12 @@ public class ALET {
         
         */
         LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
-        //LittleStructurePremade.registerPremadeStructureType("animator_workbench", ALET.MODID, LittleAnimatorBench.class);
+        LittleStructurePremade.registerPremadeStructureType("animator_workbench", ALET.MODID, LittleAnimatorBench.class);
         
         LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
         LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class).setNotShowCreativeTab();
         LittleStructurePremade.registerPremadeStructureType("adjustable", ALET.MODID, LittleAdjustableFixedStructure.class).setNotShowCreativeTab();
-        //LittleStructurePremade.registerPremadeStructureType("filling_cabinet", ALET.MODID, LittleFillingCabinet.class, LittleStructureAttribute.TICKING).addInput("accessed", 1);
+        LittleStructurePremade.registerPremadeStructureType("filling_cabinet", ALET.MODID, LittleFillingCabinet.class, LittleStructureAttribute.TICKING).addInput("accessed", 1);
         
         SoundsHandler.registerSounds();
         sounds = new ArrayList<>();

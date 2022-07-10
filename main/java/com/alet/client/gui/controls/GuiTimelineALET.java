@@ -47,16 +47,22 @@ public class GuiTimelineALET extends GuiParent {
         this.handler = handler;
         marginWidth = 0;
         this.channels = channels;
+        refreshChannels();
+        setDuration(duration);
+    }
+    
+    public void refreshChannels() {
         int i = 0;
+        this.removeControls("");
         for (TimelineChannelALET channel : channels) {
             channel.index = i;
             for (Object control : channel.controls) {
+                adjustKeyPositionX((KeyControlALET) control);
                 adjustKeyPositionY((KeyControlALET) control);
                 addControl((GuiControl) control);
             }
             i++;
         }
-        setDuration(duration);
     }
     
     public GuiTimelineALET setSidebarWidth(int width) {
@@ -65,6 +71,7 @@ public class GuiTimelineALET extends GuiParent {
     }
     
     public void adjustKeyPositionY(KeyControlALET control) {
+        System.out.println(control.channel.index);
         control.posY = timelineHeight + control.height / 2 + channelHeight * control.channel.index;
     }
     
@@ -134,7 +141,7 @@ public class GuiTimelineALET extends GuiParent {
                     return result;
                 adjustKeyPositionX(control);
                 adjustKeyPositionY(control);
-                addControl(control);
+                this.addControl(control);
                 raiseEvent(new GuiControlChangedEvent(this));
             } else if (channel != -1) {
                 int tick = getTickAt(x);
@@ -157,7 +164,7 @@ public class GuiTimelineALET extends GuiParent {
                 if (!((KeyControlALET) control).modifiable)
                     return;
                 ((KeyControlALET) control).removeKey();
-                selected = null;
+                selected = new ArrayList<KeyControlALET>();
                 raiseEvent(new GuiControlChangedEvent(this));
                 return;
             }

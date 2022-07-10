@@ -11,6 +11,7 @@ import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.alet.littletiles.gui.controls.GuiColoredSteppedSliderAlet;
+import com.alet.render.tapemeasure.shape.TapeMeasureShape;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
@@ -48,8 +49,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
     public void saveConfiguration(int index) {
         NBTTagCompound stackNBT = stack.getTagCompound();
         int context = contextBox.index;
-        int shape = shapeBox.index;
-        System.out.println(context + " save");
+        String shape = shapeBox.getCaption();
         GuiColoredSteppedSliderAlet sliderR = colorPicker.sliderR;
         GuiColoredSteppedSliderAlet sliderG = colorPicker.sliderG;
         GuiColoredSteppedSliderAlet sliderB = colorPicker.sliderB;
@@ -69,7 +69,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
             nbt = l.getCompoundTagAt(0);
         }
         nbt.setInteger("context", context);
-        nbt.setInteger("shape", shape);
+        nbt.setString("shape", shape);
         nbt.setInteger("color", color);
         list.appendTag(nbt);
         stackNBT.setTag("measurement_" + index, list);
@@ -95,7 +95,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         }
         int contextSize = ItemTapeMeasure.getContext(nbt);
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
-        int shape = nbt.hasKey("shape") ? stackNBT.getInteger("shape") : 0;
+        String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         
         List<String> relativeMeasurement = new ArrayList<String>();
         relativeMeasurement.add("tile");
@@ -106,7 +106,6 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         controls.add(measurmentTypeBox);
         
         contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
-        System.out.println(contextSize);
         contextBox.select(contextNames.indexOf(contextSize + ""));
         contextBox.index = contextNames.indexOf(contextSize + "");
         controls.add(contextBox);
@@ -129,13 +128,10 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         controls.add(clearButton);
         
         List<String> shapes = new ArrayList<String>();
-        shapes.add("box");
-        shapes.add("line");
+        shapes.addAll(TapeMeasureShape.registeredShapes.keySet());
         shapeBox = new GuiComboBox("shape", 0, 22, 100, shapes);
-        shapeBox.select(shape);
-        shapeBox.index = shape;
         controls.add(shapeBox);
-        
+        shapeBox.select(shape);
         colorPicker = (new GuiColorPickerAlet("picker", 35, 45, ColorUtilsAlet.IntToRGBA(colorInt), false, 255) {
             @Override
             public void onColorChanged() {
@@ -150,7 +146,6 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
             indexMax.add(String.valueOf(i));
         }
         
-        GuiComboBoxExtension indexExtension = null;
         indexBox = (new GuiComboBox("indexSelector", 0, 80, 20, indexMax) {
             @Override
             protected GuiComboBoxExtension createBox() {
@@ -179,7 +174,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         
         int contextSize = ItemTapeMeasure.getContext(nbt);
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
-        int shape = nbt.hasKey("shape") ? stackNBT.getInteger("shape") : 0;
+        String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         
         colorDisp.setBackgroundColor(colorInt);
         
@@ -197,7 +192,6 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         contextBox.index = contextNames.indexOf(contextSize + "");
         
         shapeBox.select(shape);
-        shapeBox.index = shape;
         
     }
 }

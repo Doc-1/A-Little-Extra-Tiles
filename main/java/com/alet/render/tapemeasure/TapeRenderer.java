@@ -1,14 +1,14 @@
 package com.alet.render.tapemeasure;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.Color;
 
-import com.alet.ALET;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.items.ItemTapeMeasure.PosData;
 import com.alet.render.tapemeasure.shape.Box;
-import com.alet.render.tapemeasure.shape.Line;
+import com.alet.render.tapemeasure.shape.TapeMeasureShape;
 import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
@@ -24,7 +24,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -50,7 +49,6 @@ public class TapeRenderer {
         List<String> contextNames = LittleGridContext.getNames();
         
         ItemStack stack = ItemStack.EMPTY;
-        ItemStack ingredient = new ItemStack(ALET.tapeMeasure, 1);
         LittleInventory inventory = new LittleInventory(player);
         
         //Sees if the tape measure is in player's inventory
@@ -88,33 +86,48 @@ public class TapeRenderer {
                 for (int i = 0; i < 10; i++) {
                     list = stackNBT.getTagList("measurement_" + i, NBT.TAG_COMPOUND);
                     NBTTagCompound nbt = list.getCompoundTagAt(0);
-                    int shape = nbt.hasKey("shape") ? nbt.getInteger("shape") : 0;
-                    int contextSize = ItemTapeMeasure.getContext(nbt);
-                    int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
-                    Color color = ColorUtils.IntToRGBA(colorInt);
+                    String shapeName = nbt.getString("shape");
                     
-                    float r = color.getRed() / 255F;
-                    float g = color.getGreen() / 255F;
-                    float b = color.getBlue() / 255F;
-                    
-                    EnumFacing facingMin = nbt.hasKey("facing") ? EnumFacing.byName(nbt.getString("facing")) : EnumFacing.UP;
-                    EnumFacing facingMax = nbt.hasKey("facing") ? EnumFacing.byName(nbt.getString("facing")) : EnumFacing.UP;
-                    
-                    SelectLittleTile tilePosMin = data.tilePosCursor;
-                    SelectLittleTile tilePosMax = data.tilePosCursor;
-                    
-                    if (nbt.hasKey("x1")) //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
-                        tilePosMin = new SelectLittleTile(new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1")), LittleGridContext.get(contextSize));
-                    
-                    if (nbt.hasKey("x2")) //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
-                        tilePosMax = new SelectLittleTile(new Vec3d(nbt.getDouble("x2"), nbt.getDouble("y2"), nbt.getDouble("z2")), LittleGridContext.get(contextSize));
-                    
-                    if (nbt.getInteger("shape") == 0) {
-                        Box.drawBox(tilePosMin, tilePosMax, r, g, b, 1.0F);
-                    } else if (nbt.getInteger("shape") == 1) {
-                        Line.drawLine(tilePosMin, tilePosMax, r, g, b, 1.0F);
-                        Box.drawBox(tilePosMin, contextSize, r, g, b, 1.0F);
-                        Box.drawBox(tilePosMax, contextSize, r, g, b, 1.0F);
+                    if (!shapeName.equals("")) {
+                        int contextSize = ItemTapeMeasure.getContext(nbt);
+                        int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
+                        Color color = ColorUtils.IntToRGBA(colorInt);
+                        
+                        float r = color.getRed() / 255F;
+                        float g = color.getGreen() / 255F;
+                        float b = color.getBlue() / 255F;
+                        
+                        SelectLittleTile tilePosMin = data.tilePosCursor;
+                        SelectLittleTile tilePosMax = data.tilePosCursor;
+                        SelectLittleTile secondartTilePosMin = data.tilePosCursor;
+                        SelectLittleTile secondartTilePosMax = data.tilePosCursor;
+                        
+                        if (nbt.hasKey("x1")) //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+                            tilePosMin = new SelectLittleTile(new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1")), LittleGridContext.get(contextSize));
+                        
+                        if (nbt.hasKey("x2")) //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+                            tilePosMax = new SelectLittleTile(new Vec3d(nbt.getDouble("x2"), nbt.getDouble("y2"), nbt.getDouble("z2")), LittleGridContext.get(contextSize));
+                        
+                        if (nbt.hasKey("x3")) //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+                            secondartTilePosMin = new SelectLittleTile(new Vec3d(nbt.getDouble("x3"), nbt.getDouble("y3"), nbt.getDouble("z3")), LittleGridContext
+                                    .get(contextSize));
+                        
+                        if (nbt.hasKey("x4")) //If the nbt has x then it will have y and z. If it does use the constant nbt value to display measurement
+                            secondartTilePosMax = new SelectLittleTile(new Vec3d(nbt.getDouble("x4"), nbt.getDouble("y4"), nbt.getDouble("z4")), LittleGridContext
+                                    .get(contextSize));
+                        
+                        try {
+                            List<SelectLittleTile> listOfTilePos = new ArrayList<SelectLittleTile>();
+                            listOfTilePos.add(tilePosMin);
+                            listOfTilePos.add(tilePosMax);
+                            listOfTilePos.add(secondartTilePosMin);
+                            listOfTilePos.add(secondartTilePosMax);
+                            TapeMeasureShape shape = TapeMeasureShape.registeredShapes.get(shapeName).newInstance();
+                            shape.drawShape(listOfTilePos, contextSize, r, g, b, 1.0F);
+                        } catch (InstantiationException | IllegalAccessException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                     }
                 }
                 tessellator.draw();

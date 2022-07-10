@@ -32,6 +32,7 @@ import com.creativemd.littletiles.common.util.place.PlacementPreview;
 import com.creativemd.littletiles.common.util.tooltip.IItemTooltip;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -63,7 +64,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public void clear(ItemStack stack, int index, EntityPlayer player) {
         NBTTagCompound nbt = stack.getTagCompound();
         
-        List<Integer> allIndexes = new ArrayList<Integer>();
         List<String> allMatches = new ArrayList<String>();
         index *= 2;
         
@@ -96,9 +96,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         
     }
     
-    public void readNBTData(ItemStack stack) {
-        NBTTagCompound nbt = stack.getTagCompound();
-    }
+    public void readNBTData(ItemStack stack) {}
     
     public NBTTagCompound getNBTData(ItemStack stack) {
         return stack.getTagCompound();
@@ -118,9 +116,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add("THIS IS IN ALPHA!\n" + "Design Will Change.\n");
-    }
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {}
     
     @Override
     public boolean onRightClick(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
@@ -159,6 +155,9 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         Vec3d posOffsetted = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
         
         int additional = rightClick ? 1 : 2;
+        if (GuiScreen.isCtrlKeyDown())
+            additional += 2;
+        
         nbt.setDouble("x" + additional, posOffsetted.x);
         nbt.setDouble("y" + additional, posOffsetted.y);
         nbt.setDouble("z" + additional, posOffsetted.z);
@@ -200,7 +199,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     @Override
     public void tick(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
         NBTTagCompound stackNBT = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
-        List<String> list = LittleGridContext.getNames();
         
         if (stackNBT.hasKey("index")) {
             int index = stackNBT.getInteger("index");
@@ -210,7 +208,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
                 nbt = l.getCompoundTagAt(0);
             }
             
-            List<String> contextNames = LittleGridContext.getNames();
             int contextSize = ItemTapeMeasure.getContext(nbt);
             LittleAbsoluteVec pos = new LittleAbsoluteVec(result, LittleGridContext.get(contextSize));
             Vec3d posEdit = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, result.sideHit);

@@ -75,14 +75,6 @@ public class GuiTreePart extends GuiControl {
     public GuiTreePart addMenu(GuiTreePart button) {
         this.listOfParts.add(button);
         button.branchHeldIn = this;
-        this.width = GuiRenderHelper.instance.getStringWidth(caption) + 15;
-        
-        if (this.type.equals(EnumPartType.Title)) {
-            if (!caption.contains("*")) {
-                this.caption = "* " + caption;
-                this.width = GuiRenderHelper.instance.getStringWidth(caption);
-            }
-        }
         return this;
     }
     
@@ -102,32 +94,33 @@ public class GuiTreePart extends GuiControl {
         int off = this.posY - this.originPosY;
         int count = (int) Math.floor(off / 14D);
         int y = (off - (count * 14));
-        if (!this.isBranch()) {
+        if (!this.type.canHold()) {
             helper.drawRect(-12, y + 4, -4, y + 5, ColorUtils.WHITE);
         } else {
             helper.drawRect(-12, y + 4, -4, y + 5, ColorUtils.WHITE);
             helper.drawRect(-1, y, 7, y + 8, ColorUtils.WHITE);
-            if (!this.isOpened) {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(0.4, 0, 0);
-                helper.drawRect(2, y + 1, 3, y + 7, ColorUtils.BLACK);
-                GlStateManager.popMatrix();
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(0, 0.4, 0);
-                helper.drawRect(0, y + 3, 6, y + 4, ColorUtils.BLACK);
-                GlStateManager.popMatrix();
-            } else {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(0, 0.4, 0);
-                helper.drawRect(0, y + 3, 6, y + 4, ColorUtils.BLACK);
-                GlStateManager.popMatrix();
-            }
+            if (!this.type.equals(EnumPartType.Title))
+                if (!this.isOpened) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0.4, 0, 0);
+                    helper.drawRect(2, y + 1, 3, y + 7, ColorUtils.BLACK);
+                    GlStateManager.popMatrix();
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0, 0.4, 0);
+                    helper.drawRect(0, y + 3, 6, y + 4, ColorUtils.BLACK);
+                    GlStateManager.popMatrix();
+                } else {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0, 0.4, 0);
+                    helper.drawRect(0, y + 3, 6, y + 4, ColorUtils.BLACK);
+                    GlStateManager.popMatrix();
+                }
             
         }
         
         GlStateManager.pushMatrix();
         if (this.type.equals(EnumPartType.Title))
-            GlStateManager.translate(1, 0, 0);
+            GlStateManager.translate(10, 0, 0);
         if (this.type.openable)
             GlStateManager.translate(10, 0, 0);
         helper.drawStringWithShadow(caption, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), height, ColorUtils.WHITE);
@@ -233,11 +226,13 @@ public class GuiTreePart extends GuiControl {
     public int getTotalBranchSize() {
         int total = 0;
         int start = this.getPartID() + 1;
-        GuiTreePart part0 = tree.listOfParts.get(start);
-        for (int i = start; i < tree.numberOfAllParts(); i++) {
-            GuiTreePart part1 = tree.listOfParts.get(i);
-            if (this.isInSameBranch(part1)) {
-                total++;
+        if (start < tree.listOfParts.size()) {
+            GuiTreePart part0 = tree.listOfParts.get(start);
+            for (int i = start; i < tree.numberOfAllParts(); i++) {
+                GuiTreePart part1 = tree.listOfParts.get(i);
+                if (this.isInSameBranch(part1)) {
+                    total++;
+                }
             }
         }
         return total;
@@ -383,6 +378,10 @@ public class GuiTreePart extends GuiControl {
     public void openMenus() {
         for (int i = 0; i < this.listOfParts.size(); i++) {
             GuiTreePart button = this.listOfParts.get(i);
+            if (!button.type.openable)
+                button.width = GuiRenderHelper.instance.getStringWidth(button.caption) + 5;
+            else
+                button.width = GuiRenderHelper.instance.getStringWidth(button.caption) + 15;
             if (!button.isRoot) {
                 tree.addControl(button);
                 if (button.isBranch() && button.isOpened) {
@@ -473,24 +472,30 @@ public class GuiTreePart extends GuiControl {
     
     public enum EnumPartType {
         /** This is the first folder, or lowest point in the directory you can reach. It can hold Branches, and Leaves */
-        Root(true),
+        Root(true, true),
         /** This, just like a root can hold other Branches or Leaves */
-        Branch(true),
+        Branch(true, true),
         /** A type of root or branch that remains open and does not close. */
-        Title(false),
+        Title(false, true),
         /** This is a file. */
-        Leaf(false),
+        Leaf(false, false),
         /** A type of Leaf that is used for when searching for a Leaf */
-        Searched(false);
+        Searched(false, false);
         
         private boolean openable;
+        private boolean canHold;
         
-        private EnumPartType(boolean openable) {
+        private EnumPartType(boolean openable, boolean canHold) {
             this.openable = openable;
+            this.canHold = canHold;
         }
         
         public boolean isOpenable() {
             return this.openable;
+        }
+        
+        public boolean canHold() {
+            return this.canHold;
         }
     }
 }

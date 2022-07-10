@@ -1,5 +1,9 @@
 package com.alet.render.tapemeasure.shape;
 
+import java.util.List;
+
+import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
+import com.alet.tiles.SelectLittleTile;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
@@ -11,8 +15,8 @@ import net.minecraft.util.math.Vec3d;
 
 public class Circle extends TapeMeasureShape {
     
-    public Circle(Vec3d p, Vec3d p2, int contextSz) {
-        super(p, p2, contextSz);
+    public Circle(List<Vec3d> listOfPoints, int contextSz) {
+        super(listOfPoints, contextSz);
     }
     
     public static void drawCircle(Vec3d pos, Vec3d pos2, float red, float green, float blue, float alpha) {
@@ -39,7 +43,22 @@ public class Circle extends TapeMeasureShape {
     }
     
     @Override
-    protected void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize) {}
+    protected void calculateDistance(List<Vec3d> listOfPoints, int contextSize) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public void getText(GuiOverlayTextList textList, int colorInt) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha) {
+        // TODO Auto-generated method stub
+        
+    }
     
 }
 

@@ -37,7 +37,6 @@ public abstract class TimelineChannelALET<T> {
     public KeyControlALET addKey(int tick, T value) {
         value = (T) ((double[]) value).clone();
         KeyControlALET control = new KeyControlALET(this, controls.size(), tick, value);
-        System.out.println(control.value.hashCode());
         for (int i = 0; i < controls.size(); i++) {
             KeyControlALET other = controls.get(i);
             
@@ -49,6 +48,7 @@ public abstract class TimelineChannelALET<T> {
                 return control;
             }
         }
+        
         controls.add(control);
         return control;
     }

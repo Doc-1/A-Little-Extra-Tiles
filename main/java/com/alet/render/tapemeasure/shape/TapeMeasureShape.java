@@ -1,40 +1,47 @@
 package com.alet.render.tapemeasure.shape;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Stack;
 
 import com.alet.ALETConfig;
+import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
+import com.alet.tiles.SelectLittleTile;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
-import scala.collection.mutable.HashMap;
 
 public abstract class TapeMeasureShape {
     
-    private Vec3d pos;
-    private Vec3d pos2;
+    private List<Vec3d> listOfPoints = new ArrayList<Vec3d>();
     private int contextSize;
     public static Minecraft mc = Minecraft.getMinecraft();
-    private static HashMap<String, TapeMeasureShape> registeredShapes = new HashMap<String, TapeMeasureShape>();
+    public static LinkedHashMap<String, Class<? extends TapeMeasureShape>> registeredShapes = new LinkedHashMap<String, Class<? extends TapeMeasureShape>>();
     
-    public TapeMeasureShape(Vec3d p, Vec3d p2, int contextSz) {
-        pos = p;
-        pos2 = p2;
+    public TapeMeasureShape(List<Vec3d> listOfPoints, int contextSz) {
+        this.listOfPoints = listOfPoints;
         contextSize = contextSz;
     }
     
-    public static void registerShape(String name, TapeMeasureShape shape) throws Exception {
-        if (!registeredShapes.contains(name))
+    public TapeMeasureShape() {
+        
+    }
+    
+    static {
+        registeredShapes.put("Box", Box.class);
+        registeredShapes.put("Line", Line.class);
+        registeredShapes.put("Compass", Compass.class);
+    }
+    
+    public static void registerShape(String name, Class<? extends TapeMeasureShape> shape) throws Exception {
+        if (!registeredShapes.containsKey(name))
             registeredShapes.put(name, shape);
         else
             throw new Exception(name + " already exists");
-    }
-    
-    public TapeMeasureShape(double x1, double y1, double z1, double x2, double y2, double z2, int contextSize) {
-        this(new Vec3d(x1, y1, z1), new Vec3d(x2, y2, z2), contextSize);
     }
     
     public static double getDistence(double pos_1, double pos_2, int contextSize) {
@@ -131,9 +138,13 @@ public abstract class TapeMeasureShape {
         return 0;
     }
     
-    protected abstract void calculateDistance(Vec3d pos, Vec3d pos2, int contextSize);
+    public abstract void getText(GuiOverlayTextList textList, int colorInt);
+    
+    public abstract void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha);
+    
+    protected abstract void calculateDistance(List<Vec3d> listOfPoints, int contextSize);
     
     public void calculateDistance() {
-        calculateDistance(pos, pos2, contextSize);
+        calculateDistance(listOfPoints, contextSize);
     }
 }

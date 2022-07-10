@@ -61,6 +61,7 @@ public class GuiTree extends GuiParent {
             GuiTreePart root = listOfRoots.get(i);
             root.posY = (14 * i) + 20;
             root.originPosY = new Integer(root.posY);
+            root.width = GuiRenderHelper.instance.getStringWidth(root.caption) + 15;
             addControl(root);
         }
     }
