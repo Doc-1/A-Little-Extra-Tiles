@@ -7,36 +7,113 @@ import com.creativemd.creativecore.client.rendering.RenderBox;
 import com.creativemd.creativecore.common.utils.math.RotationUtils;
 import com.creativemd.creativecore.common.utils.math.box.AlignedBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.render.tile.LittleRenderBox;
+import com.creativemd.littletiles.common.block.BlockTile;
 import com.creativemd.littletiles.common.structure.LittleStructure;
+import com.creativemd.littletiles.common.structure.directional.StructureDirectional;
+import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
+import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
+import com.creativemd.littletiles.common.structure.relative.StructureRelative;
 import com.creativemd.littletiles.common.structure.signal.component.SignalComponentType;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalInput;
+import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
+import com.creativemd.littletiles.common.tile.math.location.StructureLocation;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.place.PlacePreview;
 import com.creativemd.littletiles.common.tile.place.PlacePreviewFacing;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
+import com.creativemd.littletiles.common.tileentity.TileEntityLittleTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.vec.SurroundingBox;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleSignalInputQuick extends LittleSignalInput {
+    
+    @StructureDirectional(color = ColorUtils.GREEN)
+    public StructureRelative frame;
+    
+    private BlockPos location = null;
+    private LittleStructure listeningStructure;
     
     public LittleSignalInputQuick(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
     }
     
     @Override
+    public void tick() {
+        if (listeningStructure != null) {
+            if (!listeningStructure.isStillAvailable())
+                listeningStructure = null;
+        }
+    }
+    
+    @Override
+    public void neighbourChanged() {
+        super.neighbourChanged();
+        World worldIn = this.getWorld();
+        if (!worldIn.isRemote) {
+            LittleBox box = this.frame.getBox();
+            if (location == null) {
+                StructureLocation sLoc = this.getStructureLocation();
+                this.location = new BlockPos(sLoc.pos.getX(), sLoc.pos.getY(), sLoc.pos.getZ());
+            }
+            if (this.facing.equals(EnumFacing.WEST)) {
+                if (box.maxX >= (this.frame.getContext().size + 1)) {
+                    box.maxX = 1;
+                    box.minX = 0;
+                    location = location.east();
+                }
+            } else if (this.facing.equals(EnumFacing.EAST)) {
+                if (box.minX <= -1) {
+                    box.maxX = 32;
+                    box.minX = 31;
+                    location = location.west();
+                }
+            } else if (this.facing.equals(EnumFacing.NORTH)) {
+                if (box.maxZ >= (this.frame.getContext().size + 1)) {
+                    box.maxZ = 1;
+                    box.minZ = 0;
+                    location = location.south();
+                }
+            } else if (this.facing.equals(EnumFacing.SOUTH)) {
+                if (box.minZ <= -1) {
+                    box.maxZ = 32;
+                    box.minZ = 31;
+                    location = location.north();
+                }
+            }
+            TileEntityLittleTiles te = BlockTile.loadTe(worldIn, location);
+            if (te != null)
+                for (IStructureTileList s : te.structures()) {
+                    try {
+                        if (!s.getStructure().equals(this))
+                            for (Pair<IStructureTileList, LittleTile> pair : s.getStructure().tiles()) {
+                                if (LittleBox.intersectsWith(box, pair.value.getBox())) {
+                                    listeningStructure = s.getStructure();
+                                    break;
+                                }
+                            }
+                    } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+                }
+        }
+        
+    }
+    
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderFace(EnumFacing facing, LittleGridContext context, LittleBox renderBox, int distance, Axis axis, Axis one, Axis two, boolean positive, boolean oneSidedRenderer, List<LittleRenderBox> cubes) {
-        initRenderFace(facing, context, renderBox, distance, axis, one, two, positive, oneSidedRenderer, cubes);
+        super.renderFace(facing, context, renderBox.copy(), distance, axis, one, two, positive, oneSidedRenderer, cubes);
         LittleRenderBox cube = renderBox.getRenderingCube(context, LittleTiles.inputArrow, facing.ordinal());
         //cube.color = color;
         cube.keepVU = true;
@@ -62,7 +139,7 @@ public class LittleSignalInputQuick extends LittleSignalInput {
     @Override
     @SideOnly(Side.CLIENT)
     public void render(SurroundingBox box, LittleBox overallBox, List<LittleRenderBox> cubes) {
-        initRender(box, overallBox, cubes);
+        super.render(box, overallBox, cubes);
         AlignedBox cube = new AlignedBox(overallBox.getBox(box.getContext()));
         
         Axis axis = facing.getAxis();
@@ -303,7 +380,7 @@ public class LittleSignalInputQuick extends LittleSignalInput {
             List<PlacePreview> result = super.getSpecialTiles(previews);
             EnumFacing facing = (EnumFacing) loadDirectional(previews, "facing");
             LittleBox box = previews.getSurroundingBox();
-            result.add(new PlacePreviewFacing(box, facing, ColorUtils.LIGHT_BLUE));
+            result.add(new PlacePreviewFacing(box, facing, 0x800080));
             return result;
         }
         
@@ -314,7 +391,7 @@ public class LittleSignalInputQuick extends LittleSignalInput {
             float size = (float) ((Math.sqrt(bandwidth) * 1F / 32F + 0.05) * 1.4);
             cubes = new ArrayList<>();
             cubes.add(new RenderBox(0, 0.5F - size, 0.5F - size, size * 2, 0.5F + size, 0.5F + size, LittleTiles.dyeableBlock).setColor(getColor(previews)));
-            cubes.add(new RenderBox(size * 2, 0.5F - size, 0.5F - size, size * 2.5F, 0.5F + size, 0.5F + size, LittleTiles.dyeableBlock).setColor(ColorUtils.LIGHT_BLUE));
+            cubes.add(new RenderBox(size * 2, 0.5F - size, 0.5F - size, size * 2.5F, 0.5F + size, 0.5F + size, LittleTiles.dyeableBlock).setColor(0x800080));
             return cubes;
         }
         

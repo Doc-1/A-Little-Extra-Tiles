@@ -44,7 +44,8 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
     @StructureDirectional(color = ColorUtils.GREEN)
     public StructureRelative frame;
     
-    private BlockPos location = null;
+    private BlockPos location;
+    private LittleStructure listeningStructure;
     
     public LittleSignalOutputQuick(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -53,6 +54,27 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
     @Override
     public void tick() {
         
+        World worldIn = this.getWorld();
+        if (!worldIn.isRemote) {
+            if (listeningStructure != null) {
+                if (!listeningStructure.isStillAvailable()) {
+                    this.updateState(new boolean[] { false });
+                    listeningStructure = null;
+                } else if (listeningStructure instanceof LittleDoorActivator) {
+                    LittleDoorActivator door = (LittleDoorActivator) listeningStructure;
+                    if (door.opened)
+                        this.updateState(new boolean[] { true });
+                    else
+                        this.updateState(new boolean[] { false });
+                } else
+                    this.updateState(new boolean[] { false });
+            }
+        }
+    }
+    
+    @Override
+    public void neighbourChanged() {
+        super.neighbourChanged();
         World worldIn = this.getWorld();
         if (!worldIn.isRemote) {
             LittleBox box = this.frame.getBox();
@@ -86,35 +108,27 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
                 }
             }
             TileEntityLittleTiles te = BlockTile.loadTe(worldIn, location);
-            LittleStructure foundStructure = null;
             if (te != null)
                 for (IStructureTileList s : te.structures()) {
                     try {
                         if (!s.getStructure().equals(this))
                             for (Pair<IStructureTileList, LittleTile> pair : s.getStructure().tiles()) {
                                 if (LittleBox.intersectsWith(box, pair.value.getBox())) {
-                                    foundStructure = s.getStructure();
+                                    listeningStructure = s.getStructure();
                                     break;
                                 }
                             }
                     } catch (CorruptedConnectionException | NotYetConnectedException e) {}
                 }
-            if (foundStructure instanceof LittleDoorActivator) {
-                LittleDoorActivator door = (LittleDoorActivator) foundStructure;
-                if (door.opened)
-                    this.updateState(new boolean[] { true });
-                else
-                    this.updateState(new boolean[] { false });
-            } else
-                this.updateState(new boolean[] { false });
-            
         }
+        
     }
     
     @Override
     @SideOnly(Side.CLIENT)
     public void renderFace(EnumFacing facing, LittleGridContext context, LittleBox renderBox, int distance, Axis axis, Axis one, Axis two, boolean positive, boolean oneSidedRenderer, List<LittleRenderBox> cubes) {
-        initRenderFace(facing, context, renderBox, distance, axis, one, two, positive, oneSidedRenderer, cubes);
+        super.renderFace(facing, context, renderBox.copy(), distance, axis, one, two, positive, oneSidedRenderer, cubes);
+        
         LittleRenderBox cube = renderBox.getRenderingCube(context, LittleTiles.outputArrow, facing.ordinal());
         //cube.color = color;
         cube.keepVU = true;
@@ -140,7 +154,7 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
     @Override
     @SideOnly(Side.CLIENT)
     public void render(SurroundingBox box, LittleBox overallBox, List<LittleRenderBox> cubes) {
-        initRender(box, overallBox, cubes);
+        super.render(box, overallBox, cubes);
         AlignedBox structureBox = new AlignedBox(overallBox.getBox(box.getContext()));
         LittleRenderBox block = (LittleRenderBox) new LittleRenderBox(structureBox, null, LittleTiles.dyeableBlock, 0).setColor(color);
         block.allowOverlap = true;
