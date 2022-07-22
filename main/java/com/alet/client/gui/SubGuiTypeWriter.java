@@ -145,8 +145,6 @@ public class SubGuiTypeWriter extends SubGui {
         nbt.setBoolean("underline", underline.value);
         nbt.setBoolean("strikethrough", strikethrough.value);
         
-        System.out.println(nbt);
-        
         PacketHandler.sendPacketToServer(new PacketUpdateStructureFromClient(typeWriter.getStructureLocation(), nbt));
         
         super.onClosed();
@@ -285,11 +283,11 @@ public class SubGuiTypeWriter extends SubGui {
                 try {
                     input.text = path;
                 } catch (Exception e) {
-                
+                    
                 }
             }
         });
-                
+        
         GuiComboBox contextBox = (GuiComboBox) get("fontType");
         String font = contextBox.getCaption();
         GuiAnalogeSlider rotation = (GuiAnalogeSlider) get("rotation");
@@ -330,7 +328,6 @@ public class SubGuiTypeWriter extends SubGui {
         });
         
         GuiTutorialBox boxx = new GuiTutorialBox("ih", -110, 0, 180, width, height);
-        System.out.println(((GuiColorPickerAlet) get("picker")).get("r"));
         GuiColorPickerAlet picker = ((GuiColorPickerAlet) get("picker"));
         boxx.tutorialMap
                 .add(new TutorialData(get("fontType"), "right", "Clicking on this will open a dropdown menu that lets you select the type of font your text will print with. You can add custom font(s) by going to your Minecraft directory, the same place you add mods too, and look for a folder called Fonts."));

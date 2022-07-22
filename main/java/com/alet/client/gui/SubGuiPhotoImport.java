@@ -386,7 +386,6 @@ public class SubGuiPhotoImport extends SubGui {
     }
     
     public void updatePhotoData() {
-        System.out.println("update?");
         GuiLongTextField file = (GuiLongTextField) get("file");
         GuiTextfield imageWidth = (GuiTextfield) get("imageWidth");
         GuiTextfield imageHeight = (GuiTextfield) get("imageHeight");

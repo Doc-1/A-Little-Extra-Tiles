@@ -16,15 +16,18 @@ import com.alet.client.container.SubContainerAnimatorWorkbench;
 import com.alet.client.container.SubContainerBasic;
 import com.alet.client.container.SubContainerBlock;
 import com.alet.client.container.SubContainerFillingCabinet;
+import com.alet.client.container.SubContainerItemScanner;
 import com.alet.client.container.SubContainerPhotoImport;
 import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiAnimatorsWorkbench;
 import com.alet.client.gui.SubGuiBlock;
 import com.alet.client.gui.SubGuiFillingCabinet;
+import com.alet.client.gui.SubGuiItemScanner;
 import com.alet.client.gui.SubGuiMagnitudeComparator;
 import com.alet.client.gui.SubGuiManual;
 import com.alet.client.gui.SubGuiMicroProcessor;
 import com.alet.client.gui.SubGuiPhotoImport;
+import com.alet.client.gui.SubGuiSignalEventsALET;
 import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
 import com.alet.client.sounds.SoundsHandler;
@@ -54,8 +57,10 @@ import com.alet.common.structure.type.premade.LittleFillingCabinet;
 import com.alet.common.structure.type.premade.LittlePhotoImporter;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.structure.type.premade.PickupItemPremade;
+import com.alet.common.structure.type.premade.signal.LittleCircuitClock;
 import com.alet.common.structure.type.premade.signal.LittleCircuitMicroprocessor;
 import com.alet.common.structure.type.premade.signal.LittleCircuitTFlipFlop;
+import com.alet.common.structure.type.premade.signal.LittleCircuitTransformer;
 import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator4;
 import com.alet.common.structure.type.premade.signal.LittleSignalColoredDisplay;
 import com.alet.common.structure.type.premade.signal.LittleSignalInputQuick;
@@ -65,6 +70,7 @@ import com.alet.common.structure.type.premade.signal.LittleSignalOutputQuick.Lit
 import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemExport;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
+import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemLittleManual;
@@ -79,9 +85,12 @@ import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.attribute.LittleStructureAttribute;
+import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
+import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
 import com.creativemd.littletiles.common.structure.registry.StructureIngredientRule.StructureIngredientScalerVolume;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalMode;
@@ -344,6 +353,34 @@ public class ALET {
                 return new SubContainerAnimatorWorkbench(player, (LittleAnimatorBench) structure);
             }
         });
+        GuiHandler.registerGuiHandler("signal_interface", new LittleStructureGuiHandler() {
+            @Override
+            public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+                try {
+                    LittleStructure parent = structure.getParent().getStructure();
+                    GuiSignalEventsButton button = new GuiSignalEventsButton("", 0, 0, parent.getPreviews(parent.getPos()), parent, parent.type);
+                    return new SubGuiSignalEventsALET(button);
+                } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+                return null;
+            }
+            
+            @Override
+            public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+                return new SubContainerBasic(player);
+            }
+        });
+        GuiHandler.registerGuiHandler("item_scanner", new LittleStructureGuiHandler() {
+            
+            @Override
+            public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+                return new SubGuiItemScanner((LittleTransferItemScanner) structure);
+            }
+            
+            @Override
+            public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+                return new SubContainerItemScanner(player);
+            }
+        });
         LittleStructureRegistry
                 .registerStructureType("allows_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class)
                 .addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
@@ -449,6 +486,42 @@ public class ALET {
                 .addOutput("drop", 16, SignalMode.EQUAL, true);
         LittleStructurePremade.registerPremadeStructureType("item_import", ALET.MODID, LittleTransferItemImport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
                 .addOutput("block", 16, SignalMode.EQUAL, true);
+        
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_10hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_5hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_2hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_1hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("item_scanner", ALET.MODID, LittleTransferItemScanner.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("32_to_16_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("16_to_4_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("4_to_1_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("16_to_32_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("4_to_16_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("1_to_4_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
         /*
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_simple", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))

@@ -3,38 +3,41 @@ package com.alet.common.structure.type.premade.signal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.common.util.StructureUtils;
 import com.creativemd.creativecore.client.rendering.RenderBox;
 import com.creativemd.creativecore.common.utils.math.RotationUtils;
 import com.creativemd.creativecore.common.utils.math.box.AlignedBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
-import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.littletiles.LittleTiles;
+import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.client.render.tile.LittleRenderBox;
-import com.creativemd.littletiles.common.block.BlockTile;
+import com.creativemd.littletiles.common.action.LittleActionException;
+import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.directional.StructureDirectional;
-import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
-import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.relative.StructureRelative;
 import com.creativemd.littletiles.common.structure.signal.component.SignalComponentType;
-import com.creativemd.littletiles.common.structure.type.door.LittleDoorActivator;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
-import com.creativemd.littletiles.common.tile.math.location.StructureLocation;
+import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.place.PlacePreview;
 import com.creativemd.littletiles.common.tile.place.PlacePreviewFacing;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
-import com.creativemd.littletiles.common.tileentity.TileEntityLittleTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.vec.SurroundingBox;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -52,76 +55,77 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
     }
     
     @Override
-    public void tick() {
-        
-        World worldIn = this.getWorld();
-        if (!worldIn.isRemote) {
-            if (listeningStructure != null) {
-                if (!listeningStructure.isStillAvailable()) {
-                    this.updateState(new boolean[] { false });
-                    listeningStructure = null;
-                } else if (listeningStructure instanceof LittleDoorActivator) {
-                    LittleDoorActivator door = (LittleDoorActivator) listeningStructure;
-                    if (door.opened)
-                        this.updateState(new boolean[] { true });
-                    else
-                        this.updateState(new boolean[] { false });
-                } else
-                    this.updateState(new boolean[] { false });
-            }
-        }
+    protected void afterPlaced() {
+        findConnection();
     }
     
     @Override
-    public void neighbourChanged() {
-        super.neighbourChanged();
-        World worldIn = this.getWorld();
-        if (!worldIn.isRemote) {
-            LittleBox box = this.frame.getBox();
-            if (location == null) {
-                StructureLocation sLoc = this.getStructureLocation();
-                this.location = new BlockPos(sLoc.pos.getX(), sLoc.pos.getY(), sLoc.pos.getZ());
+    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+        if (this.getParent() == null) {
+            findConnection();
+            if (listeningStructure != null) {
+                if (StructureUtils.mergeChildToStructure(this, listeningStructure, true, worldIn, pos, new LittleVec(0, 0, 0), side, playerIn))
+                    playerIn.sendStatusMessage(new TextComponentString("Connection was succesful, right to open interface."), true);
+                
             }
-            if (this.facing.equals(EnumFacing.WEST)) {
-                if (box.maxX >= (this.frame.getContext().size + 1)) {
-                    box.maxX = 1;
-                    box.minX = 0;
-                    location = location.east();
-                }
-            } else if (this.facing.equals(EnumFacing.EAST)) {
-                if (box.minX <= -1) {
-                    box.maxX = 32;
-                    box.minX = 31;
-                    location = location.west();
-                }
-            } else if (this.facing.equals(EnumFacing.NORTH)) {
-                if (box.maxZ >= (this.frame.getContext().size + 1)) {
-                    box.maxZ = 1;
-                    box.minZ = 0;
-                    location = location.south();
-                }
-            } else if (this.facing.equals(EnumFacing.SOUTH)) {
-                if (box.minZ <= -1) {
-                    box.maxZ = 32;
-                    box.minZ = 31;
-                    location = location.north();
-                }
-            }
-            TileEntityLittleTiles te = BlockTile.loadTe(worldIn, location);
-            if (te != null)
-                for (IStructureTileList s : te.structures()) {
-                    try {
-                        if (!s.getStructure().equals(this))
-                            for (Pair<IStructureTileList, LittleTile> pair : s.getStructure().tiles()) {
-                                if (LittleBox.intersectsWith(box, pair.value.getBox())) {
-                                    listeningStructure = s.getStructure();
-                                    break;
-                                }
-                            }
-                    } catch (CorruptedConnectionException | NotYetConnectedException e) {}
-                }
         }
-        
+        if (!playerIn.isSneaking()) {
+            if (!worldIn.isRemote && this.getParent() != null)
+                LittleStructureGuiHandler.openGui("signal_interface", new NBTTagCompound(), playerIn, this);
+        } else if (this.getParent() != null) {
+            if (StructureUtils.removeThisDynamicChild(this))
+                playerIn.sendStatusMessage(new TextComponentString("Connection succesfully disconnected."), true);
+            else
+                playerIn.sendStatusMessage(new TextComponentString("Connection failed to disconnected."), true);
+            //   System.out.println(SignalingUtils.randState(4));
+        }
+        return true;
+    }
+    
+    public void findConnection() {
+        World worldIn = this.getWorld();
+        LittleBox box = this.frame.getBox();
+        if (location == null) {
+            this.location = new BlockPos(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
+        }
+        if (this.facing.equals(EnumFacing.WEST)) {
+            if (box.maxX >= (this.frame.getContext().size + 1)) {
+                box.maxX = 1;
+                box.minX = 0;
+                location = location.east();
+            }
+        } else if (this.facing.equals(EnumFacing.EAST)) {
+            if (box.minX <= -1) {
+                box.maxX = 32;
+                box.minX = 31;
+                location = location.west();
+            }
+        } else if (this.facing.equals(EnumFacing.NORTH)) {
+            if (box.maxZ >= (this.frame.getContext().size + 1)) {
+                box.maxZ = 1;
+                box.minZ = 0;
+                location = location.south();
+            }
+        } else if (this.facing.equals(EnumFacing.SOUTH)) {
+            if (box.minZ <= -1) {
+                box.maxZ = 32;
+                box.minZ = 31;
+                location = location.north();
+            }
+        } else if (this.facing.equals(EnumFacing.UP)) {
+            if (box.minY <= -1) {
+                box.maxY = 32;
+                box.minY = 31;
+                location = location.down();
+            }
+        } else if (this.facing.equals(EnumFacing.DOWN)) {
+            if (box.minY >= (this.frame.getContext().size + 1)) {
+                box.maxY = 1;
+                box.minY = 0;
+                location = location.up();
+            }
+        }
+        listeningStructure = StructureUtils.getStructureAt(worldIn, box, location, this);
     }
     
     @Override
@@ -154,7 +158,30 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
     @Override
     @SideOnly(Side.CLIENT)
     public void render(SurroundingBox box, LittleBox overallBox, List<LittleRenderBox> cubes) {
-        super.render(box, overallBox, cubes);
+        for (int i = 0; i < faces.length; i++) {
+            if (faces[i] == null)
+                continue;
+            
+            int distance = faces[i].distance;
+            EnumFacing facing = getFacing(i);
+            
+            Axis axis = facing.getAxis();
+            Axis one = RotationUtils.getOne(axis);
+            Axis two = RotationUtils.getTwo(axis);
+            boolean positive = facing.getAxisDirection() == AxisDirection.POSITIVE;
+            LittleGridContext context = faces[i].context;
+            
+            LittleBox renderBox = overallBox.copy();
+            
+            if (box.getContext().size > context.size) {
+                distance *= box.getContext().size / context.size;
+                context = box.getContext();
+            } else if (context.size > box.getContext().size)
+                renderBox.convertTo(box.getContext(), context);
+            
+            renderFace(facing, context, renderBox, distance, axis, one, two, positive, faces[i].oneSidedRenderer, cubes);
+        }
+        
         AlignedBox structureBox = new AlignedBox(overallBox.getBox(box.getContext()));
         LittleRenderBox block = (LittleRenderBox) new LittleRenderBox(structureBox, null, LittleTiles.dyeableBlock, 0).setColor(color);
         block.allowOverlap = true;
@@ -224,7 +251,6 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
         top.setMin(two, top.getMax(two) - sizeTwoInside * middlePart);
         
         cubes.add(top);
-        
     }
     
     @SideOnly(Side.CLIENT)
