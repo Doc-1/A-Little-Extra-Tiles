@@ -9,12 +9,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.client.gui.controls.GuiTree;
-import com.alet.client.gui.controls.GuiTreePart;
-import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.menu.GuiMenu;
-import com.alet.client.gui.controls.menu.GuiMenuBar;
-import com.alet.client.gui.controls.menu.GuiMenuItem;
+import com.alet.client.gui.controls.menu.GuiMenuPart;
+import com.alet.client.gui.controls.menu.GuiPopupMenu;
+import com.alet.client.gui.controls.menu.GuiTree;
+import com.alet.client.gui.controls.menu.GuiTreePart;
+import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -54,17 +54,7 @@ public class SubGuiFillingCabinet extends SubGui {
     @Override
     public void createControls() {
         SubContainer contain = this.container;
-        GuiMenuBar menuBar = new GuiMenuBar("menuBar");
-        GuiMenu test = new GuiMenu("Test");
-        test.add(new GuiMenuItem("Hello"));
-        GuiMenu comma = new GuiMenu(",");
-        comma.add(new GuiMenuItem("bla"));
-        test.add(comma);
-        test.add(new GuiMenuItem("World"));
-        menuBar.add(test);
-        menuBar.add(new GuiMenu("Testing"));
-        menuBar.add(new GuiMenu("Test"));
-        menuBar.addMenuTo(this);
+        
         /*
         file.add(new GuiMenuItem("New"));
         GuiMenuItem openRecent = new GuiMenuItem("Open-Recent");
@@ -84,6 +74,20 @@ public class SubGuiFillingCabinet extends SubGui {
         menuBar.setGuiParent(this);*/
         GuiScrollBox scrollBox = new GuiScrollBox("scrollBox", 0, 15, 210, 222);
         
+        List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
+        listOfMenus.add(new GuiMenuPart("New", EnumPartType.Leaf));
+        listOfMenus.add(new GuiMenuPart("Save", EnumPartType.Leaf));
+        listOfMenus.add(new GuiMenuPart("Recent Files", EnumPartType.Branch).addMenu(new GuiMenuPart("Build_01.txt", EnumPartType.Leaf))
+                .addMenu(new GuiMenuPart("Build_02.txt", EnumPartType.Leaf)).addMenu(new GuiMenuPart("Build_03.txt", EnumPartType.Leaf))
+                .addMenu(new GuiMenuPart("Build_04.txt", EnumPartType.Leaf)).addMenu(new GuiMenuPart("Build_05.txt", EnumPartType.Leaf))
+                .addMenu(new GuiMenuPart("Build_06.txt", EnumPartType.Leaf)));
+        listOfMenus.add(new GuiMenuPart("Edit", EnumPartType.Leaf));
+        listOfMenus.add(new GuiMenuPart("Menu", EnumPartType.Branch).addMenu(new GuiMenuPart("Sub1", EnumPartType.Branch)
+                .addMenu(new GuiMenuPart("Sub2", EnumPartType.Branch).addMenu(new GuiMenuPart("otherSub3", EnumPartType.Branch).addMenu(new GuiMenuPart("Hello", EnumPartType.Leaf))
+                        .addMenu(new GuiMenuPart("Sub4", EnumPartType.Branch).addMenu(new GuiMenuPart("Goodbye", EnumPartType.Leaf)))))));
+        GuiMenu menu = new GuiMenu("", 0, 0, 500, listOfMenus);
+        menu.height = 500;
+        this.addControl(new GuiPopupMenu("pop", menu, 0, 0, 0, 0));
         GuiTree tree = new GuiTree("list", 0, 0, 210, listOfRoots, true, 0, 0, 116);
         scrollBox.addControl(tree);
         tree.height = (tree.listOfParts.size() * 14) + 25;
@@ -111,7 +115,7 @@ public class SubGuiFillingCabinet extends SubGui {
                         if (!f1.exists())
                             f1.createNewFile();
                         else {
-                        
+                            
                         }
                         BufferedWriter writer = new BufferedWriter(new FileWriter("./little_structures/" + text.text + ".txt"));
                         writer.write(StructureStringUtils.exportStructure(stack));
@@ -136,7 +140,7 @@ public class SubGuiFillingCabinet extends SubGui {
                         
                     }
                 } catch (NBTException e) {
-                
+                    
                 }
             }
         });

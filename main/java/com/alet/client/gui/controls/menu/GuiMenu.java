@@ -1,19 +1,60 @@
 package com.alet.client.gui.controls.menu;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class GuiMenu extends GuiMenuItem {
+import com.creativemd.creativecore.common.gui.GuiRenderHelper;
+
+public class GuiMenu extends GuiTree {
     
-    public List<GuiMenuItem> listOfItems = new ArrayList<GuiMenuItem>();
-    
-    public GuiMenu(String name) {
-        super(name);
+    public GuiMenu(String name, int x, int y, int width, List<GuiTreePart> listOfRoots) {
+        super(name, x, y, width, listOfRoots, false, 0, 0, 0);
     }
     
-    public void add(GuiMenuItem item) {
-        listOfItems.add(item);
-        item.parent = this;
+    @Override
+    public void createRootControls() {
+        int maxWidth = 0;
+        for (int i = 0; i < listOfRoots.size(); i++) {
+            GuiTreePart root = listOfRoots.get(i);
+            int add = 0;
+            if (root.type.canHold())
+                add = 15;
+            maxWidth = Math.max(maxWidth, GuiRenderHelper.instance.getStringWidth(root.caption) + 6 + add);
+            
+        }
+        for (int i = 0; i < listOfRoots.size(); i++) {
+            GuiTreePart root = listOfRoots.get(i);
+            root.posY = (14 * i) + 20;
+            root.originPosY = new Integer(root.posY);
+            root.width = maxWidth;
+            addControl(root);
+        }
     }
     
+    @Override
+    public void allButtons(GuiTreePart root, int j) {
+        for (int i = 0; i < root.listOfParts.size(); i++) {
+            GuiTreePart part = root.listOfParts.get(i);
+            if (!part.isRoot) {
+                part.posY = (14 * (i)) + root.posY;
+                part.posX = root.width + root.posX;
+                if (part.type.canHold())
+                    part.width += 9;
+                if (!part.flag) {
+                    part.originPosX = new Integer(part.posX);
+                    part.originPosY = new Integer(part.posY);
+                    part.flag = true;
+                }
+            }
+            part.heldInID = Integer.parseInt(root.name);
+            part.name = indexPos++ + "";
+            part.tree = this;
+            listOfParts.add(part);
+            if (part.listOfParts != null && !part.listOfParts.isEmpty()) {
+                allButtons(part, j);
+            }
+        }
+    }
+    
+    @Override
+    public void updatePartsPosition() {}
 }

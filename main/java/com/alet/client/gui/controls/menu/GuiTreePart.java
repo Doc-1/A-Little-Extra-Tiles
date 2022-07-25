@@ -1,4 +1,4 @@
-package com.alet.client.gui.controls;
+package com.alet.client.gui.controls.menu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class GuiTreePart extends GuiControl {
     public List<GuiTreePart> listOfParts = new ArrayList<GuiTreePart>();
     public List<String> listOfSearchKeywords = new ArrayList<String>();
     GuiTreePart branchHeldIn;
-    private boolean isOpened = false;
+    protected boolean isOpened = false;
     boolean isRoot = false;
     int heldInID;
     public final String CAPTION;
@@ -37,7 +37,8 @@ public class GuiTreePart extends GuiControl {
     public int tempPosX;
     
     public boolean selected = false;
-    public final Style SELECTED_DISPLAY = new Style("selected", new ColoredDisplayStyle(50, 50, 50), new ColoredDisplayStyle(145, 201, 247), new ColoredDisplayStyle(145, 201, 247), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100));
+    public static final Style SELECTED_DISPLAY = new Style("SELECTED", new ColoredDisplayStyle(50, 50, 50), new ColoredDisplayStyle(145, 201, 247), new ColoredDisplayStyle(145, 201, 247), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100));
+    public static final Style DISPLAY = new Style("DISPLAY", new ColoredDisplayStyle(240, 240, 240), new ColoredDisplayStyle(240, 240, 240), new ColoredDisplayStyle(145, 201, 247), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100));
     
     public EnumPartType type;
     
@@ -307,7 +308,18 @@ public class GuiTreePart extends GuiControl {
             branch = branch.branchHeldIn;
             list.add(branch);
         }
+        if (list.isEmpty()) {
+            list.add(this);
+        }
         return list;
+    }
+    
+    public boolean hasBranchInBranchesDown(GuiTreePart branch) {
+        for (GuiTreePart part : this.getListOfBranchesDown()) {
+            if (branch.equals(part))
+                return true;
+        }
+        return false;
     }
     
     public boolean isInSameBranch(GuiTreePart part) {
@@ -353,10 +365,8 @@ public class GuiTreePart extends GuiControl {
             if (this.listOfParts != null && !this.listOfParts.isEmpty()) {
                 if (this.type.isOpenable()) {
                     if (!isOpened) {
-                        this.isOpened = true;
                         this.openMenus();
                     } else {
-                        this.isOpened = false;
                         this.closeMenus();
                     }
                     tree.updatePartsPosition();
@@ -376,6 +386,7 @@ public class GuiTreePart extends GuiControl {
     }
     
     public void openMenus() {
+        this.isOpened = true;
         for (int i = 0; i < this.listOfParts.size(); i++) {
             GuiTreePart button = this.listOfParts.get(i);
             if (!button.type.openable)
@@ -392,8 +403,9 @@ public class GuiTreePart extends GuiControl {
     }
     
     public void closeMenus() {
+        this.isOpened = false;
         List controls = tree.getControls();
-        for (GuiTreePart button : this.listOfParts) {
+        for (GuiTreePart button : tree.listOfParts) {
             if (button.isBranch()) {
                 button.closeMenus();
             }
@@ -403,7 +415,6 @@ public class GuiTreePart extends GuiControl {
     
     public void onDoubleClick() {
         if (this.type.equals(EnumPartType.Searched)) {
-            System.out.println(this.heldInID + " " + this.CAPTION);
             tree.wipePartControls();
             tree.createRootControls();
             tree.openTitles();

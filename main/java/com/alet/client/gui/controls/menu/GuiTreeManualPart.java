@@ -1,4 +1,4 @@
-package com.alet.client.gui.controls;
+package com.alet.client.gui.controls.menu;
 
 public abstract class GuiTreeManualPart extends GuiTreePart {
     

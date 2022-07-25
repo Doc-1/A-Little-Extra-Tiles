@@ -1,4 +1,4 @@
-package com.alet.client.gui.controls;
+package com.alet.client.gui.controls.menu;
 
 import com.alet.client.gui.SubGuiManual;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;

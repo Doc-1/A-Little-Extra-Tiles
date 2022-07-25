@@ -1,4 +1,4 @@
-package com.alet.client.gui.controls;
+package com.alet.client.gui.controls.menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import com.alet.client.gui.controls.GuiTreePart.EnumPartType;
+import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
@@ -17,12 +17,20 @@ public class GuiTree extends GuiParent {
     public List<GuiTreePart> listOfRoots;
     public List<GuiTreePart> listOfParts = new ArrayList<GuiTreePart>();
     public List<GuiTreePart> listOfPartsSearched = new ArrayList<GuiTreePart>();
-    public Map<GuiTreePart, GuiTreePart> mapOfRootToSubTrees = new HashMap<GuiTreePart, GuiTreePart>();
-    private int indexPos = 0;
+    protected int indexPos = 0;
     public boolean useSearchBar;
     int searchBarX;
     int searchBarY;
     int searchBarWidth;
+    
+    public GuiTree(String name, int x, int y, int width, List<GuiTreePart> listOfRoots) {
+        super(name, x, y, width, 320);
+        this.useSearchBar = false;
+        this.searchBarX = 0;
+        this.searchBarY = 0;
+        this.searchBarWidth = 0;
+        this.listOfRoots = listOfRoots;
+    }
     
     public GuiTree(String name, int x, int y, int width, List<GuiTreePart> listOfRoots, boolean useSearchBar, int searchBarX, int searchBarY, int searchBarWidth) {
         super(name, x, y, width, 320);
@@ -135,6 +143,13 @@ public class GuiTree extends GuiParent {
         removeControls("search");
     }
     
+    public void closeAllMenus() {
+        for (GuiTreePart part : this.listOfParts) {
+            if (part.type.canHold())
+                part.closeMenus();
+        }
+    }
+    
     public void openTo(GuiTreePart check) {
         do {
             GuiTreePart heldInPart = this.listOfParts.get(check.heldInID);
@@ -169,8 +184,6 @@ public class GuiTree extends GuiParent {
             if (!part.isRoot) {
                 part.posY = (14 * (i + 1)) + root.posY;
                 part.posX = 14 + root.posX;
-                if (part.isBranch())
-                    part.posX = 14 + root.posX;
                 if (!part.flag) {
                     part.originPosX = new Integer(part.posX);
                     part.originPosY = new Integer(part.posY);

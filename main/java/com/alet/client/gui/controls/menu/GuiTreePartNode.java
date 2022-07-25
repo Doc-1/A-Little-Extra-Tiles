@@ -1,4 +1,4 @@
-package com.alet.client.gui.controls;
+package com.alet.client.gui.controls.menu;
 
 import com.alet.client.gui.controls.programmer.blueprints.GuiBluePrintNode;
 
