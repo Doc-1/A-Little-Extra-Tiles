@@ -97,8 +97,6 @@ public class LittleTriggerModifyMotion extends LittleTriggerEvent {
             double totalX = 0;
             double totalY = this.yStrength;
             double totalZ = 0;
-            float rotationYawA = entity.rotationYaw;
-            float rotationYawB = entity.rotationYaw;
             
             double x1 = -MathHelper.sin((entity.rotationYaw) / 180.0F * (float) Math.PI) * this.forward;
             double z1 = MathHelper.cos((entity.rotationYaw) / 180.0F * (float) Math.PI) * this.forward;

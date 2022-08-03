@@ -43,7 +43,6 @@ public class StructureUtils {
                 try {
                     if (!s.getStructure().equals(self))
                         for (Pair<IStructureTileList, LittleTile> pair : s.getStructure().tiles()) {
-                            System.out.println(pair.value.getBox());
                             if (LittleBox.intersectsWith(box, pair.value.getBox())) {
                                 return s.getStructure();
                             }
@@ -53,6 +52,10 @@ public class StructureUtils {
         return null;
     }
     
+    /*
+     * [0,26,0 -> 32,28,32] [0,26,0 -> 32,32,32]
+       [10,8,10 -> 22,10,22] [0,0,0 -> 16,13,16]
+     */
     public static LittlePreviews addChildToStructure(LittleStructure child, LittleStructure parent, boolean dynamic) {
         if (parent == null || child == null)
             return null;

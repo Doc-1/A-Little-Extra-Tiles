@@ -11,6 +11,7 @@ import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class GuiMenuPart extends GuiTreePart {
+    boolean seprateLine = false;
     
     public GuiMenuPart(GuiTreePart part) {
         super(part);
@@ -21,23 +22,39 @@ public class GuiMenuPart extends GuiTreePart {
         super(part, type);
     }
     
-    public GuiMenuPart(String caption, EnumPartType type) {
-        super(caption, type);
+    public GuiMenuPart(String name, String caption, EnumPartType type) {
+        super(name, caption, type);
+    }
+    
+    public GuiMenuPart(String name, String caption, EnumPartType type, boolean seprateLine) {
+        super(name, caption, type);
+        this.seprateLine = seprateLine;
     }
     
     @Override
     protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
         GlStateManager.pushMatrix();
         font.drawString(caption, 0, 0, ColorUtils.BLACK);
+        if (seprateLine)
+            helper.drawRect(0, 10, this.width - 6, 11, ColorUtils.BLACK);
+        
         if (this.type.canHold()) {
             font.drawString(">", this.width - 10, 0, ColorUtils.BLACK);
         }
         GlStateManager.popMatrix();
+        
+    }
+    
+    @Override
+    protected void renderBackground(GuiRenderHelper helper, Style style) {
+        super.renderBackground(helper, style);
+        helper.drawRect(this.width - 1, 0, this.width + 1, 14, ColorUtils.RGBAToInt(60, 60, 60, 255));
+        helper.drawRect(0, this.height - 1, this.width + 1, this.height + 1, ColorUtils.RGBAToInt(60, 60, 60, 255));
+        
     }
     
     @Override
     public boolean mousePressed(int x, int y, int button) {
-        System.out.println(isMouseOver());
         return super.mousePressed(x, y, button);
     }
     
@@ -76,16 +93,24 @@ public class GuiMenuPart extends GuiTreePart {
     @Override
     public void openMenus() {
         this.isOpened = true;
+        int maxWidth = 0;
+        for (int i = 0; i < this.listOfParts.size(); i++) {
+            GuiTreePart root = listOfParts.get(i);
+            int add = 0;
+            if (root.type.canHold())
+                add = 15;
+            maxWidth = Math.max(maxWidth, GuiRenderHelper.instance.getStringWidth(root.caption) + 6 + add);
+            
+        }
         for (int i = 0; i < this.listOfParts.size(); i++) {
             GuiTreePart button = this.listOfParts.get(i);
-            if (!button.type.isOpenable())
-                button.width = GuiRenderHelper.instance.getStringWidth(button.caption) + 5;
-            else
-                button.width = GuiRenderHelper.instance.getStringWidth(button.caption) + 15;
+            button.width = maxWidth;
             if (!button.isRoot) {
                 tree.addControl(button);
             }
+            button.moveControlToTop();
         }
+        
     }
     
     @Override

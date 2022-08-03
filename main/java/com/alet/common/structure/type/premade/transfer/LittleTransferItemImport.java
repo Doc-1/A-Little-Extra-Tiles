@@ -3,8 +3,6 @@ package com.alet.common.structure.type.premade.transfer;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.vecmath.Vector3f;
-
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.structure.directional.StructureDirectional;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
@@ -31,9 +29,6 @@ public class LittleTransferItemImport extends LittleStructurePremade {
     
     @StructureDirectional
     public EnumFacing facing;
-    
-    @StructureDirectional
-    public Vector3f topRight;
     
     public boolean added = false;
     

@@ -11,6 +11,7 @@ import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 
 public class GuiTree extends GuiParent {
     
@@ -57,6 +58,7 @@ public class GuiTree extends GuiParent {
     
     public void replaceTree(List<GuiTreePart> listOfRoots) {
         this.listOfRoots = listOfRoots;
+        this.removeControls("");
         createRootControls();
         createSearchControls();
         allButtons();
@@ -190,6 +192,7 @@ public class GuiTree extends GuiParent {
                     part.flag = true;
                 }
             }
+            
             part.heldInID = Integer.parseInt(root.name);
             part.name = indexPos++ + "";
             part.tree = this;
@@ -257,6 +260,12 @@ public class GuiTree extends GuiParent {
         for (Entry<GuiTreePart, Integer> entry : movePartBy.entrySet()) {
             entry.getKey().posY = entry.getKey().originPosY + (14 * entry.getValue());
         }
+    }
+    
+    @Override
+    public boolean mousePressed(int x, int y, int button) {
+        this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
+        return super.mousePressed(x, y, button);
     }
     
     @Override

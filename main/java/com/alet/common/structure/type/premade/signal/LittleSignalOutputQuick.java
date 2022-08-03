@@ -9,7 +9,6 @@ import com.creativemd.creativecore.common.utils.math.RotationUtils;
 import com.creativemd.creativecore.common.utils.math.box.AlignedBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.client.render.tile.LittleRenderBox;
 import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
@@ -31,7 +30,6 @@ import com.creativemd.littletiles.common.util.vec.SurroundingBox;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
@@ -48,7 +46,9 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
     public StructureRelative frame;
     
     private BlockPos location;
-    private LittleStructure listeningStructure;
+    
+    private LittleStructure listeningInputStructure;
+    private LittleStructure listeningOutputStructure;
     
     public LittleSignalOutputQuick(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -63,21 +63,19 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
         if (this.getParent() == null) {
             findConnection();
-            if (listeningStructure != null) {
-                if (StructureUtils.mergeChildToStructure(this, listeningStructure, true, worldIn, pos, new LittleVec(0, 0, 0), side, playerIn))
+            if (listeningInputStructure != null) {
+                if (StructureUtils.mergeChildToStructure(this, listeningInputStructure, true, worldIn, pos, new LittleVec(0, 0, 0), side, playerIn))
                     playerIn.sendStatusMessage(new TextComponentString("Connection was succesful, right to open interface."), true);
                 
             }
         }
         if (!playerIn.isSneaking()) {
-            if (!worldIn.isRemote && this.getParent() != null)
-                LittleStructureGuiHandler.openGui("signal_interface", new NBTTagCompound(), playerIn, this);
+            
         } else if (this.getParent() != null) {
             if (StructureUtils.removeThisDynamicChild(this))
                 playerIn.sendStatusMessage(new TextComponentString("Connection succesfully disconnected."), true);
             else
                 playerIn.sendStatusMessage(new TextComponentString("Connection failed to disconnected."), true);
-            //   System.out.println(SignalingUtils.randState(4));
         }
         return true;
     }
@@ -90,42 +88,36 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
         }
         if (this.facing.equals(EnumFacing.WEST)) {
             if (box.maxX >= (this.frame.getContext().size + 1)) {
-                box.maxX = 1;
-                box.minX = 0;
+                
                 location = location.east();
             }
         } else if (this.facing.equals(EnumFacing.EAST)) {
             if (box.minX <= -1) {
-                box.maxX = 32;
-                box.minX = 31;
+                
                 location = location.west();
             }
         } else if (this.facing.equals(EnumFacing.NORTH)) {
             if (box.maxZ >= (this.frame.getContext().size + 1)) {
-                box.maxZ = 1;
-                box.minZ = 0;
+                
                 location = location.south();
             }
         } else if (this.facing.equals(EnumFacing.SOUTH)) {
             if (box.minZ <= -1) {
-                box.maxZ = 32;
-                box.minZ = 31;
+                
                 location = location.north();
             }
         } else if (this.facing.equals(EnumFacing.UP)) {
             if (box.minY <= -1) {
-                box.maxY = 32;
-                box.minY = 31;
+                
                 location = location.down();
             }
         } else if (this.facing.equals(EnumFacing.DOWN)) {
             if (box.minY >= (this.frame.getContext().size + 1)) {
-                box.maxY = 1;
-                box.minY = 0;
+                
                 location = location.up();
             }
         }
-        listeningStructure = StructureUtils.getStructureAt(worldIn, box, location, this);
+        listeningInputStructure = StructureUtils.getStructureAt(worldIn, box, location, this);
     }
     
     @Override

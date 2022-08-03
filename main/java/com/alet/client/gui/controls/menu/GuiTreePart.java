@@ -54,7 +54,7 @@ public class GuiTreePart extends GuiControl {
     }
     
     public GuiTreePart(GuiTreePart part, EnumPartType type) {
-        this(part.caption, type);
+        this("", part.caption, type);
         this.heldInID = part.heldInID;
         this.name = part.name;
         this.posX = part.posX;
@@ -66,11 +66,15 @@ public class GuiTreePart extends GuiControl {
         this.tree = part.tree;
     }
     
-    public GuiTreePart(String caption, EnumPartType type) {
-        super("", 0, 0, GuiRenderHelper.instance.getStringWidth(caption), 8);
+    public GuiTreePart(String name, String caption, EnumPartType type) {
+        super(name, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), 8);
         this.caption = caption;
         this.CAPTION = caption;
         this.type = type;
+    }
+    
+    public GuiTreePart(String caption, EnumPartType type) {
+        this("", caption, type);
     }
     
     public GuiTreePart addMenu(GuiTreePart button) {
@@ -80,7 +84,11 @@ public class GuiTreePart extends GuiControl {
     }
     
     public GuiTreePart getBranchThisIsIn() {
-        return this.tree.listOfParts.get(this.getBranchIDThisIsIn());
+        GuiTreePart part = this.tree.listOfParts.get(this.getBranchIDThisIsIn());
+        if (part.equals(this))
+            return null;
+        else
+            return part;
     }
     
     @Override
@@ -228,7 +236,6 @@ public class GuiTreePart extends GuiControl {
         int total = 0;
         int start = this.getPartID() + 1;
         if (start < tree.listOfParts.size()) {
-            GuiTreePart part0 = tree.listOfParts.get(start);
             for (int i = start; i < tree.numberOfAllParts(); i++) {
                 GuiTreePart part1 = tree.listOfParts.get(i);
                 if (this.isInSameBranch(part1)) {
@@ -240,9 +247,7 @@ public class GuiTreePart extends GuiControl {
     }
     
     public int getTotalOpenedBranchSize() {
-        int start = this.getPartID() + 1;
         int total = 0;
-        int end = start + this.getTotalBranchSize();
         for (GuiTreePart part : this.getListOfPartsUp()) {
             if (part.isInView()) {
                 total++;
@@ -308,18 +313,7 @@ public class GuiTreePart extends GuiControl {
             branch = branch.branchHeldIn;
             list.add(branch);
         }
-        if (list.isEmpty()) {
-            list.add(this);
-        }
         return list;
-    }
-    
-    public boolean hasBranchInBranchesDown(GuiTreePart branch) {
-        for (GuiTreePart part : this.getListOfBranchesDown()) {
-            if (branch.equals(part))
-                return true;
-        }
-        return false;
     }
     
     public boolean isInSameBranch(GuiTreePart part) {
@@ -365,8 +359,10 @@ public class GuiTreePart extends GuiControl {
             if (this.listOfParts != null && !this.listOfParts.isEmpty()) {
                 if (this.type.isOpenable()) {
                     if (!isOpened) {
+                        this.isOpened = true;
                         this.openMenus();
                     } else {
+                        this.isOpened = false;
                         this.closeMenus();
                     }
                     tree.updatePartsPosition();
@@ -386,7 +382,6 @@ public class GuiTreePart extends GuiControl {
     }
     
     public void openMenus() {
-        this.isOpened = true;
         for (int i = 0; i < this.listOfParts.size(); i++) {
             GuiTreePart button = this.listOfParts.get(i);
             if (!button.type.openable)
@@ -403,9 +398,8 @@ public class GuiTreePart extends GuiControl {
     }
     
     public void closeMenus() {
-        this.isOpened = false;
         List controls = tree.getControls();
-        for (GuiTreePart button : tree.listOfParts) {
+        for (GuiTreePart button : this.listOfParts) {
             if (button.isBranch()) {
                 button.closeMenus();
             }

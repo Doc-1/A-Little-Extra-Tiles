@@ -27,6 +27,7 @@ public class GuiMenu extends GuiTree {
             root.originPosY = new Integer(root.posY);
             root.width = maxWidth;
             addControl(root);
+            root.moveControlToTop();
         }
     }
     
@@ -37,8 +38,6 @@ public class GuiMenu extends GuiTree {
             if (!part.isRoot) {
                 part.posY = (14 * (i)) + root.posY;
                 part.posX = root.width + root.posX;
-                if (part.type.canHold())
-                    part.width += 9;
                 if (!part.flag) {
                     part.originPosX = new Integer(part.posX);
                     part.originPosY = new Integer(part.posY);

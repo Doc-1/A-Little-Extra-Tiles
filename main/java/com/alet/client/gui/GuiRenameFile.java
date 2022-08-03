@@ -11,28 +11,26 @@ import net.minecraft.util.text.TextFormatting;
 
 public class GuiRenameFile extends SubGui {
     
-    public String fileName;
+    public File file;
     public SubGuiFillingCabinet instance;
     
-    public GuiRenameFile(String fileName, SubGuiFillingCabinet instance) {
+    public GuiRenameFile(File file, SubGuiFillingCabinet instance) {
         super(200, 42);
-        this.fileName = fileName;
+        this.file = file;
         this.instance = instance;
     }
     
     @Override
     public void createControls() {
-        addControl(new GuiTextfield("filename", this.fileName, 0, 0, 194, 14));
+        addControl(new GuiTextfield("filename", file.getName(), 0, 0, 194, 14));
         addControl(new GuiButton("save", "Save", 144, 22, 50, 14) {
             
             @Override
             public void onClicked(int x, int y, int button) {
-                File d = new File("./little_structures/" + fileName);
-                if (d.exists()) {
+                if (file.exists()) {
                     GuiTextfield fileName = (GuiTextfield) this.getGui().get("filename");
-                    File f = new File("./little_structures/" + fileName.text);
-                    
-                    d.renameTo(f);
+                    File f = new File(file.getParent() + "\\" + fileName.text);
+                    file.renameTo(f);
                     instance.createTreeList();
                     instance.updateTree();
                     

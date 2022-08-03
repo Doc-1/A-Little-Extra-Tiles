@@ -120,8 +120,6 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         
         GlStateManager.pushMatrix();
         
-        //mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        //mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.alphaFunc(516, 0.1F);
         GlStateManager.enableBlend();
@@ -136,20 +134,17 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         Project.gluPerspective(90, (float) width / (float) height, 0.05F, 16 * 16);
         GlStateManager.matrixMode(5888);
         GlStateManager.loadIdentity();
-        //GlStateManager.matrixMode(5890);
-        GlStateManager.translate(0, 0, -distance.current());
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableDepth();
         Vector3d rotationCenter = new Vector3d(animation.center.rotationCenter);
         rotationCenter.y -= 75;
-        GlStateManager.translate(tranX.current() / 10, -tranY.current() / 10, 0);
-        GlStateManager.rotate((float) rotX.current(), 1, 0, 0);
-        GlStateManager.rotate((float) rotY.current(), 0, 1, 0);
-        GlStateManager.rotate((float) rotZ.current(), 0, 0, 1);
         
         GlStateManager.translate(-min.getPosX(context), -min.getPosY(context), -min.getPosZ(context));
         
-        GlStateManager.translate(-rotationCenter.x, -rotationCenter.y, -rotationCenter.z);
+        GlStateManager.rotate((float) rotX.current(), 1, 0, 0);
+        GlStateManager.rotate((float) rotY.current(), 0, 1, 0);
+        GlStateManager.rotate((float) rotZ.current(), 0, 0, 1);
+        GlStateManager.translate((tranX.current() / 6) - rotationCenter.x, (-tranY.current() / 6) - rotationCenter.y, -distance.current() - rotationCenter.z);
         
         GlStateManager.pushMatrix();
         

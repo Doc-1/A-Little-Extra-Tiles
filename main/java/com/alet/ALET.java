@@ -58,6 +58,7 @@ import com.alet.common.structure.type.premade.LittlePhotoImporter;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.structure.type.premade.PickupItemPremade;
 import com.alet.common.structure.type.premade.signal.LittleCircuitClock;
+import com.alet.common.structure.type.premade.signal.LittleCircuitDisplay16;
 import com.alet.common.structure.type.premade.signal.LittleCircuitMicroprocessor;
 import com.alet.common.structure.type.premade.signal.LittleCircuitTFlipFlop;
 import com.alet.common.structure.type.premade.signal.LittleCircuitTransformer;
@@ -71,6 +72,7 @@ import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemExport;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner;
+import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemLittleManual;
@@ -487,6 +489,9 @@ public class ALET {
         LittleStructurePremade.registerPremadeStructureType("item_import", ALET.MODID, LittleTransferItemImport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
                 .addOutput("block", 16, SignalMode.EQUAL, true);
         
+        LittleStructurePremade.registerPremadeStructureType("little_hopper", ALET.MODID, LittleTransferLittleHopper.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
+                .addOutput("drop", 1, SignalMode.EQUAL, true).addOutput("block", 1, SignalMode.EQUAL, true);
+        
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_10hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
@@ -498,9 +503,6 @@ public class ALET {
                 .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_1hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
-                .setNotSnapToGrid();
-        LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("item_scanner", ALET.MODID, LittleTransferItemScanner.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         
         LittleStructurePremade
@@ -522,6 +524,9 @@ public class ALET {
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("1_to_4_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("display_16", ALET.MODID, LittleCircuitDisplay16.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
         /*
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_simple", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
@@ -534,9 +539,7 @@ public class ALET {
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_advanced", ALET.MODID, LittleCircuitClockAdvanced.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid().setNotShowCreativeTab();
-        LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("display_16", ALET.MODID, LittleCircuitDisplay16.class, LittleStructureAttribute.TICKING, ALET.MODID))
-                .setNotSnapToGrid();
+        
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("colored_display_16", ALET.MODID, LittleCircuitColoredDisplay16.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
