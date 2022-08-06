@@ -10,9 +10,11 @@ import com.creativemd.littletiles.common.structure.exception.NotYetConnectedExce
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
+import com.creativemd.littletiles.common.tile.parent.IParentTileList;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.tileentity.TileEntityLittleTiles;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.Placement;
 import com.creativemd.littletiles.common.util.place.PlacementMode;
 import com.creativemd.littletiles.common.util.place.PlacementPreview;
@@ -21,6 +23,7 @@ import com.creativemd.littletiles.common.util.place.PlacementResult;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class StructureUtils {
@@ -35,24 +38,66 @@ public class StructureUtils {
      *            Can be null, if you are using this method inside a LittleStructure object you can provide this to this field. It will make sure it didn't find itself.
      * @return
      *         Returns the LittleStructure by first looking at the tiles inside a block then using box to find the exact structure located there. */
-    public static LittleStructure getStructureAt(World worldIn, LittleBox box, BlockPos pos, @Nullable LittleStructure self) {
-        BlockPos location = new BlockPos(pos.getX(), pos.getY(), pos.getZ());
-        TileEntityLittleTiles te = BlockTile.loadTe(worldIn, location);
+    public static LittleStructure getStructureAt(World worldIn, LittleBox box, Vec3d vec, @Nullable LittleStructure self) {
+        BlockPos pos = new BlockPos(vec);
+        TileEntityLittleTiles te = BlockTile.loadTe(worldIn, pos);
         if (te != null)
             for (IStructureTileList s : te.structures()) {
                 try {
-                    if (!s.getStructure().equals(self))
-                        for (Pair<IStructureTileList, LittleTile> pair : s.getStructure().tiles()) {
-                            if (LittleBox.intersectsWith(box, pair.value.getBox())) {
-                                return s.getStructure();
-                            }
+                    if (!s.getStructure().equals(self) && !s.getStructure().isChildOf(self)) {
+                        for (TileEntityLittleTiles block : s.getStructure().blocks()) {
+                            if (block.getPos().equals(pos))
+                                for (Pair<IParentTileList, LittleTile> pair : block.allTiles()) {
+                                    if ((!pair.key.getStructure().equals(self) && !pair.key.getStructure().isChildOf(self))) {
+                                        LittleBox copy = pair.value.getBox().copy();
+                                        System.out.println(box + " " + copy);
+                                        copy.convertTo(pair.key.getContext().size, 32);
+                                        if (intersectsWith(copy, box)) {
+                                            
+                                            return s.getStructure();
+                                        }
+                                        
+                                    }
+                                }
                         }
+                    }
                 } catch (CorruptedConnectionException | NotYetConnectedException e) {}
             }
         return null;
     }
     
+    public static void addOffset(LittleGridContext con, LittleBox box, Vec3d vec) {
+        
+        double x = vec.x - Math.floor(vec.x);
+        double y = vec.y - Math.floor(vec.y);
+        double z = vec.z - Math.floor(vec.z);
+        
+        box.maxX += con.toGrid(x);
+        box.maxY += con.toGrid(y);
+        box.maxZ += con.toGrid(z);
+        
+        box.minX -= con.toGrid(x);
+        box.minY -= con.toGrid(y);
+        box.minZ -= con.toGrid(z);
+    }
+    
+    public static boolean intersectsWith(LittleBox box, LittleBox box2) {
+        return box.maxX > box2.minX && box.minX < box2.maxX && box.maxY > box2.minY && box.minY < box2.maxY && box.maxZ > box2.minZ && box.minZ < box2.maxZ;
+    }
+    
     /*
+     * 
+     * 
+                            LittleAbsoluteBox absolute = new LittleAbsoluteBox(pos, pair.getValue().getBox(), s.getContext());
+                            System.out.println(box + " " + absolute.);
+                            System.out.println(LittleBox.intersectsWith(box, pair.value.getBox()));
+                            if (LittleBox.intersectsWith(box, pair.value.getBox())) {
+                                
+                                System.out.println(s.getStructure());
+                                return s.getStructure();
+                            }
+     * [0,15,0 -> 32,18,32] [0,7,0 -> 16,16,16]
+    true
      * [0,26,0 -> 32,28,32] [0,26,0 -> 32,32,32]
        [10,8,10 -> 22,10,22] [0,0,0 -> 16,13,16]
      */

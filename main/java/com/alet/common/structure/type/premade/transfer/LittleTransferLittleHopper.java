@@ -1,7 +1,7 @@
 package com.alet.common.structure.type.premade.transfer;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import com.alet.common.util.StructureUtils;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -29,8 +29,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
@@ -92,6 +92,7 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     
     public void findConnection() {
         World worldIn = this.getWorld();
+        
         LittleBox inputBox = this.input.getBox();
         LittleBox outputBox = this.output.getBox();
         if (inputLocation == null)
@@ -137,17 +138,65 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
                 inputLocation = inputLocation.up();
             }
         }
-        LittleStructure in = StructureUtils.getStructureAt(worldIn, inputBox, inputLocation, this);
-        LittleStructure out = StructureUtils.getStructureAt(worldIn, outputBox, outputLocation, this);
+        
+        double outX = this.output.getCenter().x;
+        double outY = this.output.getCenter().y;
+        double outZ = this.output.getCenter().z;
+        double inX = this.input.getCenter().x;
+        double inY = this.input.getCenter().y;
+        double inZ = this.input.getCenter().z;
+        BlockPos structurePos = this.getStructureLocation().pos;
+        Vec3d posOut = new Vec3d(structurePos.getX() + outX, structurePos.getY() + outY, structurePos.getZ() + outZ);
+        Vec3d posIn = new Vec3d(structurePos.getX() + inX, structurePos.getY() + inY, structurePos.getZ() + inZ);
+        try {
+            System.out.println(this.getSurroundingBox().getAbsoluteBox().box.getMinVec());
+        } catch (CorruptedConnectionException | NotYetConnectedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        /*
+        LittleGridContext c = input.getContext();
+        int size = c.size;
+        double con = 1D / size;
+        double count = 0.03125;
+        inputBox = this.getSurroundingBox().getAbsoluteBox().box;
+        outputBox = this.getSurroundingBox().getAbsoluteBox().box;
+        int inMinY = c.toGrid(c.toVanillaGrid(inputBox.minY) + (count * 14));
+        int inMaxY = c.toGrid(c.toVanillaGrid(inputBox.maxY));
+        inputBox.minY = inMinY;
+        inputBox.maxY = inMaxY;
+        
+        int outMinY = c.toGrid(c.toVanillaGrid(outputBox.minY) - count);
+        int outMaxY = c.toGrid(c.toVanillaGrid(outputBox.maxY) - (count * 14));
+        
+        int outMinX = c.toGrid(c.toVanillaGrid(outputBox.minX) + (count * 10));
+        int outMinZ = c.toGrid(c.toVanillaGrid(outputBox.minZ) + (count * 10));
+        
+        int outMaxX = c.toGrid(c.toVanillaGrid(outputBox.maxX) - (count * 10));
+        int outMaxZ = c.toGrid(c.toVanillaGrid(outputBox.maxZ) - (count * 10));
+        
+        outputBox.minY = outMinY;
+        outputBox.maxY = outMaxY;
+        outputBox.minX = outMinX;
+        outputBox.minZ = outMinZ;
+        outputBox.maxX = outMaxX;
+        outputBox.maxZ = outMaxZ;*/
+        LittleBox bo = new LittleBox(inputBox.getCenter(), 1, 2, 1);
+        LittleBox ba = new LittleBox(outputBox.getCenter(), 1, 1, 1);
+        LittleStructure in = StructureUtils.getStructureAt(worldIn, bo, posIn, this);
+        LittleStructure out = StructureUtils.getStructureAt(worldIn, ba, posOut, this);
+        System.out.println(in + " " + out);
+        
         if (in instanceof LittleStorage)
             listeningInputStructure = in;
+        else if (in == null)
+            listeningInputStructure = null;
         if (out instanceof LittleStorage)
             listeningOutputStructure = out;
+        else if (out == null)
+            listeningOutputStructure = null;
         
-        double con = 1D / input.getContext().size;
-        double con2 = con * 2D;
-        BlockPos p = this.getStructureLocation().pos;
-        /*
+        /*[0,15,0 -> 32,18,32] [0,3,0 -> 16,16,16]
         double xx = Math.abs(this.output.getBox().maxX + p.getX());
         double yy = Math.abs(this.output.getBox().maxY + p.getY());
         double zz = Math.abs(this.output.getBox().maxZ + p.getZ());
@@ -155,16 +204,6 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
         double yy2 = Math.abs(this.output.getBox().minY + p.getY());
         double zz2 = Math.abs(this.output.getBox().minZ + p.getZ());*/
         //AxisAlignedBB aabb = new AxisAlignedBB(pos.x - con, pos.y - con, pos.z - con, pos.x + con, pos.y + con, pos.z + con);
-        try {
-            AxisAlignedBB aabb = this.getSurroundingBox().getAABB();
-            double x = Math.ceil(aabb.maxX) - Math.floor(aabb.minX);
-            double y = Math.ceil(aabb.maxY) - Math.floor(aabb.minY);
-            double z = Math.ceil(aabb.maxZ) - Math.floor(aabb.minZ);
-            System.out.println(x + " " + y + " " + z);
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         
         //System.out.println(xDist + " " + yDist + " " + zDist);
         //System.out.println(xx + " " + yy + " " + zz + " | " + xx2 + " " + yy2 + " " + zz2);
@@ -187,6 +226,8 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     
     public void dropItemFromStorage() {
         if (this.listeningInputStructure != null) {
+            
+            System.out.println("drop");
             LittleStorage storage = (LittleStorage) this.listeningInputStructure;
             for (int i = 0; i < storage.inventorySize; i++) {
                 if (!storage.inventory.getStackInSlot(i).getItem().equals(Items.AIR)) {
@@ -229,21 +270,18 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     public void collectItems() {
         if (this.listeningOutputStructure != null)
             try {
-                LittleNoClipStructure noclip = (LittleNoClipStructure) this.children.get(0).getStructure();
-                for (Entity entity : noclip.entities)
-                    if (entity instanceof EntityItem) {
-                        if (this.entities.isEmpty())
-                            this.entities.addAll((Collection<? extends Entity>) noclip.entities.clone());
-                        for (Entity en : this.entities) {
-                            if (en instanceof EntityItem) {
-                                EntityItem eItem = (EntityItem) en;
-                                addItemToStorage(eItem);
-                                this.entities.clear();
-                            }
-                        }
-                        break;
-                    }
                 
+                System.out.println("add");
+                LittleNoClipStructure noclip = (LittleNoClipStructure) this.children.get(0).getStructure();
+                Entity entity = null;
+                Iterator<Entity> iter = noclip.entities.iterator();
+                while (iter.hasNext()) {
+                    entity = iter.next();
+                    if (entity instanceof EntityItem) {
+                        EntityItem eItem = (EntityItem) entity;
+                        addItemToStorage(eItem);
+                    }
+                }
             } catch (CorruptedConnectionException | NotYetConnectedException e) {
                 e.printStackTrace();
             }
