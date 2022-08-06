@@ -14,7 +14,6 @@ import com.creativemd.littletiles.common.tile.parent.IParentTileList;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.tileentity.TileEntityLittleTiles;
-import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.Placement;
 import com.creativemd.littletiles.common.util.place.PlacementMode;
 import com.creativemd.littletiles.common.util.place.PlacementPreview;
@@ -23,7 +22,6 @@ import com.creativemd.littletiles.common.util.place.PlacementResult;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class StructureUtils {
@@ -38,8 +36,7 @@ public class StructureUtils {
      *            Can be null, if you are using this method inside a LittleStructure object you can provide this to this field. It will make sure it didn't find itself.
      * @return
      *         Returns the LittleStructure by first looking at the tiles inside a block then using box to find the exact structure located there. */
-    public static LittleStructure getStructureAt(World worldIn, LittleBox box, Vec3d vec, @Nullable LittleStructure self) {
-        BlockPos pos = new BlockPos(vec);
+    public static LittleStructure getStructureAt(World worldIn, LittleBox box, BlockPos pos, @Nullable LittleStructure self) {
         TileEntityLittleTiles te = BlockTile.loadTe(worldIn, pos);
         if (te != null)
             for (IStructureTileList s : te.structures()) {
@@ -48,10 +45,10 @@ public class StructureUtils {
                         for (TileEntityLittleTiles block : s.getStructure().blocks()) {
                             if (block.getPos().equals(pos))
                                 for (Pair<IParentTileList, LittleTile> pair : block.allTiles()) {
-                                    if ((!pair.key.getStructure().equals(self) && !pair.key.getStructure().isChildOf(self))) {
+                                    if ((pair.key.getStructure() != self && !pair.key.getStructure().isChildOf(self))) {
                                         LittleBox copy = pair.value.getBox().copy();
-                                        System.out.println(box + " " + copy);
                                         copy.convertTo(pair.key.getContext().size, 32);
+                                        System.out.println(copy);
                                         if (intersectsWith(copy, box)) {
                                             
                                             return s.getStructure();
@@ -64,21 +61,6 @@ public class StructureUtils {
                 } catch (CorruptedConnectionException | NotYetConnectedException e) {}
             }
         return null;
-    }
-    
-    public static void addOffset(LittleGridContext con, LittleBox box, Vec3d vec) {
-        
-        double x = vec.x - Math.floor(vec.x);
-        double y = vec.y - Math.floor(vec.y);
-        double z = vec.z - Math.floor(vec.z);
-        
-        box.maxX += con.toGrid(x);
-        box.maxY += con.toGrid(y);
-        box.maxZ += con.toGrid(z);
-        
-        box.minX -= con.toGrid(x);
-        box.minY -= con.toGrid(y);
-        box.minZ -= con.toGrid(z);
     }
     
     public static boolean intersectsWith(LittleBox box, LittleBox box2) {
