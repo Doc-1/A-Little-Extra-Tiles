@@ -1,19 +1,24 @@
 package com.alet.common.util;
 
+import java.util.ArrayList;
+import java.util.Map.Entry;
+
 import javax.annotation.Nullable;
 
+import com.creativemd.creativecore.common.utils.type.HashMapList;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.littletiles.common.block.BlockTile;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
+import com.creativemd.littletiles.common.structure.relative.StructureRelative;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
-import com.creativemd.littletiles.common.tile.parent.IParentTileList;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.tileentity.TileEntityLittleTiles;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.Placement;
 import com.creativemd.littletiles.common.util.place.PlacementMode;
 import com.creativemd.littletiles.common.util.place.PlacementPreview;
@@ -29,38 +34,54 @@ public class StructureUtils {
     /** @param worldIn
      *            The world the structure is in.
      * @param box
-     *            The location you are looking for the structure at. Best to use the smallest context available and to make the box 0,0,0 by 1,1,1.
+     *            The location you are looking for the structure at.
      * @param pos
      *            The block position the structure is located at.
      * @param self
      *            Can be null, if you are using this method inside a LittleStructure object you can provide this to this field. It will make sure it didn't find itself.
      * @return
      *         Returns the LittleStructure by first looking at the tiles inside a block then using box to find the exact structure located there. */
-    public static LittleStructure getStructureAt(World worldIn, LittleBox box, BlockPos pos, @Nullable LittleStructure self) {
+    public static LittleStructure getStructureAt(World worldIn, LittleBox box, BlockPos pos, LittleGridContext context, @Nullable LittleStructure self, @Nullable Class<? extends LittleStructure> structureClass) {
         TileEntityLittleTiles te = BlockTile.loadTe(worldIn, pos);
-        if (te != null)
+        if (te != null) {
             for (IStructureTileList s : te.structures()) {
                 try {
-                    if (!s.getStructure().equals(self) && !s.getStructure().isChildOf(self)) {
-                        for (TileEntityLittleTiles block : s.getStructure().blocks()) {
-                            if (block.getPos().equals(pos))
-                                for (Pair<IParentTileList, LittleTile> pair : block.allTiles()) {
-                                    if ((pair.key.getStructure() != self && !pair.key.getStructure().isChildOf(self))) {
-                                        LittleBox copy = pair.value.getBox().copy();
-                                        copy.convertTo(pair.key.getContext().size, 32);
-                                        System.out.println(copy);
-                                        if (intersectsWith(copy, box)) {
-                                            
-                                            return s.getStructure();
-                                        }
-                                        
-                                    }
+                    LittleStructure structure = s.getStructure();
+                    if (structureClass != null && structure.getClass() != structureClass)
+                        continue;
+                    
+                    if (structure != self && !structure.isChildOf(self)) {
+                        for (Pair<IStructureTileList, LittleTile> tile : structure.tiles()) {
+                            if (tile.key.getPos().equals(pos)) {
+                                LittleBox copy = tile.value.getBox().copy();
+                                copy.convertTo(tile.key.getContext().size, context.size);
+                                if (intersectsWith(copy, box)) {
+                                    System.out.println(structure);
+                                    return s.getStructure();
                                 }
+                            }
                         }
                     }
                 } catch (CorruptedConnectionException | NotYetConnectedException e) {}
             }
+        }
         return null;
+    }
+    
+    public static LittleStructure findConnection(World worldIn, BlockPos structurePos, StructureRelative searchArea, @Nullable LittleStructure self, @Nullable Class<? extends LittleStructure> structureClass) {
+        
+        LittleBox foundBox = searchArea.getBox().copy();
+        double searchX = searchArea.getCenter().x;
+        double searchY = searchArea.getCenter().y;
+        double searchZ = searchArea.getCenter().z;
+        BlockPos posSearch = new BlockPos(structurePos.getX() + searchX, structurePos.getY() + searchY, structurePos.getZ() + searchZ);
+        HashMapList<BlockPos, LittleBox> boxesSearch = new HashMapList<BlockPos, LittleBox>();
+        foundBox.split(searchArea.getContext(), structurePos, boxesSearch, null);
+        for (Entry<BlockPos, ArrayList<LittleBox>> b : boxesSearch.entrySet())
+            if (b.getKey().equals(posSearch))
+                foundBox = b.getValue().get(0);
+        return getStructureAt(worldIn, foundBox, posSearch, searchArea.getContext(), self, structureClass);
+        
     }
     
     public static boolean intersectsWith(LittleBox box, LittleBox box2) {
@@ -87,7 +108,7 @@ public class StructureUtils {
         if (parent == null || child == null)
             return null;
         try {
-            LittlePreviews ch = child.getPreviews(child.getPos());
+            LittlePreviews ch = child.getPreviews(parent.getPos());
             LittlePreviews par = parent.getPreviews(parent.getPos());
             par.addChild(ch, dynamic);
             return par.copy();
@@ -111,9 +132,10 @@ public class StructureUtils {
         return results != null;
     }
     
-    public static boolean mergeChildToStructure(LittleStructure child, LittleStructure parent, boolean dynamic, World worldIn, BlockPos pos, LittleVec offset, EnumFacing facing, EntityPlayer playerIn) {
+    public static boolean mergeChildToStructure(LittleStructure child, LittleStructure parent, boolean dynamic, World worldIn, LittleVec offset, EnumFacing facing, EntityPlayer playerIn) {
         try {
             LittlePreviews preview = addChildToStructure(child, parent, dynamic);
+            BlockPos pos = parent.getPos();
             parent.onLittleTileDestroy();
             child.onLittleTileDestroy();
             return placePreview(preview, worldIn, pos, offset, facing, playerIn);

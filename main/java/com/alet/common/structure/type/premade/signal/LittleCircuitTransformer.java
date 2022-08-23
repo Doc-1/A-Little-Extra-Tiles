@@ -30,6 +30,7 @@ public class LittleCircuitTransformer extends LittleStructurePremade {
     }
     
     public void highToLow() {
+        
         try {
             LittleSignalInput input = (LittleSignalInput) this.children.get(0).getStructure();
             int bandwith = input.getState().length / 4;
@@ -67,12 +68,6 @@ public class LittleCircuitTransformer extends LittleStructurePremade {
             output.updateState(state);
         } catch (CorruptedConnectionException | NotYetConnectedException e) {}
         
-    }
-    
-    @Override
-    public String info() {
-        String info = this.type.id + "," + super.info();
-        return info;
     }
     
     @Override

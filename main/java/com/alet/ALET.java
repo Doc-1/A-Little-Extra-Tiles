@@ -17,12 +17,14 @@ import com.alet.client.container.SubContainerBasic;
 import com.alet.client.container.SubContainerBlock;
 import com.alet.client.container.SubContainerFillingCabinet;
 import com.alet.client.container.SubContainerItemScanner;
+import com.alet.client.container.SubContainerLittleHopper;
 import com.alet.client.container.SubContainerPhotoImport;
 import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiAnimatorsWorkbench;
 import com.alet.client.gui.SubGuiBlock;
 import com.alet.client.gui.SubGuiFillingCabinet;
 import com.alet.client.gui.SubGuiItemScanner;
+import com.alet.client.gui.SubGuiLittleHopper;
 import com.alet.client.gui.SubGuiMagnitudeComparator;
 import com.alet.client.gui.SubGuiManual;
 import com.alet.client.gui.SubGuiMicroProcessor;
@@ -58,11 +60,18 @@ import com.alet.common.structure.type.premade.LittlePhotoImporter;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.structure.type.premade.PickupItemPremade;
 import com.alet.common.structure.type.premade.signal.LittleCircuitClock;
+import com.alet.common.structure.type.premade.signal.LittleCircuitDecToAscii;
 import com.alet.common.structure.type.premade.signal.LittleCircuitDisplay16;
+import com.alet.common.structure.type.premade.signal.LittleCircuitMath;
+import com.alet.common.structure.type.premade.signal.LittleCircuitMemory;
 import com.alet.common.structure.type.premade.signal.LittleCircuitMicroprocessor;
+import com.alet.common.structure.type.premade.signal.LittleCircuitPulser;
+import com.alet.common.structure.type.premade.signal.LittleCircuitRandomNumber;
+import com.alet.common.structure.type.premade.signal.LittleCircuitSignalSwitch;
+import com.alet.common.structure.type.premade.signal.LittleCircuitSizeAdapter;
 import com.alet.common.structure.type.premade.signal.LittleCircuitTFlipFlop;
 import com.alet.common.structure.type.premade.signal.LittleCircuitTransformer;
-import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator4;
+import com.alet.common.structure.type.premade.signal.LittleMagnitudeComparator;
 import com.alet.common.structure.type.premade.signal.LittleSignalColoredDisplay;
 import com.alet.common.structure.type.premade.signal.LittleSignalInputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalInputQuick.LittleStructureTypeInputQuick;
@@ -182,11 +191,11 @@ public class ALET {
     public static Item Convert16to4;
     
     public static Item magCompare1;
-    public static Item magCompare4;
+    //public static Item magCompare4;
     public static Item magCompare16;
     
     public static Item randomGen1Bit;
-    public static Item randomGen4Bit;
+    //public static Item randomGen4Bit;
     public static Item randomGen16Bit;
     
     //public static ContainerAdapterBlock adapter;
@@ -224,7 +233,7 @@ public class ALET {
         smoothGroutBrick = new BasicBlock("smoothgroutbrick");
         
         magCompare1 = new ItemPremadePlaceable("magnitude_comparator_1", true);
-        magCompare4 = new ItemPremadePlaceable("magnitude_comparator_4", true);
+        //magCompare4 = new ItemPremadePlaceable("magnitude_comparator_4", true);
         magCompare16 = new ItemPremadePlaceable("magnitude_comparator_16", true);
         
         if (event.getSide().equals(Side.CLIENT)) {
@@ -289,7 +298,19 @@ public class ALET {
                 return new SubContainerTypeWriter(player);
             }
         });
-        
+        GuiHandler.registerGuiHandler("little_hopper", new LittleStructureGuiHandler() {
+            
+            @Override
+            @SideOnly(Side.CLIENT)
+            public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+                return new SubGuiLittleHopper((LittleTransferLittleHopper) structure);
+            }
+            
+            @Override
+            public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
+                return new SubContainerLittleHopper(player, (LittleTransferLittleHopper) structure);
+            }
+        });
         GuiHandler.registerGuiHandler("magnitude-comparator", new LittleStructureGuiHandler() {
             
             @Override
@@ -421,14 +442,16 @@ public class ALET {
     
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(magCompare4, manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(transparent)
-                .setRegistryName(transparent.getRegistryName()), new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick)
-                        .setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank)
-                                .setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank)
-                                        .setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank)
-                                                .setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank)
-                                                        .setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank
-                                                                .getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
+        event.getRegistry()
+                .registerAll(manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(transparent).setRegistryName(transparent.getRegistryName()), new ItemBlock(smoothGroutBrick)
+                        .setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick)
+                                .setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank)
+                                        .setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank)
+                                                .setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank)
+                                                        .setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank)
+                                                                .setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank)
+                                                                        .setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank)
+                                                                                .setRegistryName(smoothBirchPlank.getRegistryName()));
         proxy.loadSide();
     }
     
@@ -437,7 +460,6 @@ public class ALET {
         registerRender(littleRope);
         //registerRender(littleScissors);
         registerRender(manual);
-        registerRender(magCompare4);
         registerRender(tapeMeasure);
         registerRender(Item.getItemFromBlock(smoothGroutBrick));
         registerRender(Item.getItemFromBlock(smoothBrick));
@@ -489,9 +511,16 @@ public class ALET {
         LittleStructurePremade.registerPremadeStructureType("item_import", ALET.MODID, LittleTransferItemImport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
                 .addOutput("block", 16, SignalMode.EQUAL, true);
         
-        LittleStructurePremade.registerPremadeStructureType("little_hopper", ALET.MODID, LittleTransferLittleHopper.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
-                .addOutput("drop", 1, SignalMode.EQUAL, true).addOutput("block", 1, SignalMode.EQUAL, true);
+        LittleStructurePremade
+                .registerPremadeStructureType("little_hopper", ALET.MODID, LittleTransferLittleHopper.class, LittleStructureAttribute.TICKING | LittleStructureAttribute.NEIGHBOR_LISTENER)
+                .setNotSnapToGrid().addOutput("drop", 1, SignalMode.EQUAL, true).addOutput("block", 1, SignalMode.EQUAL, true);
         
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_memory_32", ALET.MODID, LittleCircuitMemory.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_20hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_10hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
@@ -556,9 +585,7 @@ public class ALET {
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("4_1Bits_To_1_4Bit", ALET.MODID, LittleCircuitConverterOneToFour.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid().setNotShowCreativeTab();
-        LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_1bit", ALET.MODID, LittleCircuitRandomNumberOne.class, LittleStructureAttribute.TICKING, ALET.MODID))
-                .setNotSnapToGrid().setNotShowCreativeTab();
+        
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("magnitude_comparator_1", ALET.MODID, LittleMagnitudeComparator4.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid().setNotShowCreativeTab();
@@ -568,18 +595,75 @@ public class ALET {
                 */
         
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("magnitude_comparator_4", ALET.MODID, LittleMagnitudeComparator4.class, LittleStructureAttribute.TICKING, ALET.MODID))
-                .setNotSnapToGrid().setNotShowCreativeTab();
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_pulser", ALET.MODID, LittleCircuitPulser.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_magnitude_comparator_32", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_1bit", ALET.MODID, LittleCircuitRandomNumber.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_4bit", ALET.MODID, LittleCircuitRandomNumber.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_16bit", ALET.MODID, LittleCircuitRandomNumber.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_32bit", ALET.MODID, LittleCircuitRandomNumber.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
         
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("t_flip_flop", ALET.MODID, LittleCircuitTFlipFlop.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         
         LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_dec_to_ascii", ALET.MODID, LittleCircuitDecToAscii.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_size_adapter_16", ALET.MODID, LittleCircuitSizeAdapter.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_math", ALET.MODID, LittleCircuitMath.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_switch_1", ALET.MODID, LittleCircuitSignalSwitch.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_switch_4", ALET.MODID, LittleCircuitSignalSwitch.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_switch_16", ALET.MODID, LittleCircuitSignalSwitch.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_switch_32", ALET.MODID, LittleCircuitSignalSwitch.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output1", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 1))
                 .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input1", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 1))
+                .setNotSnapToGrid();
+        
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output4", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 4))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input4", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 4))
+                .setNotSnapToGrid();
+        
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output16", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 16))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input16", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 16))
+                .setNotSnapToGrid();
+        
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output32", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 32))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input32", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 32))
                 .setNotSnapToGrid();
         
         LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);

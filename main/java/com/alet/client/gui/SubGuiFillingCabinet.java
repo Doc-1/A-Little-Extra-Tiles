@@ -272,7 +272,6 @@ public class SubGuiFillingCabinet extends SubGui {
                 } catch (IOException e) {}
             } else if (((GuiMenuPart) event.source).caption.equals("Move Up")) {
                 File f1 = getPath("");
-                System.out.println(f1.getAbsolutePath());
             } else if (((GuiMenuPart) event.source).caption.equals("Delete")) {
                 if (selectedFile != null) {
                     File f1 = null;
@@ -293,7 +292,6 @@ public class SubGuiFillingCabinet extends SubGui {
                 File f1 = getNewFolder();
                 f1.mkdir();
                 updateTree();
-                System.out.println(f1.getAbsolutePath());
             } else if (((GuiMenuPart) event.source).caption.equals("Structure details")) {
                 
                 String file = getBlueprintFromFile();

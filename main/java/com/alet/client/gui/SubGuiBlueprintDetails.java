@@ -42,8 +42,8 @@ public class SubGuiBlueprintDetails extends SubGui {
         super(180, 290);
         try {
             this.nbt = JsonToNBT.getTagFromJson(nbtString);
-            ItemStack stack = StructureStringUtils.importStructure(nbtString);
-            this.previews = LittlePreviews.getPreview(stack, true);
+            ItemStack stack = StructureStringUtils.importStructure(nbt);
+            this.previews = LittlePreviews.getPreview(stack, false);
             this.file = file;
         } catch (NBTException e) {
             e.printStackTrace();
@@ -84,7 +84,7 @@ public class SubGuiBlueprintDetails extends SubGui {
         GuiLabel structureID = new GuiLabel("Structure ID:", 0, 14, ColorUtils.WHITE);
         GuiLabel id = new GuiLabel(previews.getStructureId(), 69, 14, ColorUtils.WHITE);
         GuiLabel tileCount = new GuiLabel("Tile Count:", 0, 28, ColorUtils.WHITE);
-        
+        System.out.println(previews.size());
         GuiLabel tile = new GuiLabel(previews.totalSize() + "", 54, 28, ColorUtils.WHITE);
         GuiLabel childCount = new GuiLabel("Child Count:", 0, 42, ColorUtils.WHITE);
         GuiLabel child = new GuiLabel(previews.childrenCount() + "", 60, 42, ColorUtils.WHITE);

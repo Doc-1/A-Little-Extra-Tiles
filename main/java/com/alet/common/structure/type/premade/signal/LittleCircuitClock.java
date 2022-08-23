@@ -24,9 +24,16 @@ public class LittleCircuitClock extends LittleStructurePremade {
         if (!isClient())
             try {
                 LittleSignalOutput out = (LittleSignalOutput) this.children.get(0).getStructure();
-                pulse = tickCounting();
-                boolean[] state = { pulse };
-                out.updateState(state);
+                if (this.type.id.equals("clock_20hz")) {
+                    boolean[] state = { false };
+                    out.updateState(state);
+                    state[0] = true;
+                    out.updateState(state);
+                } else {
+                    pulse = tickCounting();
+                    boolean[] state = { pulse };
+                    out.updateState(state);
+                }
             } catch (CorruptedConnectionException | NotYetConnectedException e) {
                 e.printStackTrace();
             }

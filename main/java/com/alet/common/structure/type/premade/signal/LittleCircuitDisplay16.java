@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.common.util.SignalingUtils;
 import com.alet.font.FontReader;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.structure.LittleStructure;
@@ -32,18 +33,20 @@ public class LittleCircuitDisplay16 extends LittleStructurePremade {
         if (!isClient()) {
             try {
                 boolean[] b = ((LittleSignalInput) this.children.get(4).getStructure()).getState();
-                
                 boolean[] displayData = { b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7] };
                 boolean[] colorData = { b[8], b[9], b[10], b[11] };
                 boolean[] empty = { false, false, false, false };
+                
+                displayData = SignalingUtils.mirrorState(displayData);
+                colorData = SignalingUtils.mirrorState(colorData);
                 String binary = "";
                 for (int i = 0; i < 8; i++) {
                     binary += displayData[i] ? "1" : "0";
                 }
-                LittleStructure topLeft = this.children.get(0).getStructure();
-                LittleStructure topRight = this.children.get(1).getStructure();
-                LittleStructure bottomLeft = this.children.get(2).getStructure();
-                LittleStructure bottomRight = this.children.get(3).getStructure();
+                LittleStructure topLeft = this.getChild(0).getStructure();
+                LittleStructure topRight = this.getChild(1).getStructure();
+                LittleStructure bottomLeft = this.getChild(2).getStructure();
+                LittleStructure bottomRight = this.getChild(3).getStructure();
                 int parseInt = Integer.parseInt(binary, 2);
                 String c = (char) parseInt + "";
                 if (!c.equals(charDisplayed)) {
@@ -52,7 +55,6 @@ public class LittleCircuitDisplay16 extends LittleStructurePremade {
                     imageBitsBL.clear();
                     imageBitsBR.clear();
                     decodeImageToBits(c);
-                    System.out.println(c);
                 }
                 int x = 0;
                 for (Boolean bits : imageBitsTL) {

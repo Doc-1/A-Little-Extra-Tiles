@@ -44,10 +44,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleSignalInputQuick extends LittleSignalInput {
     
+    private boolean hasConnectionCache = false;
+    
     @StructureDirectional(color = ColorUtils.GREEN)
     public StructureRelative frame;
     
-    private BlockPos location = null;
     private LittleStructure listeningStructure;
     
     public LittleSignalInputQuick(LittleStructureType type, IStructureTileList mainBlock) {
@@ -57,11 +58,10 @@ public class LittleSignalInputQuick extends LittleSignalInput {
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
         if (this.getParent() == null) {
-            findConnection();
+            listeningStructure = StructureUtils.findConnection(this.getWorld(), this.getStructureLocation().pos, this.frame, this, null);
             if (listeningStructure != null) {
-                if (StructureUtils.mergeChildToStructure(this, listeningStructure, true, worldIn, pos, new LittleVec(0, 0, 0), side, playerIn))
-                    playerIn.sendStatusMessage(new TextComponentString("Connection was succesful, right to open interface."), true);
-                
+                if (StructureUtils.mergeChildToStructure(this, listeningStructure, true, worldIn, new LittleVec(0, 0, 0), side, playerIn))
+                    playerIn.sendStatusMessage(new TextComponentString("Connection was succesful, right click to open interface."), true);
             }
         }
         if (!playerIn.isSneaking()) {
@@ -72,55 +72,8 @@ public class LittleSignalInputQuick extends LittleSignalInput {
                 playerIn.sendStatusMessage(new TextComponentString("Connection succesfully disconnected."), true);
             else
                 playerIn.sendStatusMessage(new TextComponentString("Connection failed to disconnected."), true);
-            //   System.out.println(SignalingUtils.randState(4));
         }
         return true;
-    }
-    
-    public void findConnection() {
-        World worldIn = this.getWorld();
-        LittleBox box = this.frame.getBox();
-        if (location == null) {
-            this.location = new BlockPos(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
-        }
-        if (this.facing.equals(EnumFacing.WEST)) {
-            if (box.maxX >= (this.frame.getContext().size + 1)) {
-                box.maxX = 1;
-                box.minX = 0;
-                location = location.east();
-            }
-        } else if (this.facing.equals(EnumFacing.EAST)) {
-            if (box.minX <= -1) {
-                box.maxX = 32;
-                box.minX = 31;
-                location = location.west();
-            }
-        } else if (this.facing.equals(EnumFacing.NORTH)) {
-            if (box.maxZ >= (this.frame.getContext().size + 1)) {
-                box.maxZ = 1;
-                box.minZ = 0;
-                location = location.south();
-            }
-        } else if (this.facing.equals(EnumFacing.SOUTH)) {
-            if (box.minZ <= -1) {
-                box.maxZ = 32;
-                box.minZ = 31;
-                location = location.north();
-            }
-        } else if (this.facing.equals(EnumFacing.UP)) {
-            if (box.minY <= -1) {
-                box.maxY = 32;
-                box.minY = 31;
-                location = location.down();
-            }
-        } else if (this.facing.equals(EnumFacing.DOWN)) {
-            if (box.minY >= (this.frame.getContext().size + 1)) {
-                box.maxY = 1;
-                box.minY = 0;
-                location = location.up();
-            }
-        }
-        listeningStructure = StructureUtils.getStructureAt(worldIn, box, location, this);
     }
     
     @Override
