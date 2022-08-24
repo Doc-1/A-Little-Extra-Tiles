@@ -14,7 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class LittleCircuitRandomNumber extends LittleCircuitPremade {
     
     public LittleCircuitRandomNumber(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 3);
+        super(type, mainBlock, 3, -1);
         
     }
     
@@ -62,6 +62,12 @@ public class LittleCircuitRandomNumber extends LittleCircuitPremade {
             anyBitRand(16);
         else if (this.type.id.equals("random_generator_32bit"))
             anyBitRand(32);
+        
+    }
+    
+    @Override
+    public void trigger() {
+        // TODO Auto-generated method stub
         
     }
     

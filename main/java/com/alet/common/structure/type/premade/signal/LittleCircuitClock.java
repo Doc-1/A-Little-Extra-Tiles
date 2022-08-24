@@ -24,16 +24,11 @@ public class LittleCircuitClock extends LittleStructurePremade {
         if (!isClient())
             try {
                 LittleSignalOutput out = (LittleSignalOutput) this.children.get(0).getStructure();
-                if (this.type.id.equals("clock_20hz")) {
-                    boolean[] state = { false };
-                    out.updateState(state);
-                    state[0] = true;
-                    out.updateState(state);
-                } else {
-                    pulse = tickCounting();
-                    boolean[] state = { pulse };
-                    out.updateState(state);
-                }
+                
+                pulse = tickCounting();
+                boolean[] state = { pulse };
+                out.updateState(state);
+                
             } catch (CorruptedConnectionException | NotYetConnectedException e) {
                 e.printStackTrace();
             }
@@ -42,27 +37,45 @@ public class LittleCircuitClock extends LittleStructurePremade {
     private boolean tickCounting() {
         String id = this.type.id;
         tickCount++;
+        
         if (id.equals("clock_10hz")) {
-            if (tickCount > 1) {
-                tickCount = 0;
+            if (tickCount < 1) {
+                return false;
+            } else if (tickCount >= 1) {
+                if (tickCount >= 2) {
+                    tickCount = 0;
+                    return false;
+                }
                 return true;
             }
         } else if (id.equals("clock_5hz")) {
-            if (tickCount > 2) {
-                if (tickCount > 3)
+            if (tickCount < 5) {
+                return false;
+            } else if (tickCount >= 5) {
+                if (tickCount >= 10) {
                     tickCount = 0;
+                    return false;
+                }
                 return true;
             }
         } else if (id.equals("clock_2hz")) {
-            if (tickCount > 4) {
-                if (tickCount > 7)
+            if (tickCount < 4) {
+                return false;
+            } else if (tickCount >= 4) {
+                if (tickCount >= 8) {
                     tickCount = 0;
+                    return false;
+                }
                 return true;
             }
         } else if (id.equals("clock_1hz")) {
-            if (tickCount > 10) {
-                if (tickCount > 19)
+            if (tickCount < 10) {
+                return false;
+            } else if (tickCount >= 10) {
+                if (tickCount >= 20) {
                     tickCount = 0;
+                    return false;
+                }
                 return true;
             }
         }
