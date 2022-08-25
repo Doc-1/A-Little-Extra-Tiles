@@ -7,6 +7,8 @@ import com.creativemd.littletiles.common.structure.signal.component.ISignalCompo
 import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 
+import net.minecraft.util.text.translation.I18n;
+
 public abstract class LittleCircuitPremade extends LittleStructurePremade {
     
     boolean pulse = false;
@@ -20,9 +22,11 @@ public abstract class LittleCircuitPremade extends LittleStructurePremade {
         this.clockOutIndex = clockOutIndex;
     }
     
+    @SuppressWarnings("deprecation")
     @Override
     public String info() {
-        return this.type.id;
+        
+        return I18n.translateToLocal("item.LTPremade." + this.type.id + ".name");
     }
     
     public abstract void trigger();
@@ -35,9 +39,8 @@ public abstract class LittleCircuitPremade extends LittleStructurePremade {
                 try {
                     if (this.getChild(clockIndex).getStructure().equals(changed)) {
                         pulse = changed.getState()[0];
-                        if (oldPulse != pulse && pulse) {
-                            this.trigger();
-                        }
+                        this.trigger();
+                        
                         if (this.clockOutIndex != -1) {
                             ISignalComponent outClock = (ISignalComponent) this.getChild(clockOutIndex).getStructure();
                             outClock.updateState(changed.getState());

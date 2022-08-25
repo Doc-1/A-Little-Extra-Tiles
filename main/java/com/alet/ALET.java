@@ -77,6 +77,7 @@ import com.alet.common.structure.type.premade.signal.LittleSignalInputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalInputQuick.LittleStructureTypeInputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalOutputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalOutputQuick.LittleStructureTypeOutputQuick;
+import com.alet.common.structure.type.premade.signal.LittleSignalSevenSegmentedDisplay;
 import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemExport;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
@@ -504,7 +505,10 @@ public class ALET {
                 .addOutput("pixel9", 4, SignalMode.EQUAL, true).addOutput("pixel10", 4, SignalMode.EQUAL, true).addOutput("pixel11", 4, SignalMode.EQUAL, true)
                 .addOutput("pixel12", 4, SignalMode.EQUAL, true).addOutput("pixel13", 4, SignalMode.EQUAL, true).addOutput("pixel14", 4, SignalMode.EQUAL, true)
                 .addOutput("pixel15", 4, SignalMode.EQUAL, true);
-        
+        LittleStructurePremade.registerPremadeStructureType("seven_segement_display", ALET.MODID, LittleSignalSevenSegmentedDisplay.class, LittleStructureAttribute.TICK_RENDERING)
+                .addOutput("a", 1, SignalMode.EQUAL, true).addOutput("b", 1, SignalMode.EQUAL, true).addOutput("c", 1, SignalMode.EQUAL, true)
+                .addOutput("d", 1, SignalMode.EQUAL, true).addOutput("e", 1, SignalMode.EQUAL, true).addOutput("f", 1, SignalMode.EQUAL, true)
+                .addOutput("g", 1, SignalMode.EQUAL, true).addOutput("dp", 1, SignalMode.EQUAL, true);
         CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
         LittleStructurePremade.registerPremadeStructureType("item_export", ALET.MODID, LittleTransferItemExport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
                 .addOutput("drop", 16, SignalMode.EQUAL, true);

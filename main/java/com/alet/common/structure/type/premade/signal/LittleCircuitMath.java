@@ -49,30 +49,31 @@ public class LittleCircuitMath extends LittleCircuitPremade {
     
     @Override
     public void trigger() {
-        try {
-            LittleSignalInput math = (LittleSignalInput) this.children.get(0).getStructure();
-            int logic = SignalingUtils.boolToInt(math.getState());
-            switch (logic) {
-            case 0:
-                math('+');
-                break;
-            case 1:
-                math('-');
-                break;
-            case 2:
-                math('*');
-                break;
-            case 3:
-                math('/');
-                break;
-            
-            default:
-                break;
+        if (pulse)
+            try {
+                LittleSignalInput math = (LittleSignalInput) this.children.get(0).getStructure();
+                int logic = SignalingUtils.boolToInt(math.getState());
+                switch (logic) {
+                case 0:
+                    math('+');
+                    break;
+                case 1:
+                    math('-');
+                    break;
+                case 2:
+                    math('*');
+                    break;
+                case 3:
+                    math('/');
+                    break;
+                
+                default:
+                    break;
+                }
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         
     }
     

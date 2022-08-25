@@ -34,22 +34,23 @@ public class LittleCircuitMemory extends LittleCircuitPremade {
     
     @Override
     public void trigger() {
-        try {
-            LittleSignalOutput output = (LittleSignalOutput) this.children.get(3).getStructure();
-            LittleSignalInput wipe = (LittleSignalInput) this.children.get(0).getStructure();
-            LittleSignalInput input = (LittleSignalInput) this.children.get(2).getStructure();
-            if (!wipe.getState()[0]) {
-                state = input.getState().clone();
-            } else {
-                state = SignalingUtils.allFalse(output.getBandwidth());
+        if (pulse)
+            try {
+                LittleSignalOutput output = (LittleSignalOutput) this.children.get(3).getStructure();
+                LittleSignalInput wipe = (LittleSignalInput) this.children.get(0).getStructure();
+                LittleSignalInput input = (LittleSignalInput) this.children.get(2).getStructure();
+                if (!wipe.getState()[0]) {
+                    state = input.getState().clone();
+                } else {
+                    state = SignalingUtils.allFalse(output.getBandwidth());
+                }
+                
+                if (state != null) {
+                    output.updateState(state);
+                }
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                e.printStackTrace();
             }
-            
-            if (state != null) {
-                output.updateState(state);
-            }
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {
-            e.printStackTrace();
-        }
     }
     
 }

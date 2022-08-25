@@ -67,18 +67,19 @@ public class LittleCircuitPulser extends LittleCircuitPremade {
     
     @Override
     public void trigger() {
-        if (start)
-            try {
-                System.out.println("da");
-                LittleSignalInput count = (LittleSignalInput) this.children.get(0).getStructure();
-                max = SignalingUtils.boolToInt(count.getState().clone());
-                this.queueForNextTick();
-                this.start = false;
-            } catch (CorruptedConnectionException | NotYetConnectedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        
+        if (pulse)
+            if (start)
+                try {
+                    System.out.println("da");
+                    LittleSignalInput count = (LittleSignalInput) this.children.get(0).getStructure();
+                    max = SignalingUtils.boolToInt(count.getState().clone());
+                    this.queueForNextTick();
+                    this.start = false;
+                } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            
     }
     
 }
