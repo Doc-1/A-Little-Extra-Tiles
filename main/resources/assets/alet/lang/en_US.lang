@@ -6,8 +6,31 @@ item.LTPremade.item_import.name=Item Importer
 item.LTPremade.signal_memory_32.name=Memory Cell (32-bit)
 
 item.LTPremade.magnitude_comparator.name=Magnitude Comparator (4-bit)
-item.LTPremade.clock_simple.name=Clock 10Hz (1-bit)
-item.LTPremade.clock_advanced.name=Clock 10Hz Toggleable (1-bit)
+
+item.LTPremade.clock_10hz.name=Clock 10Hz
+item.LTPremade.clock_5hz.name=Clock 5Hz
+item.LTPremade.clock_2hz.name=Clock 2Hz
+item.LTPremade.clock_1hz.name=Clock 1Hz
+
+item.LTPremade.display_16.name=Colored Monitor (ASCII)
+item.LTPremade.signal_pulser.name=Signal Pulser
+item.LTPremade.signal_magnitude_comparator_32.name=Magnitude Comparator (32-bit)
+
+item.LTPremade.random_generator_1bit.name=Random Generator (1-bit)
+item.LTPremade.random_generator_4bit.name=Random Generator (4-bit)
+item.LTPremade.random_generator_16bit.name=Random Generator (16-bit)
+item.LTPremade.random_generator_32bit.name=Random Generator (32-bit)
+
+item.LTPremade.signal_dec_to_ascii.name=Number to ASCII
+item.LTPremade.signal_math.name=Mathematical Operation (32-bit)
+item.LTPremade.signal_switch_32.name=Switch (32-bit)
+
+item.LTPremade.4_to_1_transformer.name=Splitter (4-bit to 1-bit)
+item.LTPremade.1_to_4_transformer.name=Combiner (1-bit to 4-bit)
+
+item.LTPremade.16_to_4_transformer.name=Splitter (16-bit to 4-bit)
+item.LTPremade.4_to_16_transformer.name=Combiner (4-bit to 16-bit)
+
 
 item.LTPremade.single_cable32.name=Single Cable (32-bit)
 item.LTPremade.single_input32.name=Single Input (32-bit)

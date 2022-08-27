@@ -55,7 +55,7 @@ public class ALETEventHandler {
     public void onLeftClick(LeftClick event) {
         if (event.result.typeOfHit.equals(Type.BLOCK)) {
             Block block = event.world.getBlockState(event.result.getBlockPos()).getBlock();
-            //isStructure(event.world, event.result.getBlockPos(), event.player);
+            isStructure(event.world, event.result.getBlockPos(), event.player);
             
         }
     }
