@@ -6,10 +6,13 @@ import javax.annotation.Nullable;
 
 import com.alet.client.gui.controls.GuiStackSelectorAllMutator;
 import com.alet.client.gui.mutator.controls.GuiButtonAddMutationType;
+import com.alet.client.gui.mutator.controls.GuiButtonAddMutationType.GuiMutatorPanel;
 import com.alet.common.packet.PacketUpdateMutateFromServer;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.BlockUtils;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
@@ -29,6 +32,7 @@ import com.creativemd.littletiles.common.tile.LittleTileColored;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.parent.StructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
+import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -206,6 +210,7 @@ public class LittleStateMutatorALET extends LittleStructure {
     }
     
     public static class LittleStateMutatorParserALET extends LittleStructureGuiParser {
+        public HashMap<String, MutatorData> mutateMaterial = new HashMap<String, MutatorData>();
         
         public LittleStateMutatorParserALET(GuiParent parent, AnimationGuiHandler handler) {
             super(parent, handler);
@@ -225,15 +230,45 @@ public class LittleStateMutatorALET extends LittleStructure {
             GuiScrollBox box = new GuiScrollBox("box", 0, 0, 294, 100);
             GuiButtonAddMutationType add = new GuiButtonAddMutationType("new", 224, 110, 20, box);
             if (mutator != null && !mutator.mutateMaterial.isEmpty()) {
+                this.mutateMaterial = mutator.mutateMaterial;
                 for (int i = 0; i < mutator.mutateMaterial.size() / 2; i++) {
                     MutatorData dataA = mutator.mutateMaterial.get("a" + i);
                     MutatorData dataB = mutator.mutateMaterial.get("b" + i);
                     add.addMaterialMutation(dataA.state, dataB.state, dataA.colision, dataB.colision, dataA.color, dataB.color);
                 }
             }
-            
             parent.controls.add(add);
             parent.controls.add(box);
+        }
+        
+        public void refreshList(GuiButtonAddMutationType.GuiMutatorPanel panel) {
+            GuiScrollBox box = ((GuiScrollBox) parent.get("box"));
+            GuiButtonAddMutationType add = (GuiButtonAddMutationType) this.parent.get("new");
+            box.removeControl(panel);
+            add.depth = 0;
+            this.mutateMaterial.clear();
+            for (GuiControl cont : box.controls)
+                if (cont instanceof GuiPanel)
+                    for (GuiControl c : ((GuiPanel) cont).controls) {
+                        if (c instanceof GuiStackSelectorAllMutator) {
+                            
+                            GuiStackSelectorAllMutator control = (GuiStackSelectorAllMutator) c;
+                            this.mutateMaterial.put(control.name, new MutatorData(BlockUtils.getState(control.getSelected()), control.color, control.noclip));
+                        }
+                    }
+            box.removeControls("");
+            for (int i = 0; i < this.mutateMaterial.size() / 2; i++) {
+                MutatorData dataA = this.mutateMaterial.get("a" + i);
+                MutatorData dataB = this.mutateMaterial.get("b" + i);
+                add.addMaterialMutation(dataA.state, dataB.state, dataA.colision, dataB.colision, dataA.color, dataB.color);
+            }
+        }
+        
+        @CustomEventSubscribe
+        public void onMouseClick(GuiControlClickEvent event) {
+            if (event.source instanceof GuiButtonAddMutationType.GuiMutatorPanel) {
+                refreshList((GuiMutatorPanel) event.source);
+            }
         }
         
         @Override
@@ -242,11 +277,13 @@ public class LittleStateMutatorALET extends LittleStructure {
             HashMap<String, MutatorData> mutateMaterial = new HashMap<String, MutatorData>();
             
             for (GuiControl cont : ((GuiScrollBox) parent.get("box")).controls)
-                if (cont instanceof GuiStackSelectorAllMutator) {
-                    GuiStackSelectorAllMutator control = (GuiStackSelectorAllMutator) cont;
-                    mutateMaterial.put(control.name, new MutatorData(BlockUtils.getState(control.getSelected()), control.color, control.noclip));
-                }
-            
+                if (cont instanceof GuiPanel)
+                    for (GuiControl c : ((GuiPanel) cont).controls)
+                        if (cont instanceof GuiStackSelectorAllMutator) {
+                            GuiStackSelectorAllMutator control = (GuiStackSelectorAllMutator) cont;
+                            mutateMaterial.put(control.name, new MutatorData(BlockUtils.getState(control.getSelected()), control.color, control.noclip));
+                        }
+                    
             structure.mutateMaterial = mutateMaterial;
             return structure;
         }
