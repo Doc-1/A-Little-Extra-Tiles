@@ -217,7 +217,9 @@ public class SubGuiManual extends SubGui {
         if (!part.equals(this.selected)) {
             scrollBoxPage.removeControls(" ");
             GuiTreeManualPart paper = (GuiTreeManualPart) part;
-            scrollBoxPage.addControl(new GuiModifibleTextBox("", part.getPage(), 0, 0, 350));
+            GuiModifibleTextBox box = new GuiModifibleTextBox("", part.getPage(), 0, 0, 350);
+            scrollBoxPage.addControl(box);
+            box.addImages();
             tree.highlightPart(paper);
             this.selected = part;
         }

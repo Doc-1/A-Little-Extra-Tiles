@@ -19,6 +19,10 @@ public class GuiPopupMenu extends GuiParent {
         this.menu = menu;
     }
     
+    /** Specify the control it should look for when you press right click.
+     * 
+     * @param controlClass
+     */
     public void listenFor(Class<? extends GuiControl> controlClass) {
         this.listenFor = controlClass;
     }
@@ -28,6 +32,18 @@ public class GuiPopupMenu extends GuiParent {
         return true;
     }
     
+    /** Gets the control that the cursor is over
+     * 
+     * @param x
+     *            Cursor x pos
+     * @param y
+     *            Cursor y pos
+     * @param button
+     *            Mouse button pressed
+     * @param controls
+     *            List of controls to look through
+     * @return
+     *         Found control cursor is over. */
     public GuiControl controlOver(int x, int y, int button, ArrayList<GuiControl> controls) {
         for (GuiControl control : controls) {
             if (!(control instanceof GuiMenuPart) && control.isMouseOver((x), (y))) {
@@ -45,6 +61,18 @@ public class GuiPopupMenu extends GuiParent {
         return null;
     }
     
+    /** Verifies that a part of the menu has been clicked on. Used to auto-close the menu when clicked out of the menu.
+     * 
+     * @param x
+     *            Cursor x pos
+     * @param y
+     *            Cursor y pos
+     * @param button
+     *            Mouse button pressed
+     * @param controls
+     *            List of controls to look through
+     * @return
+     *         Found menu part under the cursor. */
     public GuiControl menuOver(int x, int y, int button, ArrayList<GuiControl> controls) {
         for (GuiControl control : controls) {
             if (control instanceof GuiMenuPart && control.isMouseOver((x - menu.posX), (y - menu.posY - 3))) {

@@ -25,7 +25,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
     List<String> listOfText = new ArrayList<String>();
     List<ModifyText> listOfModifyText = new ArrayList<ModifyText>();
     Map<Float[], ModifyText> locationTextMap = new LinkedHashMap<Float[], ModifyText>();
+    List<ModifyText> locationImageList = new ArrayList<ModifyText>();
     Map<Float[], ModifyText> locationClickableMap = new LinkedHashMap<Float[], ModifyText>();
+    
     ModifyTextMap map = new ModifyTextMap();
     public static final Pattern FORMATTING_NEWLINE_PATTERN = Pattern.compile("\\{newLines:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
     public static final Pattern FORMATTING_SCALE_PATTERN = Pattern.compile("\\{scale:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
@@ -36,6 +38,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
     public static final Pattern FORMATTING_COLOR_PATTERN = Pattern.compile("\\{color:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
     public static final Pattern FORMATTING_END_PATTERN = Pattern.compile("\\{end\\}");
     public static final Pattern FORMATTING_NUMBER_PATTERN = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+    public static final Pattern FORMATTING_SIMPLE_NUMBER_PATTERN = Pattern.compile("[0-9]+");
+    public static final Pattern FORMATTING_IMAGE_PATTERN = Pattern.compile("\\{image:[-+]?[0-9]+,[0-9]+,[a-zA-Z.]+\\}");
+    public static final Pattern FORMATTING_FILE_PATTERN = Pattern.compile("[a-zA-Z]+\\.[a-zA-Z]+");
     
     public GuiModifibleTextBox(String name, String text, int x, int y, int width) {
         super(name, text, x, y, width);
@@ -64,6 +69,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
             Matcher matcherItalic = FORMATTING_ITALIC_PATTERN.matcher(text);
             Matcher matcherUnderline = FORMATTING_UNDERLINED_PATTERN.matcher(text);
             Matcher matcherColor = FORMATTING_COLOR_PATTERN.matcher(text);
+            Matcher matcherImage = FORMATTING_IMAGE_PATTERN.matcher(text);
             Matcher matcherEnd = FORMATTING_END_PATTERN.matcher(text);
             
             ModifyText modText = new ModifyText(0, ColorUtils.WHITE, false, 0, "");
@@ -93,18 +99,28 @@ public class GuiModifibleTextBox extends GuiTextBox {
             }
             if (matcherItalic.find()) {
                 modText.italic = ModifierAttribute.isItalic(matcherItalic.group());
-                System.out.println(modText.italic);
                 text = text.replaceAll(FORMATTING_ITALIC_PATTERN.pattern(), "");
             }
             if (matcherUnderline.find()) {
                 modText.underline = ModifierAttribute.isUnderline(matcherUnderline.group());
                 text = text.replaceAll(FORMATTING_UNDERLINED_PATTERN.pattern(), "");
             }
+            if (matcherImage.find()) {
+                ImageData data = ModifierAttribute.getImagePos(matcherImage.group());
+                System.out.println(data.imageName);
+                modText.imageX = data.x;
+                modText.imageY = data.y;
+                modText.imageName = new String(data.imageName);
+                text = text.replaceAll(FORMATTING_IMAGE_PATTERN.pattern(), "");
+            }
             if (matcherEnd.find()) {
                 text = text.replaceAll(FORMATTING_END_PATTERN.pattern(), "");
                 modText.text = text;
             }
-            listOfModifyText.add(modText);
+            if (modText.imageName == "")
+                listOfModifyText.add(modText);
+            else
+                this.locationImageList.add(modText);
         }
     }
     
@@ -193,6 +209,18 @@ public class GuiModifibleTextBox extends GuiTextBox {
         if (results)
             isMouseOverClickable(posX, posY);
         return results;
+    }
+    
+    public void addImages() {
+        for (ModifyText text : this.locationImageList) {
+            String fileType = text.imageName.split("\\.")[1];
+            if (fileType.equals("png") || fileType.equals("jpeg"))
+                GuiModifibleTextBox.this.getParent().addControl(new GuiImage("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, 1));
+            else if (fileType.equals("gif"))
+                GuiModifibleTextBox.this.getParent().addControl(new GuiGIF("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, 1));
+            GuiModifibleTextBox.this.getParent().refreshControls();
+        }
+        //
     }
     
     @Override
@@ -363,6 +391,34 @@ public class GuiModifibleTextBox extends GuiTextBox {
             Matcher matcher = FORMATTING_UNDERLINED_PATTERN.matcher(clickable);
             return matcher.find();
         }
+        
+        public static ImageData getImagePos(String image) {
+            Matcher matcher = FORMATTING_SIMPLE_NUMBER_PATTERN.matcher(image);
+            int count = 0;
+            int[] pos = new int[2];
+            while (matcher.find()) {
+                pos[count] = Integer.parseInt(matcher.group());
+                count++;
+            }
+            matcher = FORMATTING_FILE_PATTERN.matcher(image);
+            matcher.find();
+            String imageName = matcher.group();
+            ImageData data = new ImageData(pos[0], pos[1], imageName);
+            return data;
+        }
+        
+    }
+    
+    private static class ImageData {
+        public int x;
+        public int y;
+        public String imageName;
+        
+        public ImageData(int x, int y, String imageName) {
+            this.x = x;
+            this.y = y;
+            this.imageName = imageName;
+        }
     }
     
     private class ModifyText {
@@ -375,7 +431,11 @@ public class GuiModifibleTextBox extends GuiTextBox {
         public String text = "";
         public int newLines = 0;
         public boolean mouseOver = false;
+        public int imageX = 0;
+        public int imageY = 0;
+        public String imageName = "";
         
+        @SuppressWarnings("unused")
         public ModifyText() {
             
         }
