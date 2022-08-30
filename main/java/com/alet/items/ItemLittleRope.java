@@ -13,6 +13,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemLittleRope extends Item implements ILittleTool {
     
@@ -31,6 +33,7 @@ public class ItemLittleRope extends Item implements ILittleTool {
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
     
+    @SideOnly(Side.CLIENT)
     @Override
     public SubGuiConfigure getConfigureGUI(EntityPlayer player, ItemStack stack) {
         return new SubGuiLittleRope(stack);
