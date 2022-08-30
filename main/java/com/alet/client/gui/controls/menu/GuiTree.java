@@ -47,6 +47,10 @@ public class GuiTree extends GuiParent {
         this.height = (listOfParts.size() * 14) + 25;
     }
     
+    /** Adds a part to a existing tree.
+     * 
+     * @param part
+     *            the part you want to add. */
     public void addToTree(GuiTreePart part) {
         this.listOfRoots.add(part);
         createRootControls();
@@ -56,6 +60,10 @@ public class GuiTree extends GuiParent {
         this.height = (listOfParts.size() * 14) + 25;
     }
     
+    /** replaces an existing tree with a new one.
+     * 
+     * @param listOfRoots
+     *            the tree you want to replace the existing tree with. */
     public void replaceTree(List<GuiTreePart> listOfRoots) {
         this.listOfRoots = listOfRoots;
         this.removeControls("");
@@ -76,6 +84,7 @@ public class GuiTree extends GuiParent {
         }
     }
     
+    /** Adds a search bar. */
     public void createSearchControls() {
         if (useSearchBar && !has("search"))
             addControl(new GuiTextfield("search", "", searchBarX, searchBarY, searchBarWidth, 10) {
@@ -109,6 +118,10 @@ public class GuiTree extends GuiParent {
         }
     }
     
+    /** Finds all tree parts with matching search term. Will also look through the related search keywords you can add yourself. *
+     * 
+     * @param search
+     *            Word to search for. */
     public void setSearchedParts(String search) {
         listOfPartsSearched.clear();
         for (GuiTreePart part : listOfParts) {
@@ -129,6 +142,7 @@ public class GuiTree extends GuiParent {
         }
     }
     
+    /** Creates a tree with just the found search results */
     public void createSearchResultControls() {
         if (this.listOfPartsSearched != null && !this.listOfPartsSearched.isEmpty())
             for (int i = 0; i < listOfPartsSearched.size(); i++) {
@@ -145,6 +159,7 @@ public class GuiTree extends GuiParent {
         removeControls("search");
     }
     
+    /** Closes every single part that is able to be openable. */
     public void closeAllMenus() {
         for (GuiTreePart part : this.listOfParts) {
             if (part.type.canHold())
@@ -152,6 +167,10 @@ public class GuiTree extends GuiParent {
         }
     }
     
+    /** This will open all branches to get to the part you specified.
+     * 
+     * @param check
+     *            The part to open to. */
     public void openTo(GuiTreePart check) {
         do {
             GuiTreePart heldInPart = this.listOfParts.get(check.heldInID);
@@ -167,6 +186,7 @@ public class GuiTree extends GuiParent {
         } while (check != null);
     }
     
+    /** sorts all the parts of the tree */
     public void allButtons() {
         for (int i = 0; i < listOfRoots.size(); i++) {
             GuiTreePart root = listOfRoots.get(i);
@@ -180,6 +200,7 @@ public class GuiTree extends GuiParent {
         }
     }
     
+    /** sorts all the parts of the tree */
     public void allButtons(GuiTreePart root, int j) {
         for (int i = 0; i < root.listOfParts.size(); i++) {
             GuiTreePart part = root.listOfParts.get(i);

@@ -13,10 +13,8 @@ import com.alet.client.gui.controls.GuiScalableTextBox;
 import com.alet.client.gui.controls.GuiTable;
 import com.alet.client.gui.controls.menu.GuiTree;
 import com.alet.client.gui.controls.menu.GuiTreeManualPart;
-import com.alet.client.gui.controls.menu.GuiTreePagePart;
 import com.alet.client.gui.controls.menu.GuiTreePart;
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
-import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
@@ -28,415 +26,114 @@ import net.minecraft.util.text.TextFormatting;
 
 public class SubGuiManual extends SubGui {
     
-    public GuiTreePart selected = new GuiTreePart("", EnumPartType.Leaf);
+    public GuiTreePart selected = new GuiTreePart("", EnumPartType.Branch);
     //ModifierAttribute.addText(1, ColorUtils.WHITE, false, 0, "", false, false, false)
     public GuiScrollBox scrollBoxPage;
     private final int white = ColorUtils.WHITE;
     
-    GuiTreePart welcome = (new GuiTreeManualPart("Welcome To LittleTiles & ALET", EnumPartType.Title) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart littleTile = (new GuiTreeManualPart("LittleTiles", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart alet = (new GuiTreeManualPart("A Little Extra Tiles", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart buildingWTile = (new GuiTreeManualPart("Building With Tiles", EnumPartType.Title) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart whatIsTile = (new GuiTreeManualPart("What is a Tile?", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart addModRemove = (new GuiTreeManualPart("Add, Modify, & Remove Tiles", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart adding = (new GuiTreeManualPart("Adding Tiles", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart modifying = (new GuiTreeManualPart("Modfying Tiles", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart removing = (new GuiTreeManualPart("Removing Tiles", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart measuring = (new GuiTreeManualPart("Measuring Tiles", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart tapeMeasure = (new GuiTreeManualPart("Little Tape Measure", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart measurements = (new GuiTreeManualPart("Measurement Shapes", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart box = (new GuiTreeManualPart("Box", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart line = (new GuiTreeManualPart("Line", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart compass = (new GuiTreeManualPart("Compass", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart buildingTool = (new GuiTreeManualPart("Building Tool", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart chisel = (new GuiTreeManualPart("Little Chisel", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart hammer = (new GuiTreeManualPart("Little Hammer", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart glove = (new GuiTreeManualPart("Little Glove", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart paintBrush = (new GuiTreeManualPart("Little Paint Brush", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart saw = (new GuiTreeManualPart("Little Saw", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart screwdriver = (new GuiTreeManualPart("Little Screwdriver", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart drawShape = (new GuiTreeManualPart("Draw Shapes", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragBox = (new GuiTreeManualPart("Box", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragSlice = (new GuiTreeManualPart("Slice", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragPolygon = (new GuiTreeManualPart("Polygon", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragWall = (new GuiTreeManualPart("Wall", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragPillar = (new GuiTreeManualPart("Pillar", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragCurves = (new GuiTreeManualPart("Curves", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragCylinder = (new GuiTreeManualPart("Cylinder", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragSphere = (new GuiTreeManualPart("Shpere", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragPyramid = (new GuiTreeManualPart("Pyramid", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragTile = (new GuiTreeManualPart("Tile", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragType = (new GuiTreeManualPart("Type", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragConnected = (new GuiTreeManualPart("Connected", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragCetered = (new GuiTreeManualPart("Centered Drag Shapes", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart dragMagicWand = (new GuiTreeManualPart("Magic Wand", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart drawMode = (new GuiTreeManualPart("Draw Modes", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart defaultMode = (new GuiTreeManualPart("Default", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart fillMode = (new GuiTreeManualPart("Fill", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart allMode = (new GuiTreeManualPart("All", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart overwriteMode = (new GuiTreeManualPart("Overwrite", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart overwriteAllMode = (new GuiTreeManualPart("Overwrite All", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart replaceMode = (new GuiTreeManualPart("Replace", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart stencilMode = (new GuiTreeManualPart("Stencil", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart colorizeMode = (new GuiTreeManualPart("Colorize", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart materialWhitelist = (new GuiTreeManualPart("Material Whitelist", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart usingStructure = (new GuiTreeManualPart("Using Structures", EnumPartType.Title) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart savingStructure = (new GuiTreeManualPart("Saving Structures", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart blueprint = (new GuiTreeManualPart("Little Blueprint", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart staticStructure = (new GuiTreeManualPart("Static Structures", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart fixedStructure = (new GuiTreeManualPart("Fixed", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart ladderStructure = (new GuiTreeManualPart("Ladder", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart bedStructure = (new GuiTreeManualPart("Bed", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart chairStructure = (new GuiTreeManualPart("Chair", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart storageStructure = (new GuiTreeManualPart("Chair", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart noclipStructure = (new GuiTreeManualPart("No-Clip", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart lightStructure = (new GuiTreeManualPart("Light", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart messageStructure = (new GuiTreeManualPart("Message", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart allowsOnLightStructure = (new GuiTreeManualPart("Allows On Light", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart ropeStructure = (new GuiTreeManualPart("Rope Connection", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart doorStructures = (new GuiTreeManualPart("Door Structures", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart axisDoor = (new GuiTreeManualPart("Axis Door", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart slidingDoor = (new GuiTreeManualPart("Sliding Door", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart advancedDoor = (new GuiTreeManualPart("Advanced Door", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart doorActivator = (new GuiTreeManualPart("Door Activator", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart doorLock = (new GuiTreeManualPart("Door Lock", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart advancedStructures = (new GuiTreeManualPart("Advanced Structures", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart triggerStructures = (new GuiTreeManualPart("Trigger", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart stateMutatorStructures = (new GuiTreeManualPart("State Mutator", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart camPlayerStructures = (new GuiTreeManualPart("Camera Player", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart usingSignaling = (new GuiTreeManualPart("Using Signaling", EnumPartType.Title) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart whatIsSignal = (new GuiTreeManualPart("What is Signaling?", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart signalingGUI = (new GuiTreeManualPart("Signaling Interface", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart logicGates = (new GuiTreeManualPart("Logic Gates", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart and = (new GuiTreeManualPart("AND", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart or = (new GuiTreeManualPart("OR", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart not = (new GuiTreeManualPart("NOT", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart nand = (new GuiTreeManualPart("NAND", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart nor = (new GuiTreeManualPart("NOR", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart xor = (new GuiTreeManualPart("XOR", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart xnor = (new GuiTreeManualPart("XNOR", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart structureSignal = (new GuiTreeManualPart("Structure's Signaling", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart staticStructureSignal = (new GuiTreeManualPart("Static Structures", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart bedSignal = (new GuiTreeManualPart("Bed", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart chairSignal = (new GuiTreeManualPart("Chair", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart storageSignal = (new GuiTreeManualPart("Storage", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart noclipSignal = (new GuiTreeManualPart("No-Clip", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart lightSignal = (new GuiTreeManualPart("Light", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart messageSignal = (new GuiTreeManualPart("Message", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart doorStructureSignal = (new GuiTreeManualPart("Door Structures", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart axisDoorSignal = (new GuiTreeManualPart("Axis Door", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart slidingDoorSignal = (new GuiTreeManualPart("Sliding Door", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart advancedDoorSignal = (new GuiTreeManualPart("Advanced Door", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart doorActivatorSignal = (new GuiTreeManualPart("Door Activator", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart doorLockSignal = (new GuiTreeManualPart("Door Lock", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart advancedStructureSignal = (new GuiTreeManualPart("Advanced Structures", EnumPartType.Branch) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart triggerSignal = (new GuiTreeManualPart("Trigger", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart stateMutatorSignal = (new GuiTreeManualPart("State Mutator", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart camPlayerSignal = (new GuiTreeManualPart("Camera Player", EnumPartType.Leaf) {
-        @Override
-        public void getPage() {}
-    });
-    GuiTreePart tutorial = (new GuiTreeManualPart("Tutorial", EnumPartType.Title) {
-        @Override
-        public void getPage() {}
-    });
+    GuiTreePart welcome = (new GuiTreeManualPart("Welcome To LittleTiles & ALET", EnumPartType.Title, "welcomeTitle"));
+    GuiTreePart littleTile = (new GuiTreeManualPart("LittleTiles", EnumPartType.Leaf, "welcomeLT"));
+    GuiTreePart alet = (new GuiTreeManualPart("A Little Extra Tiles", EnumPartType.Leaf, "welcomeALET"));
+    GuiTreePart buildingWTile = (new GuiTreeManualPart("Building With Tiles", EnumPartType.Title, "buildingTilesLT"));
+    GuiTreePart whatIsTile = (new GuiTreeManualPart("What is a Tile?", EnumPartType.Leaf, "whatIsTileLT"));
+    GuiTreePart addModRemove = (new GuiTreeManualPart("Add, Modify, & Remove Tiles", EnumPartType.Branch, "addModRemoveLT"));
+    GuiTreePart adding = (new GuiTreeManualPart("Adding Tiles", EnumPartType.Leaf, "addingLT"));
+    GuiTreePart modifying = (new GuiTreeManualPart("Modfying Tiles", EnumPartType.Leaf, "modifyingLT"));
+    GuiTreePart removing = (new GuiTreeManualPart("Removing Tiles", EnumPartType.Leaf, "removingLT"));
+    GuiTreePart measuring = (new GuiTreeManualPart("Measuring Tiles", EnumPartType.Branch, "measuringALET"));
+    GuiTreePart tapeMeasure = (new GuiTreeManualPart("Little Tape Measure", EnumPartType.Leaf, "tapeMeasureALET"));
+    GuiTreePart measurements = (new GuiTreeManualPart("Measurement Shapes", EnumPartType.Branch, "measurementsALET"));
+    GuiTreePart box = (new GuiTreeManualPart("Box", EnumPartType.Leaf, "boxMeasurmentALET"));
+    GuiTreePart line = (new GuiTreeManualPart("Line", EnumPartType.Leaf, "lineMeasurmentALET"));
+    GuiTreePart compass = (new GuiTreeManualPart("Compass", EnumPartType.Leaf, "compassMeasurmentALET"));
+    GuiTreePart buildingTool = (new GuiTreeManualPart("Building Tool", EnumPartType.Branch, "buildingToolsLT"));
+    GuiTreePart chisel = (new GuiTreeManualPart("Little Chisel", EnumPartType.Leaf, "chiselToolLT"));
+    GuiTreePart hammer = (new GuiTreeManualPart("Little Hammer", EnumPartType.Leaf, "hammerToolLT"));
+    GuiTreePart glove = (new GuiTreeManualPart("Little Glove", EnumPartType.Leaf, "gloveToolLT"));
+    GuiTreePart paintBrush = (new GuiTreeManualPart("Little Paint Brush", EnumPartType.Leaf, "paintBrushToolLT"));
+    GuiTreePart saw = (new GuiTreeManualPart("Little Saw", EnumPartType.Leaf, "sawToolLT"));
+    GuiTreePart screwdriver = (new GuiTreeManualPart("Little Screwdriver", EnumPartType.Leaf, "screwdriverToolLT"));
+    GuiTreePart drawShape = (new GuiTreeManualPart("Draw Shapes", EnumPartType.Branch, "drawShapeLT"));
+    GuiTreePart dragBox = (new GuiTreeManualPart("Box", EnumPartType.Leaf, "drawShapeBoxLT"));
+    GuiTreePart dragSlice = (new GuiTreeManualPart("Slice", EnumPartType.Leaf, "drawShapeSliceLT"));
+    GuiTreePart dragPolygon = (new GuiTreeManualPart("Polygon", EnumPartType.Leaf, "drawShapePolygonLT"));
+    GuiTreePart dragWall = (new GuiTreeManualPart("Wall", EnumPartType.Leaf, "drawShapeWallLT"));
+    GuiTreePart dragPillar = (new GuiTreeManualPart("Pillar", EnumPartType.Leaf, "drawShapePillarLT"));
+    GuiTreePart dragCurves = (new GuiTreeManualPart("Curves", EnumPartType.Leaf, "drawShapeCurvesLT"));
+    GuiTreePart dragCylinder = (new GuiTreeManualPart("Cylinder", EnumPartType.Leaf, "drawShapeCylinder"));
+    GuiTreePart dragSphere = (new GuiTreeManualPart("Shpere", EnumPartType.Leaf, "drawShapeSphereLT"));
+    GuiTreePart dragPyramid = (new GuiTreeManualPart("Pyramid", EnumPartType.Leaf, "drawShapePyramid"));
+    GuiTreePart dragTile = (new GuiTreeManualPart("Tile", EnumPartType.Leaf, "drawShapeTileLT"));
+    GuiTreePart dragType = (new GuiTreeManualPart("Type", EnumPartType.Leaf, "drawShapeTypeLT"));
+    GuiTreePart dragConnected = (new GuiTreeManualPart("Connected", EnumPartType.Leaf, "drawShapeConnectedLT"));
+    GuiTreePart dragCetered = (new GuiTreeManualPart("Centered Drag Shapes", EnumPartType.Leaf, "drawShapeCenteredALET"));
+    GuiTreePart dragMagicWand = (new GuiTreeManualPart("Magic Wand", EnumPartType.Leaf, "drawShapeMagicWandALET"));
+    GuiTreePart drawMode = (new GuiTreeManualPart("Draw Modes", EnumPartType.Branch, "drawModeLT"));
+    GuiTreePart defaultMode = (new GuiTreeManualPart("Default", EnumPartType.Leaf, "modeDefaultLT"));
+    GuiTreePart fillMode = (new GuiTreeManualPart("Fill", EnumPartType.Leaf, "modeFillLT"));
+    GuiTreePart allMode = (new GuiTreeManualPart("All", EnumPartType.Leaf, "modeAllLT"));
+    GuiTreePart overwriteMode = (new GuiTreeManualPart("Overwrite", EnumPartType.Leaf, "modeOverwriteLT"));
+    GuiTreePart overwriteAllMode = (new GuiTreeManualPart("Overwrite All", EnumPartType.Leaf, "modeOverwriteALllLT"));
+    GuiTreePart replaceMode = (new GuiTreeManualPart("Replace", EnumPartType.Leaf, "modeReplaceLT"));
+    GuiTreePart stencilMode = (new GuiTreeManualPart("Stencil", EnumPartType.Leaf, "modeStencilLT"));
+    GuiTreePart colorizeMode = (new GuiTreeManualPart("Colorize", EnumPartType.Leaf, "modeColorizeLT"));
+    GuiTreePart materialWhitelist = (new GuiTreeManualPart("Material Whitelist", EnumPartType.Leaf, "materialWhitelistLT"));
+    GuiTreePart usingStructure = (new GuiTreeManualPart("Using Structures", EnumPartType.Title, "usingStructuresLT"));
+    GuiTreePart savingStructure = (new GuiTreeManualPart("Saving Structures", EnumPartType.Branch, "savingStructuresLT"));
+    GuiTreePart blueprint = (new GuiTreeManualPart("Little Blueprint", EnumPartType.Leaf, "blueprintLT"));
+    GuiTreePart staticStructure = (new GuiTreeManualPart("Static Structures", EnumPartType.Branch, "staticStructureLT"));
+    GuiTreePart fixedStructure = (new GuiTreeManualPart("Fixed", EnumPartType.Leaf, "fixedStructureLT"));
+    GuiTreePart ladderStructure = (new GuiTreeManualPart("Ladder", EnumPartType.Leaf, "ladderStructureLT"));
+    GuiTreePart bedStructure = (new GuiTreeManualPart("Bed", EnumPartType.Leaf, "bedStructureLT"));
+    GuiTreePart chairStructure = (new GuiTreeManualPart("Chair", EnumPartType.Leaf, "chairStructureLT"));
+    GuiTreePart storageStructure = (new GuiTreeManualPart("Chair", EnumPartType.Leaf, "storageStructureLT"));
+    GuiTreePart noclipStructure = (new GuiTreeManualPart("No-Clip", EnumPartType.Leaf, "noclipStructureLT"));
+    GuiTreePart lightStructure = (new GuiTreeManualPart("Light", EnumPartType.Leaf, "lightStructureLT"));
+    GuiTreePart messageStructure = (new GuiTreeManualPart("Message", EnumPartType.Leaf, "messageStructureLT"));
+    GuiTreePart allowsOnLightStructure = (new GuiTreeManualPart("Allows On Light", EnumPartType.Leaf, "allowsOnLightStructureALET"));
+    GuiTreePart ropeStructure = (new GuiTreeManualPart("Rope Connection", EnumPartType.Leaf, "ropeStructureALET"));
+    GuiTreePart doorStructures = (new GuiTreeManualPart("Door Structures", EnumPartType.Branch, "doorStructureLT"));
+    GuiTreePart axisDoor = (new GuiTreeManualPart("Axis Door", EnumPartType.Leaf, "axisDoorLT"));
+    GuiTreePart slidingDoor = (new GuiTreeManualPart("Sliding Door", EnumPartType.Leaf, "slidingDoorLT"));
+    GuiTreePart advancedDoor = (new GuiTreeManualPart("Advanced Door", EnumPartType.Leaf, "advancedDoorLT"));
+    GuiTreePart doorActivator = (new GuiTreeManualPart("Door Activator", EnumPartType.Leaf, "doorActivatorDoorLT"));
+    GuiTreePart doorLock = (new GuiTreeManualPart("Door Lock", EnumPartType.Leaf, "doorLockDoorALET"));
+    GuiTreePart advancedStructures = (new GuiTreeManualPart("Advanced Structures", EnumPartType.Branch, "advancedStructuresALET"));
+    GuiTreePart triggerStructures = (new GuiTreeManualPart("Trigger", EnumPartType.Leaf, "triggerStructureALET"));
+    GuiTreePart stateMutatorStructures = (new GuiTreeManualPart("State Mutator", EnumPartType.Leaf, "stateMutatorStructureALET"));
+    GuiTreePart camPlayerStructures = (new GuiTreeManualPart("Camera Player", EnumPartType.Leaf, "camPlayerStructureALET"));
+    GuiTreePart usingSignaling = (new GuiTreeManualPart("Using Signaling", EnumPartType.Title, "usingSignalingLT"));
+    GuiTreePart whatIsSignal = (new GuiTreeManualPart("What is Signaling?", EnumPartType.Branch, "whatIsSignalingLT"));
+    GuiTreePart signalingGUI = (new GuiTreeManualPart("Signaling Interface", EnumPartType.Leaf, "signalingInterfaceLT"));
+    GuiTreePart logicGates = (new GuiTreeManualPart("Logic Gates", EnumPartType.Branch, "logicGatesLT"));
+    GuiTreePart and = (new GuiTreeManualPart("AND", EnumPartType.Leaf, "andLogicGateLT"));
+    GuiTreePart or = (new GuiTreeManualPart("OR", EnumPartType.Leaf, "orLogicGateLT"));
+    GuiTreePart not = (new GuiTreeManualPart("NOT", EnumPartType.Leaf, "notLogicGateLT"));
+    GuiTreePart nand = (new GuiTreeManualPart("NAND", EnumPartType.Leaf, "nandLogicGateLT"));
+    GuiTreePart nor = (new GuiTreeManualPart("NOR", EnumPartType.Leaf, "norLogicGateLT"));
+    GuiTreePart xor = (new GuiTreeManualPart("XOR", EnumPartType.Leaf, "xorLogicGateLT"));
+    GuiTreePart xnor = (new GuiTreeManualPart("XNOR", EnumPartType.Leaf, "xnorLogicGateLT"));
+    GuiTreePart bitwiseGates = (new GuiTreeManualPart("Logic Bitwise-Gates", EnumPartType.Branch, "logicBitwiseGatesLT"));
+    GuiTreePart structureSignal = (new GuiTreeManualPart("Structure's Signaling", EnumPartType.Branch, "structureSignalingLT"));
+    GuiTreePart staticStructureSignal = (new GuiTreeManualPart("Static Structures", EnumPartType.Branch, "staticStructureSignalingLT"));
+    GuiTreePart bedSignal = (new GuiTreeManualPart("Bed", EnumPartType.Leaf, "bedStructureSignalingLT"));
+    GuiTreePart chairSignal = (new GuiTreeManualPart("Chair", EnumPartType.Leaf, "chairStructureSignalingLT"));
+    GuiTreePart storageSignal = (new GuiTreeManualPart("Storage", EnumPartType.Leaf, "storageStructureSignalingLT"));
+    GuiTreePart noclipSignal = (new GuiTreeManualPart("No-Clip", EnumPartType.Leaf, "noclipStructureSignalingLT"));
+    GuiTreePart lightSignal = (new GuiTreeManualPart("Light", EnumPartType.Leaf, "lightStructureSignalingLT"));
+    GuiTreePart messageSignal = (new GuiTreeManualPart("Message", EnumPartType.Leaf, "messageStructureSignalingLT"));
+    GuiTreePart doorStructureSignal = (new GuiTreeManualPart("Door Structures", EnumPartType.Branch, "doorStructureSignalingLT"));
+    GuiTreePart axisDoorSignal = (new GuiTreeManualPart("Axis Door", EnumPartType.Leaf, "axisDoorStructureSignalingLT"));
+    GuiTreePart slidingDoorSignal = (new GuiTreeManualPart("Sliding Door", EnumPartType.Leaf, "slidingDoorStructureSignalingLT"));
+    GuiTreePart advancedDoorSignal = (new GuiTreeManualPart("Advanced Door", EnumPartType.Leaf, "advancedDoorStructureSignalingLT"));
+    GuiTreePart doorActivatorSignal = (new GuiTreeManualPart("Door Activator", EnumPartType.Leaf, "doorActivatorStructureSignalingLT"));
+    GuiTreePart doorLockSignal = (new GuiTreeManualPart("Door Lock", EnumPartType.Leaf, "doorLockStructureSignalingLT"));
+    GuiTreePart advancedStructureSignal = (new GuiTreeManualPart("Advanced Structures", EnumPartType.Branch, "advancedStructureSignalingALET"));
+    GuiTreePart triggerSignal = (new GuiTreeManualPart("Trigger", EnumPartType.Leaf, "triggerStructureSignalingALET"));
+    GuiTreePart stateMutatorSignal = (new GuiTreeManualPart("State Mutator", EnumPartType.Leaf, "stateMutatorStructureSignalingALET"));
+    
+    GuiTreePart camPlayerSignal = (new GuiTreeManualPart("Camera Player", EnumPartType.Leaf, "camPlayerStructureSignalingALET"));
+    GuiTreePart tutorial = (new GuiTreeManualPart("Tutorial", EnumPartType.Title, "tutorialsLT"));
     public GuiTree tree;
     
     public SubGuiManual() {
@@ -503,10 +200,8 @@ public class SubGuiManual extends SubGui {
         listOfMenus.add(buildingWTile);
         listOfMenus.add(usingStructure);
         listOfMenus.add(usingSignaling);
-        
         tree = new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50);
         scrollBox.controls.add(tree);
-        
     }
     
     @CustomEventSubscribe
@@ -519,22 +214,11 @@ public class SubGuiManual extends SubGui {
     
     public void updateMessage(GuiTreeManualPart part) {
         scrollBoxPage.scrolled.set(0);
-        if (part instanceof GuiTreePagePart) {
-            GuiTreePagePart paper = (GuiTreePagePart) part;
-            part.getPage();
-            this.selected = paper.page;
-            tree.highlightPart(paper.page);
-        } else if (!this.selected.equals(part)) {
-            int i = 0;
-            while (i < scrollBoxPage.controls.size()) {
-                if (scrollBoxPage.controls.get(i) instanceof CoreControl) {
-                    if (scrollBoxPage.controls.get(i) instanceof GuiGIF)
-                        ((GuiGIF) scrollBoxPage.controls.get(i)).onClosed();
-                    scrollBoxPage.controls.remove(i);
-                } else
-                    i++;
-            }
-            part.getPage();
+        if (!part.equals(this.selected)) {
+            scrollBoxPage.removeControls(" ");
+            GuiTreeManualPart paper = (GuiTreeManualPart) part;
+            scrollBoxPage.addControl(new GuiModifibleTextBox("", part.getPage(), 0, 0, 350));
+            tree.highlightPart(paper);
             this.selected = part;
         }
     }

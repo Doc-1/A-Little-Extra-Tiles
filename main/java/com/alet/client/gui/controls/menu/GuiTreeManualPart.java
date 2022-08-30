@@ -1,21 +1,27 @@
 package com.alet.client.gui.controls.menu;
 
-public abstract class GuiTreeManualPart extends GuiTreePart {
+import com.alet.common.util.text.translation.ManualTranslator;
+
+public class GuiTreeManualPart extends GuiTreePart {
+    public final String pageName;
     
-    public GuiTreeManualPart(GuiTreePart part) {
+    public GuiTreeManualPart(GuiTreePart part, String pageName) {
         super(part);
-        // TODO Auto-generated constructor stub
+        this.pageName = pageName;
     }
     
-    public GuiTreeManualPart(GuiTreePart part, EnumPartType type) {
+    public GuiTreeManualPart(GuiTreePart part, EnumPartType type, String pageName) {
         super(part, type);
+        this.pageName = pageName;
     }
     
-    public GuiTreeManualPart(String caption, EnumPartType type) {
+    public GuiTreeManualPart(String caption, EnumPartType type, String pageName) {
         super(caption, type);
-        // TODO Auto-generated constructor stub
+        this.pageName = pageName;
     }
     
-    public abstract void getPage();
+    public String getPage() {
+        return ManualTranslator.translateToLocal(pageName);
+    }
     
 }
