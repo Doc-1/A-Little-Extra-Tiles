@@ -48,7 +48,7 @@ public class LittleGuiLinkerALET extends LittleStructure {
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
         if (!worldIn.isRemote) {
-            BlockPos newPos = new BlockPos(linkedBlock.getX() + this.getPos().getX(), linkedBlock.getY() + this.getPos().getY(), linkedBlock.getZ() + this.getPos().getZ());
+            BlockPos newPos = new BlockPos(linkedBlock.getX(), linkedBlock.getY(), linkedBlock.getZ());
             float f = (float) (hitX - (double) newPos.getX());
             float f1 = (float) (hitY - (double) newPos.getY());
             float f2 = (float) (hitZ - (double) newPos.getZ());

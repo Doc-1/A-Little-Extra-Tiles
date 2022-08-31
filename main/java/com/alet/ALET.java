@@ -374,8 +374,10 @@ public class ALET {
                 return new SubContainerAnimatorWorkbench(player, (LittleAnimatorBench) structure);
             }
         });
+        
         GuiHandler.registerGuiHandler("signal_interface", new LittleStructureGuiHandler() {
             @Override
+            @SideOnly(Side.CLIENT)
             public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
                 try {
                     LittleStructure parent = structure.getParent().getStructure();
@@ -393,6 +395,7 @@ public class ALET {
         GuiHandler.registerGuiHandler("item_scanner", new LittleStructureGuiHandler() {
             
             @Override
+            @SideOnly(Side.CLIENT)
             public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
                 return new SubGuiItemScanner((LittleTransferItemScanner) structure);
             }
