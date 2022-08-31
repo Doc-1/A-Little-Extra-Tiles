@@ -49,7 +49,7 @@ import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.LittleAlwaysOnLight;
 import com.alet.common.structure.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
 import com.alet.common.structure.type.LittleCamPlayerALET;
-import com.alet.common.structure.type.LittleGuiLinkerALET;
+import com.alet.common.structure.type.LittleRemoteActivatorALET;
 import com.alet.common.structure.type.LittleLeadConnectionALET;
 import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleMusicComposerALET;
@@ -425,7 +425,7 @@ public class ALET {
         LittleStructureRegistry
                 .registerStructureType("lead_connection", "simple", LittleLeadConnectionALET.class, LittleStructureAttribute.NONE, LittleLeadConnectionALET.LittleLeadConnectionParserALET.class);
         LittleStructureRegistry
-                .registerStructureType("remote_activator", "advance", LittleGuiLinkerALET.class, LittleStructureAttribute.NONE, LittleGuiLinkerALET.LittleGuiLinkerParserALET.class);
+                .registerStructureType("remote_activator", "advance", LittleRemoteActivatorALET.class, LittleStructureAttribute.NONE, LittleRemoteActivatorALET.LittleRemoteActivatorParserALET.class);
         
         //LittleStructureRegistry.registerStructureType(new LittleAxisDoorType("loop_door", "door", LittleAxisLoopDoor.class, LittleStructureAttribute.NONE).addOutput("state", 1, SignalMode.TOGGLE), LittleAxisLoopDoorParser.class);
         if (Loader.isModLoaded("cmdcam"))
