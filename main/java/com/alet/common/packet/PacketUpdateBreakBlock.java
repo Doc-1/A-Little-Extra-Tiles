@@ -42,7 +42,6 @@ public class PacketUpdateBreakBlock extends CreativeCorePacket {
         try {
             LittleTriggerBoxStructureALET structure = (LittleTriggerBoxStructureALET) location.find(player.world);
             structure.breakBlock = LittleAction.isUsingSecondMode(player);
-            System.out.println(structure.getInput(2).toString());
             structure.getInput(2).updateState(BooleanUtils.asArray(!structure.getInput(2).getState()[0]));
             if (!structure.breakBlock) {
                 structure.entities.add(player);

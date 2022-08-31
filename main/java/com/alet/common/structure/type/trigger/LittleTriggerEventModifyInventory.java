@@ -34,7 +34,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities, Integer tick) {
+    public void runEvent(HashSet<Entity> entities) {
         // TODO Auto-generated method stub
         
     }

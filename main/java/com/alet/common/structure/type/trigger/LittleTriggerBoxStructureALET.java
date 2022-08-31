@@ -106,7 +106,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         if (worldIn.isRemote)
             return;
         
-        //System.out.println(worldIn.getMinecraftServer().getCommandManager().executeCommand(entityIn, "say h"));
         boolean intersected = false;
         if (listen) {
             for (LittleTile tile : parent) {
@@ -132,8 +131,9 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     }
     
     private void tickWhileCollided() {
+        int i = 0;
         for (LittleTriggerEvent event : triggers) {
-            event.runEvent(entities, 0);
+            event.runEvent(entities);
         }
     }
     
@@ -155,6 +155,13 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             }
         }
         return !wasEmpty;
+    }
+    
+    @Override
+    public void onLeftClick(EntityPlayer player) {
+        this.breakBlock = LittleAction.isUsingSecondMode(player);
+        PacketHandler.sendPacketToServer(new PacketUpdateBreakBlock(this.getStructureLocation()));
+        
     }
     
     public static class LittleTriggerBoxStructureParser extends LittleStructureGuiParser {
@@ -199,7 +206,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             GuiTriggerBoxAddButton add = new GuiTriggerBoxAddButton(this, "Add", 105, 170, 22);
             add.height = 19;
             parent.addControl(add);
-            System.out.println(triggers);
             if (triggers != null && !triggers.isEmpty()) {
                 for (int i = 0; i < triggers.size(); i++) {
                     box.addControl(new GuiTriggerEventButton(this, triggers.get(i).getName() + i, triggers.get(i).getName(), 0, i * 17, 119, 12));
@@ -226,13 +232,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             if (trigger != null)
                 trigger.updateValues(event.source);
         }
-    }
-    
-    @Override
-    public void onLeftClick(EntityPlayer player) {
-        this.breakBlock = LittleAction.isUsingSecondMode(player);
-        PacketHandler.sendPacketToServer(new PacketUpdateBreakBlock(this.getStructureLocation()));
-        
     }
     
 }

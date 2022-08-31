@@ -41,7 +41,7 @@ public class LittleTriggerKeyListener extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities, Integer tick) {
+    public void runEvent(HashSet<Entity> entities) {
         for (Entity entity : entities) {
             
         }

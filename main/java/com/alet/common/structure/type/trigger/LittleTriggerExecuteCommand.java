@@ -53,7 +53,7 @@ public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities, Integer tick) {
+    public void runEvent(HashSet<Entity> entities) {
         for (Entity entity : entities) {
             entity.world.getMinecraftServer().getCommandManager().executeCommand(entity.world.getMinecraftServer(), this.command);
         }

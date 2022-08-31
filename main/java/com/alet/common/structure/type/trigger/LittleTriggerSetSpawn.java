@@ -75,7 +75,7 @@ public class LittleTriggerSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities, Integer tick) {
+    public void runEvent(HashSet<Entity> entities) {
         for (Entity entity : entities) {
             if (entity instanceof EntityPlayerMP) {
                 ((EntityPlayerMP) entity).setSpawnPoint(new BlockPos(posX, posY, posZ), true);

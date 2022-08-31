@@ -16,11 +16,13 @@ public abstract class LittleTriggerEvent {
     
     public String id = "";
     public int tick = 0;
+    public int effectPerTick = 0;
     public static LinkedHashMap<String, Class<? extends LittleTriggerEvent>> registeredEvents = new LinkedHashMap<String, Class<? extends LittleTriggerEvent>>();
     
     static {
         registerEvent("Modify Health", LittleTriggerModifyHealth.class);
         registerEvent("Modify Motion", LittleTriggerModifyMotion.class);
+        registerEvent("Modify Inventory", LittleTriggerEventModifyInventory.class);
         registerEvent("Modify Scoreboard", LittleTriggerEventModifyScoreboard.class);
         registerEvent("Execute Command", LittleTriggerExecuteCommand.class);
         registerEvent("Set Spawn", LittleTriggerSetSpawn.class);
@@ -68,7 +70,15 @@ public abstract class LittleTriggerEvent {
     
     public abstract void updateValues(CoreControl source);
     
-    public abstract void runEvent(HashSet<Entity> entities, Integer tick);
+    public void tryRunEvent(HashSet<Entity> entities) {
+        if (this.effectPerTick <= this.tick) {
+            runEvent(entities);
+            this.tick = 0;
+        }
+        this.tick++;
+    }
+    
+    protected abstract void runEvent(HashSet<Entity> entities);
     
     public static void wipeControls(GuiParent panel) {
         panel.controls = new ArrayList<GuiControl>();

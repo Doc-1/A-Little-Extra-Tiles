@@ -23,7 +23,6 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
     public float damageAmount = 0;
     public float healAmount = 0;
     public String damageType = "";
-    public int effectPerTick = 0;
     public boolean heal = false;
     public boolean harm = false;
     
@@ -152,32 +151,28 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities, Integer tick) {
-        System.out.println(this.tick);
-        if (this.effectPerTick <= this.tick) {
-            if (this.harm) {
-                DamageSource damageSource = DamageSource.GENERIC;
-                for (DamageSource source : sourceOfDmg) {
-                    if (this.damageType.equals(source.getDamageType())) {
-                        damageSource = source;
-                        break;
-                    }
-                }
-                for (Entity entity : entities) {
-                    entity.attackEntityFrom(damageSource, this.damageAmount);
+    public void runEvent(HashSet<Entity> entities) {
+        if (this.harm) {
+            DamageSource damageSource = DamageSource.GENERIC;
+            for (DamageSource source : sourceOfDmg) {
+                if (this.damageType.equals(source.getDamageType())) {
+                    damageSource = source;
+                    break;
                 }
             }
-            if (this.heal) {
-                for (Entity entity : entities) {
-                    if (entity instanceof EntityLivingBase) {
-                        EntityLivingBase living = (EntityLivingBase) entity;
-                        living.heal(this.healAmount);
-                    }
-                }
+            for (Entity entity : entities) {
+                entity.attackEntityFrom(damageSource, this.damageAmount);
             }
-            this.tick = 0;
         }
-        this.tick++;
+        if (this.heal) {
+            for (Entity entity : entities) {
+                if (entity instanceof EntityLivingBase) {
+                    EntityLivingBase living = (EntityLivingBase) entity;
+                    living.heal(this.healAmount);
+                }
+            }
+        }
+        
     }
     
     @Override

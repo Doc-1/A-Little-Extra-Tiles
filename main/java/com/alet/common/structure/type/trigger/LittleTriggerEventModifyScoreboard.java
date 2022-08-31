@@ -160,37 +160,33 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities, Integer tick) {
+    public void runEvent(HashSet<Entity> entities) {
         
-        if (this.effectPerTick <= this.tick) {
-            Collection<ScoreObjective> objectives = world.getScoreboard().getScoreObjectives();
-            Collection<Score> scores = world.getScoreboard().getScores();
-            ScoreObjective objective = null;
-            Score score = null;
-            
-            for (ScoreObjective obj : objectives) {
-                if (obj.getName().equals(scoreName)) {
-                    objective = obj;
-                    break;
-                }
+        Collection<ScoreObjective> objectives = world.getScoreboard().getScoreObjectives();
+        Collection<Score> scores = world.getScoreboard().getScores();
+        ScoreObjective objective = null;
+        Score score = null;
+        
+        for (ScoreObjective obj : objectives) {
+            if (obj.getName().equals(scoreName)) {
+                objective = obj;
+                break;
             }
-            
-            for (Entity entity : entities) {
-                if (entity instanceof EntityPlayerMP)
-                    score = world.getScoreboard().getOrCreateScore(entity.getName(), objective);
-                else
-                    score = world.getScoreboard().getOrCreateScore(entity.getUniqueID().toString(), objective);
-                
-            }
-            
-            if (score != null)
-                if (value > 0)
-                    score.increaseScore(value);
-                else if (value < 0)
-                    score.decreaseScore(Math.abs(value));
-            this.tick = 0;
         }
-        this.tick++;
+        
+        for (Entity entity : entities) {
+            if (entity instanceof EntityPlayerMP)
+                score = world.getScoreboard().getOrCreateScore(entity.getName(), objective);
+            else
+                score = world.getScoreboard().getOrCreateScore(entity.getUniqueID().toString(), objective);
+            
+        }
+        
+        if (score != null)
+            if (value > 0)
+                score.increaseScore(value);
+            else if (value < 0)
+                score.decreaseScore(Math.abs(value));
     }
     
     @Override
