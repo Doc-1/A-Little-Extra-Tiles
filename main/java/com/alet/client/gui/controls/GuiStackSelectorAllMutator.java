@@ -20,6 +20,6 @@ public class GuiStackSelectorAllMutator extends GuiStackSelectorAll {
     
     @Override
     protected GuiComboBoxExtension createBox() {
-        return new GuiStackSelectorExtensionMutator(name + "extension", getPlayer(), posX, posY + height, (width + 40) - getContentOffset() * 2, 80, this);
+        return new GuiStackSelectorExtensionMutator("extension" + name, getPlayer(), posX, posY + height, (width + 40) - getContentOffset() * 2, 80, this);
     }
 }

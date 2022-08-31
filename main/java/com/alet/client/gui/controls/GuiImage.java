@@ -46,7 +46,7 @@ public class GuiImage extends GuiControl {
         this.marginWidth = 0;
         
         try {
-            BufferedImage image = TextureUtil.readBufferedImage(ALET.class.getResourceAsStream(path));
+            BufferedImage image = TextureUtil.readBufferedImage(getClass().getClassLoader().getResourceAsStream(path));
             this.width = (image.getWidth() / scale);
             this.height = (image.getHeight() / scale);
             this.scale = scale;

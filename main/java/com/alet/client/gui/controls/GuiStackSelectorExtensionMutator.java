@@ -84,7 +84,7 @@ public class GuiStackSelectorExtensionMutator extends GuiStackSelectorExtension 
             height += textfield.height;
             textfield.focused = true;
         }
-        GuiColorPickerAlet color = new GuiColorPickerAlet("color", 0, height, ColorUtils.IntToRGBA(comboBoxMutator.color), true, 0);
+        GuiColorPickerAlet color = new GuiColorPickerAlet(name + "color", 0, height, ColorUtils.IntToRGBA(comboBoxMutator.color), true, 0);
         controls.add(color);
         height += color.height;
         //GuiCheckBox noclip = new GuiCheckBox("noclip", "No Colision", 0, height, comboBoxMutator.noclip);

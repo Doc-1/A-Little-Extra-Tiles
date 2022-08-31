@@ -78,8 +78,6 @@ import com.alet.common.structure.type.premade.signal.LittleSignalOutputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalOutputQuick.LittleStructureTypeOutputQuick;
 import com.alet.common.structure.type.premade.signal.LittleSignalSevenSegmentedDisplay;
 import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
-import com.alet.common.structure.type.premade.transfer.LittleTransferItemExport;
-import com.alet.common.structure.type.premade.transfer.LittleTransferItemImport;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner;
 import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
@@ -512,10 +510,11 @@ public class ALET {
                 .addOutput("d", 1, SignalMode.EQUAL, true).addOutput("e", 1, SignalMode.EQUAL, true).addOutput("f", 1, SignalMode.EQUAL, true)
                 .addOutput("g", 1, SignalMode.EQUAL, true).addOutput("dp", 1, SignalMode.EQUAL, true);
         CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
+        /*
         LittleStructurePremade.registerPremadeStructureType("item_export", ALET.MODID, LittleTransferItemExport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
                 .addOutput("drop", 16, SignalMode.EQUAL, true);
         LittleStructurePremade.registerPremadeStructureType("item_import", ALET.MODID, LittleTransferItemImport.class, LittleStructureAttribute.TICKING).setNotSnapToGrid()
-                .addOutput("block", 16, SignalMode.EQUAL, true);
+                .addOutput("block", 16, SignalMode.EQUAL, true);*/
         
         LittleStructurePremade
                 .registerPremadeStructureType("little_hopper", ALET.MODID, LittleTransferLittleHopper.class, LittleStructureAttribute.TICKING | LittleStructureAttribute.NEIGHBOR_LISTENER)
@@ -644,26 +643,26 @@ public class ALET {
                 .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output1", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 1))
                 .setNotSnapToGrid();
         LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output4", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 4))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output16", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 16))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output32", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 32))
+                .setNotSnapToGrid();
+        
+        LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input1", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 1))
                 .setNotSnapToGrid();
         
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output4", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 4))
-                .setNotSnapToGrid();
-        LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input4", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 4))
-                .setNotSnapToGrid();
-        
-        LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output16", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 16))
                 .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input16", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 16))
                 .setNotSnapToGrid();
         
-        LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output32", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 32))
-                .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeInputQuick("signal_quick_input32", "premade", LittleSignalInputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 32))
                 .setNotSnapToGrid();
