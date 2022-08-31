@@ -409,8 +409,9 @@ public class ALET {
                 .registerStructureType("allows_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class)
                 .addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
         LittleStructureRegistry
-                .registerStructureType("tigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class)
-                .addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE).addInput("left click", 1);
+                .registerStructureType("trigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class)
+                .addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE).addInput("left_click", 1).addOutput("completed", 16, SignalMode.EQUAL)
+                .addOutput("getter", 32, SignalMode.EQUAL);
         LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class)
                 .addOutput("lock", 1, SignalMode.TOGGLE, true);
         

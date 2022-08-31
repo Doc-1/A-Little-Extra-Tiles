@@ -85,7 +85,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.refreshControls();
                 typesComboBox.select(index);
                 hasUpdated = true;
-            } else if (name.equals("structure.tigger_box.name")) {
+            } else if (name.equals("structure.trigger_box.name")) {
                 gui.height = 270;
                 gui.width = 456;
                 recipeGui.get("tilescount").posX = 308;
