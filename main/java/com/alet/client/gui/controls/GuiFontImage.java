@@ -1,9 +1,11 @@
 package com.alet.client.gui.controls;
 
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.util.Map;
 
 import com.alet.ALET;
+import com.alet.font.FontReader;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -11,37 +13,46 @@ import com.creativemd.creativecore.common.gui.client.style.Style;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiImage extends GuiControl {
-    public DynamicTexture texture;
-    public double scale;
+public class GuiFontImage extends GuiControl {
     
-    public GuiImage(String name, String path, int x, int y, double scale) {
+    public Map<TextAttribute, Object> textAttributeMap;
+    public DynamicTexture texture;
+    public int scale = 1;
+    
+    public GuiFontImage(String name, int x, int y, String fontType, Map<TextAttribute, Object> textAttributeMap, int fontSize, int fontColor, double rotation) {
         super(name, x, y, 0, 0);
         this.marginWidth = 0;
-        try {
-            BufferedImage image = TextureUtil.readBufferedImage(getClass().getClassLoader().getResourceAsStream(path));
-            this.width = (int) (image.getWidth() * scale);
-            this.height = (int) (image.getHeight() * scale);
-            this.scale = scale;
-            texture = new DynamicTexture(image);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.textAttributeMap = textAttributeMap;
+        this.scale = 3;
+        updateFont(fontType, fontSize, fontColor, rotation);
         
     }
     
-    @Override
-    public boolean hasBorder() {
-        return false;
+    public GuiFontImage(String name, String text, int x, int y, String fontType, Map<TextAttribute, Object> textAttributeMap, int fontSize, int fontColor, double rotation) {
+        super(name, x, y, 0, 0);
+        this.marginWidth = 0;
+        this.textAttributeMap = textAttributeMap;
+        this.scale = 3;
+        updateFont(fontType, text, fontSize, fontColor, rotation);
     }
     
-    @Override
-    public boolean hasBackground() {
-        return false;
+    public BufferedImage updateFont(String fontType, int fontSize, int fontColor, double rotation) {
+        return updateFont(fontType, "Preview123", fontSize, fontColor, rotation);
+    }
+    
+    public BufferedImage updateFont(String fontType, String text, int fontSize, int fontColor, double rotation) {
+        if (fontType == null || fontType.equals(""))
+            fontType = "Arial";
+        if (fontSize == 0)
+            fontSize = 48;
+        BufferedImage image = FontReader.fontToPhoto(text, fontType, textAttributeMap, fontSize, fontColor, rotation);
+        this.width = (image.getWidth() / this.scale);
+        this.height = (image.getHeight() / this.scale);
+        texture = new DynamicTexture(image);
+        return image;
     }
     
     @Override
@@ -66,6 +77,7 @@ public class GuiImage extends GuiControl {
             GlStateManager.enableAlpha();
             // GlStateManager.disableLighting();
             GlStateManager.enableTexture2D();
+            GlStateManager.scale(0.5, 0.5, 0);
             GuiIngame.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, this.width, this.height, this.width, this.height);
             GlStateManager.popMatrix();
         }
@@ -76,4 +88,24 @@ public class GuiImage extends GuiControl {
         texture.deleteGlTexture();
     }
     
+    @Override
+    public boolean mousePressed(int x, int y, int button) {
+        playSound(SoundEvents.UI_BUTTON_CLICK);
+        onClicked(x, y, button);
+        return true;
+    }
+    
+    public void onClicked(int x, int y, int button) {
+        
+    }
+    
+    @Override
+    public boolean hasBorder() {
+        return false;
+    }
+    
+    @Override
+    public boolean hasBackground() {
+        return false;
+    }
 }

@@ -26,11 +26,13 @@ public class GuiGIF extends GuiControl {
     public int tick = 0;
     public int collectTick = 0;
     public int count = 0;
+    public double scale;
     
     public GuiGIF(String name, String gif, int x, int y, double scale) {
         super(name, x, y, 0, 0);
         this.gif = gif;
         collectFrames = new ThreadCollectFrames(gif);
+        this.scale = scale;
         
     }
     
@@ -41,7 +43,7 @@ public class GuiGIF extends GuiControl {
     
     @Override
     public boolean hasBackground() {
-        return true;
+        return false;
     }
     
     @Override
@@ -61,8 +63,8 @@ public class GuiGIF extends GuiControl {
             delay.add(collectFrames.delay.get(collectTick));
             collectTick++;
             
-            this.width = f.getWidth() / 3;
-            this.height = f.getHeight() / 3;
+            this.width = (int) (f.getWidth() * scale);
+            this.height = (int) (f.getHeight() * scale);
             
             if (collectTick >= collectFrames.textures.size())
                 collectFrames = null;
@@ -71,10 +73,14 @@ public class GuiGIF extends GuiControl {
             if (count >= delay.size())
                 count = 0;
             GlStateManager.pushMatrix();
-            GlStateManager.translate(-1, -1, 0);
-            GlStateManager.scale(0.9859, 0.98, 1);
+            
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager
+                    .tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.enableAlpha();
             this.mc.getTextureManager().bindTexture(locations.get(count));
-            GuiIngame.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, this.width, this.height - 1, this.width, this.height - 1);
+            GuiIngame.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, this.width, this.height, this.width, this.height);
             GlStateManager.popMatrix();
             if (tick >= delay.get(count)) {
                 tick = 0;

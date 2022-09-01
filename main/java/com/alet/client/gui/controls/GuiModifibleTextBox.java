@@ -39,7 +39,8 @@ public class GuiModifibleTextBox extends GuiTextBox {
     public static final Pattern FORMATTING_END_PATTERN = Pattern.compile("\\{end\\}");
     public static final Pattern FORMATTING_NUMBER_PATTERN = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
     public static final Pattern FORMATTING_SIMPLE_NUMBER_PATTERN = Pattern.compile("[0-9]+");
-    public static final Pattern FORMATTING_IMAGE_PATTERN = Pattern.compile("\\{image:[-+]?[0-9]+,[0-9]+,[a-zA-Z.]+\\}");
+    public static final Pattern FORMATTING_DOUBLE_PATTERN = Pattern.compile("[-+]?[0-9]+(\\.+[0-9]+)?");
+    public static final Pattern FORMATTING_IMAGE_PATTERN = Pattern.compile("\\{image:[-+]?[0-9]+,[-+]?[0-9]+,[-+]?[0-9]+(\\.+[0-9]+)?,[a-zA-Z.]+\\}");
     public static final Pattern FORMATTING_FILE_PATTERN = Pattern.compile("[a-zA-Z]+\\.[a-zA-Z]+");
     
     public GuiModifibleTextBox(String name, String text, int x, int y, int width) {
@@ -107,9 +108,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
             }
             if (matcherImage.find()) {
                 ImageData data = ModifierAttribute.getImagePos(matcherImage.group());
-                System.out.println(data.imageName);
                 modText.imageX = data.x;
                 modText.imageY = data.y;
+                modText.imageScale = data.scale;
                 modText.imageName = new String(data.imageName);
                 text = text.replaceAll(FORMATTING_IMAGE_PATTERN.pattern(), "");
             }
@@ -215,9 +216,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
         for (ModifyText text : this.locationImageList) {
             String fileType = text.imageName.split("\\.")[1];
             if (fileType.equals("png") || fileType.equals("jpeg"))
-                GuiModifibleTextBox.this.getParent().addControl(new GuiImage("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, 1));
+                GuiModifibleTextBox.this.getParent().addControl(new GuiImage("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, text.imageScale));
             else if (fileType.equals("gif"))
-                GuiModifibleTextBox.this.getParent().addControl(new GuiGIF("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, 1));
+                GuiModifibleTextBox.this.getParent().addControl(new GuiGIF("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, text.imageScale));
             GuiModifibleTextBox.this.getParent().refreshControls();
         }
         //
@@ -393,17 +394,18 @@ public class GuiModifibleTextBox extends GuiTextBox {
         }
         
         public static ImageData getImagePos(String image) {
-            Matcher matcher = FORMATTING_SIMPLE_NUMBER_PATTERN.matcher(image);
+            Matcher matcher = FORMATTING_DOUBLE_PATTERN.matcher(image);
             int count = 0;
-            int[] pos = new int[2];
+            double[] pos = new double[3];
             while (matcher.find()) {
-                pos[count] = Integer.parseInt(matcher.group());
+                pos[count] = Double.parseDouble(matcher.group());
                 count++;
             }
+            Matcher m = FORMATTING_DOUBLE_PATTERN.matcher(image);
             matcher = FORMATTING_FILE_PATTERN.matcher(image);
             matcher.find();
             String imageName = matcher.group();
-            ImageData data = new ImageData(pos[0], pos[1], imageName);
+            ImageData data = new ImageData((int) pos[0], (int) pos[1], pos[2], imageName);
             return data;
         }
         
@@ -412,11 +414,13 @@ public class GuiModifibleTextBox extends GuiTextBox {
     private static class ImageData {
         public int x;
         public int y;
+        public double scale;
         public String imageName;
         
-        public ImageData(int x, int y, String imageName) {
+        public ImageData(int x, int y, double scale, String imageName) {
             this.x = x;
             this.y = y;
+            this.scale = scale;
             this.imageName = imageName;
         }
     }
@@ -433,6 +437,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
         public boolean mouseOver = false;
         public int imageX = 0;
         public int imageY = 0;
+        public double imageScale = 0;
         public String imageName = "";
         
         @SuppressWarnings("unused")

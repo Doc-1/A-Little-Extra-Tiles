@@ -44,7 +44,7 @@ public class GuiGlythSelectorExtension extends GuiComboBoxExtension {
 				for (int c = 0; c <= 6; c++) {
 					if (counter >= glyphs.size())
 						break;
-					controls.add(new GuiImage(((int) glyphs.get(counter)) + "", glyphs.get(counter) + "", (c * 13)
+					controls.add(new GuiFontImage(((int) glyphs.get(counter)) + "", glyphs.get(counter) + "", (c * 13)
 					        + 2, (r * 13) + 2, fontr, textAttributeMap, 32, ColorUtils.BLACK, 0) {
 						@Override
 						public void onClicked(int x, int y, int button) {

@@ -32,7 +32,7 @@ public class GuiToolTipBox extends GuiTextBox {
 	}
 	
 	public String defaultTips(GuiControl control) {
-		if (control instanceof GuiImage) {
+		if (control instanceof GuiFontImage) {
 			Random rand = new Random();
 			int r = rand.nextInt(((10 - 1) + 1) + 1);
 			switch (r) {
