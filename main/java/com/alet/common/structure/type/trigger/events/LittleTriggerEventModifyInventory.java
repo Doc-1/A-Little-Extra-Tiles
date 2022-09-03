@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger;
+package com.alet.common.structure.type.trigger.events;
 
 import java.util.HashSet;
 
@@ -16,7 +16,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT() {
+    public NBTTagCompound createNBT(NBTTagCompound nbt) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -34,9 +34,8 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities) {
-        // TODO Auto-generated method stub
-        
+    public boolean runEvent(HashSet<Entity> entities) {
+        return false;
     }
     
     @Override

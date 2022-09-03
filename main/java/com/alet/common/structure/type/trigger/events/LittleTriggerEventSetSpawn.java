@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger;
+package com.alet.common.structure.type.trigger.events;
 
 import java.util.HashSet;
 
@@ -13,27 +13,18 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
-public class LittleTriggerSetSpawn extends LittleTriggerEvent {
+public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     
     public double posX = 0;
     public double posY = 0;
     public double posZ = 0;
     
-    public LittleTriggerSetSpawn(String id) {
+    public LittleTriggerEventSetSpawn(String id) {
         super(id);
-    }
-    
-    public LittleTriggerSetSpawn(String id, NBTTagCompound nbt) {
-        super(id);
-        this.posX = nbt.getDouble("posX");
-        this.posY = nbt.getDouble("posY");
-        this.posZ = nbt.getDouble("posZ");
     }
     
     @Override
-    public NBTTagCompound createNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("trigger", id);
+    public NBTTagCompound createNBT(NBTTagCompound nbt) {
         nbt.setDouble("posX", posX);
         nbt.setDouble("posY", posY);
         nbt.setDouble("posZ", posZ);
@@ -75,13 +66,14 @@ public class LittleTriggerSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities) {
+    public boolean runEvent(HashSet<Entity> entities) {
         for (Entity entity : entities) {
             if (entity instanceof EntityPlayerMP) {
                 ((EntityPlayerMP) entity).setSpawnPoint(new BlockPos(posX, posY, posZ), true);
             }
             
         }
+        return false;
     }
     
     @Override

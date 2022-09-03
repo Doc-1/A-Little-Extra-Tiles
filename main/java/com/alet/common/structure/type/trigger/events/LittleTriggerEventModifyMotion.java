@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger;
+package com.alet.common.structure.type.trigger.events;
 
 import java.util.HashSet;
 
@@ -14,28 +14,19 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 
-public class LittleTriggerModifyMotion extends LittleTriggerEvent {
+public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     
     public double xStrength = 0;
     public double yStrength = 0;
     public double zStrength = 0;
     public double forward = 0;
     
-    public LittleTriggerModifyMotion(String id) {
+    public LittleTriggerEventModifyMotion(String id) {
         super(id);
-    }
-    
-    public LittleTriggerModifyMotion(String id, NBTTagCompound nbt) {
-        super(id);
-        this.forward = nbt.getDouble("forward");
-        this.xStrength = nbt.getDouble("xStrength");
-        this.yStrength = nbt.getDouble("yStrength");
-        this.zStrength = nbt.getDouble("zStrength");
     }
     
     @Override
-    public NBTTagCompound createNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NBTTagCompound createNBT(NBTTagCompound nbt) {
         nbt.setString("trigger", id);
         nbt.setDouble("xStrength", xStrength);
         nbt.setDouble("yStrength", yStrength);
@@ -89,7 +80,7 @@ public class LittleTriggerModifyMotion extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities) {
+    public boolean runEvent(HashSet<Entity> entities) {
         for (Entity entity : entities) {
             
             entity.velocityChanged = true;
@@ -117,6 +108,7 @@ public class LittleTriggerModifyMotion extends LittleTriggerEvent {
             entity.motionZ += totalZ;
             entity.fallDistance = 0;
         }
+        return true;
     }
     
     @Override

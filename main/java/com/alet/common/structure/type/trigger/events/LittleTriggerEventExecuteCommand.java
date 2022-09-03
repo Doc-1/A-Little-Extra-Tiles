@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger;
+package com.alet.common.structure.type.trigger.events;
 
 import java.util.HashSet;
 
@@ -10,23 +10,16 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
+public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
     
     String command = "";
     
-    public LittleTriggerExecuteCommand(String id) {
+    public LittleTriggerEventExecuteCommand(String id) {
         super(id);
-    }
-    
-    public LittleTriggerExecuteCommand(String id, NBTTagCompound nbt) {
-        super(id);
-        this.command = nbt.getString("command");
     }
     
     @Override
-    public NBTTagCompound createNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("trigger", id);
+    public NBTTagCompound createNBT(NBTTagCompound nbt) {
         nbt.setString("command", command);
         return nbt;
     }
@@ -53,10 +46,11 @@ public class LittleTriggerExecuteCommand extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities) {
+    public boolean runEvent(HashSet<Entity> entities) {
         for (Entity entity : entities) {
             entity.world.getMinecraftServer().getCommandManager().executeCommand(entity.world.getMinecraftServer(), this.command);
         }
+        return true;
     }
     
     @Override

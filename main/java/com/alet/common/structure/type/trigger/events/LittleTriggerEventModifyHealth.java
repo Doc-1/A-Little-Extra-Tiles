@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger;
+package com.alet.common.structure.type.trigger.events;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,14 +11,13 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 
-public class LittleTriggerModifyHealth extends LittleTriggerEvent {
+public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     
     public float damageAmount = 0;
     public float healAmount = 0;
@@ -52,29 +51,17 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
         }
     }
     
-    public LittleTriggerModifyHealth(String id) {
+    public LittleTriggerEventModifyHealth(String id) {
         super(id);
-    }
-    
-    public LittleTriggerModifyHealth(String id, NBTTagCompound nbt) {
-        super(id);
-        this.damageAmount = nbt.getFloat("damageAmount");
-        this.healAmount = nbt.getFloat("healAmount");
-        this.damageType = nbt.getString("damageType");
-        this.effectPerTick = nbt.getInteger("effectPerTick");
-        this.heal = nbt.getBoolean("heal");
-        this.harm = nbt.getBoolean("harm");
     }
     
     @Override
-    public NBTTagCompound createNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NBTTagCompound createNBT(NBTTagCompound nbt) {
         nbt.setString("trigger", id);
         nbt.setBoolean("heal", heal);
         nbt.setBoolean("harm", harm);
         nbt.setFloat("damageAmount", damageAmount);
         nbt.setString("damageType", damageType);
-        nbt.setInteger("effectPerTick", effectPerTick);
         nbt.setFloat("healAmount", healAmount);
         return nbt;
     }
@@ -85,7 +72,6 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
         this.harm = nbt.getBoolean("harm");
         this.damageAmount = nbt.getFloat("damageAmount");
         this.damageType = nbt.getString("damageType");
-        this.effectPerTick = nbt.getInteger("effectPerTick");
         this.healAmount = nbt.getFloat("healAmount");
         return this;
     }
@@ -106,7 +92,6 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
         
         panel.addControl(new GuiComboBox("sources", 73, 55, 80, sourceList));
         ((GuiComboBox) parent.get("sources")).select(damageType);
-        panel.addControl(new GuiTextfield("dmgPerTick", effectPerTick + "", 85, 15, 40, 14).setNumbersOnly());
         panel.addControl(new GuiAnalogeSlider("dmgAmount", 73, 78, 56, 14, damageAmount, 0, 20));
         
         panel.addControl(new GuiCheckBox("heal", "Heal Entity", 0, 110, heal));
@@ -127,10 +112,6 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
                 damageAmount = (float) slider.value;
             else if (slider.name.equals("healAmount"))
                 healAmount = (float) slider.value;
-        } else if (source instanceof GuiTextfield) {
-            GuiTextfield textField = (GuiTextfield) source;
-            if (textField.name.equals("dmgPerTick"))
-                effectPerTick = Integer.parseInt(textField.text);
         } else if (source instanceof GuiComboBox) {
             GuiComboBox combo = (GuiComboBox) source;
             if (combo.name.equals("sources"))
@@ -151,7 +132,7 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities) {
+    public boolean runEvent(HashSet<Entity> entities) {
         if (this.harm) {
             DamageSource damageSource = DamageSource.GENERIC;
             for (DamageSource source : sourceOfDmg) {
@@ -172,7 +153,7 @@ public class LittleTriggerModifyHealth extends LittleTriggerEvent {
                 }
             }
         }
-        
+        return true;
     }
     
     @Override

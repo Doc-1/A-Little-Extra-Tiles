@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger;
+package com.alet.common.structure.type.trigger.events;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -37,16 +37,8 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
         super(id);
     }
     
-    public LittleTriggerEventModifyScoreboard(String id, NBTTagCompound nbt) {
-        super(id);
-        this.value = nbt.getInteger("value");
-        this.scoreName = nbt.getString("scoreName");
-        this.effectPerTick = nbt.getInteger("tick");
-    }
-    
     @Override
-    public NBTTagCompound createNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NBTTagCompound createNBT(NBTTagCompound nbt) {
         nbt.setString("trigger", id);
         nbt.setInteger("value", value);
         nbt.setString("scoreName", scoreName);
@@ -58,7 +50,6 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
         this.value = nbt.getInteger("value");
         this.scoreName = nbt.getString("scoreName");
-        this.tick = nbt.getInteger("tick");
         return this;
     }
     
@@ -160,7 +151,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities) {
+    public boolean runEvent(HashSet<Entity> entities) {
         
         Collection<ScoreObjective> objectives = world.getScoreboard().getScoreObjectives();
         Collection<Score> scores = world.getScoreboard().getScores();
@@ -187,6 +178,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
                 score.increaseScore(value);
             else if (value < 0)
                 score.decreaseScore(Math.abs(value));
+        return true;
     }
     
     @Override

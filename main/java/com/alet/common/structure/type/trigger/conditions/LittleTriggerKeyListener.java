@@ -1,15 +1,12 @@
-package com.alet.common.structure.type.trigger;
+package com.alet.common.structure.type.trigger.conditions;
 
-import java.util.HashSet;
-
+import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleTriggerKeyListener extends LittleTriggerEvent {
+public class LittleTriggerKeyListener extends LittleTriggerCondition {
     
     private int keyToListenFor;
     
@@ -22,16 +19,13 @@ public class LittleTriggerKeyListener extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NBTTagCompound createNBT(NBTTagCompound nbt) {
         nbt.setString("trigger", id);
         return nbt;
     }
     
     @Override
     public void updateControls(GuiParent parent) {
-        GuiPanel panel = (GuiPanel) parent.get("content");
-        wipeControls(panel);
         
     }
     
@@ -41,22 +35,20 @@ public class LittleTriggerKeyListener extends LittleTriggerEvent {
     }
     
     @Override
-    public void runEvent(HashSet<Entity> entities) {
-        for (Entity entity : entities) {
-            
-        }
-    }
-    
-    @Override
     public String getName() {
         // TODO Auto-generated method stub
         return null;
     }
     
     @Override
-    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
+        return this;
+    }
+    
+    @Override
+    public boolean conditionPassed() {
         // TODO Auto-generated method stub
-        return null;
+        return false;
     }
     
 }

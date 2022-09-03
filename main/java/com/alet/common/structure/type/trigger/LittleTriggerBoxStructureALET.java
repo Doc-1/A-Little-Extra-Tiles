@@ -9,16 +9,20 @@ import javax.annotation.Nullable;
 
 import com.alet.common.packet.PacketUpdateBreakBlock;
 import com.alet.common.structure.type.ILeftClickListener;
+import com.alet.common.structure.type.trigger.events.LittleTriggerEvent;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
 import com.creativemd.littletiles.common.action.LittleAction;
+import com.creativemd.littletiles.common.action.LittleActionException;
+import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.entity.EntityAnimation;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
@@ -27,7 +31,6 @@ import com.creativemd.littletiles.common.structure.exception.NotYetConnectedExce
 import com.creativemd.littletiles.common.structure.registry.LittleStructureGuiParser;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
-import com.creativemd.littletiles.common.structure.signal.output.InternalSignalOutput;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.parent.IParentTileList;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
@@ -36,9 +39,12 @@ import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -51,7 +57,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     public HashSet<Entity> entities = new HashSet<>();
     
     public boolean breakBlock = false;
-    public boolean listen = true;
     public List<LittleTriggerEvent> triggers = new ArrayList<LittleTriggerEvent>();
     
     public LittleTriggerBoxStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
@@ -65,12 +70,10 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         for (NBTBase base : list) {
             if (base instanceof NBTTagCompound) {
                 NBTTagCompound n = (NBTTagCompound) base;
-                triggers.add(LittleTriggerEvent.getFromNBT((NBTTagCompound) n.getTag(i + "")));
+                triggers.add(LittleTriggerRegistrar.getFromNBT((NBTTagCompound) n.getTag(i + "")));
                 i++;
             }
-            
         }
-        listen = nbt.getBoolean("listening");
     }
     
     @Override
@@ -81,11 +84,9 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             NBTTagCompound n = new NBTTagCompound();
             n.setTag(i + "", trigger.createNBT());
             list.appendTag(n);
-            
             i++;
         }
         nbt.setTag("triggers", list);
-        nbt.setBoolean("listening", listen);
     }
     
     @Override
@@ -95,10 +96,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     }
     
     @Override
-    public void performInternalOutputChange(InternalSignalOutput output) {
-        if (output.component.is("listen")) {
-            listen = !listen;
-        }
+    public int getAttribute() {
+        return super.getAttribute();
     }
     
     @Override
@@ -107,18 +106,16 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             return;
         
         boolean intersected = false;
-        if (listen) {
-            for (LittleTile tile : parent) {
-                if (tile.getBox().getBox(parent.getContext(), pos).intersects(entityIn.getEntityBoundingBox())) {
-                    intersected = true;
-                    break;
-                }
+        for (LittleTile tile : parent) {
+            if (tile.getBox().getBox(parent.getContext(), pos).intersects(entityIn.getEntityBoundingBox())) {
+                intersected = true;
+                break;
             }
-            if (intersected)
-                entities.add(entityIn);
-            
-            queueForNextTick();
         }
+        if (intersected)
+            entities.add(entityIn);
+        
+        queueForNextTick();
     }
     
     @Override
@@ -128,12 +125,29 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         
         this.entities.addAll(entities.keySet());
         queueForNextTick();
+        
     }
     
-    private void tickWhileCollided() {
-        int i = 0;
+    private void triggerEvents() {
+        int allCompleted = 0;
+        int count = 1;
         for (LittleTriggerEvent event : triggers) {
-            event.runEvent(entities);
+            event.tryRunEvent(entities);
+            allCompleted = count;
+            if (!event.complete)
+                break;
+            count++;
+        }
+        //  if (!this.isClient())
+        //getInput(3).updateState(BooleanUtils.toBits(allCompleted, 16));
+    }
+    
+    @Override
+    public void tick() {
+        if (!this.isClient()) {
+            if (this.entities.isEmpty()) {
+                // getInput(2).updateState(BooleanUtils.toBits(0, 16));
+            }
         }
     }
     
@@ -147,20 +161,38 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         getInput(1).updateState(BooleanUtils.toBits(entities.size(), 4));
         boolean wasEmpty = entities.isEmpty();
         
-        tickWhileCollided();
+        triggerEvents();
         entities.clear();
         if (wasEmpty) {
             for (LittleTriggerEvent event : triggers) {
-                event.tick = 0;
+                //event.tick = 0;
             }
         }
         return !wasEmpty;
     }
     
     @Override
+    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+        if (this.isClient()) {
+            this.entities.add(playerIn);
+            queueForNextTick();
+            
+        }
+        
+        entities.clear();
+        return true;
+    }
+    
+    @Override
     public void onLeftClick(EntityPlayer player) {
-        this.breakBlock = LittleAction.isUsingSecondMode(player);
-        PacketHandler.sendPacketToServer(new PacketUpdateBreakBlock(this.getStructureLocation()));
+        if (LittleAction.isUsingSecondMode(player)) {
+            this.breakBlock = true;
+            PacketHandler.sendPacketToServer(new PacketUpdateBreakBlock(this.getStructureLocation()));
+        } else {
+            this.breakBlock = false;
+            this.entities.add(player);
+            queueForNextTick();
+        }
         
     }
     
@@ -190,10 +222,14 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             GuiPanel panel = new GuiPanel("content", 135, 0, 159, 199);
             parent.controls.add(panel);
             
+            GuiTextfield text = new GuiTextfield("", "0", 0, 0, 40, 14);
+            text.setNumbersOnly();
+            panel.addControl(text);
+            
             GuiScrollBox box = new GuiScrollBox("box", 0, 0, 127, 165);
             parent.controls.add(box);
             
-            List<String> strings = new ArrayList<>(LittleTriggerEvent.registeredEvents.keySet());
+            List<String> strings = new ArrayList<>(LittleTriggerRegistrar.registeredEvents.keySet());
             GuiComboBox list = (new GuiComboBox("list", 0, 170, 100, strings) {
                 @Override
                 protected GuiComboBoxExtension createBox() {

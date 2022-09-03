@@ -90,7 +90,7 @@ public class SubGuiManual extends SubGui {
     GuiTreePart noclipStructure = (new GuiTreeManualPart("No-Clip", EnumPartType.Leaf, "noclipStructureLT"));
     GuiTreePart lightStructure = (new GuiTreeManualPart("Light", EnumPartType.Leaf, "lightStructureLT"));
     GuiTreePart messageStructure = (new GuiTreeManualPart("Message", EnumPartType.Leaf, "messageStructureLT"));
-    GuiTreePart allowsOnLightStructure = (new GuiTreeManualPart("Allows On Light", EnumPartType.Leaf, "allowsOnLightStructureALET"));
+    GuiTreePart alwaysOnLightStructure = (new GuiTreeManualPart("Always On Light", EnumPartType.Leaf, "alwaysOnLightStructureALET"));
     GuiTreePart ropeStructure = (new GuiTreeManualPart("Rope Connection", EnumPartType.Leaf, "ropeStructureALET"));
     GuiTreePart doorStructures = (new GuiTreeManualPart("Door Structures", EnumPartType.Branch, "doorStructureLT"));
     GuiTreePart axisDoor = (new GuiTreeManualPart("Axis Door", EnumPartType.Leaf, "axisDoorLT"));
@@ -102,6 +102,8 @@ public class SubGuiManual extends SubGui {
     GuiTreePart triggerStructures = (new GuiTreeManualPart("Trigger", EnumPartType.Leaf, "triggerStructureALET"));
     GuiTreePart stateMutatorStructures = (new GuiTreeManualPart("State Mutator", EnumPartType.Leaf, "stateMutatorStructureALET"));
     GuiTreePart camPlayerStructures = (new GuiTreeManualPart("Camera Player", EnumPartType.Leaf, "camPlayerStructureALET"));
+    GuiTreePart audioStructures = (new GuiTreeManualPart("Audio Structures", EnumPartType.Branch, "audioStructureLT"));
+    GuiTreePart musicComposerStructure = (new GuiTreeManualPart("Music Composer", EnumPartType.Leaf, "musicComposerStructureALET"));
     GuiTreePart usingSignaling = (new GuiTreeManualPart("Using Signaling", EnumPartType.Title, "usingSignalingLT"));
     GuiTreePart whatIsSignal = (new GuiTreeManualPart("What is Signaling?", EnumPartType.Branch, "whatIsSignalingLT"));
     GuiTreePart signalingGUI = (new GuiTreeManualPart("Signaling Interface", EnumPartType.Leaf, "signalingInterfaceLT"));
@@ -114,6 +116,15 @@ public class SubGuiManual extends SubGui {
     GuiTreePart xor = (new GuiTreeManualPart("XOR", EnumPartType.Leaf, "xorLogicGateLT"));
     GuiTreePart xnor = (new GuiTreeManualPart("XNOR", EnumPartType.Leaf, "xnorLogicGateLT"));
     GuiTreePart bitwiseGates = (new GuiTreeManualPart("Logic Bitwise-Gates", EnumPartType.Branch, "logicBitwiseGatesLT"));
+    GuiTreePart andB = (new GuiTreeManualPart("B-AND", EnumPartType.Leaf, "bAndLogicGateLT"));
+    GuiTreePart orB = (new GuiTreeManualPart("B-OR", EnumPartType.Leaf, "bOrLogicGateLT"));
+    GuiTreePart notB = (new GuiTreeManualPart("B-NOT", EnumPartType.Leaf, "bNotLogicGateLT"));
+    GuiTreePart xorB = (new GuiTreeManualPart("B-XOR", EnumPartType.Leaf, "bXorLogicGateLT"));
+    GuiTreePart math = (new GuiTreeManualPart("Mathematical Operators", EnumPartType.Branch, "mathematicalOperatorsLT"));
+    GuiTreePart add = (new GuiTreeManualPart("Add", EnumPartType.Leaf, "mathAddLT"));
+    GuiTreePart sub = (new GuiTreeManualPart("Sub", EnumPartType.Leaf, "mathSubLT"));
+    GuiTreePart multi = (new GuiTreeManualPart("Multi", EnumPartType.Leaf, "mathMultiLT"));
+    GuiTreePart div = (new GuiTreeManualPart("Div", EnumPartType.Leaf, "mathDivLT"));
     GuiTreePart structureSignal = (new GuiTreeManualPart("Structure's Signaling", EnumPartType.Branch, "structureSignalingLT"));
     GuiTreePart staticStructureSignal = (new GuiTreeManualPart("Static Structures", EnumPartType.Branch, "staticStructureSignalingLT"));
     GuiTreePart bedSignal = (new GuiTreeManualPart("Bed", EnumPartType.Leaf, "bedStructureSignalingLT"));
@@ -131,7 +142,8 @@ public class SubGuiManual extends SubGui {
     GuiTreePart advancedStructureSignal = (new GuiTreeManualPart("Advanced Structures", EnumPartType.Branch, "advancedStructureSignalingALET"));
     GuiTreePart triggerSignal = (new GuiTreeManualPart("Trigger", EnumPartType.Leaf, "triggerStructureSignalingALET"));
     GuiTreePart stateMutatorSignal = (new GuiTreeManualPart("State Mutator", EnumPartType.Leaf, "stateMutatorStructureSignalingALET"));
-    
+    GuiTreePart audioStructureSignal = (new GuiTreeManualPart("Audio Structures", EnumPartType.Branch, "audioStructureSignalingLT"));
+    GuiTreePart musicComposerSignal = (new GuiTreeManualPart("Music Composer", EnumPartType.Leaf, "musicComposerStructureSignalingALET"));
     GuiTreePart camPlayerSignal = (new GuiTreeManualPart("Camera Player", EnumPartType.Leaf, "camPlayerStructureSignalingALET"));
     GuiTreePart tutorial = (new GuiTreeManualPart("Tutorial", EnumPartType.Title, "tutorialsLT"));
     public GuiTree tree;
@@ -184,18 +196,22 @@ public class SubGuiManual extends SubGui {
                 .addMenu(colorizeMode);
         buildingWTile.addMenu(whatIsTile).addMenu(addModRemove).addMenu(measuring).addMenu(buildingTool).addMenu(drawShape).addMenu(drawMode).addMenu(materialWhitelist);
         savingStructure.addMenu(blueprint);
-        staticStructure.addMenu(fixedStructure).addMenu(ladderStructure).addMenu(bedStructure).addMenu(chairStructure).addMenu(storageStructure).addMenu(allowsOnLightStructure)
+        staticStructure.addMenu(fixedStructure).addMenu(ladderStructure).addMenu(bedStructure).addMenu(chairStructure).addMenu(storageStructure).addMenu(alwaysOnLightStructure)
                 .addMenu(ropeStructure);
         doorStructures.addMenu(axisDoor).addMenu(slidingDoor).addMenu(advancedDoor).addMenu(doorActivator).addMenu(doorLock);
         advancedStructures.addMenu(triggerStructures).addMenu(stateMutatorStructures).addMenu(camPlayerStructures);
-        usingStructure.addMenu(savingStructure).addMenu(staticStructure).addMenu(doorStructures).addMenu(advancedStructures);
+        audioStructures.addMenu(musicComposerStructure);
+        usingStructure.addMenu(savingStructure).addMenu(staticStructure).addMenu(doorStructures).addMenu(advancedStructures).addMenu(audioStructures);
         whatIsSignal.addMenu(signalingGUI);
         logicGates.addMenu(and).addMenu(or).addMenu(not).addMenu(nand).addMenu(nor).addMenu(xor).addMenu(xnor);
+        bitwiseGates.addMenu(andB).addMenu(orB).addMenu(notB).addMenu(xorB);
+        math.addMenu(add).addMenu(sub).addMenu(multi).addMenu(div);
         staticStructureSignal.addMenu(bedSignal).addMenu(chairSignal).addMenu(storageSignal).addMenu(noclipSignal).addMenu(lightSignal).addMenu(messageSignal);
         doorStructureSignal.addMenu(axisDoorSignal).addMenu(slidingDoorSignal).addMenu(advancedDoorSignal).addMenu(doorActivatorSignal).addMenu(doorLockSignal);
+        audioStructureSignal.addMenu(musicComposerSignal);
         advancedStructureSignal.addMenu(triggerSignal).addMenu(stateMutatorSignal).addMenu(camPlayerSignal);
-        structureSignal.addMenu(staticStructureSignal).addMenu(doorStructureSignal).addMenu(advancedStructureSignal);
-        usingSignaling.addMenu(whatIsSignal).addMenu(logicGates).addMenu(structureSignal);
+        structureSignal.addMenu(staticStructureSignal).addMenu(doorStructureSignal).addMenu(advancedStructureSignal).addMenu(audioStructureSignal);
+        usingSignaling.addMenu(whatIsSignal).addMenu(logicGates).addMenu(bitwiseGates).addMenu(math).addMenu(structureSignal);
         listOfMenus.add(welcome);
         listOfMenus.add(buildingWTile);
         listOfMenus.add(usingStructure);

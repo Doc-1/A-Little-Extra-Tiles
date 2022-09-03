@@ -49,10 +49,10 @@ import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.LittleAlwaysOnLight;
 import com.alet.common.structure.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
 import com.alet.common.structure.type.LittleCamPlayerALET;
-import com.alet.common.structure.type.LittleRemoteActivatorALET;
 import com.alet.common.structure.type.LittleLeadConnectionALET;
 import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleMusicComposerALET;
+import com.alet.common.structure.type.LittleRemoteActivatorALET;
 import com.alet.common.structure.type.LittleStateMutatorALET;
 import com.alet.common.structure.type.premade.LittleAdjustableFixedStructure;
 import com.alet.common.structure.type.premade.LittleAnimatorBench;
@@ -406,12 +406,11 @@ public class ALET {
             }
         });
         LittleStructureRegistry
-                .registerStructureType("allows_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class)
+                .registerStructureType("always_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class)
                 .addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
         LittleStructureRegistry
-                .registerStructureType("trigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class)
-                .addInput("players", 4).addInput("entities", 4).addOutput("listen", 1, SignalMode.TOGGLE).addInput("left_click", 1).addOutput("completed", 16, SignalMode.EQUAL)
-                .addOutput("getter", 32, SignalMode.EQUAL);
+                .registerStructureType("trigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.COLLISION_LISTENER | LittleStructureAttribute.TICKING, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class)
+                .addOutput("shouldTrigger", 1, SignalMode.EQUAL).addOutput("left_click", 1, SignalMode.EQUAL).addInput("completed", 16).addInput("getter", 32);
         LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class)
                 .addOutput("lock", 1, SignalMode.TOGGLE, true);
         

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser;
+import com.alet.common.structure.type.trigger.events.LittleTriggerEvent;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
@@ -28,7 +29,6 @@ public class GuiTriggerEventButton extends GuiButton {
                 b.color = ColorUtils.WHITE;
             }
             this.color = ColorUtils.YELLOW;
-            System.out.println(this.name);
             updateControls(this.name);
         } else if (button == 1) {
             
