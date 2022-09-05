@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LittleTriggerEvent extends LittleTriggerObject {
     
-    public LittleTriggerEvent(String id) {
+    public LittleTriggerEvent(int id) {
         super(id);
     }
     

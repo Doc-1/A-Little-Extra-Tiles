@@ -9,16 +9,16 @@ import javax.annotation.Nullable;
 
 import com.alet.common.packet.PacketUpdateBreakBlock;
 import com.alet.common.structure.type.ILeftClickListener;
-import com.alet.common.structure.type.trigger.events.LittleTriggerEvent;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxCategory;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtensionCategory;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
+import com.creativemd.creativecore.common.utils.type.PairList;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.action.LittleActionException;
@@ -57,7 +57,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     public HashSet<Entity> entities = new HashSet<>();
     
     public boolean breakBlock = false;
-    public List<LittleTriggerEvent> triggers = new ArrayList<LittleTriggerEvent>();
+    public List<LittleTriggerObject> triggers = new ArrayList<LittleTriggerObject>();
     
     public LittleTriggerBoxStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -80,7 +80,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     protected void writeToNBTExtra(NBTTagCompound nbt) {
         int i = 0;
         NBTTagList list = new NBTTagList();
-        for (LittleTriggerEvent trigger : triggers) {
+        for (LittleTriggerObject trigger : triggers) {
             NBTTagCompound n = new NBTTagCompound();
             n.setTag(i + "", trigger.createNBT());
             list.appendTag(n);
@@ -131,8 +131,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     private void triggerEvents() {
         int allCompleted = 0;
         int count = 1;
-        for (LittleTriggerEvent event : triggers) {
-            event.tryRunEvent(entities);
+        for (LittleTriggerObject event : triggers) {
+            //event.tryRunEvent(entities);
             allCompleted = count;
             if (!event.complete)
                 break;
@@ -164,7 +164,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         triggerEvents();
         entities.clear();
         if (wasEmpty) {
-            for (LittleTriggerEvent event : triggers) {
+            for (LittleTriggerObject event : triggers) {
                 //event.tick = 0;
             }
         }
@@ -198,8 +198,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     
     public static class LittleTriggerBoxStructureParser extends LittleStructureGuiParser {
         
-        public List<LittleTriggerEvent> triggers = new ArrayList<LittleTriggerEvent>();
-        LittleTriggerEvent trigger = null;
+        public List<LittleTriggerObject> triggers = new ArrayList<LittleTriggerObject>();
+        LittleTriggerObject trigger = null;
         
         public LittleTriggerBoxStructureParser(GuiParent parent, AnimationGuiHandler handler) {
             super(parent, handler);
@@ -229,11 +229,12 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             GuiScrollBox box = new GuiScrollBox("box", 0, 0, 127, 165);
             parent.controls.add(box);
             
-            List<String> strings = new ArrayList<>(LittleTriggerRegistrar.registeredEvents.keySet());
-            GuiComboBox list = (new GuiComboBox("list", 0, 170, 100, strings) {
+            List<String> strings = new ArrayList<String>();
+            PairList<String, PairList<String, String>> elements;
+            GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (new GuiComboBoxCategory<Class<? extends LittleTriggerObject>>("list", 0, 170, 100, LittleTriggerRegistrar.triggerables) {
                 @Override
-                protected GuiComboBoxExtension createBox() {
-                    return new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 133 - getContentOffset() * 2, 100, lines);
+                protected GuiComboBoxExtensionCategory<Class<? extends LittleTriggerObject>> createBox() {
+                    return new GuiComboBoxExtensionCategory<Class<? extends LittleTriggerObject>>(name + "extension", this, posX, posY + height, 133 - getContentOffset() * 2, 100);
                 }
             });
             list.height = 19;

@@ -51,13 +51,12 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
         }
     }
     
-    public LittleTriggerEventModifyHealth(String id) {
+    public LittleTriggerEventModifyHealth(int id) {
         super(id);
     }
     
     @Override
     public NBTTagCompound createNBT(NBTTagCompound nbt) {
-        nbt.setString("trigger", id);
         nbt.setBoolean("heal", heal);
         nbt.setBoolean("harm", harm);
         nbt.setFloat("damageAmount", damageAmount);

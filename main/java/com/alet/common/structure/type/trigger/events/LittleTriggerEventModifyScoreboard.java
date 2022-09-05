@@ -33,13 +33,12 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     public String scoreName = "";
     private WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
     
-    public LittleTriggerEventModifyScoreboard(String id) {
+    public LittleTriggerEventModifyScoreboard(int id) {
         super(id);
     }
     
     @Override
     public NBTTagCompound createNBT(NBTTagCompound nbt) {
-        nbt.setString("trigger", id);
         nbt.setInteger("value", value);
         nbt.setString("scoreName", scoreName);
         nbt.setInteger("tick", effectPerTick);

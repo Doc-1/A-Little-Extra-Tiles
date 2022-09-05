@@ -21,13 +21,12 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     public double zStrength = 0;
     public double forward = 0;
     
-    public LittleTriggerEventModifyMotion(String id) {
+    public LittleTriggerEventModifyMotion(int id) {
         super(id);
     }
     
     @Override
     public NBTTagCompound createNBT(NBTTagCompound nbt) {
-        nbt.setString("trigger", id);
         nbt.setDouble("xStrength", xStrength);
         nbt.setDouble("yStrength", yStrength);
         nbt.setDouble("zStrength", zStrength);

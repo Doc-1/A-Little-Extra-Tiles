@@ -52,6 +52,16 @@ item.LTPremade.signal_quick_input32.name=Quick Input (32-bit)
 
 itemGroup.alet=Little Circuits
 
+trigger.tick_delay.name=Tick Delay
+trigger.modify_health.name=Modify Health
+trigger.modify_motion.name=Modify Motion
+trigger.modify_inventory.name=Modify Inventory
+trigger.modify_scoreboard.name=Modify Scoreboard
+trigger.execute_command.name=Execute Command
+trigger.set_spawn.name=Set Spawn
+trigger.category.codition.name=Coditions
+trigger.category.event.name=Events
+
 item.tapemeasure.name=Tape Measure
 item.little_rope.name=Little Rope
 tile.smoothbrick.name=Borderless Brick

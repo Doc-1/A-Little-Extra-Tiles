@@ -1,5 +1,6 @@
 package com.alet.common.structure.type.trigger.conditions;
 
+import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -8,18 +9,17 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleTriggerConditionTick extends LittleTriggerCondition {
+public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     
     public int tick = 0;
     public int effectPerTick = 0;
     
-    public LittleTriggerConditionTick(String id) {
+    public LittleTriggerConditionTickDelay(int id) {
         super(id);
-        // TODO Auto-generated constructor stub
     }
     
     @Override
-    public boolean conditionPassed() {
+    public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
         if (this.effectPerTick <= this.tick) {
             this.tick = 0;
         }
@@ -29,8 +29,7 @@ public class LittleTriggerConditionTick extends LittleTriggerCondition {
     
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return "Tick Delay";
     }
     
     @Override

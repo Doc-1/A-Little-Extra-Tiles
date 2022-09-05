@@ -1,5 +1,6 @@
 package com.alet.common.structure.type.trigger.conditions;
 
+import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -10,17 +11,12 @@ public class LittleTriggerKeyListener extends LittleTriggerCondition {
     
     private int keyToListenFor;
     
-    public LittleTriggerKeyListener(String id) {
-        super(id);
-    }
-    
-    public LittleTriggerKeyListener(String id, double xStrength, double yStrength, double zStrength, double forward) {
+    public LittleTriggerKeyListener(int id) {
         super(id);
     }
     
     @Override
     public NBTTagCompound createNBT(NBTTagCompound nbt) {
-        nbt.setString("trigger", id);
         return nbt;
     }
     
@@ -46,7 +42,7 @@ public class LittleTriggerKeyListener extends LittleTriggerCondition {
     }
     
     @Override
-    public boolean conditionPassed() {
+    public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
         // TODO Auto-generated method stub
         return false;
     }

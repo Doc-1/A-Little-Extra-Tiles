@@ -5,19 +5,37 @@ import java.util.ArrayList;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.utils.type.Pair;
+import com.creativemd.creativecore.common.utils.type.PairList;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LittleTriggerObject {
     
-    public String id = "";
+    public int id;
     public boolean complete = false;
     
-    public LittleTriggerObject(String id) {
+    public static PairList<Class<? extends LittleTriggerObject>, String> names = new PairList<Class<? extends LittleTriggerObject>, String>();
+    
+    public LittleTriggerObject(int id) {
         this.id = id;
     }
     
-    public abstract String getName();
+    public static void setName(String name, Class<? extends LittleTriggerObject> clazz) {
+        names.add(clazz, name);
+    }
+    
+    public static Class<? extends LittleTriggerObject> getTriggerClass(String name) {
+        for (Pair<Class<? extends LittleTriggerObject>, String> pair : names)
+            if (pair.getValue().equals(name))
+                return pair.key;
+            
+        return null;
+    }
+    
+    public String getName() {
+        return names.getValue(this.getClass());
+    }
     
     public abstract LittleTriggerObject createFrom(NBTTagCompound nbt);
     
@@ -25,7 +43,7 @@ public abstract class LittleTriggerObject {
     
     public NBTTagCompound createNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("trigger", id);
+        nbt.setString("trigger", getName() + id);
         return nbt;
     }
     

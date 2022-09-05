@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     
-    public LittleTriggerEventModifyInventory(String id) {
+    public LittleTriggerEventModifyInventory(int id) {
         super(id);
         // TODO Auto-generated constructor stub
     }

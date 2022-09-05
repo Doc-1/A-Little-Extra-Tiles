@@ -2,7 +2,7 @@ package com.alet.common.structure.type.trigger;
 
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxCategory;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 
 public class GuiTriggerBoxAddButton extends GuiButton {
@@ -17,10 +17,11 @@ public class GuiTriggerBoxAddButton extends GuiButton {
     @Override
     public void onClicked(int x, int y, int button) {
         GuiScrollBox box = (GuiScrollBox) this.getGui().get("box");
-        GuiComboBox list = (GuiComboBox) this.getGui().get("list");
+        GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (GuiComboBoxCategory<Class<? extends LittleTriggerObject>>) this.getGui().get("list");
         int i = box.controls.size();
-        parser.triggers.add(LittleTriggerRegistrar.getLittleTrigger(list.getCaption(), list.getCaption() + i));
-        GuiTriggerEventButton bu = new GuiTriggerEventButton(parser, list.getCaption() + i, list.getCaption(), 0, i * 17, 119, 12);
+        parser.triggers.add(LittleTriggerRegistrar.getTriggerObject(list.getSelected().value, i));
+        
+        GuiTriggerEventButton bu = new GuiTriggerEventButton(parser, list.getSelected().key + i, list.getCaption(), 0, i * 17, 119, 12);
         
         box.addControl(bu);
     }

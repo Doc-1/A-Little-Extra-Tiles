@@ -19,7 +19,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     public double posY = 0;
     public double posZ = 0;
     
-    public LittleTriggerEventSetSpawn(String id) {
+    public LittleTriggerEventSetSpawn(int id) {
         super(id);
     }
     

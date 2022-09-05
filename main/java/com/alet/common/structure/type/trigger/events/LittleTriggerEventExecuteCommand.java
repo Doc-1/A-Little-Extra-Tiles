@@ -14,7 +14,7 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
     
     String command = "";
     
-    public LittleTriggerEventExecuteCommand(String id) {
+    public LittleTriggerEventExecuteCommand(int id) {
         super(id);
     }
     

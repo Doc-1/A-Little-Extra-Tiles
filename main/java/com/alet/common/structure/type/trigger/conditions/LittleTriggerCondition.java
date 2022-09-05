@@ -1,14 +1,13 @@
 package com.alet.common.structure.type.trigger.conditions;
 
+import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LittleTriggerCondition extends LittleTriggerObject {
     
-    public boolean canContinue = false;
-    
-    public LittleTriggerCondition(String id) {
+    public LittleTriggerCondition(int id) {
         super(id);
         // TODO Auto-generated constructor stub
     }
@@ -24,6 +23,6 @@ public abstract class LittleTriggerCondition extends LittleTriggerObject {
         return createNBT(nbt);
     }
     
-    public abstract boolean conditionPassed();
+    public abstract boolean conditionPassed(LittleTriggerBoxStructureALET structure);
     
 }
