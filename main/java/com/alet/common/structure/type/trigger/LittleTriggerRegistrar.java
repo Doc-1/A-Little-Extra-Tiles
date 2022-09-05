@@ -27,14 +27,16 @@ public class LittleTriggerRegistrar {
         registerTriggerObject("event", "set_spawn", LittleTriggerEventSetSpawn.class);
     }
     
-    public static void registerTriggerObject(String category, String id, Class<? extends LittleTriggerObject> event) {
+    public static void registerTriggerObject(String category, String name, Class<? extends LittleTriggerObject> clazz) {
         category = "trigger.category." + category + ".name";
         PairList<String, Class<? extends LittleTriggerObject>> categoryList = triggerables.getValue(category);
         if (categoryList == null) {
             categoryList = new PairList<>();
             triggerables.add(category, categoryList);
         }
-        categoryList.add("trigger." + id + ".name", event);
+        name = "trigger." + name + ".name";
+        LittleTriggerObject.setName(name, clazz);
+        categoryList.add(name, clazz);
         
     }
     
@@ -48,9 +50,11 @@ public class LittleTriggerRegistrar {
     }
     
     public static LittleTriggerObject getFromNBT(NBTTagCompound nbt) {
-        String id = nbt.getString("trigger");
-        String name = id.replaceAll("\\d", "");
-        LittleTriggerObject event = getTriggerObject(LittleTriggerObject.getTriggerClass(name), 0);
+        String trigger = nbt.getString("trigger");
+        String[] arr = trigger.split("(?<=\\D)(?=\\d)");
+        String name = arr[0];
+        int index = Integer.parseInt(arr[1]);
+        LittleTriggerObject event = getTriggerObject(LittleTriggerObject.getTriggerClass(name), index);
         event.createFrom(nbt);
         return event;
     }

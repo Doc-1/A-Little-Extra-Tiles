@@ -155,8 +155,4 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
         return true;
     }
     
-    @Override
-    public String getName() {
-        return "Modify Health";
-    }
 }

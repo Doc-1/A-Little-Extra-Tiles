@@ -110,9 +110,4 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
         return true;
     }
     
-    @Override
-    public String getName() {
-        return "Modify Motion";
-    }
-    
 }

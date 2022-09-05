@@ -76,9 +76,4 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
         return false;
     }
     
-    @Override
-    public String getName() {
-        return "Set Spawn";
-    }
-    
 }

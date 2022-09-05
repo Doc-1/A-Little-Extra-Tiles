@@ -28,11 +28,6 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     }
     
     @Override
-    public String getName() {
-        return "Tick Delay";
-    }
-    
-    @Override
     public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
         this.effectPerTick = nbt.getInteger("effectPerTick");
         return this;

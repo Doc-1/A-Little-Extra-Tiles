@@ -14,7 +14,6 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxCategory;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtensionCategory;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
@@ -47,6 +46,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,6 +83,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         for (LittleTriggerObject trigger : triggers) {
             NBTTagCompound n = new NBTTagCompound();
             n.setTag(i + "", trigger.createNBT());
+            System.out.println(n);
             list.appendTag(n);
             i++;
         }
@@ -222,10 +223,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             GuiPanel panel = new GuiPanel("content", 135, 0, 159, 199);
             parent.controls.add(panel);
             
-            GuiTextfield text = new GuiTextfield("", "0", 0, 0, 40, 14);
-            text.setNumbersOnly();
-            panel.addControl(text);
-            
             GuiScrollBox box = new GuiScrollBox("box", 0, 0, 127, 165);
             parent.controls.add(box);
             
@@ -245,7 +242,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             parent.addControl(add);
             if (triggers != null && !triggers.isEmpty()) {
                 for (int i = 0; i < triggers.size(); i++) {
-                    box.addControl(new GuiTriggerEventButton(this, triggers.get(i).getName() + i, triggers.get(i).getName(), 0, i * 17, 119, 12));
+                    box.addControl(new GuiTriggerEventButton(this, triggers.get(i).getName() + i, I18n.translateToLocal(triggers.get(i).getName()), 0, i * 17, 119, 12));
                 }
             }
         }
@@ -254,6 +251,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         @SideOnly(Side.CLIENT)
         public LittleTriggerBoxStructureALET parseStructure(LittlePreviews previews) {
             LittleTriggerBoxStructureALET structure = createStructure(LittleTriggerBoxStructureALET.class, null);
+            System.out.println(this.trigger);
             structure.triggers = this.triggers;
             return structure;
         }

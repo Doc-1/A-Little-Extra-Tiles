@@ -180,9 +180,4 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
         return true;
     }
     
-    @Override
-    public String getName() {
-        return "Modify Scoreboard";
-    }
-    
 }

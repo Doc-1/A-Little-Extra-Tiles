@@ -31,12 +31,6 @@ public class LittleTriggerKeyListener extends LittleTriggerCondition {
     }
     
     @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
     public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
         return this;
     }

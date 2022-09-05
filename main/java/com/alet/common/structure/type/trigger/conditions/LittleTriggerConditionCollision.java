@@ -20,12 +20,6 @@ public class LittleTriggerConditionCollision extends LittleTriggerCondition {
     }
     
     @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
     public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
         // TODO Auto-generated method stub
         return null;

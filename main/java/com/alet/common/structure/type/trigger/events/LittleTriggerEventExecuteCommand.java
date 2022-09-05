@@ -53,9 +53,4 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
         return true;
     }
     
-    @Override
-    public String getName() {
-        return "Execute Command";
-    }
-    
 }
