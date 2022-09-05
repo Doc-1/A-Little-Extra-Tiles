@@ -83,7 +83,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         for (LittleTriggerObject trigger : triggers) {
             NBTTagCompound n = new NBTTagCompound();
             n.setTag(i + "", trigger.createNBT());
-            System.out.println(n);
             list.appendTag(n);
             i++;
         }

@@ -1,7 +1,6 @@
 package com.alet.common.structure.type.trigger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser;
 import com.creativemd.creativecore.common.gui.GuiControl;
@@ -9,6 +8,8 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+
+import net.minecraft.util.text.translation.I18n;
 
 public class GuiTriggerEventButton extends GuiButton {
     LittleTriggerBoxStructureParser parser;
@@ -29,16 +30,19 @@ public class GuiTriggerEventButton extends GuiButton {
             this.color = ColorUtils.YELLOW;
             updateControls(this.name);
         } else if (button == 1) {
-            /*
+            
             int z = 0;
             for (int i = 0; i < parser.triggers.size(); i++) {
-                if (parser.triggers.get(i).id.equals(this.name)) {
+                LittleTriggerObject triggerObj = parser.triggers.get(i);
+                String triggerName = triggerObj.getName() + triggerObj.id;
+                
+                if (triggerName.equals(this.name)) {
                     z = i;
                     break;
                 }
             }
             parser.triggers.remove(z);
-            updateList();*/
+            updateList();
         }
         
     }
@@ -49,16 +53,11 @@ public class GuiTriggerEventButton extends GuiButton {
         box.controls = new ArrayList<GuiControl>();
         panel.controls = new ArrayList<GuiControl>();
         
-        List<LittleTriggerObject> tempTriggers = new ArrayList<LittleTriggerObject>();
         for (int i = 0; i < parser.triggers.size(); i++) {
-            LittleTriggerObject tempTrigger = parser.triggers.get(i);
-            tempTriggers.add(tempTrigger);
+            LittleTriggerObject triggerObj = parser.triggers.get(i);
+            triggerObj.id = i;
+            box.addControl(new GuiTriggerEventButton(parser, triggerObj.getName() + i, I18n.translateToLocal(triggerObj.getName()), 0, i * 17, 119, 12));
         }
-        
-        parser.triggers = tempTriggers;
-        for (int i = 0; i < parser.triggers.size(); i++)
-            box.addControl(new GuiTriggerEventButton(parser, parser.triggers.get(i).getName() + i, parser.triggers.get(i).getName(), 0, i * 17, 119, 12));
-        
     }
     
     public void updateControls(String name) {
