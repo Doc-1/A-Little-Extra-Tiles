@@ -16,10 +16,17 @@ public class LittleTriggerConditionCountTick extends LittleTriggerCondition {
     
     @Override
     public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
-        if (structure.tick <= 10) {
-            structure.canRun = false;
-            return true;
+        if (!structure.entities.isEmpty()) {
+            if (50 <= structure.tick) {
+                structure.tick = 0;
+                return true;
+            }
+        } else {
+            structure.tick = 0;
+            structure.run = false;
         }
+        structure.entities.clear();
+        structure.tick++;
         return false;
     }
     

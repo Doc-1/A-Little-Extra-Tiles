@@ -2,6 +2,8 @@ package com.alet.common.structure.type.trigger.events;
 
 import java.util.HashSet;
 
+import javax.annotation.Nullable;
+
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 
 import net.minecraft.entity.Entity;
@@ -24,10 +26,10 @@ public abstract class LittleTriggerEvent extends LittleTriggerObject {
         return createNBT(nbt);
     }
     
-    public void tryRunEvent(HashSet<Entity> entities) {
+    public void eventPassed(@Nullable HashSet<Entity> entities) {
         this.complete = runEvent(entities);
     }
     
-    protected abstract boolean runEvent(HashSet<Entity> entities);
+    protected abstract boolean runEvent(@Nullable HashSet<Entity> entities);
     
 }

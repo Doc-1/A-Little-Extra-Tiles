@@ -61,12 +61,13 @@ public class GuiTriggerEventButton extends GuiButton {
     }
     
     public void updateControls(String name) {
-        for (LittleTriggerObject trig : parser.triggers) {
-            /*
-            if (trig.id.equals(name)) {
-                parser.trigger = trig;
+        for (LittleTriggerObject triggerObj : parser.triggers) {
+            String objName = triggerObj.getName() + triggerObj.id;
+            if (objName.equals(name)) {
+                parser.trigger = triggerObj;
                 break;
-            }*/}
+            }
+        }
         if (parser.trigger != null)
             parser.trigger.updateControls(this.getGui());
     }

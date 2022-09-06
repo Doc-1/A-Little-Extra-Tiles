@@ -20,10 +20,14 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     
     @Override
     public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
-        if (this.effectPerTick <= this.tick) {
-            this.tick = 0;
+        
+        if (50 <= structure.tick) {
+            structure.tick = 0;
+            this.completed = true;
+            return true;
         }
-        this.tick++;
+        System.out.println(structure.tick);
+        structure.tick++;
         return false;
     }
     
