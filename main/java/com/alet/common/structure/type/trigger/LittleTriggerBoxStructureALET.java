@@ -7,24 +7,20 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.alet.common.packet.PacketUpdateBreakBlock;
 import com.alet.common.structure.type.ILeftClickListener;
+import com.alet.common.structure.type.trigger.conditions.LittleTriggerCondition;
+import com.alet.common.structure.type.trigger.events.LittleTriggerEvent;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxCategory;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtensionCategory;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
-import com.creativemd.creativecore.common.packet.PacketHandler;
-import com.creativemd.creativecore.common.utils.math.BooleanUtils;
-import com.creativemd.creativecore.common.utils.type.PairList;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
-import com.creativemd.littletiles.common.action.LittleAction;
-import com.creativemd.littletiles.common.action.LittleActionException;
-import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.entity.EntityAnimation;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
+import com.creativemd.littletiles.common.structure.attribute.LittleStructureAttribute;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureGuiParser;
@@ -38,12 +34,9 @@ import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
@@ -56,8 +49,13 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     
     public HashSet<Entity> entities = new HashSet<>();
     
+    public int tick = 0;
     public boolean breakBlock = false;
-    public List<LittleTriggerObject> triggers = new ArrayList<LittleTriggerObject>();
+    public boolean canRun = false;
+    public boolean run = false;
+    public boolean shouldCount = false;
+    public int modifier = 0;
+    public List<LittleTriggerObject> triggerObjs = new ArrayList<LittleTriggerObject>();
     
     public LittleTriggerBoxStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -70,7 +68,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         for (NBTBase base : list) {
             if (base instanceof NBTTagCompound) {
                 NBTTagCompound n = (NBTTagCompound) base;
-                triggers.add(LittleTriggerRegistrar.getFromNBT((NBTTagCompound) n.getTag(i + "")));
+                triggerObjs.add(LittleTriggerRegistrar.getFromNBT((NBTTagCompound) n.getTag(i + "")));
                 i++;
             }
         }
@@ -80,9 +78,9 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     protected void writeToNBTExtra(NBTTagCompound nbt) {
         int i = 0;
         NBTTagList list = new NBTTagList();
-        for (LittleTriggerObject trigger : triggers) {
+        for (LittleTriggerObject triggerObj : triggerObjs) {
             NBTTagCompound n = new NBTTagCompound();
-            n.setTag(i + "", trigger.createNBT());
+            n.setTag(i + "", triggerObj.createNBT());
             list.appendTag(n);
             i++;
         }
@@ -91,13 +89,13 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
     
     @Override
     public void onLittleTileDestroy() throws CorruptedConnectionException, NotYetConnectedException {
-        if (this.breakBlock)
-            super.onLittleTileDestroy();
+        // if (this.breakBlock)
+        super.onLittleTileDestroy();
     }
     
     @Override
     public int getAttribute() {
-        return super.getAttribute();
+        return super.getAttribute() | modifier | LittleStructureAttribute.NOCOLLISION;
     }
     
     @Override
@@ -114,43 +112,49 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         }
         if (intersected)
             entities.add(entityIn);
-        
-        queueForNextTick();
+        this.run = intersected;
+        //queueForNextTick();
     }
     
     @Override
     public void checkForAnimationCollision(EntityAnimation animation, HashMap<Entity, AxisAlignedBB> entities) throws CorruptedConnectionException, NotYetConnectedException {
         if (animation.world.isRemote)
             return;
+        /*
+        this.entities.addAll(entities.keySet());*/
+        //queueForNextTick();
         
-        this.entities.addAll(entities.keySet());
-        queueForNextTick();
-        
-    }
-    
-    private void triggerEvents() {
-        int allCompleted = 0;
-        int count = 1;
-        for (LittleTriggerObject event : triggers) {
-            //event.tryRunEvent(entities);
-            allCompleted = count;
-            if (!event.complete)
-                break;
-            count++;
-        }
-        //  if (!this.isClient())
-        //getInput(3).updateState(BooleanUtils.toBits(allCompleted, 16));
     }
     
     @Override
     public void tick() {
         if (!this.isClient()) {
-            if (this.entities.isEmpty()) {
-                // getInput(2).updateState(BooleanUtils.toBits(0, 16));
+            if (this.run) {
+                boolean flag = LittleTriggerObject.hasCondition(triggerObjs);
+                boolean flag1 = !flag;
+                for (LittleTriggerObject triggerObj : this.triggerObjs) {
+                    if (triggerObj instanceof LittleTriggerCondition)
+                        flag1 = ((LittleTriggerCondition) triggerObj).conditionPassed(this);
+                    else if (flag1 && triggerObj instanceof LittleTriggerEvent) {
+                        LittleTriggerEvent triggerEvent = (LittleTriggerEvent) triggerObj;
+                        triggerEvent.tryRunEvent(entities);
+                    }
+                    if (!flag1)
+                        break;
+                    
+                }
+                if (!flag)
+                    this.run = false;
+                
+                if (shouldCount)
+                    tick++;
+                entities.clear();
             }
         }
+        
     }
     
+    /*
     @Override
     public boolean queueTick() {
         int players = 0;
@@ -169,13 +173,13 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             }
         }
         return !wasEmpty;
-    }
-    
+    }*/
+    /*
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
         if (this.isClient()) {
             this.entities.add(playerIn);
-            queueForNextTick();
+            // queueForNextTick();
             
         }
         
@@ -191,10 +195,12 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         } else {
             this.breakBlock = false;
             this.entities.add(player);
-            queueForNextTick();
+            // queueForNextTick();
         }
         
     }
+    */
+    public void onLeftClick(EntityPlayer player) {};
     
     public static class LittleTriggerBoxStructureParser extends LittleStructureGuiParser {
         
@@ -217,7 +223,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         public void createControls(LittlePreviews previews, LittleStructure structure) {
             LittleTriggerBoxStructureALET triggerBox = (LittleTriggerBoxStructureALET) structure;
             if (triggerBox != null)
-                this.triggers = triggerBox.triggers;
+                this.triggers = triggerBox.triggerObjs;
             
             GuiPanel panel = new GuiPanel("content", 135, 0, 159, 199);
             parent.controls.add(panel);
@@ -225,8 +231,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
             GuiScrollBox box = new GuiScrollBox("box", 0, 0, 127, 165);
             parent.controls.add(box);
             
-            List<String> strings = new ArrayList<String>();
-            PairList<String, PairList<String, String>> elements;
             GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (new GuiComboBoxCategory<Class<? extends LittleTriggerObject>>("list", 0, 170, 100, LittleTriggerRegistrar.triggerables) {
                 @Override
                 protected GuiComboBoxExtensionCategory<Class<? extends LittleTriggerObject>> createBox() {
@@ -251,7 +255,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure implements IL
         public LittleTriggerBoxStructureALET parseStructure(LittlePreviews previews) {
             LittleTriggerBoxStructureALET structure = createStructure(LittleTriggerBoxStructureALET.class, null);
             System.out.println(this.trigger);
-            structure.triggers = this.triggers;
+            structure.triggerObjs = this.triggers;
             return structure;
         }
         

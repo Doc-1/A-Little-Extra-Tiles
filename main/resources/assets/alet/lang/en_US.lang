@@ -53,14 +53,20 @@ item.LTPremade.signal_quick_input32.name=Quick Input (32-bit)
 itemGroup.alet=Little Circuits
 
 trigger.tick_delay.name=Tick Delay
+trigger.on_collision.name=On Collision
 trigger.modify_health.name=Modify Health
 trigger.modify_motion.name=Modify Motion
 trigger.modify_inventory.name=Modify Inventory
 trigger.modify_scoreboard.name=Modify Scoreboard
 trigger.execute_command.name=Execute Command
 trigger.set_spawn.name=Set Spawn
+trigger.count_tick.name=Count Tick
+trigger.mouse_activation.name=Mouse Activation
+trigger.signal_activation.name=Signal Activation
+
 trigger.category.codition.name=Coditions
 trigger.category.event.name=Events
+
 
 item.tapemeasure.name=Tape Measure
 item.little_rope.name=Little Rope

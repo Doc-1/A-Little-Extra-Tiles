@@ -80,6 +80,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     
     @Override
     public boolean runEvent(HashSet<Entity> entities) {
+        System.out.println("da");
         for (Entity entity : entities) {
             
             entity.velocityChanged = true;

@@ -7,28 +7,32 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleTriggerConditionCollision extends LittleTriggerCondition {
+public class LittleTriggerConditionCountTick extends LittleTriggerCondition {
     
-    public LittleTriggerConditionCollision(int id) {
+    public LittleTriggerConditionCountTick(int id) {
         super(id);
         // TODO Auto-generated constructor stub
     }
     
     @Override
     public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
+        if (structure.tick <= 10) {
+            structure.canRun = false;
+            return true;
+        }
         return false;
     }
     
     @Override
     public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
         // TODO Auto-generated method stub
-        return null;
+        return this;
     }
     
     @Override
     public NBTTagCompound createNBT(NBTTagCompound nbt) {
         // TODO Auto-generated method stub
-        return null;
+        return nbt;
     }
     
     @Override

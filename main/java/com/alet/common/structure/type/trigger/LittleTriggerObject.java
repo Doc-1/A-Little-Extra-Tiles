@@ -1,7 +1,9 @@
 package com.alet.common.structure.type.trigger;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.alet.common.structure.type.trigger.conditions.LittleTriggerCondition;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -13,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public abstract class LittleTriggerObject {
     
     public int id;
+    public int tick = 0;
     public boolean complete = false;
     
     public static PairList<Class<? extends LittleTriggerObject>, String> names = new PairList<Class<? extends LittleTriggerObject>, String>();
@@ -35,6 +38,14 @@ public abstract class LittleTriggerObject {
     
     public String getName() {
         return names.getValue(this.getClass());
+    }
+    
+    public static boolean hasCondition(List<LittleTriggerObject> triggerObjs) {
+        for (LittleTriggerObject triggerObj : triggerObjs) {
+            if (triggerObj instanceof LittleTriggerCondition)
+                return true;
+        }
+        return false;
     }
     
     public abstract LittleTriggerObject createFrom(NBTTagCompound nbt);
