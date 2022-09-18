@@ -11,7 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     
-    public int tick = 0;
     public int effectPerTick = 0;
     
     public LittleTriggerConditionTickDelay(int id) {
@@ -21,12 +20,11 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     @Override
     public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
         
-        if (50 <= structure.tick) {
+        if (effectPerTick <= structure.tick) {
             structure.tick = 0;
             this.completed = true;
             return true;
         }
-        System.out.println(structure.tick);
         structure.tick++;
         return false;
     }
@@ -46,14 +44,15 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     @Override
     public void updateControls(GuiParent parent) {
         GuiPanel panel = (GuiPanel) parent.get("content");
-        wipeControls(panel);
-        panel.addControl(new GuiTextfield("preTick", effectPerTick + "", 85, 15, 40, 14).setNumbersOnly());
+        panel.addControl(new GuiTextfield("preTick", effectPerTick + "", 85, 0, 40, 14).setNumbersOnly());
         
     }
     
     @Override
     public void updateValues(CoreControl source) {
-        // TODO Auto-generated method stub
+        if (source instanceof GuiTextfield) {
+            this.effectPerTick = Integer.parseInt(((GuiTextfield) source).text);
+        }
         
     }
     

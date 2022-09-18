@@ -64,7 +64,12 @@ trigger.count_tick.name=Count Tick
 trigger.mouse_activation.name=Mouse Activation
 trigger.signal_activation.name=Signal Activation
 
-trigger.category.codition.name=Coditions
+trigger.listener.collision.name=Collision with Tiles
+trigger.listener.right_click.name=Right Click
+trigger.listener.aabb_collision.name=Collision with Area
+
+trigger.category.listener.name=Listeners
+trigger.category.codition.name=Conditions
 trigger.category.event.name=Events
 
 

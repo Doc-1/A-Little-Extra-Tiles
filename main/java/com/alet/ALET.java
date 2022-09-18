@@ -39,6 +39,8 @@ import com.alet.common.entity.EntityRopeConnection;
 import com.alet.common.packet.PacketConnectLead;
 import com.alet.common.packet.PacketDropItem;
 import com.alet.common.packet.PacketGetServerCams;
+import com.alet.common.packet.PacketLeftClick;
+import com.alet.common.packet.PacketPlaySound;
 import com.alet.common.packet.PacketSendGuiToClient;
 import com.alet.common.packet.PacketSendServerCams;
 import com.alet.common.packet.PacketSendSound;
@@ -480,12 +482,14 @@ public class ALET {
     public void Init(FMLInitializationEvent event) {
         CreativeCorePacket.registerPacket(PacketUpdateNBT.class);
         CreativeCorePacket.registerPacket(PacketSendSound.class);
+        CreativeCorePacket.registerPacket(PacketPlaySound.class);
         CreativeCorePacket.registerPacket(PacketUpdateStructureFromClient.class);
         CreativeCorePacket.registerPacket(PacketSendGuiToClient.class);
         CreativeCorePacket.registerPacket(PacketDropItem.class);
         CreativeCorePacket.registerPacket(PacketConnectLead.class);
         CreativeCorePacket.registerPacket(PacketUpdateBreakBlock.class);
         CreativeCorePacket.registerPacket(PacketUpdateMutateFromServer.class);
+        CreativeCorePacket.registerPacket(PacketLeftClick.class);
         
         if (Loader.isModLoaded("cmdcam")) {
             CreativeCorePacket.registerPacket(PacketSendServerCams.class);

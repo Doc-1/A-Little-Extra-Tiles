@@ -7,11 +7,10 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleTriggerConditionCountTick extends LittleTriggerCondition {
+public class LittleTriggerConditionWhileCollided extends LittleTriggerCondition {
     
-    public LittleTriggerConditionCountTick(int id) {
+    public LittleTriggerConditionWhileCollided(int id) {
         super(id);
-        // TODO Auto-generated constructor stub
     }
     
     @Override
@@ -23,7 +22,6 @@ public class LittleTriggerConditionCountTick extends LittleTriggerCondition {
             }
         } else {
             structure.tick = 0;
-            structure.run = false;
         }
         structure.entities.clear();
         structure.tick++;

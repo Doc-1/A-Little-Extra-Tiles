@@ -86,18 +86,18 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 typesComboBox.select(index);
                 hasUpdated = true;
             } else if (name.equals("structure.trigger_box.name")) {
-                gui.height = 270;
+                gui.height = 300;
                 gui.width = 456;
                 recipeGui.get("tilescount").posX = 308;
                 recipeGui.get("pause").posX = 348;
                 recipeGui.get("play").posX = 368;
                 recipeGui.get("stop").posX = 388;
                 recipeGui.get("panel").width = 306;
-                recipeGui.get("panel").height = 211;
+                recipeGui.get("panel").height = 241;
                 
-                recipeGui.get("save").posY = 243;
-                recipeGui.get("name").posY = 243;
-                recipeGui.get("clear").posY = 243;
+                recipeGui.get("save").posY = 273;
+                recipeGui.get("name").posY = 273;
+                recipeGui.get("clear").posY = 273;
                 viewer.posX = 308;
                 viewer.moveViewPort(-50, 30);
                 recipeGui.refreshControls();

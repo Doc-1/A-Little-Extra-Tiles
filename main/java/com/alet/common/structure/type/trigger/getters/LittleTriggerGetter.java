@@ -6,9 +6,10 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LittleTriggerGetter extends LittleTriggerObject {
     
+    int outputIndex;
+    
     public LittleTriggerGetter(int id) {
         super(id);
-        // TODO Auto-generated constructor stub
     }
     
     @Override

@@ -26,10 +26,6 @@ public abstract class LittleTriggerEvent extends LittleTriggerObject {
         return createNBT(nbt);
     }
     
-    public void eventPassed(@Nullable HashSet<Entity> entities) {
-        this.complete = runEvent(entities);
-    }
-    
-    protected abstract boolean runEvent(@Nullable HashSet<Entity> entities);
+    public abstract boolean runEvent(@Nullable HashSet<Entity> entities);
     
 }

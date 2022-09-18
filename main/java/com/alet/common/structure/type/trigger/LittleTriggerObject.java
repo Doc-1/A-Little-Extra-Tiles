@@ -7,6 +7,7 @@ import com.alet.common.structure.type.trigger.conditions.LittleTriggerCondition;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
@@ -15,9 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public abstract class LittleTriggerObject {
     
     public int id;
-    public int tick = 0;
-    public boolean complete = false;
-    
+    public LittleTriggerBoxStructureALET structure;
     public static PairList<Class<? extends LittleTriggerObject>, String> names = new PairList<Class<? extends LittleTriggerObject>, String>();
     
     public LittleTriggerObject(int id) {
@@ -56,6 +55,10 @@ public abstract class LittleTriggerObject {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("trigger", getName() + id);
         return nbt;
+    }
+    
+    public GuiPanel getPanel(GuiParent parent) {
+        return (GuiPanel) parent.get("content");
     }
     
     public abstract NBTTagCompound createNBT(NBTTagCompound nbt);

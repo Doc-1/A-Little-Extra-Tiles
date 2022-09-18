@@ -12,7 +12,6 @@ public abstract class LittleTriggerCondition extends LittleTriggerObject {
     
     public LittleTriggerCondition(int id) {
         super(id);
-        // TODO Auto-generated constructor stub
     }
     
     @Override
@@ -32,7 +31,7 @@ public abstract class LittleTriggerCondition extends LittleTriggerObject {
         if (conditionPassed(structure))
             if (nextTriggerObj instanceof LittleTriggerEvent) {
                 LittleTriggerEvent triggerEvent = (LittleTriggerEvent) nextTriggerObj;
-                triggerEvent.eventPassed(structure.entities);
+                triggerEvent.runEvent(structure.entities);
                 return true;
             }
         return false;

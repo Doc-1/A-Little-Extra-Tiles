@@ -14,7 +14,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -53,14 +52,14 @@ public class ALETEventHandler {
     
     @SubscribeEvent
     public void onLeftClick(LeftClick event) {
+        /*
         if (event.result.typeOfHit.equals(Type.BLOCK)) {
             Block block = event.world.getBlockState(event.result.getBlockPos()).getBlock();
             isStructure(event.world, event.result.getBlockPos(), event.player);
-            
-        }
+        }*/
     }
     
-    private boolean isStructure(World world, BlockPos pos, EntityPlayer player) {
+    public static boolean isStructure(World world, BlockPos pos, EntityPlayer player) {
         Block block = world.getBlockState(pos).getBlock();
         if (block instanceof BlockTile) {
             try {

@@ -101,7 +101,6 @@ public class GuiPopupMenu extends GuiParent {
         
         GuiMenuPart found = (GuiMenuPart) menuOver(x, y, button, this.getParent().controls);
         if (button == 1) {
-            this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
             if (!pressed) {
                 menu.posX = x - 2;
                 menu.posY = y - 23;
@@ -114,6 +113,7 @@ public class GuiPopupMenu extends GuiParent {
                 menu.closeAllMenus();
             }
             pressed = true;
+            this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
         } else if (button != 2 && (button == 0 && found == null || found.type.equals(EnumPartType.Leaf))) {
             menu.closeAllMenus();
             this.getParent().removeControl(menu);
