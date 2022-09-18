@@ -2,8 +2,8 @@ package com.alet.common.structure.type.trigger;
 
 import java.lang.reflect.InvocationTargetException;
 
+import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionHasItem;
 import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionTickDelay;
-import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionWhileCollided;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventExecuteCommand;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventModifyHealth;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventModifyInventory;
@@ -21,7 +21,7 @@ public class LittleTriggerRegistrar {
     public static PairList<String, PairList<String, Class<? extends LittleTriggerObject>>> triggerables = new PairList<>();
     static {
         registerTriggerObject("codition", "tick_delay", LittleTriggerConditionTickDelay.class);
-        registerTriggerObject("codition", "count_tick", LittleTriggerConditionWhileCollided.class);
+        registerTriggerObject("codition", "has_item", LittleTriggerConditionHasItem.class);
         registerTriggerObject("event", "modify_health", LittleTriggerEventModifyHealth.class);
         registerTriggerObject("event", "modify_motion", LittleTriggerEventModifyMotion.class);
         registerTriggerObject("event", "modify_inventory", LittleTriggerEventModifyInventory.class);

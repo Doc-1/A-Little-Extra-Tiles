@@ -173,7 +173,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 if (this.collisionArea != null) {
                     entities.addAll(this.getWorld().getEntitiesWithinAABB(Entity.class, this.collisionArea));
                 }
-            //System.out.println(this.run);
             if (this.run) {
                 boolean flag = LittleTriggerObject.hasCondition(triggerObjs);
                 boolean flag1 = !flag;
@@ -185,7 +184,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                         if (this.triggerObjs.size() > i + 1)
                             flag1 = ((LittleTriggerCondition) triggerObj).conditionRunEvent(this, this.triggerObjs.get(i + 1));
                     } else if (flag1 && triggerObj instanceof LittleTriggerEvent) {
-                        if (0 < i - 1 && !(this.triggerObjs.get(i - 1) instanceof LittleTriggerCondition)) {
+                        if (0 <= i - 1 && (this.triggerObjs.get(i - 1) instanceof LittleTriggerCondition || this.triggerObjs.get(i - 1) instanceof LittleTriggerEvent)) {
                             LittleTriggerEvent triggerEvent = (LittleTriggerEvent) triggerObj;
                             triggerEvent.runEvent(entities);
                         } else if (0 > i - 1) {

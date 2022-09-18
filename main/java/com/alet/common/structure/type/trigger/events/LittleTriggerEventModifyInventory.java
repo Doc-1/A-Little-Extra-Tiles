@@ -2,12 +2,24 @@ package com.alet.common.structure.type.trigger.events;
 
 import java.util.HashSet;
 
+import com.alet.client.gui.LittleItemSelector;
+import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.alet.client.gui.controls.GuiFakeSlot;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
+import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
+import com.creativemd.littletiles.common.action.LittleAction;
+import com.creativemd.littletiles.common.util.ingredient.LittleIngredients;
+import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
+import com.creativemd.littletiles.common.util.ingredient.NotEnoughIngredientsException;
+import com.creativemd.littletiles.common.util.ingredient.StackIngredient;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -45,19 +57,81 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     
     @Override
     public void updateControls(GuiParent parent) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
         GuiPanel panel = getPanel(parent);
-        panel.addControl(new GuiFakeSlot("", 0, 0, 18, 18));
+        GuiFakeSlot stack = new GuiFakeSlot("stack", 0, 20, 18, 18);
+        panel.addControl(stack);
+        if (!this.stack.isEmpty())
+            stack.updateItemStack(this.stack);
+        panel.addControl(new GuiStackSelectorAll("preview", 0, 0, 110, player, new GuiStackSelectorAll.InventoryCollector(new LittleItemSelector()), true));
+        
+        panel.addControl(new GuiButton("use", "Use Item As Key", 25, 22) {
+            @Override
+            public void onClicked(int x, int y, int button) {
+                GuiStackSelectorAll preview = (GuiStackSelectorAll) parent.get("preview");
+                GuiFakeSlot key = (GuiFakeSlot) parent.get("stack");
+                key.updateItemStack(preview.getSelected());
+            }
+        });
+        GuiConnectedCheckBoxes addRemove = new GuiConnectedCheckBoxes("addRemove", 0, 45).addCheckBox("add", "Add Item").addCheckBox("remove", "Remove Item");
+        if (this.addItem)
+            addRemove.setSelected("add");
+        else
+            addRemove.setSelected("remove");
+        panel.addControl(addRemove);
+        GuiConnectedCheckBoxes handInventory = new GuiConnectedCheckBoxes("handInv", 0, 77).addCheckBox("inHand", "Check In Hand").addCheckBox("inInv", "Check In Inventory");
+        if (this.inHand)
+            handInventory.setSelected("inHand");
+        else
+            handInventory.setSelected("inInv");
+        
+        panel.addControl(handInventory);
     }
     
     @Override
     public void updateValues(CoreControl source) {
-        // TODO Auto-generated method stub
+        if (source instanceof GuiFakeSlot) {
+            GuiFakeSlot key = (GuiFakeSlot) source;
+            this.stack = key.basic.getStackInSlot(0);
+        } else if (source instanceof GuiConnectedCheckBoxes) {
+            GuiConnectedCheckBoxes boxes = (GuiConnectedCheckBoxes) source;
+            if (source.is("addRemove")) {
+                this.addItem = boxes.getSelected().name.equals("add");
+            } else if (source.is("handInv")) {
+                this.inHand = boxes.getSelected().name.equals("inHand");
+            }
+        }
         
     }
     
     @Override
     public boolean runEvent(HashSet<Entity> entities) {
-        return false;
+        for (Entity entity : entities) {
+            if (entity instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) entity;
+                if (!stack.isEmpty()) {
+                    LittleIngredients ingredients = new LittleIngredients(new StackIngredient(stack));
+                    
+                    try {
+                        if (!addItem) {
+                            if (this.inHand) {
+                                if (player.getHeldItemMainhand().getItem().equals(stack.getItem()))
+                                    player.getHeldItemMainhand().shrink(1);
+                            } else {
+                                LittleAction.checkAndTake(player, new LittleInventory(player), ingredients);
+                            }
+                        } else {
+                            LittleAction.checkAndGive(player, new LittleInventory(player), ingredients);
+                            
+                        }
+                    } catch (NotEnoughIngredientsException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return true;
     }
     
 }

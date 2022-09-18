@@ -4,6 +4,7 @@ import com.creativemd.creativecore.common.gui.client.style.DisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.container.SlotControlNoSync;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.slots.SlotPreview;
 
 import net.minecraft.inventory.InventoryBasic;
@@ -35,5 +36,6 @@ public class GuiFakeSlot extends GuiParent {
     
     public void updateItemStack(ItemStack itemStack) {
         basic.setInventorySlotContents(0, itemStack);
+        this.raiseEvent(new GuiControlChangedEvent(this));
     }
 }

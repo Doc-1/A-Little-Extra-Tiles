@@ -43,7 +43,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
             if (entity instanceof EntityPlayer)
                 PacketHandler.sendPacketToPlayer(new PacketPlaySound(pitch, volume, false, this.structure.getPos(), selected), (EntityPlayerMP) entity);
         }
-        return false;
+        return true;
     }
     
     @Override
