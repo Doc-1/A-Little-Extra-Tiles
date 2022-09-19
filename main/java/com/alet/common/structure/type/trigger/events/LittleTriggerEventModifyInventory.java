@@ -8,7 +8,9 @@ import com.alet.client.gui.controls.GuiFakeSlot;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.util.ingredient.LittleIngredients;
@@ -70,16 +72,22 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
             public void onClicked(int x, int y, int button) {
                 GuiStackSelectorAll preview = (GuiStackSelectorAll) parent.get("preview");
                 GuiFakeSlot key = (GuiFakeSlot) parent.get("stack");
-                key.updateItemStack(preview.getSelected());
+                ItemStack temp = preview.getSelected().copy();
+                temp.setCount(stackCount);
+                key.updateItemStack(temp);
             }
         });
-        GuiConnectedCheckBoxes addRemove = new GuiConnectedCheckBoxes("addRemove", 0, 45).addCheckBox("add", "Add Item").addCheckBox("remove", "Remove Item");
+        panel.addControl(new GuiLabel("Stack Count:", 0, 45));
+        GuiTextfield count = new GuiTextfield("count", this.stackCount + "", 66, 45, 25, 10).setNumbersOnly();
+        count.maxLength = 2;
+        panel.addControl(count);
+        GuiConnectedCheckBoxes addRemove = new GuiConnectedCheckBoxes("addRemove", 0, 65).addCheckBox("add", "Add Item").addCheckBox("remove", "Remove Item");
         if (this.addItem)
             addRemove.setSelected("add");
         else
             addRemove.setSelected("remove");
         panel.addControl(addRemove);
-        GuiConnectedCheckBoxes handInventory = new GuiConnectedCheckBoxes("handInv", 0, 77).addCheckBox("inHand", "Check In Hand").addCheckBox("inInv", "Check In Inventory");
+        GuiConnectedCheckBoxes handInventory = new GuiConnectedCheckBoxes("handInv", 0, 97).addCheckBox("inHand", "Check In Hand").addCheckBox("inInv", "Check In Inventory");
         if (this.inHand)
             handInventory.setSelected("inHand");
         else
@@ -92,7 +100,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     public void updateValues(CoreControl source) {
         if (source instanceof GuiFakeSlot) {
             GuiFakeSlot key = (GuiFakeSlot) source;
-            this.stack = key.basic.getStackInSlot(0);
+            this.stack = key.basic.getStackInSlot(0).copy();
         } else if (source instanceof GuiConnectedCheckBoxes) {
             GuiConnectedCheckBoxes boxes = (GuiConnectedCheckBoxes) source;
             if (source.is("addRemove")) {
@@ -100,6 +108,19 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
             } else if (source.is("handInv")) {
                 this.inHand = boxes.getSelected().name.equals("inHand");
             }
+        } else if (source.is("count")) {
+            GuiTextfield count = (GuiTextfield) source;
+            int c = Integer.parseInt(count.text);
+            if (c == 0) {
+                c = 1;
+                count.text = "1";
+            } else if (c > 64) {
+                c = 64;
+                count.text = "64";
+            }
+            this.stackCount = c;
+            if (!this.stack.isEmpty())
+                this.stack.setCount(this.stackCount);
         }
         
     }
@@ -111,12 +132,12 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
                 EntityPlayer player = (EntityPlayer) entity;
                 if (!stack.isEmpty()) {
                     LittleIngredients ingredients = new LittleIngredients(new StackIngredient(stack));
-                    
                     try {
                         if (!addItem) {
                             if (this.inHand) {
-                                if (player.getHeldItemMainhand().getItem().equals(stack.getItem())) {
-                                    player.getHeldItemMainhand().shrink(1);
+                                ItemStack mainHand = player.getHeldItemMainhand();
+                                if (mainHand.getItem().equals(stack.getItem()) && mainHand.getCount() >= stack.getCount()) {
+                                    mainHand.shrink(stack.getCount());
                                     return true;
                                 }
                             } else {
@@ -128,7 +149,6 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
                             return true;
                         }
                     } catch (NotEnoughIngredientsException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
