@@ -115,14 +115,17 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
                     try {
                         if (!addItem) {
                             if (this.inHand) {
-                                if (player.getHeldItemMainhand().getItem().equals(stack.getItem()))
+                                if (player.getHeldItemMainhand().getItem().equals(stack.getItem())) {
                                     player.getHeldItemMainhand().shrink(1);
+                                    return true;
+                                }
                             } else {
                                 LittleAction.checkAndTake(player, new LittleInventory(player), ingredients);
+                                return true;
                             }
                         } else {
                             LittleAction.checkAndGive(player, new LittleInventory(player), ingredients);
-                            
+                            return true;
                         }
                     } catch (NotEnoughIngredientsException e) {
                         // TODO Auto-generated catch block
@@ -131,7 +134,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
                 }
             }
         }
-        return true;
+        return false;
     }
     
 }

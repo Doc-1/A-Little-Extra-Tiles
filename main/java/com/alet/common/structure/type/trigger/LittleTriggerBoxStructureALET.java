@@ -75,6 +75,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
     public boolean collisionListener = false;
     public boolean aabbCollisionListener = false;
     public boolean rightClickListener = false;
+    public boolean consideredEventsConditions = false;
     public AxisAlignedBB collisionArea;
     
     public List<LittleTriggerObject> triggerObjs = new ArrayList<LittleTriggerObject>();
@@ -108,6 +109,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             NBTTagCompound n = (NBTTagCompound) nbt.getTag("collisionArea");
             this.collisionArea = NBTUtils.readAABB(n);
         }
+        if (nbt.hasKey("consideredEventsConditions"))
+            this.consideredEventsConditions = nbt.getBoolean("consideredEventsConditions");
     }
     
     @Override
@@ -127,12 +130,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         nbt.setBoolean("rightClickListener", this.rightClickListener);
         if (this.collisionArea != null)
             nbt.setTag("collisionArea", NBTUtils.writeAABB(this.collisionArea));
-        
-    }
-    
-    @Override
-    public void onLittleTileDestroy() throws CorruptedConnectionException, NotYetConnectedException {
-        super.onLittleTileDestroy();
+        nbt.setBoolean("consideredEventsConditions", this.consideredEventsConditions);
     }
     
     @Override
@@ -174,36 +172,36 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     entities.addAll(this.getWorld().getEntitiesWithinAABB(Entity.class, this.collisionArea));
                 }
             if (this.run) {
-                boolean flag = LittleTriggerObject.hasCondition(triggerObjs);
-                boolean flag1 = !flag;
-                boolean flag2 = false;
+                boolean flag = LittleTriggerObject.hasCondition(triggerObjs); //Will reset the run and tick values
+                boolean flag1 = !flag; //Will stop the for loop and reset the run and tick values
+                boolean flag2 = false; //Will reset the run and tick values
                 
+                //for loops through all trigger conditions and events in order.
                 for (int i = 0; i < this.triggerObjs.size(); i++) {
                     LittleTriggerObject triggerObj = this.triggerObjs.get(i);
                     if (triggerObj instanceof LittleTriggerCondition) {
                         if (this.triggerObjs.size() > i + 1)
                             flag1 = ((LittleTriggerCondition) triggerObj).conditionRunEvent(this, this.triggerObjs.get(i + 1));
                     } else if (flag1 && triggerObj instanceof LittleTriggerEvent) {
-                        if (0 <= i - 1 && (this.triggerObjs.get(i - 1) instanceof LittleTriggerCondition || this.triggerObjs.get(i - 1) instanceof LittleTriggerEvent)) {
+                        if (0 <= i - 1 || 0 > i - 1) {
                             LittleTriggerEvent triggerEvent = (LittleTriggerEvent) triggerObj;
-                            triggerEvent.runEvent(entities);
-                        } else if (0 > i - 1) {
-                            LittleTriggerEvent triggerEvent = (LittleTriggerEvent) triggerObj;
-                            triggerEvent.runEvent(entities);
+                            boolean event = triggerEvent.runEvent(entities);
+                            if (consideredEventsConditions)
+                                flag1 = event;
                         }
                     }
                     
                     if (!flag1)
                         break;
                 }
-                
+                //Will stop the loop if there is no entities inside the collision area.
                 if (runWhileCollided) {
                     flag2 = this.entities.isEmpty();
                     entities.clear();
                 }
                 
+                //If there is no conditions then there is no need to loop.
                 if (!flag || flag1 || flag2) {
-                    //If there is no conditions then there is no need to loop.
                     this.run = false;
                     this.tick = 0;
                     for (LittleTriggerObject triggerObj : this.triggerObjs) {
@@ -239,6 +237,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         public boolean aabbCollisionListener = false;
         public boolean rightClickListener = false;
         public AxisAlignedBB collisionArea;
+        public boolean consideredEventsConditions = false;
         public String collisionListenerTranslate = I18n.translateToLocal("trigger.listener.collision.name");
         public String aabbCollisionListenerTranslate = I18n.translateToLocal("trigger.listener.aabb_collision.name");
         public String rightClickTranslate = I18n.translateToLocal("trigger.listener.right_click.name");
@@ -264,6 +263,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 this.collisionListener = triggerBox.collisionListener;
                 this.aabbCollisionListener = triggerBox.aabbCollisionListener;
                 this.rightClickListener = triggerBox.rightClickListener;
+                this.consideredEventsConditions = triggerBox.consideredEventsConditions;
                 if (triggerBox.collisionArea != null)
                     this.collisionArea = triggerBox.collisionArea;
             }
@@ -327,6 +327,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     box.addControl(new GuiTriggerEventButton(triggers.get(i).getName() + i, I18n.translateToLocal(triggers.get(i).getName()), 0, i * 17, 119, 12));
                 }
             }
+            parent.addControl(new GuiCheckBox("consider", "Make Events Conditional", 0, 208, consideredEventsConditions));
         }
         
         @Override
@@ -354,7 +355,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             
             structure.triggerObjs = this.triggers;
             structure.runWhileCollided = this.runWhileCollided;
-            
+            structure.consideredEventsConditions = this.consideredEventsConditions;
             return structure;
         }
         
@@ -409,6 +410,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         public void onControlChanged(GuiControlChangedEvent event) {
             if (event.source.is("while_collided"))
                 this.runWhileCollided = ((GuiCheckBox) event.source).value;
+            else if (event.source.is("consider"))
+                this.consideredEventsConditions = ((GuiCheckBox) event.source).value;
             else if (event.source.is("listener")) {
                 GuiComboBox listListener = (GuiComboBox) event.source;
                 GuiPanel settingsPanel = (GuiPanel) parent.get("settings");
