@@ -1,7 +1,6 @@
 package com.alet.common.structure.type.trigger.events;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import com.alet.common.packet.PacketPlaySound;
@@ -38,8 +37,8 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     }
     
     @Override
-    public boolean runEvent(HashSet<Entity> entities) {
-        for (Entity entity : entities) {
+    public boolean runEvent() {
+        for (Entity entity : this.getEntities()) {
             if (entity instanceof EntityPlayer)
                 PacketHandler.sendPacketToPlayer(new PacketPlaySound(pitch, volume, false, this.structure.getPos(), selected), (EntityPlayerMP) entity);
         }

@@ -181,11 +181,11 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     LittleTriggerObject triggerObj = this.triggerObjs.get(i);
                     if (triggerObj instanceof LittleTriggerCondition) {
                         if (this.triggerObjs.size() > i + 1)
-                            flag1 = ((LittleTriggerCondition) triggerObj).conditionRunEvent(this, this.triggerObjs.get(i + 1));
+                            flag1 = ((LittleTriggerCondition) triggerObj).conditionRunEvent(this.triggerObjs.get(i + 1));
                     } else if (flag1 && triggerObj instanceof LittleTriggerEvent) {
                         if (0 <= i - 1 || 0 > i - 1) {
                             LittleTriggerEvent triggerEvent = (LittleTriggerEvent) triggerObj;
-                            boolean event = triggerEvent.runEvent(entities);
+                            boolean event = triggerEvent.runEvent();
                             if (consideredEventsConditions)
                                 flag1 = event;
                         }

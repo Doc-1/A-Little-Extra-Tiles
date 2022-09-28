@@ -1,12 +1,7 @@
 package com.alet.common.structure.type.trigger.events;
 
-import java.util.HashSet;
-
-import javax.annotation.Nullable;
-
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LittleTriggerEvent extends LittleTriggerObject {
@@ -16,16 +11,11 @@ public abstract class LittleTriggerEvent extends LittleTriggerObject {
     }
     
     @Override
-    public LittleTriggerObject createFrom(NBTTagCompound nbt) {
-        return createFromNBT(nbt);
-    }
-    
-    @Override
     public NBTTagCompound createNBT() {
         NBTTagCompound nbt = super.createNBT();
         return createNBT(nbt);
     }
     
-    public abstract boolean runEvent(@Nullable HashSet<Entity> entities);
+    public abstract boolean runEvent();
     
 }

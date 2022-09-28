@@ -58,7 +58,7 @@ public class LittleSignalOutputQuick extends LittleSignalOutput {
         if (this.getParent() == null) {
             listeningStructure = StructureUtils.findConnection(this.getWorld(), this.getStructureLocation().pos, this.frame, this, null);
             if (listeningStructure != null) {
-                if (StructureUtils.mergeChildToStructure(this, listeningStructure, true, worldIn, new LittleVec(0, 0, 0), side, playerIn))
+                if (StructureUtils.mergeChildToStructure(this, listeningStructure, true, this.getWorld(), new LittleVec(0, 0, 0), side, playerIn))
                     playerIn.sendStatusMessage(new TextComponentString("Connection was succesful, right to open interface."), true);
                 
             }

@@ -1,7 +1,6 @@
 package com.alet.common.structure.type.trigger.events;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import com.creativemd.creativecore.common.gui.CoreControl;
@@ -131,7 +130,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
-    public boolean runEvent(HashSet<Entity> entities) {
+    public boolean runEvent() {
         if (this.harm) {
             DamageSource damageSource = DamageSource.GENERIC;
             for (DamageSource source : sourceOfDmg) {
@@ -140,12 +139,12 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
                     break;
                 }
             }
-            for (Entity entity : entities) {
+            for (Entity entity : this.getEntities()) {
                 entity.attackEntityFrom(damageSource, this.damageAmount);
             }
         }
         if (this.heal) {
-            for (Entity entity : entities) {
+            for (Entity entity : this.getEntities()) {
                 if (entity instanceof EntityLivingBase) {
                     EntityLivingBase living = (EntityLivingBase) entity;
                     living.heal(this.healAmount);

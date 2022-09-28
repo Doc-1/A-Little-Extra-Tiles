@@ -1,7 +1,5 @@
 package com.alet.common.structure.type.trigger.events;
 
-import java.util.HashSet;
-
 import com.alet.client.gui.controls.GuiWrappedTextField;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -46,8 +44,8 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
     }
     
     @Override
-    public boolean runEvent(HashSet<Entity> entities) {
-        for (Entity entity : entities) {
+    public boolean runEvent() {
+        for (Entity entity : this.getEntities()) {
             entity.world.getMinecraftServer().getCommandManager().executeCommand(entity.world.getMinecraftServer(), this.command);
         }
         return true;

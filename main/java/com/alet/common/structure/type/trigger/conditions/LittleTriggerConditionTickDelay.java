@@ -1,6 +1,5 @@
 package com.alet.common.structure.type.trigger.conditions;
 
-import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -18,11 +17,10 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     }
     
     @Override
-    public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
+    public boolean conditionPassed() {
         
         if (effectPerTick <= structure.tick) {
             structure.tick = 0;
-            this.completed = true;
             return true;
         }
         structure.tick++;

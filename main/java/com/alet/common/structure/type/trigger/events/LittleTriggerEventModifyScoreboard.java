@@ -3,7 +3,6 @@ package com.alet.common.structure.type.trigger.events;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -150,7 +149,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
-    public boolean runEvent(HashSet<Entity> entities) {
+    public boolean runEvent() {
         
         Collection<ScoreObjective> objectives = world.getScoreboard().getScoreObjectives();
         Collection<Score> scores = world.getScoreboard().getScores();
@@ -164,7 +163,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
             }
         }
         
-        for (Entity entity : entities) {
+        for (Entity entity : this.getEntities()) {
             if (entity instanceof EntityPlayerMP)
                 score = world.getScoreboard().getOrCreateScore(entity.getName(), objective);
             else

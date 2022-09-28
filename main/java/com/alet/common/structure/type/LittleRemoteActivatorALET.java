@@ -53,6 +53,7 @@ public class LittleRemoteActivatorALET extends LittleStructure {
     
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
+        
         if (!worldIn.isRemote) {
             
             BlockPos newPos;

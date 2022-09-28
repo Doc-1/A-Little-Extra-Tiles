@@ -1,6 +1,5 @@
 package com.alet.common.structure.type.trigger.conditions;
 
-import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -36,7 +35,7 @@ public class LittleTriggerKeyListener extends LittleTriggerCondition {
     }
     
     @Override
-    public boolean conditionPassed(LittleTriggerBoxStructureALET structure) {
+    public boolean conditionPassed() {
         // TODO Auto-generated method stub
         return false;
     }

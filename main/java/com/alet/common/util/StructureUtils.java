@@ -56,7 +56,6 @@ public class StructureUtils {
                                 LittleBox copy = tile.value.getBox().copy();
                                 copy.convertTo(tile.key.getContext().size, context.size);
                                 if (intersectsWith(copy, box)) {
-                                    System.out.println(structure);
                                     return s.getStructure();
                                 }
                             }
@@ -116,6 +115,17 @@ public class StructureUtils {
         return null;
     }
     
+    public static LittlePreviews addPreviewToStructure(LittlePreviews previews, LittleStructure parent, boolean dynamic) {
+        if (parent == null || previews == null)
+            return null;
+        try {
+            LittlePreviews par = parent.getPreviews(parent.getPos());
+            par.addChild(previews, dynamic);
+            return par.copy();
+        } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+        return null;
+    }
+    
     public static void placeStructure(LittleStructure structure, World worldIn, BlockPos pos, LittleVec offset, EnumFacing facing, EntityPlayer playerIn) {
         try {
             LittlePreviews preview = structure.getPreviews(pos);
@@ -138,6 +148,16 @@ public class StructureUtils {
             BlockPos pos = parent.getPos();
             parent.onLittleTileDestroy();
             child.onLittleTileDestroy();
+            return placePreview(preview, worldIn, pos, offset, facing, playerIn);
+        } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+        return false;
+    }
+    
+    public static boolean mergePreviewToStructure(LittlePreviews previews, LittleStructure parent, boolean dynamic, World worldIn, LittleVec offset, EnumFacing facing, EntityPlayer playerIn) {
+        try {
+            LittlePreviews preview = addPreviewToStructure(previews, parent, dynamic);
+            BlockPos pos = parent.getPos();
+            parent.onLittleTileDestroy();
             return placePreview(preview, worldIn, pos, offset, facing, playerIn);
         } catch (CorruptedConnectionException | NotYetConnectedException e) {}
         return false;

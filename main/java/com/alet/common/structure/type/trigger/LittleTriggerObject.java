@@ -1,6 +1,7 @@
 package com.alet.common.structure.type.trigger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import com.alet.common.structure.type.trigger.conditions.LittleTriggerCondition;
@@ -11,6 +12,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LittleTriggerObject {
@@ -39,6 +41,10 @@ public abstract class LittleTriggerObject {
         return names.getValue(this.getClass());
     }
     
+    public HashSet<Entity> getEntities() {
+        return this.structure.entities;
+    }
+    
     public static boolean hasCondition(List<LittleTriggerObject> triggerObjs) {
         for (LittleTriggerObject triggerObj : triggerObjs) {
             if (triggerObj instanceof LittleTriggerCondition)
@@ -46,8 +52,6 @@ public abstract class LittleTriggerObject {
         }
         return false;
     }
-    
-    public abstract LittleTriggerObject createFrom(NBTTagCompound nbt);
     
     public abstract LittleTriggerObject createFromNBT(NBTTagCompound nbt);
     

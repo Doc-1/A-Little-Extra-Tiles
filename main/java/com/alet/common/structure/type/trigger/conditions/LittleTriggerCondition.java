@@ -1,6 +1,5 @@
 package com.alet.common.structure.type.trigger.conditions;
 
-import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEvent;
 
@@ -15,28 +14,25 @@ public abstract class LittleTriggerCondition extends LittleTriggerObject {
     }
     
     @Override
-    public LittleTriggerObject createFrom(NBTTagCompound nbt) {
-        return createFromNBT(nbt);
-    }
-    
-    @Override
     public NBTTagCompound createNBT() {
         NBTTagCompound nbt = super.createNBT();
         return createNBT(nbt);
     }
     
-    public boolean conditionRunEvent(LittleTriggerBoxStructureALET structure, LittleTriggerObject nextTriggerObj) {
+    public boolean conditionRunEvent(LittleTriggerObject nextTriggerObj) {
         if (completed)
             return true;
-        if (conditionPassed(structure))
+        if (conditionPassed()) {
+            this.completed = true;
             if (nextTriggerObj instanceof LittleTriggerEvent) {
                 LittleTriggerEvent triggerEvent = (LittleTriggerEvent) nextTriggerObj;
-                triggerEvent.runEvent(structure.entities);
+                triggerEvent.runEvent();
                 return true;
             }
+        }
         return false;
     }
     
-    public abstract boolean conditionPassed(LittleTriggerBoxStructureALET structure);
+    public abstract boolean conditionPassed();
     
 }

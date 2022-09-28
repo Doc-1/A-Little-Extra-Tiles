@@ -1,7 +1,5 @@
 package com.alet.common.structure.type.trigger.events;
 
-import java.util.HashSet;
-
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
@@ -66,8 +64,8 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
-    public boolean runEvent(HashSet<Entity> entities) {
-        for (Entity entity : entities) {
+    public boolean runEvent() {
+        for (Entity entity : this.getEntities()) {
             if (entity instanceof EntityPlayerMP) {
                 ((EntityPlayerMP) entity).setSpawnPoint(new BlockPos(posX, posY, posZ), true);
             }

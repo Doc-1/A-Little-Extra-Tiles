@@ -59,7 +59,7 @@ public class LittleTriggerRegistrar {
         String name = arr[0];
         int index = Integer.parseInt(arr[1]);
         LittleTriggerObject event = getTriggerObject(LittleTriggerObject.getTriggerClass(name), index);
-        event.createFrom(nbt);
+        event.createFromNBT(nbt);
         return event;
     }
 }

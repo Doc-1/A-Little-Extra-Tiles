@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger.conditions;
+package com.alet.common.structure.type.trigger.getters;
 
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
@@ -6,29 +6,23 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleTriggerConditionHasItem extends LittleTriggerCondition {
+public class LittleTriggerGetterPlayer extends LittleTriggerGetter {
     
-    public LittleTriggerConditionHasItem(int id) {
+    public LittleTriggerGetterPlayer(int id) {
         super(id);
         // TODO Auto-generated constructor stub
     }
     
     @Override
-    public boolean conditionPassed() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
     public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
         // TODO Auto-generated method stub
-        return this;
+        return null;
     }
     
     @Override
     public NBTTagCompound createNBT(NBTTagCompound nbt) {
         // TODO Auto-generated method stub
-        return nbt;
+        return null;
     }
     
     @Override

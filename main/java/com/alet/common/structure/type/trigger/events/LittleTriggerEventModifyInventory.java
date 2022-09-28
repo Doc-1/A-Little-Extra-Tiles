@@ -1,7 +1,5 @@
 package com.alet.common.structure.type.trigger.events;
 
-import java.util.HashSet;
-
 import com.alet.client.gui.LittleItemSelector;
 import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.alet.client.gui.controls.GuiFakeSlot;
@@ -126,8 +124,8 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public boolean runEvent(HashSet<Entity> entities) {
-        for (Entity entity : entities) {
+    public boolean runEvent() {
+        for (Entity entity : this.getEntities()) {
             if (entity instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) entity;
                 if (!stack.isEmpty()) {
