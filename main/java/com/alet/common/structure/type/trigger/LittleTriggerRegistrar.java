@@ -10,6 +10,7 @@ import com.alet.common.structure.type.trigger.events.LittleTriggerEventModifyInv
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventModifyMotion;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventModifyScoreboard;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventPlaySound;
+import com.alet.common.structure.type.trigger.events.LittleTriggerEventSetSignal;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventSetSpawn;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
@@ -29,6 +30,7 @@ public class LittleTriggerRegistrar {
         registerTriggerObject("event", "execute_command", LittleTriggerEventExecuteCommand.class);
         registerTriggerObject("event", "set_spawn", LittleTriggerEventSetSpawn.class);
         registerTriggerObject("event", "play_sound", LittleTriggerEventPlaySound.class);
+        registerTriggerObject("event", "set_signal", LittleTriggerEventSetSignal.class);
     }
     
     public static void registerTriggerObject(String category, String name, Class<? extends LittleTriggerObject> clazz) {
@@ -59,7 +61,7 @@ public class LittleTriggerRegistrar {
         String name = arr[0];
         int index = Integer.parseInt(arr[1]);
         LittleTriggerObject event = getTriggerObject(LittleTriggerObject.getTriggerClass(name), index);
-        event.createFromNBT(nbt);
+        event.deserializeNBT(nbt);
         return event;
     }
 }

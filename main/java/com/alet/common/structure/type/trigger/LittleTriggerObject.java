@@ -11,6 +11,7 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -53,7 +54,7 @@ public abstract class LittleTriggerObject {
         return false;
     }
     
-    public abstract LittleTriggerObject createFromNBT(NBTTagCompound nbt);
+    public abstract LittleTriggerObject deserializeNBT(NBTTagCompound nbt);
     
     public NBTTagCompound createNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
@@ -65,11 +66,11 @@ public abstract class LittleTriggerObject {
         return (GuiPanel) parent.get("content");
     }
     
-    public abstract NBTTagCompound createNBT(NBTTagCompound nbt);
+    public abstract NBTTagCompound serializeNBT(NBTTagCompound nbt);
     
-    public abstract void updateControls(GuiParent parent);
+    public abstract void createGuiControls(GuiParent parent, LittlePreviews previews);
     
-    public abstract void updateValues(CoreControl source);
+    public abstract void guiChangedEvent(CoreControl source);
     
     public static void wipeControls(GuiParent panel) {
         panel.controls = new ArrayList<GuiControl>();

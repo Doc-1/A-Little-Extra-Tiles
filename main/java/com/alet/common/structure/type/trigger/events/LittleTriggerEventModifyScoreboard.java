@@ -14,6 +14,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,7 +38,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setInteger("value", value);
         nbt.setString("scoreName", scoreName);
         nbt.setInteger("tick", effectPerTick);
@@ -45,14 +46,14 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
-    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
         this.value = nbt.getInteger("value");
         this.scoreName = nbt.getString("scoreName");
         return this;
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         Scoreboard score = world.getScoreboard();
         Collection<ScoreObjective> objectives = score.getScoreObjectives();
@@ -121,7 +122,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateValues(CoreControl source) {
+    public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiComboBox) {
             GuiComboBox cBox = (GuiComboBox) source;
             fillComboBox(cBox);

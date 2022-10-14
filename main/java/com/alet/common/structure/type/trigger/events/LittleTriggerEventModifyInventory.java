@@ -11,6 +11,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
 import com.creativemd.littletiles.common.action.LittleAction;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.ingredient.LittleIngredients;
 import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
 import com.creativemd.littletiles.common.util.ingredient.NotEnoughIngredientsException;
@@ -36,7 +37,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
         addItem = nbt.getBoolean("addItem");
         stackCount = nbt.getInteger("stackCount");
         stack = new ItemStack(nbt.getCompoundTag("stack"));
@@ -45,7 +46,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setBoolean("addItem", addItem);
         nbt.setInteger("stackCount", stackCount);
         NBTTagCompound nbtItemStack = new NBTTagCompound();
@@ -56,7 +57,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         GuiPanel panel = getPanel(parent);
         GuiFakeSlot stack = new GuiFakeSlot("stack", 0, 20, 18, 18);
@@ -95,7 +96,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateValues(CoreControl source) {
+    public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiFakeSlot) {
             GuiFakeSlot key = (GuiFakeSlot) source;
             this.stack = key.basic.getStackInSlot(0).copy();

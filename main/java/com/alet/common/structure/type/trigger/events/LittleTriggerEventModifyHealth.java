@@ -10,6 +10,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -55,7 +56,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setBoolean("heal", heal);
         nbt.setBoolean("harm", harm);
         nbt.setFloat("damageAmount", damageAmount);
@@ -65,7 +66,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
-    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
         this.heal = nbt.getBoolean("heal");
         this.harm = nbt.getBoolean("harm");
         this.damageAmount = nbt.getFloat("damageAmount");
@@ -75,7 +76,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         List<String> sourceList = new ArrayList<String>();
         for (DamageSource forEachSource : sourceOfDmg) {
@@ -103,7 +104,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateValues(CoreControl source) {
+    public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiAnalogeSlider) {
             GuiAnalogeSlider slider = (GuiAnalogeSlider) source;
             if (slider.name.equals("dmgAmount"))

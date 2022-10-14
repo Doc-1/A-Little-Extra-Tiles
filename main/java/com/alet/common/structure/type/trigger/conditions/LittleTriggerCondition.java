@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public abstract class LittleTriggerCondition extends LittleTriggerObject {
     
     public boolean completed = false;
+    public boolean shouldLoop = false;
     
     public LittleTriggerCondition(int id) {
         super(id);
@@ -16,19 +17,22 @@ public abstract class LittleTriggerCondition extends LittleTriggerObject {
     @Override
     public NBTTagCompound createNBT() {
         NBTTagCompound nbt = super.createNBT();
-        return createNBT(nbt);
+        return serializeNBT(nbt);
     }
     
     public boolean conditionRunEvent(LittleTriggerObject nextTriggerObj) {
-        if (completed)
+        if (completed) {
             return true;
+        }
         if (conditionPassed()) {
+            
             this.completed = true;
             if (nextTriggerObj instanceof LittleTriggerEvent) {
                 LittleTriggerEvent triggerEvent = (LittleTriggerEvent) nextTriggerObj;
                 triggerEvent.runEvent();
                 return true;
-            }
+            } else if (nextTriggerObj instanceof LittleTriggerCondition)
+                return true;
         }
         return false;
     }

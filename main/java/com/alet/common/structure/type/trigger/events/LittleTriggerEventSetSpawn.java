@@ -5,6 +5,7 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,7 +23,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setDouble("posX", posX);
         nbt.setDouble("posY", posY);
         nbt.setDouble("posZ", posZ);
@@ -30,7 +31,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
-    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
         this.posX = nbt.getDouble("posX");
         this.posY = nbt.getDouble("posY");
         this.posZ = nbt.getDouble("posZ");
@@ -38,7 +39,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         wipeControls(panel);
         panel.addControl(new GuiLabel("Set Spawn", 0, 0));
@@ -51,7 +52,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateValues(CoreControl source) {
+    public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiTextfield) {
             GuiTextfield textField = (GuiTextfield) source;
             if (textField.name.equals("xStr"))

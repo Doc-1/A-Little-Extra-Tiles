@@ -3,6 +3,7 @@ package com.alet.common.structure.type.trigger.conditions;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -15,22 +16,20 @@ public class LittleTriggerKeyListener extends LittleTriggerCondition {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         return nbt;
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {}
+    
+    @Override
+    public void guiChangedEvent(CoreControl source) {
         
     }
     
     @Override
-    public void updateValues(CoreControl source) {
-        
-    }
-    
-    @Override
-    public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerObject deserializeNBT(NBTTagCompound nbt) {
         return this;
     }
     

@@ -14,6 +14,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.packet.PacketHandler;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,7 +47,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     }
     
     @Override
-    public LittleTriggerObject createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerObject deserializeNBT(NBTTagCompound nbt) {
         this.volume = nbt.getFloat("volume");
         this.pitch = nbt.getFloat("pitch");
         this.selected = nbt.getString("selected");
@@ -54,7 +55,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setFloat("volume", volume);
         nbt.setFloat("pitch", pitch);
         nbt.setString("selected", selected);
@@ -62,7 +63,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         
         GuiTextfield search = new GuiTextfield("search", "", 0, 0, 170, 14);
@@ -104,7 +105,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateValues(CoreControl source) {
+    public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiComboBox)
             selected = ((GuiComboBox) source).getCaption();
         if (source instanceof GuiAnalogeSlider) {

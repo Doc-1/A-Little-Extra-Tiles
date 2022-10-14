@@ -4,6 +4,7 @@ import com.alet.client.gui.controls.GuiWrappedTextField;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,26 +18,26 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setString("command", command);
         return nbt;
     }
     
     @Override
-    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
         this.command = nbt.getString("command");
         return this;
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         wipeControls(panel);
         panel.addControl(new GuiWrappedTextField("command", command, 0, 50, 150, 100));
     }
     
     @Override
-    public void updateValues(CoreControl source) {
+    public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiWrappedTextField) {
             GuiWrappedTextField text = (GuiWrappedTextField) source;
             this.command = text.text;

@@ -6,6 +6,7 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
+import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +25,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     }
     
     @Override
-    public NBTTagCompound createNBT(NBTTagCompound nbt) {
+    public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setDouble("xStrength", xStrength);
         nbt.setDouble("yStrength", yStrength);
         nbt.setDouble("zStrength", zStrength);
@@ -35,7 +36,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     }
     
     @Override
-    public LittleTriggerEvent createFromNBT(NBTTagCompound nbt) {
+    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
         this.xStrength = nbt.getDouble("xStrength");
         this.yStrength = nbt.getDouble("yStrength");
         this.zStrength = nbt.getDouble("zStrength");
@@ -46,7 +47,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateControls(GuiParent parent) {
+    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         panel.addControl(new GuiLabel("Modify Motion", 0, 0));
         int m = 5;
@@ -70,7 +71,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     }
     
     @Override
-    public void updateValues(CoreControl source) {
+    public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiAnalogeSlider) {
             GuiAnalogeSlider slider = (GuiAnalogeSlider) source;
             if (slider.name.equals("xStr"))

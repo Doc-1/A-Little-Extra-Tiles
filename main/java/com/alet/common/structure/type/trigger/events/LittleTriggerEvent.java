@@ -13,7 +13,7 @@ public abstract class LittleTriggerEvent extends LittleTriggerObject {
     @Override
     public NBTTagCompound createNBT() {
         NBTTagCompound nbt = super.createNBT();
-        return createNBT(nbt);
+        return serializeNBT(nbt);
     }
     
     public abstract boolean runEvent();
