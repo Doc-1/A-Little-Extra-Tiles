@@ -11,10 +11,10 @@ import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleCircuitDecToAscii extends LittleCircuitPremade {
+public class LittleCircuitDecimalToAscii extends LittleCircuitPremade {
     
-    public LittleCircuitDecToAscii(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 3, 4);
+    public LittleCircuitDecimalToAscii(LittleStructureType type, IStructureTileList mainBlock) {
+        super(type, mainBlock, 3);
         // TODO Auto-generated constructor stub
     }
     
@@ -35,21 +35,11 @@ public class LittleCircuitDecToAscii extends LittleCircuitPremade {
         try {
             LittleSignalInput input = (LittleSignalInput) this.children.get(0).getStructure();
             LittleSignalOutput output = (LittleSignalOutput) this.children.get(1).getStructure();
-            LittleSignalOutput leftover = (LittleSignalOutput) this.children.get(2).getStructure();
             int z = BooleanUtils.boolToInt(SignalingUtils.mirrorState(input.getState()));
-            char c = (z + "").charAt(0);
+            char c = (char) z;
             boolean[] ascii = new boolean[8];
             BooleanUtils.intToBool((int) c, ascii);
-            output.updateState(SignalingUtils.mirrorState(ascii));
-            if ((z + "").length() > 1) {
-                String extra = (z + "").substring(1);
-                boolean[] extraBits = new boolean[32];
-                BooleanUtils.intToBool(Integer.parseInt(extra), extraBits);
-                leftover.updateState(SignalingUtils.mirrorState(extraBits));
-            } else {
-                leftover.updateState(SignalingUtils.allFalse(32));
-            }
-            
+            System.out.println(ascii);
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

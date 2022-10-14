@@ -25,11 +25,13 @@ item.LTPremade.signal_dec_to_ascii.name=Number to ASCII
 item.LTPremade.signal_math.name=Mathematical Operation (32-bit)
 item.LTPremade.signal_switch_32.name=Switch (32-bit)
 
-item.LTPremade.4_to_1_transformer.name=Splitter (4-bit to 1-bit)
-item.LTPremade.1_to_4_transformer.name=Combiner (1-bit to 4-bit)
+item.LTPremade.splitter_4_to_1.name=Splitter (4-bit to 1-bit)
+item.LTPremade.splitter_16_to_4.name=Splitter (16-bit to 4-bit)
+item.LTPremade.splitter_32_to_16.name=Splitter (16-bit to 32-bit)
 
-item.LTPremade.16_to_4_transformer.name=Splitter (16-bit to 4-bit)
-item.LTPremade.4_to_16_transformer.name=Combiner (4-bit to 16-bit)
+item.LTPremade.combiner_1_to_4.name=Combiner (1-bit to 4-bit)
+item.LTPremade.combiner_4_to_16.name=Combiner (4-bit to 16-bit)
+item.LTPremade.combiner_16_to_32.name=Combiner (32-bit to 16-bit)
 
 
 item.LTPremade.single_cable32.name=Single Cable (32-bit)

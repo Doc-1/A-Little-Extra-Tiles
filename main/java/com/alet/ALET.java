@@ -63,11 +63,11 @@ import com.alet.common.structure.type.premade.LittlePhotoImporter;
 import com.alet.common.structure.type.premade.LittleTypeWriter;
 import com.alet.common.structure.type.premade.PickupItemPremade;
 import com.alet.common.structure.type.premade.signal.LittleCircuitClock;
-import com.alet.common.structure.type.premade.signal.LittleCircuitDecToAscii;
 import com.alet.common.structure.type.premade.signal.LittleCircuitDisplay16;
 import com.alet.common.structure.type.premade.signal.LittleCircuitMath;
 import com.alet.common.structure.type.premade.signal.LittleCircuitMemory;
 import com.alet.common.structure.type.premade.signal.LittleCircuitMicroprocessor;
+import com.alet.common.structure.type.premade.signal.LittleCircuitNumberToAscii;
 import com.alet.common.structure.type.premade.signal.LittleCircuitPulser;
 import com.alet.common.structure.type.premade.signal.LittleCircuitRandomNumber;
 import com.alet.common.structure.type.premade.signal.LittleCircuitSignalSwitch;
@@ -412,7 +412,7 @@ public class ALET {
                 .addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
         LittleStructureRegistry
                 .registerStructureType("trigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER | LittleStructureAttribute.TICKING, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class)
-                .addOutput("shouldTrigger", 1, SignalMode.EQUAL).addOutput("left_click", 1, SignalMode.EQUAL).addInput("completed", 16).addInput("getter", 32);
+                .addOutput("allow", 1, SignalMode.EQUAL).addInput("completed", 1);
         LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class)
                 .addOutput("lock", 1, SignalMode.TOGGLE, true);
         
@@ -527,7 +527,7 @@ public class ALET {
         //        .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_keypad", ALET.MODID, LittleCircuitKeypad.class, LittleStructureAttribute.TICKING, ALET.MODID));
         
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_memory_32", ALET.MODID, LittleCircuitMemory.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("memory_32", ALET.MODID, LittleCircuitMemory.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_10hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
@@ -542,27 +542,30 @@ public class ALET {
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("clock_1hz", ALET.MODID, LittleCircuitClock.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         
-        /*LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("32_to_16_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("splitter_32_to_16", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("16_to_32_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
-                .setNotSnapToGrid();*/
-        LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("16_to_4_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("splitter_16_to_4", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("4_to_1_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("splitter_4_to_1", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("4_to_16_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("combiner_16_to_32", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("1_to_4_transformer", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("combiner_4_to_16", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_dec_to_ascii", ALET.MODID, LittleCircuitDecToAscii.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("combiner_1_to_4", ALET.MODID, LittleCircuitTransformer.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("dec_to_ascii", ALET.MODID, LittleCircuitNumberToAscii.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .setNotSnapToGrid();
+        LittleStructurePremade
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("number_to_ascii", ALET.MODID, LittleCircuitNumberToAscii.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("display_16", ALET.MODID, LittleCircuitDisplay16.class, LittleStructureAttribute.TICKING, ALET.MODID))
@@ -609,7 +612,7 @@ public class ALET {
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_pulser", ALET.MODID, LittleCircuitPulser.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_magnitude_comparator_32", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("magnitude_comparator_32", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();/*
                                     LittleStructurePremade
                                     .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_1bit", ALET.MODID, LittleCircuitRandomNumber.class, LittleStructureAttribute.TICKING, ALET.MODID))
@@ -625,7 +628,7 @@ public class ALET {
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_32bit", ALET.MODID, LittleCircuitRandomNumber.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_math", ALET.MODID, LittleCircuitMath.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("math", ALET.MODID, LittleCircuitMath.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         /*
         LittleStructurePremade
@@ -641,7 +644,7 @@ public class ALET {
                 .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_switch_16", ALET.MODID, LittleCircuitSignalSwitch.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();*/
         LittleStructurePremade
-                .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_switch_32", ALET.MODID, LittleCircuitSignalSwitch.class, LittleStructureAttribute.TICKING, ALET.MODID))
+                .registerPremadeStructureType(new LittleStructureTypeCircuit("switch_32", ALET.MODID, LittleCircuitSignalSwitch.class, LittleStructureAttribute.TICKING, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade
                 .registerPremadeStructureType(new LittleStructureTypeOutputQuick("signal_quick_output1", "premade", LittleSignalOutputQuick.class, LittleStructureAttribute.EXTRA_RENDERING | LittleStructureAttribute.TICKING, ALET.MODID, 1))
@@ -672,7 +675,7 @@ public class ALET {
                 .setNotSnapToGrid();
         
         LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
-        //LittleStructurePremade.registerPremadeStructureType("animator_workbench", ALET.MODID, LittleAnimatorBench.class);
+        LittleStructurePremade.registerPremadeStructureType("animator_workbench", ALET.MODID, LittleAnimatorBench.class);
         
         LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
         LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class).setNotShowCreativeTab();

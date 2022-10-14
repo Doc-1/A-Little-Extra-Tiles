@@ -150,7 +150,6 @@ public class LittleSignalColoredDisplay extends LittleStructurePremade {
         
         buffer.rewind();
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA2, 4, 4, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
-        
     }
     
     @Override

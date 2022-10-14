@@ -14,7 +14,8 @@ import net.minecraft.nbt.NBTTagCompound;
 public class LittleMagnitudeComparator extends LittleCircuitPremade {
     
     public LittleMagnitudeComparator(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 6, 7);
+        super(type, mainBlock, 7);
+        //6
     }
     
     @Override
@@ -30,10 +31,10 @@ public class LittleMagnitudeComparator extends LittleCircuitPremade {
         try {
             LittleSignalInput k1 = (LittleSignalInput) this.children.get(0).getStructure();
             LittleSignalInput k2 = (LittleSignalInput) this.children.get(1).getStructure();
-            LittleSignalInput comparator = (LittleSignalInput) this.children.get(2).getStructure();
-            LittleSignalOutput outK1 = (LittleSignalOutput) this.children.get(3).getStructure();
-            LittleSignalOutput outK2 = (LittleSignalOutput) this.children.get(4).getStructure();
-            LittleSignalOutput out = (LittleSignalOutput) this.children.get(5).getStructure();
+            LittleSignalInput comparator = (LittleSignalInput) this.children.get(3).getStructure();
+            LittleSignalOutput outK1 = (LittleSignalOutput) this.children.get(4).getStructure();
+            LittleSignalOutput outK2 = (LittleSignalOutput) this.children.get(5).getStructure();
+            LittleSignalOutput out = (LittleSignalOutput) this.children.get(2).getStructure();
             int bits1 = BooleanUtils.boolToInt(SignalingUtils.mirrorState(k1.getState()));
             int bits2 = BooleanUtils.boolToInt(SignalingUtils.mirrorState(k2.getState()));
             

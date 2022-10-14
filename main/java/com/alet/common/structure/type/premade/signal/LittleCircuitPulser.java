@@ -17,7 +17,7 @@ public class LittleCircuitPulser extends LittleCircuitPremade {
     private int tickCount = 0;
     
     public LittleCircuitPulser(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 2, -1);
+        super(type, mainBlock, 1);
     }
     
     private boolean tickCounting() {
@@ -36,21 +36,24 @@ public class LittleCircuitPulser extends LittleCircuitPremade {
     
     @Override
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
-        // TODO Auto-generated method stub
-        
+        this.start = nbt.getBoolean("start");
+        this.counter = nbt.getInteger("counter");
+        this.max = nbt.getInteger("max");
+        this.tickCount = nbt.getInteger("tickCount");
     }
     
     @Override
     protected void writeToNBTExtra(NBTTagCompound nbt) {
-        // TODO Auto-generated method stub
-        
+        nbt.setBoolean("start", this.start);
+        nbt.setInteger("counter", this.counter);
+        nbt.setInteger("max", this.max);
+        nbt.setInteger("tickCount", this.tickCount);
     }
     
     @Override
     public boolean queueTick() {
         try {
-            LittleSignalOutput pulse = (LittleSignalOutput) this.children.get(1).getStructure();
-            tickCounting();
+            LittleSignalOutput pulse = (LittleSignalOutput) this.children.get(2).getStructure();
             pulse.updateState(new boolean[] { tickCounting() });
             
             if (counter >= max) {
@@ -67,19 +70,17 @@ public class LittleCircuitPulser extends LittleCircuitPremade {
     
     @Override
     public void trigger() {
-        if (pulse)
-            if (start)
-                try {
-                    System.out.println("da");
-                    LittleSignalInput count = (LittleSignalInput) this.children.get(0).getStructure();
-                    max = SignalingUtils.boolToInt(count.getState().clone());
-                    this.queueForNextTick();
-                    this.start = false;
-                } catch (CorruptedConnectionException | NotYetConnectedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            
+        if (start)
+            try {
+                LittleSignalInput count = (LittleSignalInput) this.children.get(0).getStructure();
+                max = SignalingUtils.boolToInt(count.getState().clone());
+                this.queueForNextTick();
+                this.start = false;
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        
     }
     
 }

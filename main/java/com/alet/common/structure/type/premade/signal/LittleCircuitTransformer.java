@@ -3,18 +3,27 @@ package com.alet.common.structure.type.premade.signal;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
-import com.creativemd.littletiles.common.structure.type.premade.LittleStructurePremade;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalInput;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleCircuitTransformer extends LittleStructurePremade {
+public class LittleCircuitTransformer extends LittleCircuitPremade {
     
     public LittleCircuitTransformer(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock);
-        // TODO Auto-generated constructor stub
+        super(type, mainBlock, -1);
+        if (this.type.id.contains("32"))
+            if (this.type.id.contains("splitter"))
+                setTriggerIndexes(0);
+            else
+                setTriggerIndexes(1, 2);
+        else {
+            if (this.type.id.contains("splitter"))
+                setTriggerIndexes(0);
+            else
+                setTriggerIndexes(1, 2, 3, 4);
+        }
     }
     
     @Override
@@ -29,12 +38,12 @@ public class LittleCircuitTransformer extends LittleStructurePremade {
         
     }
     
-    public void highToLow() {
+    public void highToLow(int splitValue) {
         
         try {
             LittleSignalInput input = (LittleSignalInput) this.children.get(0).getStructure();
-            int bandwith = input.getState().length / 4;
-            for (int i = 0; i < 4; i++) {
+            int bandwith = input.getState().length / splitValue;
+            for (int i = 0; i < splitValue; i++) {
                 boolean[] state = new boolean[bandwith];
                 LittleSignalOutput output = (LittleSignalOutput) this.children.get(i + 1).getStructure();
                 int start = i * bandwith;
@@ -49,14 +58,14 @@ public class LittleCircuitTransformer extends LittleStructurePremade {
         
     }
     
-    public void lowToHigh() {
+    public void lowToHigh(int splitValue) {
         try {
             LittleSignalOutput output = (LittleSignalOutput) this.children.get(0).getStructure();
-            int inBandwith = output.getState().length / 4;
+            int inBandwith = output.getState().length / splitValue;
             int outBandwith = output.getState().length;
             
             boolean[] state = new boolean[outBandwith];
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < splitValue; i++) {
                 LittleSignalInput input = (LittleSignalInput) this.children.get(i + 1).getStructure();
                 int counter = 0;
                 int start = (i * inBandwith);
@@ -71,13 +80,18 @@ public class LittleCircuitTransformer extends LittleStructurePremade {
     }
     
     @Override
-    public void tick() {
-        if (!this.isClient()) {
-            if (this.type.id.equals("4_to_1_transformer") || this.type.id.equals("16_to_4_transformer") || this.type.id.equals("32_to_16_transformer"))
-                highToLow();
-            
-            else if (this.type.id.equals("1_to_4_transformer") || this.type.id.equals("4_to_16_transformer") || this.type.id.equals("16_to_32_transformer"))
-                lowToHigh();
+    public void trigger() {
+        if (this.type.id.contains("splitter")) {
+            if (this.type.id.equals("splitter_4_to_1") || this.type.id.equals("splitter_16_to_4"))
+                highToLow(4);
+            else if (this.type.id.equals("splitter_32_to_16"))
+                highToLow(2);
+        } else if (this.type.id.contains("combiner")) {
+            if (this.type.id.equals("combiner_1_to_4") || this.type.id.equals("combiner_4_to_16"))
+                lowToHigh(4);
+            else if (this.type.id.equals("combiner_16_to_32"))
+                lowToHigh(2);
         }
+        
     }
 }

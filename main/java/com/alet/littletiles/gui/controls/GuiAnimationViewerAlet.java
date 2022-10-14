@@ -2,6 +2,7 @@ package com.alet.littletiles.gui.controls;
 
 import javax.vecmath.Vector3d;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
 
 import com.creativemd.creativecore.common.gui.GuiControl;
@@ -9,21 +10,30 @@ import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.utils.math.SmoothValue;
 import com.creativemd.creativecore.common.utils.mc.TickUtils;
+import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.controls.GuiAnimationViewer;
 import com.creativemd.littletiles.client.world.LittleAnimationHandlerClient;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiAnimationViewerAlet extends GuiAnimationViewer {
+    
+    public static final ResourceLocation GRASS_TEXTURE = Blocks.GRASS.getRegistryName();
     
     private int moveX;
     private int moveY;
     public SmoothValue tranX = new SmoothValue(200);
     public SmoothValue tranY = new SmoothValue(200);
     public boolean rightGrabbed = false;
+    private int textureId = -1;
     
     public GuiAnimationViewerAlet(String name, int x, int y, int width, int height) {
         super(name, x, y, width, height);
@@ -147,11 +157,18 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         GlStateManager.translate((tranX.current() / 6) - rotationCenter.x, (-tranY.current() / 6) - rotationCenter.y, -distance.current() - rotationCenter.z);
         
         GlStateManager.pushMatrix();
-        
+        ResourceLocation WHITE_TEXTURE = new ResourceLocation(LittleTiles.modid, "textures/preview.png");
+        mc.renderEngine.bindTexture(WHITE_TEXTURE);
+        GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+        renderBox();
         GlStateManager.translate(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
         GlStateManager.translate(0, -75, 0);
         
         LittleAnimationHandlerClient.render.doRender(animation, 0, 0, 0, 0, TickUtils.getPartialTickTime());
+        
+        GlStateManager.depthMask(true);
+        GlStateManager.enableTexture2D();
         
         GlStateManager.popMatrix();
         
@@ -174,5 +191,18 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         GlStateManager.loadIdentity();
         mc.entityRenderer.setupOverlayRendering();
         GlStateManager.disableDepth();
+        
+    }
+    
+    public void renderBox() {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(0, 50, 0).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.pos(0, 51, 500).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.pos(500, 50, 500).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.pos(500, 51, 0).color(0, 0, 0, 0).endVertex();
+        
+        tessellator.draw();
     }
 }

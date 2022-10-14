@@ -1,7 +1,5 @@
 package com.alet.common.structure.type.premade.signal;
 
-import com.alet.common.util.SignalingUtils;
-import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
@@ -14,16 +12,15 @@ import net.minecraft.nbt.NBTTagCompound;
 public class LittleCircuitRandomNumber extends LittleCircuitPremade {
     
     public LittleCircuitRandomNumber(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 3, -1);
+        super(type, mainBlock, 3);
         
     }
     
     public void oneBitRand() {
         try {
             LittleSignalOutput out = (LittleSignalOutput) this.children.get(0).getStructure();
-            if (pulse) {
-                out.updateState(SignalingUtils.randState(1));
-            }
+            // out.updateState(SignalingUtils.randState(1));
+            
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             e.printStackTrace();
         }
@@ -35,11 +32,11 @@ public class LittleCircuitRandomNumber extends LittleCircuitPremade {
             LittleSignalOutput out = (LittleSignalOutput) this.children.get(0).getStructure();
             LittleSignalInput min = (LittleSignalInput) this.children.get(1).getStructure();
             LittleSignalInput max = (LittleSignalInput) this.children.get(2).getStructure();
-            if (pulse) {
+            /*
                 boolean[] state = SignalingUtils.randState(BooleanUtils.boolToInt(SignalingUtils.mirrorState(min.getState())), BooleanUtils
                         .boolToInt(SignalingUtils.mirrorState(max.getState())), bandwidth);
                 out.updateState(state);
-            }
+            */
             
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             e.printStackTrace();

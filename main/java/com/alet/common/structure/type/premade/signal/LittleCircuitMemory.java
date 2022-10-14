@@ -16,7 +16,8 @@ public class LittleCircuitMemory extends LittleCircuitPremade {
     boolean[] state;
     
     public LittleCircuitMemory(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 1, 4);
+        super(type, mainBlock, 3);
+        this.setTriggerIndexes(0, 1);
     }
     
     @Override
@@ -34,23 +35,22 @@ public class LittleCircuitMemory extends LittleCircuitPremade {
     
     @Override
     public void trigger() {
-        if (pulse)
-            try {
-                LittleSignalOutput output = (LittleSignalOutput) this.children.get(3).getStructure();
-                LittleSignalInput wipe = (LittleSignalInput) this.children.get(0).getStructure();
-                LittleSignalInput input = (LittleSignalInput) this.children.get(2).getStructure();
-                if (!wipe.getState()[0]) {
-                    state = input.getState().clone();
-                } else {
-                    state = SignalingUtils.allFalse(output.getBandwidth());
-                }
-                
-                if (state != null) {
-                    output.updateState(state);
-                }
-            } catch (CorruptedConnectionException | NotYetConnectedException e) {
-                e.printStackTrace();
+        try {
+            LittleSignalOutput output = (LittleSignalOutput) this.children.get(2).getStructure();
+            LittleSignalInput wipe = (LittleSignalInput) this.children.get(0).getStructure();
+            LittleSignalInput input = (LittleSignalInput) this.children.get(1).getStructure();
+            if (!wipe.getState()[0]) {
+                state = input.getState().clone();
+            } else {
+                state = SignalingUtils.allFalse(output.getBandwidth());
             }
+            
+            if (state != null) {
+                output.updateState(state);
+            }
+        } catch (CorruptedConnectionException | NotYetConnectedException e) {
+            e.printStackTrace();
+        }
     }
     
 }
