@@ -146,6 +146,17 @@ public class SubGuiManual extends SubGui {
     GuiTreePart musicComposerSignal = (new GuiTreeManualPart("Music Composer", EnumPartType.Leaf, "musicComposerStructureSignalingALET"));
     GuiTreePart camPlayerSignal = (new GuiTreeManualPart("Camera Player", EnumPartType.Leaf, "camPlayerStructureSignalingALET"));
     GuiTreePart tutorial = (new GuiTreeManualPart("Tutorial", EnumPartType.Title, "tutorialsLT"));
+    GuiTreePart littleCircuit = new GuiTreeManualPart("Little Circuits", EnumPartType.Title, "circuitALET");
+    GuiTreePart circuitClock = new GuiTreeManualPart("Clock", EnumPartType.Leaf, "circuitClockALET");
+    GuiTreePart circuitColorMon = new GuiTreeManualPart("Colored ASCII Monitor", EnumPartType.Leaf, "circuitColorMonALET");
+    GuiTreePart circuitMath = new GuiTreeManualPart("Algebraic Operation", EnumPartType.Leaf, "circuitMathALET");
+    GuiTreePart circuitMemory = new GuiTreeManualPart("Memory", EnumPartType.Leaf, "circuitMemoryALET");
+    GuiTreePart circuitPulser = new GuiTreeManualPart("Pulser", EnumPartType.Leaf, "circuitPulserALET");
+    GuiTreePart circuitRand = new GuiTreeManualPart("Random Number Generator", EnumPartType.Leaf, "circuitRandALET");
+    GuiTreePart circuitSwitch = new GuiTreeManualPart("Switch", EnumPartType.Leaf, "circuitSwitchALET");
+    GuiTreePart circuitMagnitdue = new GuiTreeManualPart("Magnitude Comparator", EnumPartType.Leaf, "circuitComparatorALET");
+    GuiTreePart circuitSplitter = new GuiTreeManualPart("Splitter", EnumPartType.Leaf, "circuitSplitterALET");
+    GuiTreePart circuitCombiner = new GuiTreeManualPart("Combiner", EnumPartType.Leaf, "circuitCombinerALET");
     public GuiTree tree;
     
     public SubGuiManual() {
@@ -212,10 +223,13 @@ public class SubGuiManual extends SubGui {
         advancedStructureSignal.addMenu(triggerSignal).addMenu(stateMutatorSignal).addMenu(camPlayerSignal);
         structureSignal.addMenu(staticStructureSignal).addMenu(doorStructureSignal).addMenu(advancedStructureSignal).addMenu(audioStructureSignal);
         usingSignaling.addMenu(whatIsSignal).addMenu(logicGates).addMenu(bitwiseGates).addMenu(math).addMenu(structureSignal);
+        littleCircuit.addMenu(circuitClock).addMenu(circuitPulser).addMenu(circuitColorMon).addMenu(circuitMagnitdue).addMenu(circuitMath).addMenu(circuitMemory)
+                .addMenu(circuitRand).addMenu(circuitSwitch).addMenu(circuitSplitter).addMenu(circuitCombiner);
         listOfMenus.add(welcome);
         listOfMenus.add(buildingWTile);
         listOfMenus.add(usingStructure);
         listOfMenus.add(usingSignaling);
+        listOfMenus.add(littleCircuit);
         tree = new GuiTree("tree", 0, 0, 194, listOfMenus, true, 0, 0, 50);
         scrollBox.controls.add(tree);
     }

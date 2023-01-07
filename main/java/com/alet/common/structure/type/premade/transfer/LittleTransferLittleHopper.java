@@ -54,6 +54,7 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     private LittleStructure listeningInputStructure;
     private LittleStructure listeningOutputStructure;
     
+    public boolean active = true;
     public boolean added = false;
     public boolean dropped = false;
     public boolean trigger = false;
@@ -254,57 +255,53 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     
     @Override
     public void performInternalOutputChange(InternalSignalOutput output) {
-        if (output.component.is("drop")) {
-            if (!dropped) {
-                dropped = true;
-                counter = 0;
-            }
-        } else if (output.component.is("add")) {
-            if (!added) {
-                added = true;
-                counter = 0;
-            }
+        if (output.component.is("active")) {
+            this.active = !output.getState()[0];
+            counter = 0;
+            
         }
     }
     
     @Override
     public void tick() {
         if (!this.isClient()) {
-            if (!dropped || !added)
-                counter++;
-            if (counter >= 11) {
-                counter = 0;
-                trigger = true;
-            }
-            if (trigger) {
-                if (!hasInputNeigborCache) {
-                    this.listeningInputStructure = this.findConnection(this.input);
-                    hasInputNeigborCache = true;
+            if (active) {
+                if (!dropped || !added)
+                    counter++;
+                if (counter >= 11) {
+                    counter = 0;
+                    trigger = true;
                 }
-                if (!hasOutputNeigborCache) {
-                    this.listeningOutputStructure = this.findConnection(this.output);
-                    hasOutputNeigborCache = true;
-                }
-                if (!added) {
-                    if (this.listeningOutputStructure != null) {
-                        hopperToStorage();
-                    } else
-                        dropItemFromStorage();
-                    added = false;
-                }
-                if (!dropped) {
-                    this.itemToHopper(collectItems());
-                    if (this.listeningInputStructure != null) {
-                        storageToHopper();
+                if (trigger) {
+                    if (!hasInputNeigborCache) {
+                        this.listeningInputStructure = this.findConnection(this.input);
+                        hasInputNeigborCache = true;
                     }
-                    dropped = false;
+                    if (!hasOutputNeigborCache) {
+                        this.listeningOutputStructure = this.findConnection(this.output);
+                        hasOutputNeigborCache = true;
+                    }
+                    if (!added) {
+                        if (this.listeningOutputStructure != null) {
+                            hopperToStorage();
+                        } else
+                            dropItemFromStorage();
+                        added = false;
+                    }
+                    if (!dropped) {
+                        this.itemToHopper(collectItems());
+                        if (this.listeningInputStructure != null) {
+                            storageToHopper();
+                        }
+                        dropped = false;
+                    }
                 }
+                
+                trigger = false;
+                
             }
-            
-            trigger = false;
             
         }
-        
     }
     
     public boolean hasPlayerOpened(EntityPlayer player) {

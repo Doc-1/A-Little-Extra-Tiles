@@ -4,7 +4,6 @@ import com.alet.common.util.SignalingUtils;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
-import com.creativemd.littletiles.common.structure.type.door.LittleAdvancedDoor;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalInput;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
@@ -14,9 +13,10 @@ import net.minecraft.nbt.NBTTagCompound;
 public class LittleCircuitSignalSwitch extends LittleCircuitPremade {
     
     public LittleCircuitSignalSwitch(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, -1);
-        //3 1
-        // TODO Auto-generated constructor stub
+        super(type, mainBlock, 2);
+        this.checkForZero = true;
+        this.setInputIndexes(0);
+        this.setOutputIndexes(1);
     }
     
     @Override
@@ -32,22 +32,17 @@ public class LittleCircuitSignalSwitch extends LittleCircuitPremade {
     }
     
     @Override
-    public void trigger() {
+    public void trigger(int clockValue) {
         try {
-            LittleSignalInput source = (LittleSignalInput) this.children.get(1).getStructure();
-            LittleSignalOutput output = (LittleSignalOutput) this.children.get(2).getStructure();
-            LittleSignalInput active = (LittleSignalInput) this.children.get(3).getStructure();
-            if (active.getState()[0])
+            LittleSignalInput source = (LittleSignalInput) this.children.get(0).getStructure();
+            LittleSignalOutput output = (LittleSignalOutput) this.children.get(1).getStructure();
+            if (clockValue == 1)
                 output.updateState(source.getState());
             else
                 output.updateState(SignalingUtils.allFalse(output.getBandwidth()));
-            LittleAdvancedDoor door = (LittleAdvancedDoor) this.children.get(0).getStructure();
-            door.getOutput(0).updateState(active.getState());
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             e.printStackTrace();
         }
     }
     
-    @Override
-    public void tick() {}
 }

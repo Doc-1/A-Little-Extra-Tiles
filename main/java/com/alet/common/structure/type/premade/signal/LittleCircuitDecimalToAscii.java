@@ -31,7 +31,7 @@ public class LittleCircuitDecimalToAscii extends LittleCircuitPremade {
     }
     
     @Override
-    public void trigger() {
+    public void trigger(int clockValue) {
         try {
             LittleSignalInput input = (LittleSignalInput) this.children.get(0).getStructure();
             LittleSignalOutput output = (LittleSignalOutput) this.children.get(1).getStructure();
@@ -39,7 +39,6 @@ public class LittleCircuitDecimalToAscii extends LittleCircuitPremade {
             char c = (char) z;
             boolean[] ascii = new boolean[8];
             BooleanUtils.intToBool((int) c, ascii);
-            System.out.println(ascii);
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

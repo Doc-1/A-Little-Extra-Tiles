@@ -15,7 +15,7 @@ public class LittleCircuitNumberToAscii extends LittleCircuitPremade {
     
     public LittleCircuitNumberToAscii(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock, 3);
-        // TODO Auto-generated constructor stub
+        this.setInputIndexes(0);
     }
     
     @Override
@@ -31,7 +31,7 @@ public class LittleCircuitNumberToAscii extends LittleCircuitPremade {
     }
     
     @Override
-    public void trigger() {
+    public void trigger(int clockValue) {
         try {
             LittleSignalInput input = (LittleSignalInput) this.children.get(0).getStructure();
             LittleSignalOutput output = (LittleSignalOutput) this.children.get(1).getStructure();
@@ -50,7 +50,7 @@ public class LittleCircuitNumberToAscii extends LittleCircuitPremade {
                 leftover.updateState(SignalingUtils.allFalse(32));
             }
             
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {
+        } catch (NumberFormatException | CorruptedConnectionException | NotYetConnectedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

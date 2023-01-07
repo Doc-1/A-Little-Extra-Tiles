@@ -11,13 +11,14 @@ import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LittleCircuitMemory extends LittleCircuitPremade {
+public class LittleCircuitNVRAM extends LittleCircuitPremade {
     
     boolean[] state;
     
-    public LittleCircuitMemory(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 3);
-        this.setTriggerIndexes(0, 1);
+    public LittleCircuitNVRAM(LittleStructureType type, IStructureTileList mainBlock) {
+        super(type, mainBlock, 4);
+        this.setInputIndexes(0, 1, 3);
+        this.setOutputIndexes(2);
     }
     
     @Override
@@ -34,15 +35,16 @@ public class LittleCircuitMemory extends LittleCircuitPremade {
     }
     
     @Override
-    public void trigger() {
+    public void trigger(int clockValue) {
         try {
             LittleSignalOutput output = (LittleSignalOutput) this.children.get(2).getStructure();
             LittleSignalInput wipe = (LittleSignalInput) this.children.get(0).getStructure();
+            LittleSignalInput save = (LittleSignalInput) this.children.get(3).getStructure();
             LittleSignalInput input = (LittleSignalInput) this.children.get(1).getStructure();
-            if (!wipe.getState()[0]) {
-                state = input.getState().clone();
-            } else {
+            if (wipe.getState()[0]) {
                 state = SignalingUtils.allFalse(output.getBandwidth());
+            } else if (save.getState()[0]) {
+                state = input.getState().clone();
             }
             
             if (state != null) {

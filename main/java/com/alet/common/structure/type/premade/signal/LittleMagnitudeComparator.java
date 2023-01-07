@@ -14,8 +14,9 @@ import net.minecraft.nbt.NBTTagCompound;
 public class LittleMagnitudeComparator extends LittleCircuitPremade {
     
     public LittleMagnitudeComparator(LittleStructureType type, IStructureTileList mainBlock) {
-        super(type, mainBlock, 7);
-        //6
+        super(type, mainBlock, 5);
+        this.setInputIndexes(0, 1, 3);
+        this.setOutputIndexes(2);
     }
     
     @Override
@@ -24,16 +25,22 @@ public class LittleMagnitudeComparator extends LittleCircuitPremade {
     }
     
     @Override
-    protected void writeToNBTExtra(NBTTagCompound nbt) {}
+    protected void writeToNBTExtra(NBTTagCompound nbt) {
+        
+        int x = 0;
+        x++;
+        if (x > 9) {
+            x = x - 10;
+        }
+    }
     
     @Override
-    public void trigger() {
+    public void trigger(int clockValue) {
         try {
             LittleSignalInput k1 = (LittleSignalInput) this.children.get(0).getStructure();
             LittleSignalInput k2 = (LittleSignalInput) this.children.get(1).getStructure();
             LittleSignalInput comparator = (LittleSignalInput) this.children.get(3).getStructure();
             LittleSignalOutput outK1 = (LittleSignalOutput) this.children.get(4).getStructure();
-            LittleSignalOutput outK2 = (LittleSignalOutput) this.children.get(5).getStructure();
             LittleSignalOutput out = (LittleSignalOutput) this.children.get(2).getStructure();
             int bits1 = BooleanUtils.boolToInt(SignalingUtils.mirrorState(k1.getState()));
             int bits2 = BooleanUtils.boolToInt(SignalingUtils.mirrorState(k2.getState()));
@@ -42,12 +49,10 @@ public class LittleMagnitudeComparator extends LittleCircuitPremade {
             switch (logic) {
             case 0:
                 if (bits1 < bits2) {
-                    outK1.updateState(BooleanUtils.SINGLE_FALSE);
-                    outK2.updateState(BooleanUtils.SINGLE_TRUE);
+                    outK1.updateState(BooleanUtils.SINGLE_TRUE);
                     out.updateState(k2.getState());
                 } else {
                     outK1.updateState(BooleanUtils.SINGLE_FALSE);
-                    outK2.updateState(BooleanUtils.SINGLE_FALSE);
                     out.updateState(SignalingUtils.allFalse(k1.getBandwidth()));
                 }
                 break;
@@ -55,22 +60,18 @@ public class LittleMagnitudeComparator extends LittleCircuitPremade {
             case 1:
                 if (bits1 > bits2) {
                     outK1.updateState(BooleanUtils.SINGLE_TRUE);
-                    outK2.updateState(BooleanUtils.SINGLE_FALSE);
                     out.updateState(k1.getState());
                 } else {
                     outK1.updateState(BooleanUtils.SINGLE_FALSE);
-                    outK2.updateState(BooleanUtils.SINGLE_FALSE);
                     out.updateState(SignalingUtils.allFalse(k1.getBandwidth()));
                 }
                 break;
             case 2:
                 if (bits1 <= bits2) {
-                    outK1.updateState(BooleanUtils.SINGLE_FALSE);
-                    outK2.updateState(BooleanUtils.SINGLE_TRUE);
+                    outK1.updateState(BooleanUtils.SINGLE_TRUE);
                     out.updateState(k2.getState());
                 } else {
                     outK1.updateState(BooleanUtils.SINGLE_FALSE);
-                    outK2.updateState(BooleanUtils.SINGLE_FALSE);
                     out.updateState(SignalingUtils.allFalse(k1.getBandwidth()));
                 }
                 
@@ -78,11 +79,9 @@ public class LittleMagnitudeComparator extends LittleCircuitPremade {
             case 3:
                 if (bits1 >= bits2) {
                     outK1.updateState(BooleanUtils.SINGLE_TRUE);
-                    outK2.updateState(BooleanUtils.SINGLE_FALSE);
                     out.updateState(k1.getState());
                 } else {
                     outK1.updateState(BooleanUtils.SINGLE_FALSE);
-                    outK2.updateState(BooleanUtils.SINGLE_FALSE);
                     out.updateState(SignalingUtils.allFalse(k1.getBandwidth()));
                 }
                 
@@ -90,11 +89,9 @@ public class LittleMagnitudeComparator extends LittleCircuitPremade {
             case 4:
                 if (bits1 == bits2) {
                     outK1.updateState(BooleanUtils.SINGLE_TRUE);
-                    outK2.updateState(BooleanUtils.SINGLE_TRUE);
                     out.updateState(k2.getState());
                 } else {
                     outK1.updateState(BooleanUtils.SINGLE_FALSE);
-                    outK2.updateState(BooleanUtils.SINGLE_FALSE);
                     out.updateState(SignalingUtils.allFalse(k1.getBandwidth()));
                 }
                 break;

@@ -15,7 +15,8 @@ public class LittleCircuitMath extends LittleCircuitPremade {
     
     public LittleCircuitMath(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock, 4);
-        // TODO Auto-generated constructor stub
+        this.setInputIndexes(0, 1, 3);
+        this.setOutputIndexes(2);
     }
     
     public void math(char operator) throws CorruptedConnectionException, NotYetConnectedException {
@@ -23,6 +24,7 @@ public class LittleCircuitMath extends LittleCircuitPremade {
         LittleSignalInput in2 = (LittleSignalInput) this.children.get(1).getStructure();
         
         LittleSignalOutput out1 = (LittleSignalOutput) this.children.get(2).getStructure();
+        
         int x1 = SignalingUtils.boolToInt(in1.getState());
         int x2 = SignalingUtils.boolToInt(in2.getState());
         if (operator == '+')
@@ -31,7 +33,7 @@ public class LittleCircuitMath extends LittleCircuitPremade {
             out1.updateState(BooleanUtils.toBits(x1 - x2, out1.getBandwidth()));
         else if (operator == '*')
             out1.updateState(BooleanUtils.toBits(x1 * x2, out1.getBandwidth()));
-        else if (operator == '/')
+        else if (operator == '/' && x2 != 0)
             out1.updateState(BooleanUtils.toBits(x1 / x2, out1.getBandwidth()));
     }
     
@@ -48,7 +50,7 @@ public class LittleCircuitMath extends LittleCircuitPremade {
     }
     
     @Override
-    public void trigger() {
+    public void trigger(int clockValue) {
         try {
             LittleSignalInput math = (LittleSignalInput) this.children.get(3).getStructure();
             int logic = SignalingUtils.boolToInt(math.getState());

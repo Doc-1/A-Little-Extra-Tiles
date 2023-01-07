@@ -11,33 +11,31 @@ import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class LittleCircuitPulser extends LittleCircuitPremade {
-    private boolean start = true;
-    private int counter = 0;
+    private boolean start = false;
     private int max = 0;
     private int tickCount = 0;
     
     public LittleCircuitPulser(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock, 1);
+        this.setInputIndexes(0);
     }
     
     private boolean tickCounting() {
         tickCount++;
-        int tickMax = 5;
-        if (tickCount > tickMax * 2) {
+        
+        if (tickCount >= max + 1) {
             tickCount = 0;
-            counter++;
+            start = false;
             return false;
-        } else if (tickCount > tickMax) {
+        } else if (tickCount >= max) {
             return true;
         }
-        
         return false;
     }
     
     @Override
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
         this.start = nbt.getBoolean("start");
-        this.counter = nbt.getInteger("counter");
         this.max = nbt.getInteger("max");
         this.tickCount = nbt.getInteger("tickCount");
     }
@@ -45,37 +43,27 @@ public class LittleCircuitPulser extends LittleCircuitPremade {
     @Override
     protected void writeToNBTExtra(NBTTagCompound nbt) {
         nbt.setBoolean("start", this.start);
-        nbt.setInteger("counter", this.counter);
         nbt.setInteger("max", this.max);
         nbt.setInteger("tickCount", this.tickCount);
     }
     
     @Override
-    public boolean queueTick() {
-        try {
-            LittleSignalOutput pulse = (LittleSignalOutput) this.children.get(2).getStructure();
-            pulse.updateState(new boolean[] { tickCounting() });
-            
-            if (counter >= max) {
-                counter = 0;
-                start = true;
-            } else if (counter <= max) {
-                return true;
-            }
-            
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {}
-        
-        return false;
+    public void tick() {
+        if (!this.isClient() && start) {
+            try {
+                LittleSignalOutput pulse = (LittleSignalOutput) this.children.get(2).getStructure();
+                pulse.updateState(new boolean[] { tickCounting() });
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+        }
     }
     
     @Override
-    public void trigger() {
-        if (start)
+    public void trigger(int clockValue) {
+        if (!start)
             try {
                 LittleSignalInput count = (LittleSignalInput) this.children.get(0).getStructure();
                 max = SignalingUtils.boolToInt(count.getState().clone());
-                this.queueForNextTick();
-                this.start = false;
+                this.start = true;
             } catch (CorruptedConnectionException | NotYetConnectedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

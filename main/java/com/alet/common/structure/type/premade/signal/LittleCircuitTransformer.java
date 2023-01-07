@@ -15,14 +15,14 @@ public class LittleCircuitTransformer extends LittleCircuitPremade {
         super(type, mainBlock, -1);
         if (this.type.id.contains("32"))
             if (this.type.id.contains("splitter"))
-                setTriggerIndexes(0);
+                setInputIndexes(0);
             else
-                setTriggerIndexes(1, 2);
+                setInputIndexes(1, 2);
         else {
             if (this.type.id.contains("splitter"))
-                setTriggerIndexes(0);
+                setInputIndexes(0);
             else
-                setTriggerIndexes(1, 2, 3, 4);
+                setInputIndexes(1, 2, 3, 4);
         }
     }
     
@@ -80,7 +80,7 @@ public class LittleCircuitTransformer extends LittleCircuitPremade {
     }
     
     @Override
-    public void trigger() {
+    public void trigger(int clockValue) {
         if (this.type.id.contains("splitter")) {
             if (this.type.id.equals("splitter_4_to_1") || this.type.id.equals("splitter_16_to_4"))
                 highToLow(4);

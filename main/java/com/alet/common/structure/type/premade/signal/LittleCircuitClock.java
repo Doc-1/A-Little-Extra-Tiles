@@ -21,17 +21,20 @@ public class LittleCircuitClock extends LittleStructurePremade {
     
     @Override
     public void tick() {
-        if (!isClient())
+        if (!isClient()) {
             try {
                 LittleSignalOutput out = (LittleSignalOutput) this.children.get(0).getStructure();
                 
                 pulse = tickCounting();
                 boolean[] state = { pulse };
-                out.updateState(state);
                 
+                out.updateState(state);
             } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            
+        }
     }
     
     private boolean tickCounting() {
