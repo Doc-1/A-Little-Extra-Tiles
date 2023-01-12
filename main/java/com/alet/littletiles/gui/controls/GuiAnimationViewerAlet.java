@@ -14,6 +14,7 @@ import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.controls.GuiAnimationViewer;
 import com.creativemd.littletiles.client.world.LittleAnimationHandlerClient;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,6 +22,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 
@@ -32,6 +34,7 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
     private int moveY;
     public SmoothValue tranX = new SmoothValue(200);
     public SmoothValue tranY = new SmoothValue(200);
+    public SmoothValue tranZ = new SmoothValue(200);
     public boolean rightGrabbed = false;
     private int textureId = -1;
     
@@ -53,12 +56,6 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
             grabX = x;
             grabY = y;
         }
-        if (rightGrabbed) {
-            tranY.set((tranY.aimed()) + (y / 10) - (grabY / 10));
-            tranX.set((tranX.aimed()) + (x / 10) - (grabX / 10));
-            grabX = x;
-            grabY = y;
-        }
         
     }
     
@@ -66,12 +63,6 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
     public boolean mousePressed(int x, int y, int button) {
         if (button == 0) {
             grabbed = true;
-            grabX = x;
-            grabY = y;
-            return true;
-        }
-        if (button == 1) {
-            rightGrabbed = true;
             grabX = x;
             grabY = y;
             return true;
@@ -91,23 +82,52 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
     public boolean onKeyPressed(char character, int key) {
         if (!isMouseOver())
             return false;
-        double mod = 1D;
-        if (GuiScreen.isShiftKeyDown()) {
-            mod = 5D;
+        double mod = 0.5D;
+        if (GuiScreen.isCtrlKeyDown())
+            mod = 1.5D;
+        
+        if (GuiScreen.isAltKeyDown())
+            mod = 0.1D;
+        
+        GameSettings gSettings = Minecraft.getMinecraft().gameSettings;
+        if (gSettings.keyBindForward.getKeyCode() == key) {
+            tranX.set(tranX.current() + (mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            tranZ.set(tranZ.current() + (mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)))));
         }
-        if (key == 17 && !GuiScreen.isCtrlKeyDown()) {
-            distance.set(distance.current() - (0.2D * mod));
-        } else if (key == 31 && !GuiScreen.isCtrlKeyDown()) {
-            distance.set(distance.current() + (0.2D * mod));
+        if (gSettings.keyBindBack.getKeyCode() == key) {
+            tranX.set(tranX.current() - (mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            tranZ.set(tranZ.current() - (mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)))));
+        }
+        if (gSettings.keyBindRight.getKeyCode() == key) {
+            tranX.set(tranX.current() - (mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            tranZ.set(tranZ.current() - (mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)))));
+        }
+        if (gSettings.keyBindLeft.getKeyCode() == key) {
+            tranX.set(tranX.current() + (mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            tranZ.set(tranZ.current() + (mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)))));
+        }
+        if (gSettings.keyBindSneak.getKeyCode() == key) {
+            tranY.set(tranY.current() + mod);
+        }
+        if (gSettings.keyBindJump.getKeyCode() == key) {
+            
+            tranY.set(tranY.current() - mod);
+        }
+        /*
+        if (key == 17 && !GuiScreen.isShiftKeyDown()) {
+            tranZ.set(tranZ.current() - (0.2D * mod));
+        } else if (key == 31 && !GuiScreen.isShiftKeyDown()) {
+            tranZ.set(tranZ.current() + (0.2D * mod));
         } else if (key == 32) {
             tranX.set(tranX.current() - (mod));
         } else if (key == 30) {
             tranX.set(tranX.current() + (mod));
-        } else if (key == 17 && GuiScreen.isCtrlKeyDown() && !GuiScreen.isAltKeyDown()) {
+        } else if (key == 17 && GuiScreen.isShiftKeyDown() && !GuiScreen.isAltKeyDown()) {
             tranY.set(tranY.current() + (mod));
-        } else if (key == 31 && GuiScreen.isCtrlKeyDown() && !GuiScreen.isAltKeyDown()) {
+        } else if (key == 31 && GuiScreen.isShiftKeyDown() && !GuiScreen.isAltKeyDown()) {
             tranY.set(tranY.current() - (mod));
-        }
+        }*/
+        
         return true;
     }
     
@@ -119,9 +139,9 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         makeLightBright();
         tranX.tick();
         tranY.tick();
+        tranZ.tick();
         rotX.tick();
         rotY.tick();
-        distance.tick();
         
         GlStateManager.disableDepth();
         
@@ -154,7 +174,7 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         GlStateManager.rotate((float) rotX.current(), 1, 0, 0);
         GlStateManager.rotate((float) rotY.current(), 0, 1, 0);
         GlStateManager.rotate((float) rotZ.current(), 0, 0, 1);
-        GlStateManager.translate((tranX.current() / 6) - rotationCenter.x, (-tranY.current() / 6) - rotationCenter.y, -distance.current() - rotationCenter.z);
+        GlStateManager.translate(tranX.current() - rotationCenter.x, tranY.current() - rotationCenter.y, tranZ.current() - rotationCenter.z);
         
         GlStateManager.pushMatrix();
         ResourceLocation WHITE_TEXTURE = new ResourceLocation(LittleTiles.modid, "textures/preview.png");
