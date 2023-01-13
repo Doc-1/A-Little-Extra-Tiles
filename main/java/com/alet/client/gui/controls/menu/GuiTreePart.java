@@ -29,6 +29,8 @@ public class GuiTreePart extends GuiControl {
     public int originPosY;
     public int originPosX;
     
+    public int textColor = ColorUtils.WHITE;
+    
     public boolean mousePressed = false;
     public boolean counting = false;
     public int tick = 0;
@@ -71,6 +73,18 @@ public class GuiTreePart extends GuiControl {
         this.caption = caption;
         this.CAPTION = caption;
         this.type = type;
+    }
+    
+    public GuiTreePart(String name, int textColor, String caption, EnumPartType type) {
+        super(name, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), 8);
+        this.caption = caption;
+        this.CAPTION = caption;
+        this.type = type;
+        this.textColor = textColor;
+    }
+    
+    public GuiTreePart(String caption, int textColor, EnumPartType type) {
+        this("", textColor, caption, type);
     }
     
     public GuiTreePart(String caption, EnumPartType type) {
@@ -132,7 +146,7 @@ public class GuiTreePart extends GuiControl {
             GlStateManager.translate(10, 0, 0);
         if (this.type.openable)
             GlStateManager.translate(10, 0, 0);
-        helper.drawStringWithShadow(caption, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), height, ColorUtils.WHITE);
+        helper.drawStringWithShadow(caption, 0, 0, GuiRenderHelper.instance.getStringWidth(caption), height, this.textColor);
         GlStateManager.popMatrix();
     }
     
