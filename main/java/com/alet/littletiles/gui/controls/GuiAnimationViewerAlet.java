@@ -2,6 +2,7 @@ package com.alet.littletiles.gui.controls;
 
 import javax.vecmath.Vector3d;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
 
@@ -88,31 +89,45 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         
         if (GuiScreen.isAltKeyDown())
             mod = 0.1D;
-        
         GameSettings gSettings = Minecraft.getMinecraft().gameSettings;
-        if (gSettings.keyBindForward.getKeyCode() == key) {
-            tranX.set(tranX.current() + (mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
-            tranZ.set(tranZ.current() + (mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)))));
+        double x = tranX.current();
+        double y = tranY.current();
+        double z = tranZ.current();
+        if (Keyboard.isKeyDown(gSettings.keyBindForward.getKeyCode())) {
+            x += mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)));
+            z += mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)));
+            //tranX.set(tranX.current() + (mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            //tranZ.set(tranZ.current() + (mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)))));
         }
-        if (gSettings.keyBindBack.getKeyCode() == key) {
-            tranX.set(tranX.current() - (mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
-            tranZ.set(tranZ.current() - (mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)))));
+        if (Keyboard.isKeyDown(gSettings.keyBindBack.getKeyCode())) {
+            x -= mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)));
+            z -= mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)));
+            //tranX.set(tranX.current() - (mod * (double) (Math.sin(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            //tranZ.set(tranZ.current() - (mod * (double) (Math.cos(this.rotY.aimed() * ((float) Math.PI / 180F)))));
         }
-        if (gSettings.keyBindRight.getKeyCode() == key) {
-            tranX.set(tranX.current() - (mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
-            tranZ.set(tranZ.current() - (mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)))));
+        if (Keyboard.isKeyDown(gSettings.keyBindRight.getKeyCode())) {
+            x -= mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)));
+            z -= mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)));
+            //tranX.set(tranX.current() - (mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            //tranZ.set(tranZ.current() - (mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)))));
         }
-        if (gSettings.keyBindLeft.getKeyCode() == key) {
-            tranX.set(tranX.current() + (mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
-            tranZ.set(tranZ.current() + (mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)))));
+        if (Keyboard.isKeyDown(gSettings.keyBindLeft.getKeyCode())) {
+            x += mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)));
+            z += mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)));
+            //tranX.set(tranX.current() + (mod * (double) (Math.cos(-this.rotY.aimed() * ((float) Math.PI / 180F)))));
+            //tranZ.set(tranZ.current() + (mod * (double) (Math.sin(this.rotY.aimed() * ((float) Math.PI / 180F)))));
         }
-        if (gSettings.keyBindSneak.getKeyCode() == key) {
-            tranY.set(tranY.current() + mod);
+        if (Keyboard.isKeyDown(gSettings.keyBindSneak.getKeyCode())) {
+            y += mod;
+            //tranY.set(tranY.current() + mod);
         }
-        if (gSettings.keyBindJump.getKeyCode() == key) {
-            
-            tranY.set(tranY.current() - mod);
+        if (Keyboard.isKeyDown(gSettings.keyBindJump.getKeyCode())) {
+            y -= mod;
+            //tranY.set(tranY.current() - mod);
         }
+        tranX.set(x);
+        tranY.set(y);
+        tranZ.set(z);
         /*
         if (key == 17 && !GuiScreen.isShiftKeyDown()) {
             tranZ.set(tranZ.current() - (0.2D * mod));
@@ -142,6 +157,7 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         tranZ.tick();
         rotX.tick();
         rotY.tick();
+        distance.tick();
         
         GlStateManager.disableDepth();
         
@@ -166,6 +182,7 @@ public class GuiAnimationViewerAlet extends GuiAnimationViewer {
         GlStateManager.loadIdentity();
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableDepth();
+        GlStateManager.translate(0, 0, -distance.current());
         Vector3d rotationCenter = new Vector3d(animation.center.rotationCenter);
         rotationCenter.y -= 75;
         
