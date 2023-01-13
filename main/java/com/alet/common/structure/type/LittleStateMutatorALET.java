@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import com.alet.client.gui.controls.GuiStackSelectorAllMutator;
 import com.alet.client.gui.controls.GuiStackSelectorExtensionMutator;
-import com.alet.common.packet.PacketUpdateMutateFromServer;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -20,7 +19,6 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelectorAll;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
-import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.BlockUtils;
 import com.creativemd.littletiles.client.gui.LittleSubGuiUtils.LittleBlockSelector;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
@@ -135,6 +133,7 @@ public class LittleStateMutatorALET extends LittleStructure {
     @Override
     public void performInternalOutputChange(InternalSignalOutput output) {
         if (output.component.is("activate")) {
+            
             try {
                 changeMaterialState();
             } catch (CorruptedConnectionException | NotYetConnectedException e) {
@@ -169,15 +168,15 @@ public class LittleStateMutatorALET extends LittleStructure {
                         if (tile instanceof LittleTileColored) {
                             LittleTileColored coloredTile = (LittleTileColored) tile;
                             if (coloredTile.getBlockState().equals(dataA.state) && coloredTile.color == dataA.color) {
-                                coloredTile.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
                                 LittleTile temp = LittleTileColored.setColor(tile.copy(), dataB.color);
+                                temp.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
                                 s.remove(coloredTile);
                                 s.add(temp);
                                 
                             }
                         } else if (tile.getBlockState().equals(dataA.state)) {
-                            tile.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
                             LittleTile coloredTile = LittleTileColored.setColor(tile.copy(), dataB.color);
+                            coloredTile.setBlock(dataB.state.getBlock(), dataB.state.getBlock().getMetaFromState(dataB.state));
                             s.remove(tile);
                             s.add(coloredTile);
                             
@@ -188,8 +187,8 @@ public class LittleStateMutatorALET extends LittleStructure {
                 }
             });
         }
-        if (!this.getWorld().isRemote)
-            PacketHandler.sendPacketToTrackingPlayers(new PacketUpdateMutateFromServer(this.getStructureLocation()), this.getWorld(), this.getPos(), null);
+        //if (!this.getWorld().isRemote)
+        //    PacketHandler.sendPacketToTrackingPlayers(new PacketUpdateMutateFromServer(this.getStructureLocation()), this.getWorld(), this.getPos(), null);
     }
     
     public void changeCollisionState() throws CorruptedConnectionException, NotYetConnectedException {
@@ -247,7 +246,7 @@ public class LittleStateMutatorALET extends LittleStructure {
             if (player.isCreative()) {
                 
                 GuiScrollBox box = new GuiScrollBox("box", 0, 0, 294, 100);
-                GuiCheckBox check = new GuiCheckBox("check", "Allow Right Click", 120, 110, mutator.allowRightClick);
+                GuiCheckBox check = new GuiCheckBox("check", "Allow Right Click", 120, 110, mutator != null ? mutator.allowRightClick : true);
                 GuiButton add = new GuiButton("add", 224, 110, 20) {
                     @Override
                     public void onClicked(int x, int y, int button) {
