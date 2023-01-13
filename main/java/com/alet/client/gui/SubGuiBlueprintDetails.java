@@ -39,7 +39,7 @@ public class SubGuiBlueprintDetails extends SubGui {
     int yellow;
     
     public SubGuiBlueprintDetails(String nbtString, File file) {
-        super(180, 290);
+        super(180, 320);
         try {
             this.nbt = JsonToNBT.getTagFromJson(nbtString);
             ItemStack stack = StructureStringUtils.importStructure(nbt);
@@ -84,7 +84,6 @@ public class SubGuiBlueprintDetails extends SubGui {
         GuiLabel structureID = new GuiLabel("Structure ID:", 0, 14, ColorUtils.WHITE);
         GuiLabel id = new GuiLabel(previews.getStructureId(), 69, 14, ColorUtils.WHITE);
         GuiLabel tileCount = new GuiLabel("Tile Count:", 0, 28, ColorUtils.WHITE);
-        System.out.println(previews.size());
         GuiLabel tile = new GuiLabel(previews.totalSize() + "", 54, 28, ColorUtils.WHITE);
         GuiLabel childCount = new GuiLabel("Child Count:", 0, 42, ColorUtils.WHITE);
         GuiLabel child = new GuiLabel(previews.childrenCount() + "", 60, 42, ColorUtils.WHITE);
@@ -97,19 +96,21 @@ public class SubGuiBlueprintDetails extends SubGui {
         GuiLabel modifyDate = new GuiLabel("Modified Date:", 0, 84, ColorUtils.WHITE);
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         GuiLabel date = new GuiLabel(sdf.format(file.lastModified()), 70, 84, ColorUtils.WHITE);
-        GuiLabel material = new GuiLabel("Material Required:", 0, 168);
-        GuiScrollBox scroll = new GuiScrollBox("materialBox", 0, 182, 174, 100);
+        GuiLabel grid = new GuiLabel("Grid:", 0, 98);
+        GuiLabel gridSize = new GuiLabel(previews.getContext() + "", 26, 98);
+        GuiLabel colors = new GuiLabel("Dyes Required:", 0, 112, ColorUtils.WHITE);
+        GuiLabel black = new GuiLabel("Black:", 10, 126, 0x707070);
+        GuiLabel cyan = new GuiLabel("Cyan:", 10, 140, 0x00FFFF);
+        GuiLabel megenta = new GuiLabel("Magenta:", 10, 154, ColorUtils.MAGENTA);
+        GuiLabel yellow = new GuiLabel("Yellow:", 10, 168, ColorUtils.YELLOW);
+        GuiLabel b = new GuiLabel(this.black + "", 41, 126, 0x707070);
+        GuiLabel c = new GuiLabel(this.cyan + "", 39, 140, 0x00FFFF);
+        GuiLabel m = new GuiLabel(this.magenta + "", 55, 154, ColorUtils.MAGENTA);
+        GuiLabel y = new GuiLabel(this.yellow + "", 45, 168, ColorUtils.YELLOW);
+        GuiLabel material = new GuiLabel("Material Required:", 0, 200);
+        GuiScrollBox scroll = new GuiScrollBox("materialBox", 0, 214, 174, 100);
         addControl(scroll);
         collectIngredients(scroll);
-        GuiLabel colors = new GuiLabel("Dyes Required:", 0, 98, ColorUtils.WHITE);
-        GuiLabel black = new GuiLabel("Black:", 10, 112, 0x707070);
-        GuiLabel cyan = new GuiLabel("Cyan:", 10, 126, 0x00FFFF);
-        GuiLabel megenta = new GuiLabel("Magenta:", 10, 140, ColorUtils.MAGENTA);
-        GuiLabel yellow = new GuiLabel("Yellow:", 10, 154, ColorUtils.YELLOW);
-        GuiLabel b = new GuiLabel(this.black + "", 41, 112, 0x707070);
-        GuiLabel c = new GuiLabel(this.cyan + "", 39, 126, 0x00FFFF);
-        GuiLabel m = new GuiLabel(this.magenta + "", 55, 140, ColorUtils.MAGENTA);
-        GuiLabel y = new GuiLabel(this.yellow + "", 45, 154, ColorUtils.YELLOW);
         addControl(structureID);
         addControl(id);
         addControl(structureName);
@@ -124,6 +125,8 @@ public class SubGuiBlueprintDetails extends SubGui {
         addControl(size);
         addControl(modifyDate);
         addControl(date);
+        addControl(grid);
+        addControl(gridSize);
         addControl(colors);
         addControl(black);
         addControl(cyan);
