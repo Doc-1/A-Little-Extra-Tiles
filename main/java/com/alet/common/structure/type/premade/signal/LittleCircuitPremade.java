@@ -87,18 +87,21 @@ public abstract class LittleCircuitPremade extends LittleStructurePremade {
                 if (clockIndex != -1) {
                     
                     boolean flag1 = false;
-                    for (int x : this.inputIndexes) {
-                        if (x == -1) {
-                            flag1 = true;
-                            break;
-                        }
-                        if (this.getChild(x) != null) {
-                            if (this.getChild(x).getStructure().equals(changed)) {
+                    if (this.inputIndexes != null)
+                        for (int x : this.inputIndexes) {
+                            if (x == -1) {
                                 flag1 = true;
                                 break;
                             }
+                            if (this.getChild(x) != null) {
+                                if (this.getChild(x).getStructure().equals(changed)) {
+                                    flag1 = true;
+                                    break;
+                                }
+                            }
                         }
-                    }
+                    else
+                        flag1 = true;
                     if (flag1) {
                         this.queueForNextTick();
                         
