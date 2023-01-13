@@ -6,6 +6,10 @@ import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 
 public class SignalingUtils {
     
+    private static final boolean[] FALSE_4 = new boolean[4];
+    private static final boolean[] FALSE_16 = new boolean[16];
+    private static final boolean[] FALSE_32 = new boolean[32];
+    
     public static boolean[] randState(int bandwidth) {
         int max = (int) Math.pow(bandwidth, 2) + 1;
         Random random = new Random();
@@ -57,7 +61,16 @@ public class SignalingUtils {
     }
     
     public static boolean[] allFalse(int bandwidth) {
-        return new boolean[bandwidth];
+        if (bandwidth == 4)
+            return FALSE_4;
+        else if (bandwidth == 16)
+            return FALSE_16;
+        else if (bandwidth == 32)
+            return FALSE_32;
+        else {
+            new Exception("Bandwidth is a invalid number. Valid numbers are: 4, 16, and 32");
+            return BooleanUtils.SINGLE_FALSE;
+        }
     }
     
     public static boolean[] flipBits(boolean[] state) {
