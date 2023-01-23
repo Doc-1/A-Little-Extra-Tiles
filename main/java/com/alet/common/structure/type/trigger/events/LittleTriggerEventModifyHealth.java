@@ -16,6 +16,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     
@@ -76,6 +78,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         List<String> sourceList = new ArrayList<String>();

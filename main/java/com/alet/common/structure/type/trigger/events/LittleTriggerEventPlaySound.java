@@ -23,6 +23,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     
@@ -63,6 +65,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         

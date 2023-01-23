@@ -20,21 +20,10 @@ public abstract class LittleTriggerCondition extends LittleTriggerObject {
         return serializeNBT(nbt);
     }
     
-    public boolean conditionRunEvent(LittleTriggerObject nextTriggerObj) {
-        if (completed) {
+    public boolean conditionRunEvent() {
+        if (completed) 
             return true;
-        }
-        if (conditionPassed()) {
-            
-            this.completed = true;
-            if (nextTriggerObj instanceof LittleTriggerEvent) {
-                LittleTriggerEvent triggerEvent = (LittleTriggerEvent) nextTriggerObj;
-                triggerEvent.runEvent();
-                return true;
-            } else if (nextTriggerObj instanceof LittleTriggerCondition)
-                return true;
-        }
-        return false;
+        return conditionPassed();
     }
     
     public abstract boolean conditionPassed();

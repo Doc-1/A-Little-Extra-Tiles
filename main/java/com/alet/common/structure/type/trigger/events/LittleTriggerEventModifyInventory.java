@@ -23,6 +23,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     
@@ -57,6 +59,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         GuiPanel panel = getPanel(parent);

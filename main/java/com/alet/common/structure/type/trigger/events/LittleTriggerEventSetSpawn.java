@@ -11,6 +11,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     
@@ -39,6 +41,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         wipeControls(panel);
