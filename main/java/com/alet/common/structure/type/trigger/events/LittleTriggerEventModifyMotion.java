@@ -10,6 +10,8 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     
@@ -47,6 +49,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         panel.addControl(new GuiLabel("Modify Motion", 0, 0));
