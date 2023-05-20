@@ -148,6 +148,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 }
             }
             if (intersected) {
+                this.entities.clear();
                 entities.add(entityIn);
                 this.run = true;
             }
@@ -159,6 +160,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         if (animation.world.isRemote)
             return;
         if (collisionListener) {
+            this.entities.clear();
             this.entities.addAll(entities.keySet());
             this.run = true;
         }
