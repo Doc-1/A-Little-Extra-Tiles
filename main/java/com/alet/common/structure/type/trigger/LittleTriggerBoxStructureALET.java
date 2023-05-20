@@ -225,6 +225,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         if (!this.isClient()) {
             if (this.rightClickListener) {
                 this.run = true;
+                this.entities.clear();
                 this.entities.add(playerIn);
             }
         }
