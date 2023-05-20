@@ -28,8 +28,8 @@ public class PacketConnectLead extends CreativeCorePacket {
     
     public PacketConnectLead(EntityRopeConnection connection, LeadConnectionData data, int index) {
         this.connectionID = connection.getEntityId();
-        this.size = data.idsConnected.size();
-        this.connectors = data.idsConnected;
+        //this.size = data.idsConnected.size();
+        //this.connectors = data.idsConnected;
         this.color = data.color;
         this.thickness = data.thickness;
         this.tautness = data.tautness;
@@ -65,6 +65,7 @@ public class PacketConnectLead extends CreativeCorePacket {
         WorldClient world = (WorldClient) player.getEntityWorld();
         EntityRopeConnection connection = (EntityRopeConnection) world.getEntityByID(this.connectionID);
         LeadConnectionData data = new LeadConnectionData(color, thickness, tautness, lightLevel);
+        /*
         System.out.println("cli " + data.lightLevel);
         for (int id : connectors)
             data.idsConnected.add(id);
@@ -86,7 +87,7 @@ public class PacketConnectLead extends CreativeCorePacket {
             }
             
         }
-        
+        */
     }
     
     @Override

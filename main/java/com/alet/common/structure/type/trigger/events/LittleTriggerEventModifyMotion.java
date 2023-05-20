@@ -21,6 +21,8 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     public double forward = 0;
     public double strafe = 0;
     public boolean addTo = true;
+    public double maxVelocity = 0;
+    public double minVelocity = 0;
     
     public LittleTriggerEventModifyMotion(int id) {
         super(id);
@@ -33,6 +35,8 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
         nbt.setDouble("zStrength", zStrength);
         nbt.setDouble("forward", forward);
         nbt.setDouble("strafe", strafe);
+        nbt.setDouble("maxVelocity", maxVelocity);
+        nbt.setDouble("minVelocity", minVelocity);
         nbt.setBoolean("addTo", addTo);
         return nbt;
     }
@@ -44,6 +48,8 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
         this.zStrength = nbt.getDouble("zStrength");
         this.forward = nbt.getDouble("forward");
         this.strafe = nbt.getDouble("strafe");
+        this.maxVelocity = nbt.getDouble("maxVelocity");
+        this.minVelocity = nbt.getDouble("minVelocity");
         this.addTo = nbt.getBoolean("addTo");
         return this;
     }
@@ -113,6 +119,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
             entity.moveRelative(strafe != 0 ? 1F : 0F, 0F, 0F, (float) strafe);
             entity.moveRelative(0F, 0F, forward != 0 ? 1F : 0F, (float) forward);
             entity.fallDistance = 0;
+            System.out.println(entity.motionX + " " + entity.motionY + " " + entity.motionZ);
         }
         return true;
     }

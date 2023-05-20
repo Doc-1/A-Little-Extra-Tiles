@@ -1,7 +1,6 @@
 item.LTPremade.photoimporter.name=Photo Importer
 item.LTPremade.typewriter.name=Typewriter
-item.LTPremade.item_export.name=Item Exporter
-item.LTPremade.item_import.name=Item Importer
+item.LTPremade.filling_cabinet.name=Filling Cabinet (WIP)
 
 item.LTPremade.signal_memory_32.name=Memory Cell (32-bit)
 
@@ -42,15 +41,15 @@ item.LTPremade.little_hopper.name=Little Hopper
 item.LTPremade.signal_color_display_16.name=Signal Colored Display (64-bits)
 item.LTPremade.seven_segement_display.name=Signal Seven Segment Display (8-bits)
 
-item.LTPremade.signal_quick_output1.name=Quick Output (1-bit)
-item.LTPremade.signal_quick_output4.name=Quick Output (4-bit)
-item.LTPremade.signal_quick_output16.name=Quick Output (16-bit)
-item.LTPremade.signal_quick_output32.name=Quick Output (32-bit)
+item.LTPremade.signal_quick_output1.name=Quick Output (1-bit) (WIP)
+item.LTPremade.signal_quick_output4.name=Quick Output (4-bit) (WIP)
+item.LTPremade.signal_quick_output16.name=Quick Output (16-bit) (WIP)
+item.LTPremade.signal_quick_output32.name=Quick Output (32-bit) (WIP)
 
-item.LTPremade.signal_quick_input1.name=Quick Input (1-bit)
-item.LTPremade.signal_quick_input4.name=Quick Input (4-bit)
-item.LTPremade.signal_quick_input16.name=Quick Input (16-bit)
-item.LTPremade.signal_quick_input32.name=Quick Input (32-bit)
+item.LTPremade.signal_quick_input1.name=Quick Input (1-bit) (WIP)
+item.LTPremade.signal_quick_input4.name=Quick Input (4-bit) (WIP)
+item.LTPremade.signal_quick_input16.name=Quick Input (16-bit) (WIP)
+item.LTPremade.signal_quick_input32.name=Quick Input (32-bit) (WIP)
 
 itemGroup.alet=Little Circuits
 
@@ -76,7 +75,10 @@ trigger.category.event.name=Events
 
 
 item.tapemeasure.name=Tape Measure
-item.little_rope.name=Little Rope
+item.little_rope.name=Little Rope (WIP)
+item.little_scissor.name=Little Scissor (WIP)
+item.little_manual.name=Little Manual (WIP)
+
 tile.smoothbrick.name=Borderless Brick
 tile.smoothgroutbrick.name=Borderless Brick Grout
 tile.smoothoakplank.name=Borderless Oak Planks
@@ -92,12 +94,12 @@ config.alet.maxPixelText.comment=This will set the max number of pixels a text c
 config.alet.colorAccuracy.comment=This will change how many colors the printer has access to. Zero is all available colors.
 
 
-structure.trigger_box.name=Trigger Box
+structure.trigger_box.name=(WIP)Trigger Box
 structure.door_lock.name=Door Lock
-structure.state_activator.name=State Mutator
+structure.state_activator.name=(WIP)State Mutator
 structure.music_composer.name=Music Composer
 structure.always_on_light.name=Always On Light
-structure.lead_connection.name=Rope Connector
+structure.lead_connection.name=(WIP)Rope Connector
 structure.cam_player.name=Cam Player
 structure.remote_activator.name=Remote Activator
 
@@ -105,3 +107,4 @@ structure.category.sound=Audio
 structure.category.advance=Advance
 
 alet.tapemeasure.tooltip='%s' to configure tool\n'%s', '%s' to change\nselected measurement\n'%s' to clear measurement
+gui.little_hopper.title=Little Hopper

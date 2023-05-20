@@ -31,6 +31,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.entity.AnimationPreview;
 import com.creativemd.littletiles.common.item.ItemLittleRecipe;
 import com.creativemd.littletiles.common.structure.LittleStructure;
@@ -59,24 +60,6 @@ public class SubGuiFillingCabinet extends SubGui {
     @Override
     public void createControls() {
         SubContainer contain = this.container;
-        
-        /*
-        file.add(new GuiMenuItem("New"));
-        GuiMenuItem openRecent = new GuiMenuItem("Open-Recent");
-        openRecent.add(new GuiMenuItem("Test"));
-        openRecent.add(new GuiMenuItem("Test2"));
-        GuiMenuItem hello = new GuiMenuItem("Hello");
-        GuiMenuItem ping = new GuiMenuItem("Ping");
-        ping.add(new GuiMenuItem("another one"));
-        hello.add(ping);
-        openRecent.add(hello);
-        file.add(openRecent);
-        menuBar.add(file);
-        GuiMenuItem edit = new GuiMenuItem("Edit");
-        edit.add(new GuiMenuItem("Transform"));
-        menuBar.add(edit);
-        menuBar.add(new GuiMenuItem("Help"));
-        menuBar.setGuiParent(this);*/
         
         GuiMenuPart sortBy = new GuiMenuPart("", "Sort by", EnumPartType.Branch, true);
         GuiMenuPart name = new GuiMenuPart("", "Name", EnumPartType.Leaf);
@@ -147,7 +130,7 @@ public class SubGuiFillingCabinet extends SubGui {
             @Override
             public void onClicked(int x, int y, int button) {
                 try {
-                    String file = getBlueprintFromFile();
+                    String file = getBlueprintFromSelectedFile();
                     if (file != null) {
                         NBTTagCompound nbt = JsonToNBT.getTagFromJson(file);
                         try {
@@ -165,11 +148,29 @@ public class SubGuiFillingCabinet extends SubGui {
         });
     }
     
+    public GuiTreePart validGrid(File file, GuiTreePart part) {
+        String data = this.getBlueprintFromFile(part);
+        if (data != null) {
+            try {
+                try {
+                    NBTTagCompound nbt = JsonToNBT.getTagFromJson(data);
+                    LittleGridContext.get(nbt);
+                } catch (RuntimeException e) {
+                    part = new GuiTreePart(file.getName(), ColorUtils.RED, EnumPartType.Leaf);
+                    part.setCustomTooltip("Error: Invalid Grid Size");
+                    return part;
+                }
+            } catch (NBTException e) {}
+        }
+        return part;
+    }
+    
     public void createTreeList() {
         File d = new File("./little_structures");
         listOfRoots.clear();
         for (File file : d.listFiles()) {
             GuiTreePart root = new GuiTreePart(file.getName(), EnumPartType.Leaf);
+            root = validGrid(file, root);
             if (file.isDirectory()) {
                 root = new GuiTreePart(file.getName(), EnumPartType.Root);
                 collectFilesInDir(file, root);
@@ -185,7 +186,9 @@ public class SubGuiFillingCabinet extends SubGui {
                 part.addMenu(branch);
                 collectFilesInDir(file, branch);
             } else if (file.isFile()) {
-                part.addMenu(new GuiTreePart(file.getName(), EnumPartType.Leaf));
+                GuiTreePart newPart = new GuiTreePart(file.getName(), EnumPartType.Leaf);
+                newPart = validGrid(file, newPart);
+                part.addMenu(newPart);
             }
         }
     }
@@ -198,11 +201,15 @@ public class SubGuiFillingCabinet extends SubGui {
         tree.replaceTree(listOfRoots);
     }
     
-    public String getBlueprintFromFile() {
+    public String getBlueprintFromSelectedFile() {
+        return getBlueprintFromFile(this.selectedFile);
+    }
+    
+    public String getBlueprintFromFile(GuiTreePart part) {
         String file = "";
-        if (selectedFile != null) {
+        if (part != null) {
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(getPath(selectedFile.caption)));
+                BufferedReader reader = new BufferedReader(new FileReader(getPath(part.caption)));
                 file = reader.readLine();
                 reader.close();
             } catch (IOException e) {
@@ -294,7 +301,7 @@ public class SubGuiFillingCabinet extends SubGui {
                 updateTree();
             } else if (((GuiMenuPart) event.source).caption.equals("Structure details")) {
                 
-                String file = getBlueprintFromFile();
+                String file = getBlueprintFromSelectedFile();
                 if (file != null) {
                     Layer.addLayer(this, new SubGuiBlueprintDetails(file, getPath(selectedFile.caption)));
                 }
@@ -313,7 +320,7 @@ public class SubGuiFillingCabinet extends SubGui {
         if (control != null) {
             lable.setCaption(TextFormatting.BOLD + control.CAPTION);
             try {
-                String file = getBlueprintFromFile();
+                String file = getBlueprintFromSelectedFile();
                 if (file != null) {
                     NBTTagCompound nbt = JsonToNBT.getTagFromJson(file);
                     ItemStack stack = StructureStringUtils.importStructure(nbt);
@@ -324,7 +331,6 @@ public class SubGuiFillingCabinet extends SubGui {
                     this.refreshControls();
                 }
             } catch (NBTException | NullPointerException e) {}
-            lable.setCaption(TextFormatting.BOLD + control.CAPTION);
         } else {
             lable.setCaption(TextFormatting.BOLD + "None");
         }

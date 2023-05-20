@@ -34,9 +34,6 @@ public class LittlePhotoImporter extends LittleStructurePremade {
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
         if (!worldIn.isRemote) {
             LittleStructureGuiHandler.openGui("photo-import", new NBTTagCompound(), playerIn, this);
-        } else {
-            System.out.println(pos);
-            System.out.println(worldIn.getTileEntity(pos).getClass());
         }
         return true;
     }

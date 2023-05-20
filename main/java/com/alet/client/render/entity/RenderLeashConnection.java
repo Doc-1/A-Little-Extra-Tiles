@@ -1,12 +1,9 @@
 package com.alet.client.render.entity;
 
-import java.util.UUID;
-
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
 import com.alet.common.entity.EntityRopeConnection;
-import com.alet.common.entity.LeadConnectionData;
 import com.creativemd.creativecore.common.utils.math.vec.Vec3;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.client.render.overlay.PreviewRenderer;
@@ -50,7 +47,7 @@ public class RenderLeashConnection extends Render<EntityRopeConnection> {
     @Override
     public void doRender(EntityRopeConnection entity, double x, double y, double z, float entityYaw, float partialTicks) {
         //System.out.println(entity.getDataManager().get(entity.CONNECTIONS));
-        
+        /*
         entity.entityFollowDoor();
         World world = entity.getWorld();
         for (LeadConnectionData data : entity.connectionsMap) {
@@ -63,7 +60,7 @@ public class RenderLeashConnection extends Render<EntityRopeConnection> {
             }
             for (int id : data.idsConnected)
                 renderLeash(entity, world.getEntityByID(id), x, y, z, data.color, data.thickness, data.tautness, data.lightLevel, partialTicks);
-        }
+        }*/
         
         /*
          * 
@@ -114,10 +111,6 @@ public class RenderLeashConnection extends Render<EntityRopeConnection> {
         
         GlStateManager.popMatrix();*/
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
-    }
-    
-    private double interpolateValue(double start, double end, double pct) {
-        return start + (end - start) * pct;
     }
     
     public void bezier(Vec3 pFinal, Vec3 p0, Vec3 p1, Vec3 p2, float t) {
@@ -185,7 +178,6 @@ public class RenderLeashConnection extends Render<EntityRopeConnection> {
             GlStateManager.disableCull();
             bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
             
-            double distance = 0;
             Vec3d prevVec = new Vec3d(startPoint.x, startPoint.y, startPoint.z);
             
             for (int j = 0; j <= 24; ++j) {
@@ -193,10 +185,10 @@ public class RenderLeashConnection extends Render<EntityRopeConnection> {
                 float f3 = (float) j / 24.0F;
                 bezier(drawPoint, startPoint, midPoint, endPoint, f3);
                 Vec3d vec = new Vec3d(drawPoint.x, drawPoint.y, drawPoint.z);
-                distance += vec.distanceTo(prevVec);
                 prevVec = vec;
                 bufferbuilder.pos(drawPoint.x - thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
                 bufferbuilder.pos(drawPoint.x + thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
+                
             }
             //System.out.println(distance);
             tessellator.draw();

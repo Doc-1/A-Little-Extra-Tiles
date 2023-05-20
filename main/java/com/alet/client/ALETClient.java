@@ -14,7 +14,6 @@ import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.common.util.shape.DragShapeCenteredBox;
 import com.alet.common.util.shape.DragShapeCenteredCylinder;
 import com.alet.common.util.shape.DragShapeCenteredSphere;
-import com.alet.common.util.shape.DragShapeFill;
 import com.alet.common.util.shape.DragShapePixel;
 import com.alet.common.util.shape.LittleShapeMagicWand;
 import com.alet.render.tapemeasure.TapeRenderer;
@@ -93,7 +92,7 @@ public class ALETClient extends LittleTilesServer {
         ShapeRegistry.registerShape("centered_sphere", new DragShapeCenteredSphere(), ShapeType.SHAPE);
         ShapeRegistry.registerShape("pixel", new DragShapePixel(), ShapeType.SHAPE);
         
-        ShapeRegistry.registerShape("fill", new DragShapeFill(), ShapeType.SHAPE);
+        //ShapeRegistry.registerShape("fill", new DragShapeFill(), ShapeType.SHAPE);
         
         ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
         

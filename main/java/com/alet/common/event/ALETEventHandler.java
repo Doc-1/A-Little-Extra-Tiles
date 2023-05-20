@@ -1,9 +1,11 @@
 package com.alet.common.event;
 
+import com.alet.ALETConfig;
 import com.alet.client.gui.override.HandlerSubGuiOverride;
 import com.alet.common.structure.type.ILeftClickListener;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.mc.ContainerSub;
+import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.littletiles.client.event.LeftClick;
 import com.creativemd.littletiles.common.block.BlockTile;
 import com.creativemd.littletiles.common.block.BlockTile.TEResult;
@@ -13,6 +15,7 @@ import com.creativemd.littletiles.common.structure.exception.NotYetConnectedExce
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -22,10 +25,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ALETEventHandler {
-    
-    private static boolean guiOpened = false;
+    private static boolean shown = false;
     private static int phase = 1;
-    private static String guiName = "";
     private SubGui guiList;
     
     @SubscribeEvent
@@ -45,6 +46,10 @@ public class ALETEventHandler {
                 } else if (mc.player.openContainer instanceof ContainerSub) {
                     guiList = ((ContainerSub) mc.player.openContainer).gui.getTopLayer();
                     HandlerSubGuiOverride.updateGuiFrom(guiList);
+                }
+                if (!shown && ALETConfig.client.showAgain) {
+                    GuiHandler.openGui("notice", new NBTTagCompound(), mc.player);
+                    shown = true;
                 }
             }
         }

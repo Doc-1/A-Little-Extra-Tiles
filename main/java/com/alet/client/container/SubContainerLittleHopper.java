@@ -22,9 +22,9 @@ public class SubContainerLittleHopper extends SubContainer {
     @Override
     public void createControls() {
         for (int i = 0; i < 5; i++) {
-            addSlotToContainer(new Slot(hopper.inventory, i, i * 18, 0));
+            addSlotToContainer(new Slot(hopper.inventory, i, (i * 18) + 35, 15));
         }
-        addPlayerSlotsToContainer(player, 0, 100);
+        addPlayerSlotsToContainer(player, 0, 50);
     }
     
     @Override

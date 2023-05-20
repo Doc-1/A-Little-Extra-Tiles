@@ -2,11 +2,10 @@ package com.alet.items;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.alet.common.entity.EntityRopeConnection;
-import com.alet.common.entity.LeadConnectionData;
 import com.creativemd.creativecore.common.utils.math.vec.Vec3;
+import com.creativemd.creativecore.common.utils.mc.TickUtils;
 import com.creativemd.littletiles.LittleTiles;
 
 import net.minecraft.client.Minecraft;
@@ -32,52 +31,46 @@ public class ItemLittleScissors extends Item {
     
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        Vec3d look = playerIn.getPositionVector();
-        double d0 = (double) Minecraft.getMinecraft().playerController.getBlockReachDistance();
+        Vec3d playerPos = playerIn.getPositionVector();
+        double d0 = (double) Minecraft.getMinecraft().playerController.getBlockReachDistance() * 3;
         float f0 = Minecraft.getMinecraft().getRenderPartialTicks();
-        Vec3d pos1 = look.addVector(d0, d0, d0);
-        Vec3d pos2 = look.addVector(-d0, -d0, -d0);
+        Vec3d pos1 = playerPos.addVector(d0, d0, d0);
+        Vec3d pos2 = playerPos.addVector(-d0, -d0, -d0);
         List<EntityRopeConnection> entityList = worldIn.getEntitiesWithinAABB(EntityRopeConnection.class, new AxisAlignedBB(pos1, pos2));
-        List<AxisAlignedBB> boxes = new ArrayList<AxisAlignedBB>();
         for (EntityRopeConnection entity : entityList) {
-            boxes.addAll(findBoxes(entity, entity.posX, entity.posY, entity.posZ, entity.rotationYaw, f0));
+            findBoxes(playerIn, entity, f0);
         }
         
-        Vec3 start = new Vec3(playerIn.getPositionVector().x, playerIn.getPositionVector().y, playerIn.getPositionVector().z);
-        Vec3 end = new Vec3(playerIn.rayTrace(d0, f0).hitVec.x, playerIn.rayTrace(d0, f0).hitVec.y, playerIn.rayTrace(d0, f0).hitVec.z);
-        Vec3 mid = new Vec3(start.x - end.x, start.y - end.y, start.z - end.z);
-        Vec3 point = new Vec3(0, 0, 0);
-        List<AxisAlignedBB> boxes2 = new ArrayList<AxisAlignedBB>();
-        for (int j = 0; j <= 24; j++) {
-            float f3 = (float) j / 24.0F;
-            this.bezier(point, start, mid, end, f3);
-            for (AxisAlignedBB aabb : boxes) {
-                if (aabb.contains(new Vec3d(point.x, point.y, point.z))) {
-                    System.out.println("success");
-                }
-            }
-        }
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
     
-    public List<AxisAlignedBB> findBoxes(EntityRopeConnection entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        //System.out.println(entity.getDataManager().get(entity.CONNECTIONS));
-        
+    public boolean findBoxes(EntityPlayer playerIn, EntityRopeConnection entity, float partialTicks) {
         entity.entityFollowDoor();
         World world = entity.getWorld();
         List<AxisAlignedBB> boxes = new ArrayList<AxisAlignedBB>();
+        float partialTickTime = TickUtils.getPartialTickTime();
+        Vec3d pos = playerIn.getPositionEyes(partialTickTime);
+        Vec3d look = playerIn.getLook(partialTickTime);
+        double d0 = (double) Minecraft.getMinecraft().playerController.getBlockReachDistance() * 3;
+        Vec3d vec32 = pos.addVector(look.x * d0, look.y * d0, look.z * d0);
+        /*
         for (LeadConnectionData data : entity.connectionsMap) {
             for (UUID uuid : data.uuidsConnected) {
                 for (Entity loadedEntity : world.loadedEntityList) {
                     if (uuid.equals(loadedEntity.getPersistentID())) {
-                        data.idsConnected.add(loadedEntity.getEntityId());
+                        boxes.addAll(calcBoxes(entity, loadedEntity, entity.posX, entity.posY, entity.posZ, data.thickness, data.tautness, data.lightLevel, partialTicks));
+                        for (int i = 0; i < boxes.size(); i++) {
+                            RayTraceResult result = boxes.get(i).calculateIntercept(pos, vec32);
+                            if (result != null) {
+                                System.out.println("success");
+                                entity.setDead();
+                            }
+                        }
                     }
                 }
             }
-            for (int id : data.idsConnected)
-                boxes.addAll(calcBoxes(entity, world.getEntityByID(id), x, y, z, data.thickness, data.tautness, data.lightLevel, partialTicks));
-        }
-        return boxes;
+        }*/
+        return false;
     }
     
     protected List<AxisAlignedBB> calcBoxes(EntityRopeConnection entityConnection, Entity entity, double x, double y, double z, double thickness, double tautness, float lightLevel, float partialTicks) {
@@ -112,32 +105,28 @@ public class ItemLittleScissors extends Item {
             double k1 = p2_1 - p1_1;
             double k2 = p2_2 - p1_2;
             
-            Vec3 startPoint = new Vec3(x, y, z);
-            Vec3 midPoint = new Vec3(x - k0, y - k1, z - k2);
-            Vec3 endPoint = new Vec3(x - g0, y - g1, z - g2);
-            
-            //System.out.println(startPoint + " " + endPoint);
+            Vec3 startPoint1 = new Vec3(x, y, z);
+            Vec3 midPoint1 = new Vec3((x - k0), (y - k1), (z - k2));
+            Vec3 endPoint1 = new Vec3((x - g0), (y - g1), (z - g2));
             
             Vec3 drawPointA = new Vec3(0, 0, 0);
             Vec3 drawPointB = new Vec3(0, 0, 0);
             
             List<AxisAlignedBB> boxes = new ArrayList<AxisAlignedBB>();
-            double distance = 0;
-            Vec3d prevVec = new Vec3d(startPoint.x, startPoint.y, startPoint.z);
-            for (int j = 0; j <= 24; j += 2) {
-                System.out.println(j);
+            for (int j = 0; j <= 24; j++) {
                 float f3 = (float) j / 24.0F;
-                float f4 = (float) j + 1 / 24.0F;
-                bezier(drawPointA, startPoint, midPoint, endPoint, f3);
-                bezier(drawPointB, startPoint, midPoint, endPoint, f4);
-                Vec3d vecA = new Vec3d(drawPointA.x, drawPointA.y, drawPointA.z);
-                Vec3d vecB = new Vec3d(drawPointB.x, drawPointB.y, drawPointB.z);
-                distance += vecA.distanceTo(prevVec);
-                prevVec = vecA;
-                AxisAlignedBB aabb = new AxisAlignedBB(drawPointA.x - thickness, drawPointA.y - thickness, drawPointA.z, drawPointB.x + thickness, drawPointB.y + thickness, drawPointB.z);
-                boxes.add(aabb);
-                //bufferbuilder.pos(drawPoint.x - thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
-                //bufferbuilder.pos(drawPoint.x + thickness, drawPoint.y, drawPoint.z).color(red, green, blue, alpha).endVertex();
+                float f4 = (float) (j + 1) / 24.0F;
+                bezier(drawPointA, startPoint1, midPoint1, endPoint1, f3);
+                bezier(drawPointB, startPoint1, midPoint1, endPoint1, f4);
+                double minX = Math.min(drawPointA.x - thickness, drawPointB.x - thickness);
+                double minY = Math.min(drawPointA.y - thickness, drawPointB.y - thickness);
+                double minZ = Math.min(drawPointA.z - thickness, drawPointB.z - thickness);
+                
+                double maxX = Math.max(drawPointA.x + thickness, drawPointB.x + thickness);
+                double maxY = Math.max(drawPointA.y + thickness, drawPointB.y + thickness);
+                double maxZ = Math.max(drawPointA.z + thickness, drawPointB.z + thickness);
+                AxisAlignedBB aabb1 = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+                boxes.add(aabb1);
             }
             return boxes;
         }

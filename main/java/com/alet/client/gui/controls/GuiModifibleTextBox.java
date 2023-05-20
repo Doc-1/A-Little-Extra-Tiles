@@ -207,8 +207,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
     @Override
     public boolean isMouseOver(int posX, int posY) {
         boolean results = super.isMouseOver(posX, posY);
-        if (results)
-            isMouseOverClickable(posX, posY);
+        isMouseOverClickable(posX, posY);
         return results;
     }
     
@@ -230,6 +229,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
             if (modText.mouseOver) {
                 playSound(SoundEvents.UI_BUTTON_CLICK);
                 clickedOn(modText.text);
+                modText.mouseOver = false;
             }
         }
     }

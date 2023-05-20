@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.alet.client.ALETClient;
 import com.alet.client.container.SubContainerAnimatorWorkbench;
 import com.alet.client.container.SubContainerBasic;
@@ -28,6 +31,7 @@ import com.alet.client.gui.SubGuiLittleHopper;
 import com.alet.client.gui.SubGuiMagnitudeComparator;
 import com.alet.client.gui.SubGuiManual;
 import com.alet.client.gui.SubGuiMicroProcessor;
+import com.alet.client.gui.SubGuiNoticeAtJoin;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiSignalEventsALET;
 import com.alet.client.gui.SubGuiTypeWriter;
@@ -160,6 +164,7 @@ public class ALET {
     public static final String NAME = "A Little Extra Tiles";
     public static final String VERSION = "1.0";
     
+    public static final Logger LOGGER = LogManager.getLogger(ALET.MODID);
     public static ALETConfig CONFIG;
     
     public static CreativeTabs littleCircuitTab = new CreativeTabs("alet") {
@@ -241,6 +246,18 @@ public class ALET {
             ALETClient.addItemToRenderTiles(jumpRod);
             createStructureFolder();
             getFonts();
+            GuiHandler.registerGuiHandler("notice", new CustomGuiHandler() {
+                @Override
+                public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
+                    return new SubGuiNoticeAtJoin();
+                }
+                
+                @Override
+                public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
+                    return new SubContainerBasic(player);
+                }
+                
+            });
         }
         
         registerEntity();
@@ -304,7 +321,7 @@ public class ALET {
             @Override
             @SideOnly(Side.CLIENT)
             public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
-                return new SubGuiLittleHopper((LittleTransferLittleHopper) structure);
+                return new SubGuiLittleHopper();
             }
             
             @Override
@@ -425,7 +442,7 @@ public class ALET {
                 .registerStructureType("music_composer", "sound", LittleMusicComposerALET.class, LittleStructureAttribute.TICKING, LittleMusicComposerALET.LittleMusicComposerParserALET.class)
                 .addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
         LittleStructureRegistry
-                .registerStructureType("lead_connection", "simple", LittleLeadConnectionALET.class, LittleStructureAttribute.NONE, LittleLeadConnectionALET.LittleLeadConnectionParserALET.class);
+                .registerStructureType("lead_connection", "simple", LittleLeadConnectionALET.class, LittleStructureAttribute.TICK_RENDERING, LittleLeadConnectionALET.LittleLeadConnectionParserALET.class);
         LittleStructureRegistry
                 .registerStructureType("remote_activator", "advance", LittleRemoteActivatorALET.class, LittleStructureAttribute.NONE, LittleRemoteActivatorALET.LittleRemoteActivatorParserALET.class);
         
@@ -446,23 +463,21 @@ public class ALET {
     
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry()
-                .registerAll(manual, littleRope, jumpRod, tapeMeasure, new ItemBlock(transparent).setRegistryName(transparent.getRegistryName()), new ItemBlock(smoothGroutBrick)
-                        .setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick)
-                                .setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank)
-                                        .setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank)
-                                                .setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank)
-                                                        .setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank)
-                                                                .setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank)
-                                                                        .setRegistryName(smoothJunglePlank.getRegistryName()), new ItemBlock(smoothBirchPlank)
-                                                                                .setRegistryName(smoothBirchPlank.getRegistryName()));
+        event.getRegistry().registerAll(manual, littleScissors, littleRope, jumpRod, tapeMeasure, new ItemBlock(transparent)
+                .setRegistryName(transparent.getRegistryName()), new ItemBlock(smoothGroutBrick).setRegistryName(smoothGroutBrick.getRegistryName()), new ItemBlock(smoothBrick)
+                        .setRegistryName(smoothBrick.getRegistryName()), new ItemBlock(smoothOakPlank)
+                                .setRegistryName(smoothOakPlank.getRegistryName()), new ItemBlock(smoothDarkOakPlank)
+                                        .setRegistryName(smoothDarkOakPlank.getRegistryName()), new ItemBlock(smoothAcaciaPlank)
+                                                .setRegistryName(smoothAcaciaPlank.getRegistryName()), new ItemBlock(smoothSprucePlank)
+                                                        .setRegistryName(smoothSprucePlank.getRegistryName()), new ItemBlock(smoothJunglePlank).setRegistryName(smoothJunglePlank
+                                                                .getRegistryName()), new ItemBlock(smoothBirchPlank).setRegistryName(smoothBirchPlank.getRegistryName()));
         proxy.loadSide();
     }
     
     @SubscribeEvent
     public static void registerRenders(ModelRegistryEvent event) {
         registerRender(littleRope);
-        //registerRender(littleScissors);
+        registerRender(littleScissors);
         registerRender(manual);
         registerRender(tapeMeasure);
         registerRender(Item.getItemFromBlock(smoothGroutBrick));
@@ -523,7 +538,7 @@ public class ALET {
         
         LittleStructurePremade
                 .registerPremadeStructureType("little_hopper", ALET.MODID, LittleTransferLittleHopper.class, LittleStructureAttribute.TICKING | LittleStructureAttribute.NEIGHBOR_LISTENER)
-                .setNotSnapToGrid().addOutput("active", 1, SignalMode.EQUAL, true);
+                .setNotSnapToGrid().addOutput("inactive", 1, SignalMode.EQUAL, true);
         // LittleStructurePremade
         //        .registerPremadeStructureType(new LittleStructureTypeCircuit("signal_keypad", ALET.MODID, LittleCircuitKeypad.class, LittleStructureAttribute.TICKING, ALET.MODID));
         
@@ -677,7 +692,7 @@ public class ALET {
                 .setNotSnapToGrid();
         
         LittleStructurePremade.registerPremadeStructureType("photoimporter", ALET.MODID, LittlePhotoImporter.class);
-        LittleStructurePremade.registerPremadeStructureType("animator_workbench", ALET.MODID, LittleAnimatorBench.class);
+        //LittleStructurePremade.registerPremadeStructureType("animator_workbench", ALET.MODID, LittleAnimatorBench.class);
         
         LittleStructurePremade.registerPremadeStructureType("typewriter", ALET.MODID, LittleTypeWriter.class);
         LittleStructurePremade.registerPremadeStructureType("jump_rod", ALET.MODID, PickupItemPremade.class).setNotShowCreativeTab();

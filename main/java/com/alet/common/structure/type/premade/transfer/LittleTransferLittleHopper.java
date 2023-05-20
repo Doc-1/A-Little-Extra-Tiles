@@ -55,8 +55,6 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     private LittleStructure listeningOutputStructure;
     
     public boolean active = true;
-    public boolean added = false;
-    public boolean dropped = false;
     public boolean trigger = false;
     
     private boolean hasInputNeigborCache = false;
@@ -141,7 +139,7 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
         for (int i = 0; i < 5; i++) {
             
             ItemStack stack = inventory.getStackInSlot(i).copy();
-            if (roomFor(stack) > 0) {
+            if (roomForInStorage(stack)) {
                 inventory.decrStackSize(i, 1);
                 stack.setCount(1);
                 storage.inventory.addItem(stack);
@@ -157,7 +155,7 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
         for (int i = 0; i < storage.inventorySize; i++) {
             
             ItemStack stack = storage.inventory.getStackInSlot(i).copy();
-            if (roomFor(stack) > 0) {
+            if (roomForInHopper(stack)) {
                 storage.inventory.decrStackSize(i, 1);
                 stack.setCount(1);
                 this.inventory.addItem(stack);
@@ -172,7 +170,7 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
         if (!entityList.isEmpty()) {
             for (EntityItem entityItem : entityList) {
                 ItemStack stack = entityItem.getItem().copy();
-                if (roomFor(stack) > 0) {
+                if (roomForInHopper(stack)) {
                     stack = inventory.addItem(entityItem.getItem());
                     if (stack.isEmpty()) {
                         entityItem.setItem(stack);
@@ -188,18 +186,31 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
         }
     }
     
-    public byte roomFor(ItemStack item) {
-        byte count = 0;
+    public boolean roomForInHopper(ItemStack item) {
         for (int i = 0; i < 5; i++) {
             ItemStack stack = this.inventory.getStackInSlot(i);
             if (stack.getItem().equals(Items.AIR))
-                count++;
+                return true;
             else if ((stack.getCount() < 64)) {
                 if (item.getItem().equals(stack.getItem()) && item.getMetadata() == stack.getMetadata())
-                    count++;
+                    return true;
             }
         }
-        return count;
+        return false;
+    }
+    
+    public boolean roomForInStorage(ItemStack item) {
+        LittleStorage storage = (LittleStorage) this.listeningOutputStructure;
+        for (int i = 0; i < storage.numberOfSlots; i++) {
+            ItemStack stack = storage.inventory.getStackInSlot(i);
+            if (stack.getItem().equals(Items.AIR))
+                return true;
+            else if ((stack.getCount() < 64)) {
+                if (item.getItem().equals(stack.getItem()) && item.getMetadata() == stack.getMetadata())
+                    return true;
+            }
+        }
+        return false;
     }
     
     public void dropItemFromStorage() {
@@ -257,8 +268,6 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     public void performInternalOutputChange(InternalSignalOutput output) {
         if (output.component.is("active")) {
             this.active = !output.getState()[0];
-            counter = 0;
-            
         }
     }
     
@@ -266,8 +275,7 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
     public void tick() {
         if (!this.isClient()) {
             if (active) {
-                if (!dropped || !added)
-                    counter++;
+                counter++;
                 if (counter >= 11) {
                     counter = 0;
                     trigger = true;
@@ -281,19 +289,13 @@ public class LittleTransferLittleHopper extends LittleStructurePremade {
                         this.listeningOutputStructure = this.findConnection(this.output);
                         hasOutputNeigborCache = true;
                     }
-                    if (!added) {
-                        if (this.listeningOutputStructure != null) {
-                            hopperToStorage();
-                        } else
-                            dropItemFromStorage();
-                        added = false;
-                    }
-                    if (!dropped) {
-                        this.itemToHopper(collectItems());
-                        if (this.listeningInputStructure != null) {
-                            storageToHopper();
-                        }
-                        dropped = false;
+                    if (this.listeningOutputStructure != null) {
+                        hopperToStorage();
+                    } else
+                        dropItemFromStorage();
+                    this.itemToHopper(collectItems());
+                    if (this.listeningInputStructure != null) {
+                        storageToHopper();
                     }
                 }
                 

@@ -7,9 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.vecmath.Vector3d;
 
-import com.alet.common.packet.PacketConnectLead;
 import com.alet.common.structure.type.LittleLeadConnectionALET;
-import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.world.IOrientatedWorld;
 import com.creativemd.littletiles.common.entity.INoPushEntity;
 import com.creativemd.littletiles.common.structure.LittleStructure;
@@ -27,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -35,7 +32,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
@@ -47,7 +43,6 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
     public static final DataParameter<Float> CONNECTIONZ = EntityDataManager.createKey(EntityRopeConnection.class, DataSerializers.FLOAT);
     private StructureChildConnection temp;
     
-    public Set<LeadConnectionData> connectionsMap = new HashSet<LeadConnectionData>();
     public float prevRenderYawOffset;
     public float renderYawOffset;
     
@@ -176,8 +171,8 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
             uuids.add(new UUID(M, L));
         }
         LeadConnectionData data = new LeadConnectionData(color, thickness, tautness, lightLevel);
-        data.uuidsConnected = uuids;
-        this.connectionsMap.add(data);
+        //data.uuidsConnected = uuids;
+        //this.connectionsMap.add(data);
     }
     
     @Override
@@ -201,7 +196,7 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
         nbt.setFloat("chairZ", dataManager.get(CONNECTIONZ));
         
         NBTTagList list = new NBTTagList();
-        
+        /*
         if (!this.connectionsMap.isEmpty()) {
             int i = 0;
             for (LeadConnectionData data : this.connectionsMap) {
@@ -220,7 +215,7 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
                 nbt.setTag("connections", list);
                 i++;
             }
-        }
+        }*/
         //System.out.println(nbt);
     }
     
@@ -228,6 +223,7 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
     /entitydata @e[type=!player,r=3] {}
      */
     public void updateLeashHolders(@Nullable EntityPlayerMP receiverPlayer, boolean sendAttachNotification) {
+        /*
         if (!this.world.isRemote && sendAttachNotification && this.world instanceof WorldServer) {
             Object[] arrayData = this.connectionsMap.toArray();
             if (receiverPlayer != null) {
@@ -242,7 +238,7 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
         }
         if (this.isRiding()) {
             this.dismountRidingEntity();
-        }
+        }*/
     }
     
     /*
@@ -296,6 +292,7 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
     
     @Override
     public void writeSpawnData(ByteBuf buf) {
+        /*
         buf.writeByte(this.connectionsMap.size());
         for (LeadConnectionData data : this.connectionsMap) {
             buf.writeByte(data.uuidsConnected.size());
@@ -307,11 +304,12 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
                 buf.writeLong(uuid.getMostSignificantBits());
                 buf.writeLong(uuid.getLeastSignificantBits());
             }
-        }
+        }*/
     }
     
     @Override
     public void readSpawnData(ByteBuf buf) {
+        /*
         byte dataSize = buf.readByte();
         LeadConnectionData data = null;
         for (int i = 0; i < dataSize; i++) {
@@ -329,7 +327,7 @@ public class EntityRopeConnection extends Entity implements IWorldPositionProvid
             this.connectionsMap.add(data);
             
         }
-        
+        */
     }
     
 }

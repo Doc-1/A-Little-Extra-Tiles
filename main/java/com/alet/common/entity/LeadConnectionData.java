@@ -1,8 +1,6 @@
 package com.alet.common.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import net.minecraft.util.math.Vec3d;
 
 public class LeadConnectionData {
     
@@ -10,8 +8,10 @@ public class LeadConnectionData {
     public int color;
     public double thickness;
     public double tautness;
-    public Set<UUID> uuidsConnected = new HashSet<UUID>();
-    public Set<Integer> idsConnected = new HashSet<Integer>();
+    public Vec3d position1;
+    public Vec3d axisCenter1;
+    public Vec3d position2;
+    public Vec3d axisCenter2;
     public float lightLevel;
     
     public LeadConnectionData(int color, double thickness, double tautness, float lightLevel) {
