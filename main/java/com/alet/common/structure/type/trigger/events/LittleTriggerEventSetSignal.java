@@ -35,7 +35,7 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     @Override
     public boolean runEvent() {
         try {
-            SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser("p.b0"), true, false);
+            SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser(outputName), true, false);
             ISignalComponent componet = (ISignalComponent) target.getTarget(this.structure);
             
             try {
@@ -83,7 +83,7 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
             if (!o.totalName.equals("allow") && !o.totalName.equals("completed")) {
                 if (o.totalName.equals(outputName))
                     index = i;
-                list.add(o.totalName);
+                list.add(o.name);
                 i++;
             }
         }
