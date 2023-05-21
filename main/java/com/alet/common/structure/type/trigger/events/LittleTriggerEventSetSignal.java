@@ -11,12 +11,13 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.client.gui.signal.SubGuiDialogSignal.GuiSignalComponent;
+import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
+import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.signal.component.ISignalComponent;
 import com.creativemd.littletiles.common.structure.signal.component.SignalComponentType;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalPatternParser;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalTarget;
-import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,17 +35,26 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     @Override
     public boolean runEvent() {
         try {
-            SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser(outputName), true, false);
-            LittleSignalOutput componet = (LittleSignalOutput) target.getTarget(this.structure);
-            if (BooleanUtils.any(componet.getState())) {
-                componet.updateState(new boolean[] { false });
-            } else {
-                componet.updateState(new boolean[] { true });
+            SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser("p.b0"), true, false);
+            ISignalComponent componet = (ISignalComponent) target.getTarget(this.structure);
+            
+            try {
+                if (BooleanUtils.any(componet.getState())) {
+                    componet.updateState(new boolean[] { false });
+                } else {
+                    componet.updateState(new boolean[] { true });
+                }
+            } catch (CorruptedConnectionException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NotYetConnectedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return false;
+        return true;
     }
     
     @Override
@@ -64,13 +74,13 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     @Override
     @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(true, true, true);
+        List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(false, true, true);
         //this.outputName = GuiSignalComponent.get(0).totalName;
         List<String> list = new ArrayList<String>();
         int index = 0;
         int i = 0;
         for (GuiSignalComponent o : GuiSignalComponent) {
-            if (!o.totalName.equals("allow")) {
+            if (!o.totalName.equals("allow") && !o.totalName.equals("completed")) {
                 if (o.totalName.equals(outputName))
                     index = i;
                 list.add(o.totalName);
@@ -78,7 +88,7 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
             }
         }
         GuiPanel panel = this.getPanel(parent);
-        GuiComboBox box = new GuiComboBox("outList", 0, 0, 50, list);
+        GuiComboBox box = new GuiComboBox("outList", 0, 0, 100, list);
         if (!list.isEmpty())
             box.select(index);
         panel.addControl(box);

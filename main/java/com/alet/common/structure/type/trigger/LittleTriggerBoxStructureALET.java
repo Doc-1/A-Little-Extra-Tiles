@@ -174,30 +174,31 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     entities.addAll(this.getWorld().getEntitiesWithinAABB(Entity.class, this.collisionArea));
                 }
             if (this.run) {
-                boolean hasCondition = LittleTriggerObject.hasCondition(triggerObjs); //Will reset the run and tick values
+                boolean hasCondition = LittleTriggerObject.hasCondition(this.triggerObjs); //Will reset the run and tick values
                 boolean shouldContinue = true; //Will stop the for loop and reset the run and tick values
                 boolean flag2 = false; //Will reset the run and tick values
                 //for loops through all trigger conditions and events in order.
-                while (currentEvent < this.triggerObjs.size()) {
-                    LittleTriggerObject triggerObj = this.triggerObjs.get(currentEvent);
+                while (this.currentEvent < this.triggerObjs.size()) {
+                    LittleTriggerObject triggerObj = this.triggerObjs.get(this.currentEvent);
                     if (triggerObj instanceof LittleTriggerCondition) {
-                        if (this.triggerObjs.size() > currentEvent + 1) {
+                        if (this.triggerObjs.size() > this.currentEvent + 1) {
                             LittleTriggerCondition condition = (LittleTriggerCondition) triggerObj;
                             shouldContinue = condition.conditionRunEvent();
                             if (!shouldContinue && !condition.shouldLoop) {
                                 flag2 = true;
-                                entities.clear();
+                                this.entities.clear();
                             }
                         }
                     } else if (shouldContinue && triggerObj instanceof LittleTriggerEvent) {
                         LittleTriggerEvent triggerEvent = (LittleTriggerEvent) triggerObj;
                         boolean event = triggerEvent.runEvent();
-                        if (considerEventsConditions)
+                        if (this.considerEventsConditions)
                             shouldContinue = event;
                     }
                     if (!shouldContinue)
                         break;
-                    currentEvent++;
+                    this.currentEvent++;
+                    
                 }
                 //Will stop the loop if there is no entities inside the collision area.
                 if (!this.rightClickListener && runWhileCollided) {
@@ -209,7 +210,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 else
                     this.getInput(0).updateState(new boolean[] { false });
                 //If there is no conditions then there is no need to loop.
-                if (currentEvent >= triggerObjs.size() || flag2) {
+                if (this.currentEvent >= triggerObjs.size() || flag2) {
                     this.run = false;
                     this.tick = 0;
                     this.currentEvent = 0;
@@ -220,6 +221,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 }
             }
         }
+        
     }
     
     @Override
