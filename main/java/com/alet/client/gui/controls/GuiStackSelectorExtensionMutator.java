@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.creativemd.creativecore.common.gui.controls.container.SlotControlNoSync;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiStackSelector;
@@ -41,15 +40,10 @@ public class GuiStackSelectorExtensionMutator extends GuiStackSelectorExtension 
     @Override
     @CustomEventSubscribe
     public void onChanged(GuiControlChangedEvent event) {
-        GuiStackSelectorAllMutator comboBoxMutator = (GuiStackSelectorAllMutator) comboBox;
         if (event.source.is("searchBar")) {
             search = ((GuiTextfield) event.source).text;
             reloadControls();
             refreshControls();
-        } else if (event.source.is("color"))
-            comboBoxMutator.color = ColorUtils.RGBAToInt(((GuiColorPickerAlet) get("color")).color);
-        else if (event.source.is("noclip")) {
-            comboBoxMutator.noclip = ((GuiCheckBox) get("noclip")).value;
         }
     }
     

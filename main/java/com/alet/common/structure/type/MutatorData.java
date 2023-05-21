@@ -16,4 +16,8 @@ public class MutatorData {
         this.color = color;
         this.colision = colision;
     }
+    
+    public MutatorData copy() {
+        return new MutatorData(this.state, this.color, this.colision);
+    }
 }

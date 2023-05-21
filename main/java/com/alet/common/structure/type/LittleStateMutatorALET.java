@@ -1,14 +1,23 @@
 package com.alet.common.structure.type;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
 import com.alet.client.gui.controls.GuiStackSelectorAllMutator;
 import com.alet.client.gui.controls.GuiStackSelectorExtensionMutator;
+import com.alet.client.gui.controls.menu.GuiMenu;
+import com.alet.client.gui.controls.menu.GuiMenuPart;
+import com.alet.client.gui.controls.menu.GuiPopupMenu;
+import com.alet.client.gui.controls.menu.GuiTreePart;
+import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
+import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
@@ -142,17 +151,6 @@ public class LittleStateMutatorALET extends LittleStructure {
         }
     }
     
-    public void changeVisibleState() throws CorruptedConnectionException, NotYetConnectedException {
-        
-        for (IStructureTileList tileList : this.blocksList()) {
-            for (LittleTile tile : tileList)
-                tile.invisible = !tile.invisible;
-            tileList.getTe().updateBlock();
-            tileList.getTe().updateNeighbour();
-        }
-        this.updateStructure();
-    }
-    
     public void changeMaterialState() throws CorruptedConnectionException, NotYetConnectedException {
         for (IStructureTileList tileList : this.blocksList()) {
             tileList.getTe().updateTiles(x -> {
@@ -187,8 +185,6 @@ public class LittleStateMutatorALET extends LittleStructure {
                 }
             });
         }
-        //if (!this.getWorld().isRemote)
-        //    PacketHandler.sendPacketToTrackingPlayers(new PacketUpdateMutateFromServer(this.getStructureLocation()), this.getWorld(), this.getPos(), null);
     }
     
     public void changeCollisionState() throws CorruptedConnectionException, NotYetConnectedException {
@@ -226,6 +222,7 @@ public class LittleStateMutatorALET extends LittleStructure {
     
     public static class LittleStateMutatorParserALET extends LittleStructureGuiParser {
         public LinkedHashMap<String, MutatorData> mutateMaterial = new LinkedHashMap<String, MutatorData>();
+        protected CoreControl rightClickedControl;
         
         public LittleStateMutatorParserALET(GuiParent parent, AnimationGuiHandler handler) {
             super(parent, handler);
@@ -246,71 +243,146 @@ public class LittleStateMutatorALET extends LittleStructure {
             if (player.isCreative()) {
                 
                 GuiScrollBox box = new GuiScrollBox("box", 0, 0, 294, 100);
+                List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
+                GuiMenuPart moveUp = new GuiMenuPart("", "Move Up", EnumPartType.Leaf);
+                GuiMenuPart moveDown = new GuiMenuPart("", "Move Down", EnumPartType.Leaf);
+                GuiMenuPart swap = new GuiMenuPart("", "Swap States", EnumPartType.Leaf);
+                GuiMenuPart delete = new GuiMenuPart("", "Delete", EnumPartType.Leaf);
+                listOfMenus.add(moveUp);
+                listOfMenus.add(moveDown);
+                listOfMenus.add(swap);
+                listOfMenus.add(delete);
+                GuiMenu menu = new GuiMenu("", 0, 0, 68, listOfMenus);
+                menu.height = 100;
+                
+                GuiPopupMenu popup = new GuiPopupMenu("popup", menu, 0, 0, 0, 0);
+                box.addControl(popup);
                 GuiCheckBox check = new GuiCheckBox("check", "Allow Right Click", 120, 110, mutator != null ? mutator.allowRightClick : true);
                 GuiButton add = new GuiButton("add", 224, 110, 20) {
                     @Override
                     public void onClicked(int x, int y, int button) {
-                        int size = mutateMaterial.size() / 2;
-                        mutateMaterial.put("a" + size, new MutatorData(Blocks.STONE.getDefaultState(), 0xFFFFFFFF, true));
-                        mutateMaterial.put("b" + size, new MutatorData(Blocks.STONE.getDefaultState(), 0xFFFFFFFF, true));
-                        add();
+                        int size = (mutateMaterial.size() / 2);
+                        addMutations(size, new MutatorData(Blocks.STONE.getDefaultState(), 0xFFFFFFFF, true), new MutatorData(Blocks.STONE.getDefaultState(), 0xFFFFFFFF, true));
                     }
                 };
-                parent.controls.add(add);
-                parent.controls.add(check);
                 parent.controls.add(box);
                 if (mutator != null && !mutator.mutateMaterial.isEmpty()) {
                     this.mutateMaterial = mutator.mutateMaterial;
-                    add();
+                    showExistingMutations();
                 }
+                parent.controls.add(add);
+                parent.controls.add(check);
             } else
                 parent.controls.add(new GuiTextBox("message", "These settings are only avalible in creative mode", 0, 0, 100));
         }
         
-        public void add() {
+        protected void showExistingMutations() {
+            int i = 0;
+            for (Entry<String, MutatorData> entry : this.mutateMaterial.entrySet()) {
+                if (entry.getKey().contains("a")) {
+                    addMutations(i, entry.getValue(), null);
+                } else if (entry.getKey().contains("b")) {
+                    addMutations(i, null, entry.getValue());
+                    i++;
+                }
+            }
+        }
+        
+        protected void swapMutations(int position) {
+            List<MutatorData> tempList = new ArrayList<MutatorData>();
+            for (Entry<String, MutatorData> entry : this.mutateMaterial.entrySet())
+                tempList.add(entry.getValue());
+            Collections.swap(tempList, position * 2, (position * 2) + 1);
+            LinkedHashMap<String, MutatorData> mutateMaterialTemp = new LinkedHashMap<String, MutatorData>();
+            int i = 0;
+            int step = 0;
+            for (MutatorData data : tempList) {
+                if (step == 0) {
+                    mutateMaterialTemp.put("a" + i, data);
+                    step++;
+                } else if (step == 1) {
+                    mutateMaterialTemp.put("b" + i, data);
+                    step = 0;
+                    i++;
+                }
+            }
+            this.mutateMaterial = mutateMaterialTemp;
+            refreshMutations();
+        }
+        
+        protected void moveMutations(int distance, int position) {
+            List<MutatorData> tempList = new ArrayList<MutatorData>();
+            for (Entry<String, MutatorData> entry : this.mutateMaterial.entrySet())
+                tempList.add(entry.getValue());
+            Collections.swap(tempList, (position * 2), (position * 2) + (distance * 2));
+            Collections.swap(tempList, (position * 2) + 1, (position * 2) + (distance * 2) + 1);
+            LinkedHashMap<String, MutatorData> mutateMaterialTemp = new LinkedHashMap<String, MutatorData>();
+            int i = 0;
+            int step = 0;
+            for (MutatorData data : tempList) {
+                if (step == 0) {
+                    mutateMaterialTemp.put("a" + i, data);
+                    step++;
+                } else if (step == 1) {
+                    mutateMaterialTemp.put("b" + i, data);
+                    step = 0;
+                    i++;
+                }
+            }
+            this.mutateMaterial = mutateMaterialTemp;
+            refreshMutations();
+        }
+        
+        protected void refreshMutations() {
+            int i = 0;
             GuiScrollBox box = (GuiScrollBox) this.parent.get("box");
-            box.removeControls(" ");
-            
-            int size = (mutateMaterial.size() / 2);
-            int k = 0;
-            LinkedHashMap<String, MutatorData> newMutateMaterial = new LinkedHashMap<String, MutatorData>();
-            for (Entry<String, MutatorData> entry : mutateMaterial.entrySet()) {
-                newMutateMaterial.put(entry.getKey().substring(0, 1) + k, entry.getValue());
-                if (entry.getKey().contains("b"))
-                    k++;
+            box.removeControls("popup");
+            LinkedHashMap<String, MutatorData> mutateMaterialTemp = new LinkedHashMap<String, MutatorData>();
+            for (Entry<String, MutatorData> entry : this.mutateMaterial.entrySet()) {
+                if (entry.getKey().contains("a")) {
+                    mutateMaterialTemp.put("a" + i, entry.getValue());
+                } else if (entry.getKey().contains("b")) {
+                    mutateMaterialTemp.put("b" + i, entry.getValue());
+                    i++;
+                }
             }
-            mutateMaterial = newMutateMaterial;
-            for (int i = 0; i < size; i++) {
-                GuiMutatorPanel panel = new GuiMutatorPanel(i + "", 0, 28 * i, 242, 21);
-                GuiStackSelectorAllMutator a = new GuiStackSelectorAllMutator("a" + i, 0, 0, 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
-                GuiStackSelectorAllMutator b = new GuiStackSelectorAllMutator("b" + i, 134, 0, 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+            this.mutateMaterial = mutateMaterialTemp;
+            showExistingMutations();
+        }
+        
+        protected void addMutations(int position, @Nullable MutatorData value1, @Nullable MutatorData value2) {
+            GuiScrollBox box = (GuiScrollBox) this.parent.get("box");
+            GuiMutatorPanel panel = new GuiMutatorPanel(position + "", 0, 28 * position, 242, 21);
+            
+            if (value1 != null) {
+                mutateMaterial.put("a" + position, value1);
+                GuiStackSelectorAllMutator a = new GuiStackSelectorAllMutator("a" + position, 0, 0, 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
                 panel.controls.add(a);
-                panel.controls.add(b);
-                MutatorData mutatorA = mutateMaterial.get("a" + i);
-                MutatorData mutatorB = mutateMaterial.get("b" + i);
-                IBlockState materialA = mutatorA.state;
-                IBlockState materialB = mutatorB.state;
+                IBlockState materialA = value1.state;
                 a.setSelectedForce(materialA.getBlock().getPickBlock(materialA, null, null, null, null));
-                a.color = mutatorA.color;
-                
+                a.color = value1.color;
+                this.mutateMaterial.put("a" + position, value1);
+            }
+            if (value2 != null) {
+                mutateMaterial.put("b" + position, value2);
+                GuiStackSelectorAllMutator b = new GuiStackSelectorAllMutator("b" + position, 134, 0, 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+                panel.controls.add(b);
+                IBlockState materialB = value2.state;
                 b.setSelectedForce(materialB.getBlock().getPickBlock(materialB, null, null, null, null));
-                b.color = mutatorB.color;
-                panel.controls.add(new GuiLabel("To", 111, 2));
-                
-                panel.refreshControls();
-                box.controls.add(panel);
-                box.refreshControls();
+                b.color = value2.color;
+                this.mutateMaterial.put("b" + position, value2);
             }
             
+            panel.controls.add(new GuiLabel("To", 111, 2));
+            panel.refreshControls();
+            box.controls.add(panel);
+            box.refreshControls();
         }
         
         @CustomEventSubscribe
         public void controlClicked(GuiControlClickEvent event) {
             if (event.button == 1 && event.source instanceof GuiMutatorPanel) {
-                this.mutateMaterial.remove("a" + event.source.name);
-                this.mutateMaterial.remove("b" + event.source.name);
-                add();
-                
+                rightClickedControl = event.source;
             }
         }
         
@@ -323,7 +395,22 @@ public class LittleStateMutatorALET extends LittleStructure {
             if (event.source instanceof GuiColorPickerAlet) {
                 GuiColorPickerAlet color = (GuiColorPickerAlet) event.source;
                 GuiStackSelectorAllMutator mutator = (GuiStackSelectorAllMutator) ((GuiStackSelectorExtensionMutator) event.source.parent).comboBox;
+                mutator.color = ColorUtilsAlet.RGBAToInt(color.color);
                 this.mutateMaterial.put(mutator.name, new MutatorData(BlockUtils.getState(mutator.getSelected()), ColorUtilsAlet.RGBAToInt(color.color), true));
+            }
+            if (event.source instanceof GuiMenuPart) {
+                String caption = ((GuiMenuPart) event.source).caption;
+                if (caption.equals("Move Up")) {
+                    this.moveMutations(-1, Integer.parseInt(rightClickedControl.name));
+                } else if (caption.equals("Move Down")) {
+                    this.moveMutations(1, Integer.parseInt(rightClickedControl.name));
+                } else if (caption.equals("Delete")) {
+                    this.mutateMaterial.remove("a" + rightClickedControl.name);
+                    this.mutateMaterial.remove("b" + rightClickedControl.name);
+                    refreshMutations();
+                } else if (caption.equals("Swap States")) {
+                    this.swapMutations(Integer.parseInt(rightClickedControl.name));
+                }
             }
         }
         

@@ -120,4 +120,19 @@ public class GuiPopupMenu extends GuiParent {
             pressed = false;
         }
     }
+    
+    @Override
+    public boolean canOverlap() {
+        return true;
+    }
+    
+    @Override
+    public boolean hasBackground() {
+        return false;
+    }
+    
+    @Override
+    public boolean hasBorder() {
+        return false;
+    }
 }
