@@ -107,6 +107,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiAnalogeSlider) {
             GuiAnalogeSlider slider = (GuiAnalogeSlider) source;

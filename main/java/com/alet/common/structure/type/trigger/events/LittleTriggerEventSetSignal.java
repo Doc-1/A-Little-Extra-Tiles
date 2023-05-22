@@ -9,15 +9,15 @@ import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
-import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.client.gui.signal.SubGuiDialogSignal.GuiSignalComponent;
-import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
-import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.signal.component.ISignalComponent;
 import com.creativemd.littletiles.common.structure.signal.component.SignalComponentType;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalPatternParser;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalTarget;
+import com.creativemd.littletiles.common.structure.signal.output.InternalSignalOutput;
+import com.creativemd.littletiles.common.structure.signal.output.SignalExternalOutputHandler;
+import com.creativemd.littletiles.common.structure.signal.output.SignalOutputHandler;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,20 +37,14 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
         try {
             SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser(outputName), true, false);
             ISignalComponent componet = (ISignalComponent) target.getTarget(this.structure);
-            
-            try {
-                if (BooleanUtils.any(componet.getState())) {
-                    componet.updateState(new boolean[] { false });
-                } else {
-                    componet.updateState(new boolean[] { true });
-                }
-            } catch (CorruptedConnectionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (NotYetConnectedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            SignalOutputHandler handler = null;
+            if (componet instanceof InternalSignalOutput) {
+                handler = ((InternalSignalOutput) componet).handler;
+            } else if (componet instanceof SignalExternalOutputHandler) {
+                handler = ((SignalExternalOutputHandler) componet).handler;
             }
+            handler.schedule(new boolean[] { false });
+            handler.schedule(new boolean[] { true });
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -95,6 +89,7 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("outList")) {
             GuiComboBox combo = (GuiComboBox) source;

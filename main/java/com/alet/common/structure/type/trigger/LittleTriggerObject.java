@@ -15,6 +15,8 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class LittleTriggerObject {
     
@@ -62,16 +64,20 @@ public abstract class LittleTriggerObject {
         return nbt;
     }
     
+    @SideOnly(Side.CLIENT)
     public GuiPanel getPanel(GuiParent parent) {
         return (GuiPanel) parent.get("content");
     }
     
     public abstract NBTTagCompound serializeNBT(NBTTagCompound nbt);
     
+    @SideOnly(Side.CLIENT)
     public abstract void createGuiControls(GuiParent parent, LittlePreviews previews);
     
+    @SideOnly(Side.CLIENT)
     public abstract void guiChangedEvent(CoreControl source);
     
+    @SideOnly(Side.CLIENT)
     public static void wipeControls(GuiParent panel) {
         panel.controls = new ArrayList<GuiControl>();
     }

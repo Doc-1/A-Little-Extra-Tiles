@@ -257,8 +257,8 @@ public class LittleStateMutatorALET extends LittleStructure {
                 
                 GuiPopupMenu popup = new GuiPopupMenu("popup", menu, 0, 0, 0, 0);
                 box.addControl(popup);
-                GuiCheckBox check = new GuiCheckBox("check", "Allow Right Click", 120, 110, mutator != null ? mutator.allowRightClick : true);
-                GuiButton add = new GuiButton("add", 224, 110, 20) {
+                GuiCheckBox check = new GuiCheckBox("check", "Allow Right Click", 0, 107, mutator != null ? mutator.allowRightClick : true);
+                GuiButton add = new GuiButton("Add Mutation", 234, 111, 60) {
                     @Override
                     public void onClicked(int x, int y, int button) {
                         int size = (mutateMaterial.size() / 2);
@@ -352,11 +352,11 @@ public class LittleStateMutatorALET extends LittleStructure {
         
         protected void addMutations(int position, @Nullable MutatorData value1, @Nullable MutatorData value2) {
             GuiScrollBox box = (GuiScrollBox) this.parent.get("box");
-            GuiMutatorPanel panel = new GuiMutatorPanel(position + "", 0, 28 * position, 242, 21);
+            GuiMutatorPanel panel = new GuiMutatorPanel(position + "", 0, 28 * position, 286, 21);
             
             if (value1 != null) {
                 mutateMaterial.put("a" + position, value1);
-                GuiStackSelectorAllMutator a = new GuiStackSelectorAllMutator("a" + position, 0, 0, 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+                GuiStackSelectorAllMutator a = new GuiStackSelectorAllMutator("a" + position, 0, 0, 105, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
                 panel.controls.add(a);
                 IBlockState materialA = value1.state;
                 a.setSelectedForce(materialA.getBlock().getPickBlock(materialA, null, null, null, null));
@@ -365,7 +365,7 @@ public class LittleStateMutatorALET extends LittleStructure {
             }
             if (value2 != null) {
                 mutateMaterial.put("b" + position, value2);
-                GuiStackSelectorAllMutator b = new GuiStackSelectorAllMutator("b" + position, 134, 0, 80, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
+                GuiStackSelectorAllMutator b = new GuiStackSelectorAllMutator("b" + position, 153, 0, 105, null, new GuiStackSelectorAll.CreativeCollector(new LittleBlockSelector()), true);
                 panel.controls.add(b);
                 IBlockState materialB = value2.state;
                 b.setSelectedForce(materialB.getBlock().getPickBlock(materialB, null, null, null, null));
@@ -373,7 +373,7 @@ public class LittleStateMutatorALET extends LittleStructure {
                 this.mutateMaterial.put("b" + position, value2);
             }
             
-            panel.controls.add(new GuiLabel("To", 111, 2));
+            panel.controls.add(new GuiLabel("To", 134, 2));
             panel.refreshControls();
             box.controls.add(panel);
             box.refreshControls();

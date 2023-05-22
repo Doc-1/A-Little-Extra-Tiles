@@ -47,6 +47,7 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiWrappedTextField) {
             GuiWrappedTextField text = (GuiWrappedTextField) source;

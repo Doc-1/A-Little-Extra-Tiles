@@ -108,6 +108,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiComboBox)
             selected = ((GuiComboBox) source).getCaption();

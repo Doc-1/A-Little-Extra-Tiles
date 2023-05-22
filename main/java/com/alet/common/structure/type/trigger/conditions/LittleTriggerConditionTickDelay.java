@@ -8,6 +8,8 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     
@@ -20,7 +22,6 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     
     @Override
     public boolean conditionPassed() {
-        
         if (effectPerTick - 1 <= structure.tick) {
             structure.tick = 0;
             return true;
@@ -42,6 +43,7 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiTextfield) {
             this.effectPerTick = Integer.parseInt(((GuiTextfield) source).text);
@@ -50,6 +52,7 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         panel.addControl(new GuiTextfield("preTick", effectPerTick + "", 85, 0, 40, 14).setNumbersOnly());

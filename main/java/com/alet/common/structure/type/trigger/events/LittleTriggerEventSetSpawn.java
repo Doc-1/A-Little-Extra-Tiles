@@ -55,6 +55,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiTextfield) {
             GuiTextfield textField = (GuiTextfield) source;

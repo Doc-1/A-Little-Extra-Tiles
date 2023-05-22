@@ -20,6 +20,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerConditionHasItem extends LittleTriggerCondition {
     
@@ -83,6 +85,7 @@ public class LittleTriggerConditionHasItem extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         GuiPanel panel = getPanel(parent);
@@ -127,6 +130,7 @@ public class LittleTriggerConditionHasItem extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiFakeSlot) {
             GuiFakeSlot key = (GuiFakeSlot) source;

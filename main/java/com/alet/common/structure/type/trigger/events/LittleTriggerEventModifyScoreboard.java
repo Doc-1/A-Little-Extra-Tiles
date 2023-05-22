@@ -82,6 +82,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
         
     }
     
+    @SideOnly(Side.CLIENT)
     public void fillComboBox(GuiComboBox cBox) {
         GuiPanel panel = (GuiPanel) cBox.getGui().get("panel");
         
@@ -125,6 +126,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiComboBox) {
             GuiComboBox cBox = (GuiComboBox) source;
@@ -140,6 +142,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
         }
     }
     
+    @SideOnly(Side.CLIENT)
     public GuiLabel shortenName(String name, int y) {
         GuiLabel label = new GuiLabel(name, 0, y * 15);
         String fullName = new String(name);

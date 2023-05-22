@@ -99,6 +99,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiFakeSlot) {
             GuiFakeSlot key = (GuiFakeSlot) source;

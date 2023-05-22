@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +33,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.creativemd.creativecore.common.world.SubWorldServer;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
 import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
@@ -54,18 +57,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerBoxStructureALET extends LittleStructure {
     public HashSet<Entity> entities = new HashSet<>();
+    public List<UUID> entitiesToLoad;
     public int tick = 0;
     public int currentEvent = 0;
     public boolean breakBlock = false;
@@ -95,6 +101,12 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 i++;
             }
         }
+        NBTTagList entityList = nbt.getTagList("entities", Constants.NBT.TAG_STRING);
+        this.entitiesToLoad = new ArrayList<UUID>();
+        for (int j = 0; j < entityList.tagCount(); j++) {
+            entitiesToLoad.add(UUID.fromString(entityList.getStringTagAt(j)));
+        }
+        run = nbt.getBoolean("isRunning");
         tick = nbt.getInteger("currentTick");
         currentEvent = nbt.getInteger("currentEvent");
         if (nbt.hasKey("runWhileCollided"))
@@ -123,7 +135,15 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             list.appendTag(n);
             i++;
         }
+        NBTTagList entityList = new NBTTagList();
+        if (this.entities != null && !this.entities.isEmpty()) {
+            for (Entity entity : this.entities) {
+                entityList.appendTag(new NBTTagString(entity.getUniqueID().toString()));
+            }
+        }
+        nbt.setBoolean("isRunning", run);
         nbt.setTag("triggers", list);
+        nbt.setTag("entities", entityList);
         nbt.setInteger("currentTick", this.tick);
         nbt.setInteger("currentEvent", this.currentEvent);
         nbt.setBoolean("runWhileCollided", this.runWhileCollided);
@@ -166,14 +186,35 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         }
     }
     
+    /*
+     
+     */
+    
     @Override
     public void tick() {
+        
         if (!this.isClient()) {
+            World world = this.getWorld();
+            if (world instanceof SubWorldServer)
+                world = ((SubWorldServer) world).getRealWorld();
+            WorldServer server = (WorldServer) world;
+            if (this.entitiesToLoad != null) {
+                for (Iterator<UUID> iterator = entitiesToLoad.iterator(); iterator.hasNext();) {
+                    UUID uuid = (UUID) iterator.next();
+                    Entity en = server.getEntityFromUuid(uuid);
+                    if (en != null) {
+                        this.entities.add(en);
+                        iterator.remove();
+                    }
+                }
+                if (entitiesToLoad.isEmpty())
+                    entitiesToLoad = null;
+            }
             if (this.aabbCollisionListener)
                 if (this.collisionArea != null) {
                     entities.addAll(this.getWorld().getEntitiesWithinAABB(Entity.class, this.collisionArea));
                 }
-            if (this.run) {
+            if (!this.entities.isEmpty() && this.run) {
                 boolean hasCondition = LittleTriggerObject.hasCondition(this.triggerObjs); //Will reset the run and tick values
                 boolean shouldContinue = true; //Will stop the for loop and reset the run and tick values
                 boolean flag2 = false; //Will reset the run and tick values
@@ -221,7 +262,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 }
             }
         }
-        
     }
     
     @Override
