@@ -3,6 +3,7 @@ package com.alet.common.structure.type.trigger.conditions;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
@@ -55,7 +56,8 @@ public class LittleTriggerConditionTickDelay extends LittleTriggerCondition {
     @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
-        panel.addControl(new GuiTextfield("preTick", effectPerTick + "", 85, 0, 40, 14).setNumbersOnly());
+        panel.addControl(new GuiLabel("Tick Delay:", 0, 3));
+        panel.addControl(new GuiTextfield("preTick", effectPerTick + "", 60, 0, 40, 14).setNumbersOnly());
         
     }
     

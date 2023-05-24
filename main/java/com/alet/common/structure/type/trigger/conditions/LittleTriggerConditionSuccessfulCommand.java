@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger.events;
+package com.alet.common.structure.type.trigger.conditions;
 
 import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.alet.client.gui.controls.GuiWrappedTextField;
@@ -16,13 +16,27 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
+public class LittleTriggerConditionSuccessfulCommand extends LittleTriggerCondition {
     
     String command = "";
     boolean isSenderPlayer = false;
     
-    public LittleTriggerEventExecuteCommand(int id) {
+    public LittleTriggerConditionSuccessfulCommand(int id) {
         super(id);
+        // TODO Auto-generated constructor stub
+    }
+    
+    @Override
+    public boolean conditionPassed() {
+        for (Entity entity : this.getEntities()) {
+            ICommandSender sender = new StructureCommandSender(entity, structure);
+            if (this.isSenderPlayer)
+                sender = new EntityCommandSender(entity);
+            int i = entity.world.getMinecraftServer().getCommandManager().executeCommand(sender, this.command);
+            if (i == 1)
+                return true;
+        }
+        return false;
     }
     
     @Override
@@ -33,14 +47,13 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
     }
     
     @Override
-    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
+    public LittleTriggerCondition deserializeNBT(NBTTagCompound nbt) {
         this.command = nbt.getString("command");
         this.isSenderPlayer = nbt.getBoolean("isSenderPlayer");
         return this;
     }
     
     @Override
-    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         GuiPanel panel = (GuiPanel) parent.get("content");
         wipeControls(panel);
@@ -51,6 +64,7 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
         option.addCheckBox("structureIsSender", "Structure is Sender");
         option.setSelected(isSenderPlayer ? "entityIsSender" : "structureIsSender");
         panel.addControl(option);
+        
     }
     
     @Override
@@ -69,16 +83,4 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
             }
         }
     }
-    
-    @Override
-    public boolean runEvent() {
-        for (Entity entity : this.getEntities()) {
-            ICommandSender sender = new StructureCommandSender(entity, structure);
-            if (this.isSenderPlayer)
-                sender = new EntityCommandSender(entity);
-            entity.world.getMinecraftServer().getCommandManager().executeCommand(sender, this.command);
-        }
-        return true;
-    }
-    
 }
