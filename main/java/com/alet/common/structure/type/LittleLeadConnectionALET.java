@@ -67,12 +67,6 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
     @Override
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
         
-        /*
-        if (nbt.hasKey("connection"))
-            connectionUUID = UUID.fromString(nbt.getString("connection"));
-        else
-            connectionUUID = null;
-        */
     }
     
     @Override
@@ -80,65 +74,12 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         if (!connectionsMap.isEmpty()) {
             for (LeadConnectionData data : connectionsMap) {}
         }
-        /*
-        if (connectionUUID != null)
-            nbt.setString("connection", connectionUUID.toString());
-        else
-            nbt.removeTag("connection");
-        */
     }
     
     @Override
     protected void afterPlaced() {
         super.afterPlaced();
-        /*
-        if (connectionUUID != null) {
-            World world = getWorld();
-            if (world instanceof IOrientatedWorld) {
-                if (world instanceof CreativeWorld && ((CreativeWorld) world).parent == null)
-                    return;
-                world = ((IOrientatedWorld) world).getRealWorld();
-            }
-            for (Entity entity : world.loadedEntityList)
-                if (entity.getUniqueID().equals(connectionUUID) && entity instanceof EntityRopeConnection) {
-                    EntityRopeConnection connection = (EntityRopeConnection) entity;
-                    StructureChildConnection temp = this.generateConnection(connection);
-                    connection.getDataManager().set(EntityRopeConnection.CONNECTION, temp.writeToNBT(new NBTTagCompound()));
-                    break;
-                }
-        }*/
     }
-    
-    /*
-    public List<Entity> sortEntityList(List<Entity> entityList) {
-        List<Entity> sortedEntityList = new ArrayList<Entity>();
-        List<Entity> playerList = new ArrayList<Entity>();
-        List<Entity> leadList = new ArrayList<Entity>();
-        List<Entity> otherList = new ArrayList<Entity>();
-        for (Entity entity : entityList) {
-            if (entity instanceof EntityPlayer)
-                playerList.add(entity);
-            else if (entity instanceof EntityRopeConnection)
-                leadList.add(entity);
-            else if (entity instanceof IMob)
-                otherList.add(entity);
-        }
-        
-        if (leadList != null)
-            for (Entity en : leadList) {
-                sortedEntityList.add(en);
-            }
-        if (otherList != null)
-            for (Entity en : otherList) {
-                sortedEntityList.add(en);
-            }
-        if (playerList != null)
-            for (Entity en : playerList) {
-                sortedEntityList.add(en);
-            }
-        return sortedEntityList;
-    }
-    */
     
     @Override
     public void renderTick(BlockPos pos, double x, double y, double z, float partialTickTime) {
@@ -173,7 +114,6 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
             Vec3 drawPoint = new Vec3(0, 0, 0);
             Color c = ColorUtils.IntToRGBA(connection.color);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, connection.lightLevel, connection.lightLevel);
-            //System.out.println(lightLevel);
             float red = c.getRed() / 255F;
             float green = c.getGreen() / 255F;
             float blue = c.getBlue() / 255F;
@@ -270,143 +210,9 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         
     }
     
-    /*
-                WorldServer serverWorld = (WorldServer) world;
-                
-                EntityRopeConnection connection;
-                
-                if (serverWorld.getEntityFromUuid(connectionUUID) == null) {
-                    connection = new EntityRopeConnection(this, world, i2, j2, k2);
-                    world.spawnEntity(connection);
-                    this.connectionUUID = connection.getPersistentID();
-                }
-                connection = (EntityRopeConnection) serverWorld.getEntityFromUuid(connectionUUID);
-                
-                NBTTagCompound nbt = new NBTTagCompound();
-                boolean sameConnectionID = false;
-                int selectedID = -1;
-                int prevSelectedID = -1;
-                
-                if (heldItem.hasTagCompound()) {
-                    nbt = heldItem.getTagCompound();
-                    if (nbt.hasKey("selectedID")) {
-                        sameConnectionID = nbt.getInteger("selectedID") == connection.getEntityId();
-                        nbt.setInteger("prevSelectedID", nbt.getInteger("selectedID"));
-                    }
-                } else {
-                    nbt.setBoolean("playerIsHolding", false);
-                    heldItem.setTagCompound(nbt);
-                }
-                nbt.setInteger("selectedID", connection.getEntityId());
-                selectedID = connection.getEntityId();
-                if (nbt.hasKey("prevSelectedID"))
-                    prevSelectedID = nbt.getInteger("prevSelectedID");
-                
-                EntityRopeConnection en0 = (EntityRopeConnection) world.getEntityByID(selectedID);
-                EntityRopeConnection en1 = (EntityRopeConnection) world.getEntityByID(prevSelectedID);
-                
-                if (en1 == null)
-                    en1 = (EntityRopeConnection) world.getEntityByID(selectedID);
-                boolean playerIsHolding = nbt.getBoolean("playerIsHolding");
-                
-                List<Entity> entityList = sortEntityList(world
-                        .getEntitiesWithinAABB(Entity.class, new AxisAlignedBB((double) i2 - 7.0D, (double) j2 - 7.0D, (double) k2 - 7.0D, (double) i2 + 7.0D, (double) j2 + 7.0D, (double) k2 + 7.0D)));
-                for (Entity entity : entityList) {
-                    int color = ColorUtils.BLACK;
-                    double thickness = 0.3D;
-                    double tautness = 0.5D;
-                    float lightLevel = 240F;
-                    
-                    if (nbt.hasKey("color")) {
-                        color = nbt.getInteger("color");
-                        thickness = nbt.getDouble("thickness");
-                        tautness = nbt.getDouble("tautness");
-                        lightLevel = nbt.getFloat("light");
-                    }
-                    LeadConnectionData data = null;
-                    if (playerIsHolding) {
-                        if (!sameConnectionID) {
-                            for (LeadConnectionData d : en1.connectionsMap) {
-                                if (d.equals(new LeadConnectionData(color, thickness, tautness, lightLevel))) {
-                                    data = d;
-                                    break;
-                                }
-                            }
-                            if (data == null) {
-                                LeadConnectionData newData = new LeadConnectionData(color, thickness, tautness, lightLevel);
-                                newData.uuidsConnected.add(en0.getPersistentID());
-                                newData.idsConnected.add(en0.getEntityId());
-                                en1.connectionsMap.add(newData);
-                            } else {
-                                data.uuidsConnected.add(en0.getPersistentID());
-                                data.uuidsConnected.remove(player.getPersistentID());
-                                data.idsConnected.add(en0.getEntityId());
-                                data.idsConnected.remove(player.getEntityId());
-                            }
-                            nbt.setBoolean("playerIsHolding", false);
-                        } else {
-                            //remove player from en0
-                            boolean hasMatch = false;
-                            for (LeadConnectionData d : en0.connectionsMap)
-                                for (UUID uuid : d.uuidsConnected) {
-                                    if (uuid.equals(player.getPersistentID())) {
-                                        data = d;
-                                        hasMatch = true;
-                                        break;
-                                    }
-                                }
-                            if (hasMatch) {
-                                data.uuidsConnected.remove(player.getPersistentID());
-                                data.idsConnected.remove(player.getEntityId());
-                            }
-                            nbt.setBoolean("playerIsHolding", false);
-                        }
-                    } else {
-                        for (LeadConnectionData d : en0.connectionsMap) {
-                            if (d.equals(new LeadConnectionData(color, thickness, tautness, lightLevel))) {
-                                data = d;
-                                break;
-                            }
-                        }
-                        if (data == null) {
-                            LeadConnectionData newData = new LeadConnectionData(color, thickness, tautness, lightLevel);
-                            newData.uuidsConnected.add(player.getPersistentID());
-                            newData.idsConnected.add(player.getEntityId());
-                            en0.connectionsMap.add(newData);
-                        } else {
-                            data.uuidsConnected.add(player.getPersistentID());
-                            data.idsConnected.add(player.getEntityId());
-                        }
-                        nbt.setBoolean("playerIsHolding", true);
-                    }
-                }
-                
-                en0.updateLeashHolders((EntityPlayerMP) player, true);
-                en1.updateLeashHolders((EntityPlayerMP) player, true);
-            }
-            
-        }*/
     @Override
     public void removeStructure(LittleNeighborUpdateCollector neighbor) throws CorruptedConnectionException, NotYetConnectedException {
-        /*
-        if (!this.getWorld().isRemote) {
-            World world = this.getWorld();
-            WorldServer serverWorld = null;
-            
-            if (this.getWorld() instanceof SubWorld) {
-                SubWorld subWorld = (SubWorld) world;
-                serverWorld = (WorldServer) subWorld.getRealWorld();
-            } else if (this.getWorld() instanceof WorldServer)
-                serverWorld = (WorldServer) this.getWorld();
-            
-            if (serverWorld != null) {
-                Entity entity = serverWorld.getEntityFromUuid(connectionUUID);
-                if (entity != null && entity instanceof EntityRopeConnection) {
-                    EntityRopeConnection connection = (EntityRopeConnection) entity;
-                    connection.setDead();
-                }
-            }
-        }*/
+        
         super.removeStructure(neighbor);
     }
     
@@ -499,10 +305,8 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
         
         private void setViewer(GuiTileViewer viewer, LittleAdvancedDoor door, LittleGridContext axisContext) {
             viewer.visibleAxis = true;
-            boolean even = false;
             if (door != null) {
-                even = door.axisCenter.isEven();
-                viewer.setEven(even);
+                viewer.setEven(door.axisCenter.isEven());
                 
                 door.axisCenter.convertToSmallest();
                 axisContext = door.axisCenter.getContext();
@@ -576,65 +380,3 @@ public class LittleLeadConnectionALET extends LittleAdvancedDoor {
     }
     
 }
-
-/*
- * 
-							
-							if (entity instanceof EntityLeadConnection) {
-								EntityLeadConnection lead = (EntityLeadConnection) entity;
-								if (nbt.getInteger("connectionID") != connection.getEntityId()) {
-									if (entity.getEntityId() != connection.getEntityId()) {
-										nbt.setBoolean("playerIsHolding", false);
-										nbt.setInteger("connectorID", entity.getEntityId());
-										nbt.setInteger("connectionID", connection.getEntityId());
-										connection.leashHolder = null;
-										heldItem.setTagCompound(nbt);
-										System.out.println("line 185");
-									}
-								} else {
-									nbt.setBoolean("playerIsHolding", true);
-									heldItem.setTagCompound(nbt);
-									System.out.println("line 190");
-								}
-								break;
-							}
-						} else {
-							if (entity instanceof EntityPlayer) {
-								nbt.setBoolean("playerIsHolding", true);
-								nbt.setInteger("connectorID", entity.getEntityId());
-								nbt.setInteger("connectionID", connection.getEntityId());
-								
-								connection.leashHolder = entity;
-								//connection.connectIDs.add(player.getEntityId());
-								heldItem.setTagCompound(nbt);
-								
-								System.out.println("line 204");
-								break;
-							}
- */
-
-/*
- * 
-					for (Entity entity : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB((double) i2 - 7.0D, (double) j2 - 7.0D, (double) k2 - 7.0D, (double) i2 + 7.0D, (double) j2 + 7.0D, (double) k2 + 7.0D))) {
-						EntityLeadConnection entityToConnect = null;
-						if (entity instanceof EntityLeadConnection) {
-							entityToConnect = (EntityLeadConnection) entity;
-							if (!entityToConnect.equals(connection)) {
-								if (entityToConnect.leashHolder != null)
-									System.out.println("not Null");
-								connection.leashHolder = null;
-								System.out.println("Entity" + entityToConnect.getEntityId());
-								removeID(entityToConnect, player.getEntityId());
-								removeID(connection, player.getEntityId());
-								connection.connectIDs.add(entityToConnect.getEntityId());
-								break;
-							}
-						} else if (entity instanceof EntityPlayer) {
-							System.out.println("Player: " + connection.leashHolder);
-							connection.leashHolder = entity;
-							connection.connectIDs.add(player.getEntityId());
-						}
-					}
-					
-					connection.updateLeashHolders((EntityPlayerMP) player, true);
- */
