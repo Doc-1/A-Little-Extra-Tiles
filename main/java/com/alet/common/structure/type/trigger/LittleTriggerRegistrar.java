@@ -3,6 +3,8 @@ package com.alet.common.structure.type.trigger;
 import java.lang.reflect.InvocationTargetException;
 
 import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionHasItem;
+import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionIsEntity;
+import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionScoreboard;
 import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionSuccessfulCommand;
 import com.alet.common.structure.type.trigger.conditions.LittleTriggerConditionTickDelay;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEventExecuteCommand;
@@ -25,6 +27,8 @@ public class LittleTriggerRegistrar {
         registerTriggerObject("codition", "tick_delay", LittleTriggerConditionTickDelay.class);
         registerTriggerObject("codition", "has_item", LittleTriggerConditionHasItem.class);
         registerTriggerObject("codition", "successful_command", LittleTriggerConditionSuccessfulCommand.class);
+        registerTriggerObject("codition", "is_entity", LittleTriggerConditionIsEntity.class);
+        registerTriggerObject("codition", "scoreboard", LittleTriggerConditionScoreboard.class);
         registerTriggerObject("event", "modify_health", LittleTriggerEventModifyHealth.class);
         registerTriggerObject("event", "modify_motion", LittleTriggerEventModifyMotion.class);
         registerTriggerObject("event", "modify_inventory", LittleTriggerEventModifyInventory.class);

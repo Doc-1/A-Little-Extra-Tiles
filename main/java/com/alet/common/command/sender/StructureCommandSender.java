@@ -70,7 +70,6 @@ public class StructureCommandSender implements ICommandSender {
             BlockPos pos = structure.getPos();
             Vec3d vec = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
             vec = ((IOrientatedWorld) structure.getWorld()).getOrigin().transformPointToWorld(vec);
-            System.out.println(pos + " " + vec);
             return new BlockPos(vec);
         }
         return structure.getPos();
@@ -78,6 +77,9 @@ public class StructureCommandSender implements ICommandSender {
     
     @Override
     public Vec3d getPositionVector() {
+        if (structure.getWorld() instanceof IOrientatedWorld)
+            return ((IOrientatedWorld) structure.getWorld()).getOrigin().transformPointToWorld(center);
+        
         return center;
     }
     

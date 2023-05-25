@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.trigger.events;
+package com.alet.common.structure.type.trigger.conditions;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
@@ -27,26 +26,63 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
+public class LittleTriggerConditionScoreboard extends LittleTriggerCondition {
     
     public int value = 0;
     public String scoreName = "";
+    public int operation = 0;
     private WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
     
-    public LittleTriggerEventModifyScoreboard(int id) {
+    public LittleTriggerConditionScoreboard(int id) {
         super(id);
+        // TODO Auto-generated constructor stub
+    }
+    
+    @Override
+    public boolean conditionPassed() {
+        for (Entity entity : this.getEntities()) {
+            Scoreboard scoreBoard = world.getScoreboard();
+            for (Score sc : scoreBoard.getScores()) {
+                System.out.println(sc.getPlayerName());
+                if (sc.getObjective().getName().equals(scoreName)) {
+                    switch (operation) {
+                    case 0:
+                        if (sc.getScorePoints() == value)
+                            return true;
+                    case 1:
+                        if (sc.getScorePoints() < value)
+                            return true;
+                    case 2:
+                        if (sc.getScorePoints() > value)
+                            return true;
+                    case 3:
+                        if (sc.getScorePoints() <= value)
+                            return true;
+                    case 4:
+                        if (sc.getScorePoints() >= value)
+                            return true;
+                    default:
+                        break;
+                    }
+                }
+            }
+            
+        }
+        return false;
     }
     
     @Override
     public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setInteger("value", value);
+        nbt.setInteger("operation", operation);
         nbt.setString("scoreName", scoreName);
         return nbt;
     }
     
     @Override
-    public LittleTriggerEvent deserializeNBT(NBTTagCompound nbt) {
+    public LittleTriggerCondition deserializeNBT(NBTTagCompound nbt) {
         this.value = nbt.getInteger("value");
+        this.operation = nbt.getInteger("operation");
         this.scoreName = nbt.getString("scoreName");
         return this;
     }
@@ -63,19 +99,51 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
             ScoreObjective obj = (ScoreObjective) iterator.next();
             list.add(obj.getName());
         }
-        wipeControls(panel);
         panel.addControl(new GuiLabel("Type:", 0, 100));
         panel.addControl(new GuiLabel("type", "", 30, 100));
-        panel.addControl(new GuiLabel("Change Value by:", 0, 118));
-        panel.addControl(new GuiTextfield("value", value + "", 90, 118, 30, 10).setNumbersIncludingNegativeOnly());
+        panel.addControl(new GuiLabel("If Value is", 0, 118));
+        panel.addControl(new GuiTextfield("value", value + "", 86, 118, 30, 10).setNumbersIncludingNegativeOnly());
         panel.addControl(new GuiScrollBox("bx", 0, 40, 152, 50));
         GuiComboBox cBox = new GuiComboBox("ls", 0, 20, 152, list);
         cBox.setCaption(scoreName);
         cBox.width = 158;
         panel.addControl(cBox);
         fillComboBox(cBox);
-        panel.addControl(new GuiLabel("Modify Scoreboard", 0, 0));
-        
+        panel.addControl(new GuiLabel("If Scoreboard", 0, 0));
+        List<String> operations = new ArrayList<String>();
+        operations.add("=");
+        operations.add("<");
+        operations.add(">");
+        operations.add(">=");
+        operations.add("<=");
+        GuiComboBox op = (new GuiComboBox("operation", 58, 116, 20, operations) {
+            @Override
+            public void setCaption(String caption) {
+                this.caption = caption;
+            }
+        });
+        String cap = "";
+        switch (operation) {
+        case 0:
+            cap = "=";
+            break;
+        case 1:
+            cap = "<";
+            break;
+        case 2:
+            cap = ">";
+            break;
+        case 3:
+            cap = "<=";
+            break;
+        case 4:
+            cap = ">=";
+            break;
+        default:
+            break;
+        }
+        op.setCaption(cap);
+        panel.addControl(op);
     }
     
     @SideOnly(Side.CLIENT)
@@ -127,6 +195,26 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
             if (cBox.is("ls")) {
                 fillComboBox(cBox);
                 scoreName = cBox.getCaption();
+            } else if (cBox.is("operation")) {
+                switch (cBox.getCaption()) {
+                case "=":
+                    this.operation = 0;
+                    break;
+                case "<":
+                    this.operation = 1;
+                    break;
+                case ">":
+                    this.operation = 2;
+                    break;
+                case "<=":
+                    this.operation = 3;
+                    break;
+                case ">=":
+                    this.operation = 4;
+                    break;
+                default:
+                    break;
+                }
             }
         }
         if (source instanceof GuiTextfield) {
@@ -147,36 +235,6 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
         }
         
         return label;
-    }
-    
-    @Override
-    public boolean runEvent() {
-        
-        Collection<ScoreObjective> objectives = world.getScoreboard().getScoreObjectives();
-        ScoreObjective objective = null;
-        Score score = null;
-        
-        for (ScoreObjective obj : objectives) {
-            if (obj.getName().equals(scoreName)) {
-                objective = obj;
-                break;
-            }
-        }
-        
-        for (Entity entity : this.getEntities()) {
-            if (entity instanceof EntityPlayerMP)
-                score = world.getScoreboard().getOrCreateScore(entity.getName(), objective);
-            else
-                score = world.getScoreboard().getOrCreateScore(entity.getUniqueID().toString(), objective);
-            
-        }
-        
-        if (score != null)
-            if (value > 0)
-                score.increaseScore(value);
-            else if (value < 0)
-                score.decreaseScore(Math.abs(value));
-        return true;
     }
     
 }

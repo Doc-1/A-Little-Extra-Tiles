@@ -89,6 +89,7 @@ public class LittleTriggerConditionHasItem extends LittleTriggerCondition {
     public void createGuiControls(GuiParent parent, LittlePreviews previews) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         GuiPanel panel = getPanel(parent);
+        wipeControls(panel);
         GuiFakeSlot stack = new GuiFakeSlot("stack", 0, 20, 18, 18);
         panel.addControl(stack);
         if (!this.stack.isEmpty())
