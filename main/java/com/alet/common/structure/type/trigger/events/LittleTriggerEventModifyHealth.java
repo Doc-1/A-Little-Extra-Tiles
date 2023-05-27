@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
@@ -79,8 +78,7 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        GuiPanel panel = (GuiPanel) parent.get("content");
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         List<String> sourceList = new ArrayList<String>();
         for (DamageSource forEachSource : sourceOfDmg) {
             sourceList.add(forEachSource.damageType);
@@ -91,9 +89,9 @@ public class LittleTriggerEventModifyHealth extends LittleTriggerEvent {
         panel.addControl(new GuiCheckBox("harm", "Harm Entity", 0, 38, harm));
         panel.addControl(new GuiLabel("Damage Type:", 0, 58));
         panel.addControl(new GuiLabel("Total Damage:", 0, 81));
-        
-        panel.addControl(new GuiComboBox("sources", 73, 55, 80, sourceList));
-        ((GuiComboBox) parent.get("sources")).select(damageType);
+        GuiComboBox damageSource = new GuiComboBox("sources", 73, 55, 80, sourceList);
+        damageSource.select(damageType);
+        panel.addControl(damageSource);
         panel.addControl(new GuiAnalogeSlider("dmgAmount", 73, 78, 56, 14, damageAmount, 0, 20));
         
         panel.addControl(new GuiCheckBox("heal", "Heal Entity", 0, 110, heal));

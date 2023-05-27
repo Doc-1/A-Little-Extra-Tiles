@@ -1,10 +1,7 @@
 package com.alet.common.packet;
 
-import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
-import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.common.action.LittleAction;
-import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.tile.math.location.StructureLocation;
 
 import io.netty.buffer.ByteBuf;
@@ -39,6 +36,7 @@ public class PacketUpdateBreakBlock extends CreativeCorePacket {
     
     @Override
     public void executeServer(EntityPlayer player) {
+        /*
         try {
             LittleTriggerBoxStructureALET structure = (LittleTriggerBoxStructureALET) location.find(player.world);
             structure.breakBlock = LittleAction.isUsingSecondMode(player);
@@ -48,6 +46,7 @@ public class PacketUpdateBreakBlock extends CreativeCorePacket {
                 structure.queueForNextTick();
             }
         } catch (LittleActionException e) {}
+        */
     }
     
 }

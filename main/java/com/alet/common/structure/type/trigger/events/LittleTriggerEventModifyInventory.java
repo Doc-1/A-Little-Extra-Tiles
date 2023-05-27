@@ -4,7 +4,6 @@ import com.alet.client.gui.LittleItemSelector;
 import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.alet.client.gui.controls.GuiFakeSlot;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
@@ -60,9 +59,8 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        GuiPanel panel = getPanel(parent);
         GuiFakeSlot stack = new GuiFakeSlot("stack", 0, 20, 18, 18);
         panel.addControl(stack);
         if (!this.stack.isEmpty())

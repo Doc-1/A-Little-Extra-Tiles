@@ -1,7 +1,6 @@
 package com.alet.common.structure.type.trigger.events;
 
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
@@ -42,9 +41,7 @@ public class LittleTriggerEventSetSpawn extends LittleTriggerEvent {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        GuiPanel panel = (GuiPanel) parent.get("content");
-        wipeControls(panel);
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiLabel("Set Spawn", 0, 0));
         panel.addControl(new GuiTextfield("xStr", posX + "", 15, 19, 48, 10).setFloatOnly());
         panel.addControl(new GuiTextfield("yStr", posY + "", 15, 39, 48, 10).setFloatOnly());

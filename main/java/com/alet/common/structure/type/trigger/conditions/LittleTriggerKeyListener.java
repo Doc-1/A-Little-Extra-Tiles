@@ -2,7 +2,7 @@ package com.alet.common.structure.type.trigger.conditions;
 
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,7 +21,7 @@ public class LittleTriggerKeyListener extends LittleTriggerCondition {
     }
     
     @Override
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {}
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {}
     
     @Override
     public void guiChangedEvent(CoreControl source) {

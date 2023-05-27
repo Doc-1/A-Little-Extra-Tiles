@@ -6,7 +6,6 @@ import java.util.List;
 import com.alet.common.packet.PacketPlaySound;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
@@ -66,9 +65,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        GuiPanel panel = (GuiPanel) parent.get("content");
-        
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         GuiTextfield search = new GuiTextfield("search", "", 0, 0, 170, 14);
         panel.addControl(search);
         GuiComboBox box = new GuiComboBox("sounds", 0, 22, 170, possibleLines);

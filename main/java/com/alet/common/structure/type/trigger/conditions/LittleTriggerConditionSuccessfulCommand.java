@@ -5,7 +5,6 @@ import com.alet.client.gui.controls.GuiWrappedTextField;
 import com.alet.common.command.sender.EntityCommandSender;
 import com.alet.common.command.sender.StructureCommandSender;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
@@ -54,9 +53,7 @@ public class LittleTriggerConditionSuccessfulCommand extends LittleTriggerCondit
     }
     
     @Override
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        GuiPanel panel = (GuiPanel) parent.get("content");
-        wipeControls(panel);
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiLabel("Command", 0, 37));
         panel.addControl(new GuiWrappedTextField("command", command, 0, 50, 153, 123));
         GuiConnectedCheckBoxes option = new GuiConnectedCheckBoxes("", 0, 0);

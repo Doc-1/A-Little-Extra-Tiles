@@ -2,7 +2,6 @@ package com.alet.common.structure.type.trigger.events;
 
 import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
@@ -56,8 +55,7 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        GuiPanel panel = (GuiPanel) parent.get("content");
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiLabel("Modify Motion", 0, 0));
         int m = 5;
         panel.addControl(new GuiAnalogeSlider("xStr", 15, 19, 48, 10, xStrength, -m, m));

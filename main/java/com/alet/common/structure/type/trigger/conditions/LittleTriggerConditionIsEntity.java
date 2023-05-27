@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class LittleTriggerConditionIsEntity extends LittleTriggerCondition {
     
-    public String entityType;
+    public String entityType = "player";
     
     public LittleTriggerConditionIsEntity(int id) {
         super(id);
@@ -47,9 +47,8 @@ public class LittleTriggerConditionIsEntity extends LittleTriggerCondition {
     }
     
     @Override
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        GuiPanel panel = getPanel(parent);
-        wipeControls(panel);
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
+        panel.addControl(new GuiLabel("Is Entity", 0, 0));
         List<String> nameList = new ArrayList<String>();
         nameList.add("player");
         for (ResourceLocation res : EntityList.getEntityNameList()) {
@@ -57,7 +56,7 @@ public class LittleTriggerConditionIsEntity extends LittleTriggerCondition {
             if (name != null)
                 nameList.add(name);
         }
-        GuiComboBox comboBox = new GuiComboBox("nameList", 0, 0, 153, nameList) {
+        GuiComboBox comboBox = new GuiComboBox("nameList", 0, 16, 153, nameList) {
             @Override
             public void setCaption(String caption) {
                 this.caption = caption;

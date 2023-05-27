@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.littletiles.client.gui.signal.SubGuiDialogSignal.GuiSignalComponent;
@@ -67,7 +66,7 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(false, true, true);
         //this.outputName = GuiSignalComponent.get(0).totalName;
         List<String> list = new ArrayList<String>();
@@ -81,7 +80,6 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
                 i++;
             }
         }
-        GuiPanel panel = this.getPanel(parent);
         GuiComboBox box = new GuiComboBox("outList", 0, 0, 100, list);
         if (!list.isEmpty())
             box.select(index);

@@ -15,24 +15,21 @@ import com.alet.client.gui.controls.menu.GuiMenuPart;
 import com.alet.client.gui.controls.menu.GuiPopupMenu;
 import com.alet.client.gui.controls.menu.GuiTreePart;
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
+import com.alet.common.structure.type.trigger.activator.LittleTriggerActivator;
 import com.alet.common.structure.type.trigger.conditions.LittleTriggerCondition;
 import com.alet.common.structure.type.trigger.events.LittleTriggerEvent;
-import com.alet.common.util.NBTUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxCategory;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtensionCategory;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
-import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.creativemd.creativecore.common.utils.type.Pair;
+import com.creativemd.creativecore.common.utils.type.PairList;
 import com.creativemd.creativecore.common.world.SubWorldServer;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
 import com.creativemd.littletiles.common.action.LittleActionException;
@@ -62,7 +59,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -75,15 +71,9 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
     public List<UUID> entitiesToLoad;
     public int tick = 0;
     public int currentEvent = 0;
-    public boolean breakBlock = false;
     public boolean run = false;
-    public boolean runWhileCollided = false;
-    public boolean collisionListener = false;
-    public boolean aabbCollisionListener = false;
-    public boolean globalListener = false;
-    public boolean rightClickListener = false;
+    public LittleTriggerActivator triggerActivator;
     public boolean considerEventsConditions = false;
-    public AxisAlignedBB collisionArea;
     public List<LittleTriggerObject> triggerObjs = new ArrayList<LittleTriggerObject>();
     
     public LittleTriggerBoxStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
@@ -100,6 +90,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 LittleTriggerObject triggerObj = LittleTriggerRegistrar.getFromNBT((NBTTagCompound) n.getTag(i + ""));
                 triggerObjs.add(triggerObj);
                 triggerObj.structure = this;
+                
                 i++;
             }
         }
@@ -108,23 +99,18 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         for (int j = 0; j < entityList.tagCount(); j++) {
             entitiesToLoad.add(UUID.fromString(entityList.getStringTagAt(j)));
         }
+        if (nbt.hasKey("activator")) {
+            triggerActivator = (LittleTriggerActivator) LittleTriggerRegistrar.getFromNBT(nbt.getCompoundTag("activator"));
+            triggerActivator.structure = this;
+        }
         run = nbt.getBoolean("isRunning");
         tick = nbt.getInteger("currentTick");
         currentEvent = nbt.getInteger("currentEvent");
-        if (nbt.hasKey("runWhileCollided"))
-            this.runWhileCollided = nbt.getBoolean("runWhileCollided");
-        if (nbt.hasKey("collisionListener"))
-            this.collisionListener = nbt.getBoolean("collisionListener");
-        if (nbt.hasKey("aabbCollisionListener"))
-            this.aabbCollisionListener = nbt.getBoolean("aabbCollisionListener");
-        if (nbt.hasKey("rightClickListener"))
-            this.rightClickListener = nbt.getBoolean("rightClickListener");
-        if (nbt.hasKey("globalListener"))
-            this.globalListener = nbt.getBoolean("globalListener");
+        /*
         if (nbt.hasKey("collisionArea")) {
             NBTTagCompound n = (NBTTagCompound) nbt.getTag("collisionArea");
             this.collisionArea = NBTUtils.readAABB(n);
-        }
+        }*/
         if (nbt.hasKey("consideredEventsConditions"))
             this.considerEventsConditions = nbt.getBoolean("consideredEventsConditions");
     }
@@ -145,18 +131,17 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 entityList.appendTag(new NBTTagString(entity.getUniqueID().toString()));
             }
         }
+        if (this.triggerActivator != null)
+            nbt.setTag("activator", this.triggerActivator.createNBT());
+        
         nbt.setBoolean("isRunning", run);
         nbt.setTag("triggers", list);
         nbt.setTag("entities", entityList);
         nbt.setInteger("currentTick", this.tick);
         nbt.setInteger("currentEvent", this.currentEvent);
-        nbt.setBoolean("runWhileCollided", this.runWhileCollided);
-        nbt.setBoolean("collisionListener", this.collisionListener);
-        nbt.setBoolean("aabbCollisionListener", this.aabbCollisionListener);
-        nbt.setBoolean("globalListener", this.globalListener);
-        nbt.setBoolean("rightClickListener", this.rightClickListener);
+        /*
         if (this.collisionArea != null)
-            nbt.setTag("collisionArea", NBTUtils.writeAABB(this.collisionArea));
+            nbt.setTag("collisionArea", NBTUtils.writeAABB(this.collisionArea));*/
         nbt.setBoolean("consideredEventsConditions", this.considerEventsConditions);
     }
     
@@ -164,36 +149,32 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
     public void onEntityCollidedWithBlock(World worldIn, IParentTileList parent, BlockPos pos, Entity entityIn) {
         if (worldIn.isRemote)
             return;
-        if (collisionListener) {
-            boolean intersected = false;
-            for (LittleTile tile : parent) {
-                if (tile.getBox().getBox(parent.getContext(), pos).intersects(entityIn.getEntityBoundingBox())) {
-                    intersected = true;
-                    break;
-                }
-            }
-            if (intersected) {
-                this.entities.clear();
-                entities.add(entityIn);
-                this.run = true;
+        boolean intersected = false;
+        for (LittleTile tile : parent) {
+            if (tile.getBox().getBox(parent.getContext(), pos).intersects(entityIn.getEntityBoundingBox())) {
+                intersected = true;
+                break;
             }
         }
+        if (intersected) {
+            this.triggerActivator.onCollision(worldIn, entityIn);
+        }
+        
     }
     
     @Override
     public void checkForAnimationCollision(EntityAnimation animation, HashMap<Entity, AxisAlignedBB> entities) throws CorruptedConnectionException, NotYetConnectedException {
         if (animation.world.isRemote)
             return;
-        if (collisionListener) {
-            this.entities.clear();
-            this.entities.addAll(entities.keySet());
-            this.run = true;
-        }
+        this.triggerActivator.onCollision(animation.world, entities.keySet());
     }
     
-    /*
-     
-     */
+    @Override
+    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+        if (!this.isClient())
+            this.triggerActivator.onRightClick(worldIn, tile, pos, playerIn, hand, heldItem, side, hitX, hitY, hitZ, action);
+        return true;
+    }
     
     @Override
     public void tick() {
@@ -215,32 +196,29 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 if (entitiesToLoad.isEmpty())
                     entitiesToLoad = null;
             }
-            if (this.aabbCollisionListener)
-                if (this.collisionArea != null) {
-                    this.entities.clear();
-                    entities.addAll(this.getWorld().getEntitiesWithinAABB(Entity.class, this.collisionArea));
-                    if (!entities.isEmpty())
-                        this.run = true;
-                }
-            if (this.globalListener)
+            
+            /*
+                
+            if (triggerMode.equals("global"))
                 if (!world.loadedEntityList.isEmpty()) {
                     this.entities.clear();
                     entities.addAll(world.getLoadedEntityList());
                     this.run = true;
-                }
+                }*/
+            this.run = this.triggerActivator.shouldRun(world, entities);
             if (!this.entities.isEmpty() && this.run) {
                 boolean hasCondition = LittleTriggerObject.hasCondition(this.triggerObjs); //Will reset the run and tick values
                 boolean shouldContinue = true; //Will stop the for loop and reset the run and tick values
-                boolean flag2 = false; //Will reset the run and tick values
+                boolean flag = false; //Will reset the run and tick values
                 //for loops through all trigger conditions and events in order.
                 while (this.currentEvent < this.triggerObjs.size()) {
                     LittleTriggerObject triggerObj = this.triggerObjs.get(this.currentEvent);
                     if (triggerObj instanceof LittleTriggerCondition) {
-                        if (this.triggerObjs.size() > this.currentEvent + 1) {
+                        if (this.triggerObjs.size() > this.currentEvent) {
                             LittleTriggerCondition condition = (LittleTriggerCondition) triggerObj;
                             shouldContinue = condition.conditionRunEvent();
                             if (!shouldContinue && !condition.shouldLoop) {
-                                flag2 = true;
+                                flag = true;
                                 this.entities.clear();
                             }
                         }
@@ -256,19 +234,22 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     
                 }
                 //Will stop the loop if there is no entities inside the collision area.
-                if (!this.rightClickListener && runWhileCollided) {
+                /*
+                if (!triggerMode.equals("rightClick") && runWhileCollided) {
                     flag2 = this.entities.isEmpty();
                     entities.clear();
-                }
-                if (hasCondition && shouldContinue && !flag2)
+                }*/
+                this.triggerActivator.loopRules(entities, shouldContinue, flag);
+                if (hasCondition && shouldContinue && !flag)
                     this.getInput(0).updateState(new boolean[] { true });
                 else
                     this.getInput(0).updateState(new boolean[] { false });
                 //If there is no conditions then there is no need to loop.
-                if (this.currentEvent >= triggerObjs.size() || flag2) {
+                if (this.currentEvent >= triggerObjs.size() || flag) {
                     this.run = false;
                     this.tick = 0;
                     this.currentEvent = 0;
+                    this.entities.clear();
                     for (LittleTriggerObject triggerObj : this.triggerObjs) {
                         if (triggerObj instanceof LittleTriggerCondition)
                             ((LittleTriggerCondition) triggerObj).completed = false;
@@ -278,35 +259,14 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         }
     }
     
-    @Override
-    public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
-        if (!this.isClient()) {
-            if (this.rightClickListener) {
-                this.run = true;
-                this.entities.clear();
-                this.entities.add(playerIn);
-            }
-        }
-        return true;
-    }
-    
     public static class LittleTriggerBoxStructureParser extends LittleStructureGuiParser {
         public List<LittleTriggerObject> triggers = new ArrayList<LittleTriggerObject>();
         LittleTriggerObject trigger = null;
         public LittlePreviews previews;
         public boolean runWhileCollided = false;
-        public boolean collisionListener = false;
-        public boolean aabbCollisionListener = false;
-        public boolean rightClickListener = false;
-        public boolean globalListener = false;
         public AxisAlignedBB collisionArea;
-        public Vec3d min = new Vec3d(0, 0, 0);
-        public Vec3d max = new Vec3d(0, 0, 0);
+        public LittleTriggerActivator triggerActivator;
         public boolean consideredEventsConditions = false;
-        public String collisionListenerTranslate = I18n.translateToLocal("trigger.listener.collision.name");
-        public String aabbCollisionListenerTranslate = I18n.translateToLocal("trigger.listener.aabb_collision.name");
-        public String globalListenerTranslate = I18n.translateToLocal("trigger.listener.global.name");
-        public String rightClickTranslate = I18n.translateToLocal("trigger.listener.right_click.name");
         
         public LittleTriggerBoxStructureParser(GuiParent parent, AnimationGuiHandler handler) {
             super(parent, handler);
@@ -326,22 +286,13 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             this.previews = previews;
             if (triggerBox != null) {
                 this.triggers = triggerBox.triggerObjs;
-                this.runWhileCollided = triggerBox.runWhileCollided;
-                this.collisionListener = triggerBox.collisionListener;
-                this.aabbCollisionListener = triggerBox.aabbCollisionListener;
-                this.rightClickListener = triggerBox.rightClickListener;
                 this.consideredEventsConditions = triggerBox.considerEventsConditions;
-                this.globalListener = triggerBox.globalListener;
-                if (triggerBox.collisionArea != null) {
-                    this.collisionArea = triggerBox.collisionArea;
-                    this.min = new Vec3d(this.collisionArea.minX, this.collisionArea.minY, this.collisionArea.minZ);
-                    this.max = new Vec3d(this.collisionArea.maxX, this.collisionArea.maxY, this.collisionArea.maxZ);
-                }
+                this.triggerActivator = triggerBox.triggerActivator;
             }
-            GuiPanel triggerPanel = new GuiPanel("content", 135, 50, 159, 179);
-            parent.controls.add(triggerPanel);
-            GuiPanel settingsPanel = new GuiPanel("settings", 135, 0, 159, 43);
+            GuiPanel settingsPanel = new GuiPanel("settings", 135, 50, 159, 179);
             parent.controls.add(settingsPanel);
+            GuiPanel triggerPanel = new GuiPanel("trigger", 135, 0, 159, 43);
+            parent.controls.add(triggerPanel);
             GuiScrollBox box = new GuiScrollBox("box", 0, 19, 127, 165);
             parent.controls.add(box);
             List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
@@ -355,30 +306,64 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             menu.height = 100;
             GuiPopupMenu popup = new GuiPopupMenu("popup", menu, 0, 0, 0, 0);
             box.addControl(popup);
-            List<String> listeners = new ArrayList<String>();
-            listeners.add(collisionListenerTranslate);
-            listeners.add(aabbCollisionListenerTranslate);
-            listeners.add(rightClickTranslate);
-            listeners.add(globalListenerTranslate);
-            GuiComboBox listListener = (new GuiComboBox("listener", 0, 0, 127, listeners) {
+            GuiComboBoxCategory<Class<? extends LittleTriggerActivator>> listActivators = (new GuiComboBoxCategory<Class<? extends LittleTriggerActivator>>("activators", 0, 0, 127, LittleTriggerRegistrar.triggerActivators) {
                 @Override
-                protected GuiComboBoxExtension createBox() {
-                    return new GuiComboBoxExtension(name + "extension", this, posX, posY + height, 133 - getContentOffset() * 2, 55, lines);
+                public void setCaption(String caption) {
+                    int size = -1;
+                    for (PairList<String, Class<? extends LittleTriggerActivator>> pair : elements.values()) {
+                        for (Pair<String, Class<? extends LittleTriggerActivator>> d : pair) {
+                            size++;
+                            String key = getKeyAtIndex(size);
+                            if (key.equals(caption))
+                                select(size);
+                        }
+                    }
+                }
+                
+                public String getKeyAtIndex(int index) {
+                    int currentIndex = 0;
+                    if (index == -1)
+                        return "";
+                    for (Pair<String, PairList<String, Class<? extends LittleTriggerActivator>>> pair : elements) {
+                        if (index >= currentIndex + pair.value.size())
+                            currentIndex += pair.value.size();
+                        else {
+                            return pair.value.get(index - currentIndex).key;
+                        }
+                    }
+                    return "";
+                }
+                
+                public boolean select(int index) {
+                    int currentIndex = 0;
+                    if (index == -1)
+                        return false;
+                    for (Pair<String, PairList<String, Class<? extends LittleTriggerActivator>>> pair : elements) {
+                        if (index >= currentIndex + pair.value.size())
+                            currentIndex += pair.value.size();
+                        else {
+                            caption = translate(pair.value.get(index - currentIndex).key);
+                            this.index = index;
+                            raiseEvent(new GuiControlChangedEvent(this));
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                
+                @Override
+                protected GuiComboBoxExtensionCategory<Class<? extends LittleTriggerActivator>> createBox() {
+                    return new GuiComboBoxExtensionCategory<Class<? extends LittleTriggerActivator>>(name + "extension", this, posX, posY + height, 133 - getContentOffset() * 2, 100);
                 }
             });
-            if (collisionListener) {
-                listListener.select(collisionListenerTranslate);
-                collisionControls(settingsPanel);
-            } else if (aabbCollisionListener) {
-                listListener.select(aabbCollisionListenerTranslate);
-                aabbCollisionControls(settingsPanel);
-            } else if (rightClickListener)
-                listListener.select(rightClickTranslate);
-            else if (globalListener) {
-                listListener.select(globalListenerTranslate);
+            if (this.triggerActivator == null)
+                createActivator(listActivators.getSelected().value);
+            if (this.triggerActivator != null) {
+                listActivators.setCaption(triggerActivator.getName());
+                updateActivatorControls();
             }
-            parent.addControl(listListener);
-            GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (new GuiComboBoxCategory<Class<? extends LittleTriggerObject>>("list", 0, 189, 100, LittleTriggerRegistrar.triggerables) {
+            parent.addControl(listActivators);
+            GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (new GuiComboBoxCategory<Class<? extends LittleTriggerObject>>("list", 0, 189, 100, LittleTriggerRegistrar.triggerableObjects) {
                 @Override
                 protected GuiComboBoxExtensionCategory<Class<? extends LittleTriggerObject>> createBox() {
                     return new GuiComboBoxExtensionCategory<Class<? extends LittleTriggerObject>>(name + "extension", this, posX, posY + height, 133 - getContentOffset() * 2, 100);
@@ -401,28 +386,9 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         @SideOnly(Side.CLIENT)
         public LittleTriggerBoxStructureALET parseStructure(LittlePreviews previews) {
             LittleTriggerBoxStructureALET structure = createStructure(LittleTriggerBoxStructureALET.class, null);
-            String selected = ((GuiComboBox) parent.get("listener")).getCaption();
-            if (selected.equals(collisionListenerTranslate))
-                structure.collisionListener = true;
-            else
-                structure.collisionListener = false;
-            if (selected.equals(aabbCollisionListenerTranslate))
-                structure.aabbCollisionListener = true;
-            else
-                structure.aabbCollisionListener = false;
-            if (selected.equals(rightClickTranslate))
-                structure.rightClickListener = true;
-            else
-                structure.rightClickListener = false;
-            if (selected.equals(globalListenerTranslate))
-                structure.globalListener = true;
-            else
-                structure.globalListener = false;
-            structure.collisionArea = new AxisAlignedBB(this.min, this.max);
             structure.triggerObjs = this.triggers;
-            structure.runWhileCollided = this.runWhileCollided;
+            structure.triggerActivator = this.triggerActivator;
             structure.considerEventsConditions = this.consideredEventsConditions;
-            System.out.println(collisionArea);
             return structure;
         }
         
@@ -431,29 +397,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         protected LittleStructureType getStructureType() {
             return LittleStructureRegistry.getStructureType(LittleTriggerBoxStructureALET.class);
         }
-        
-        public void collisionControls(GuiPanel settingsPanel) {
-            settingsPanel.addControl(new GuiCheckBox("while_collided", "Run Only While Collided", 0, 0, this.runWhileCollided));
-        }
-        
-        public void aabbCollisionControls(GuiPanel settingsPanel) {
-            settingsPanel.addControl(new GuiCheckBox("while_collided", "Run Only While Collided", 0, 0, this.runWhileCollided));
-            settingsPanel.addControl(new GuiLabel("X1:", 0, 14));
-            settingsPanel.addControl(new GuiLabel("X2:", 0, 29));
-            settingsPanel.addControl(new GuiLabel("Y1:", 52, 14));
-            settingsPanel.addControl(new GuiLabel("Y2:", 52, 29));
-            settingsPanel.addControl(new GuiLabel("Z1:", 104, 14));
-            settingsPanel.addControl(new GuiLabel("Z2:", 104, 29));
-            settingsPanel.addControl(new GuiTextfield("x_min", this.collisionArea != null ? this.collisionArea.minX + "" : "0.0", 18, 14, 30, 8).setFloatOnly());
-            settingsPanel.addControl(new GuiTextfield("x_max", this.collisionArea != null ? this.collisionArea.maxX + "" : "0.0", 18, 29, 30, 8).setFloatOnly());
-            settingsPanel.addControl(new GuiTextfield("y_min", this.collisionArea != null ? this.collisionArea.minY + "" : "0.0", 70, 14, 30, 8).setFloatOnly());
-            settingsPanel.addControl(new GuiTextfield("y_max", this.collisionArea != null ? this.collisionArea.maxY + "" : "0.0", 70, 29, 30, 8).setFloatOnly());
-            settingsPanel.addControl(new GuiTextfield("z_min", this.collisionArea != null ? this.collisionArea.minZ + "" : "0.0", 122, 14, 30, 8).setFloatOnly());
-            settingsPanel.addControl(new GuiTextfield("z_max", this.collisionArea != null ? this.collisionArea.maxZ + "" : "0.0", 122, 29, 30, 8).setFloatOnly());
-        }
-        
-        @CustomEventSubscribe
-        public void onControlClicked(GuiControlClickEvent event) {}
         
         public void moveTriggerOnList(int distance) {
             int z = 0;
@@ -472,20 +415,26 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             }
         }
         
+        public void createActivator(Class<? extends LittleTriggerActivator> clazz) {
+            this.triggerActivator = LittleTriggerRegistrar.getTriggerActivator(clazz);
+        }
+        
+        public void createActivatorGui() {
+            GuiPanel panel = this.triggerActivator.getPanel(parent);
+            LittleTriggerObject.wipeControls(panel);
+            this.triggerActivator.createGuiControls(panel, previews);
+        }
+        
         @CustomEventSubscribe
         public void onControlChanged(GuiControlChangedEvent event) {
             if (event.source.is("while_collided"))
                 this.runWhileCollided = ((GuiCheckBox) event.source).value;
             else if (event.source.is("consider"))
                 this.consideredEventsConditions = ((GuiCheckBox) event.source).value;
-            else if (event.source.is("listener")) {
-                GuiComboBox listListener = (GuiComboBox) event.source;
-                GuiPanel settingsPanel = (GuiPanel) parent.get("settings");
-                settingsPanel.removeControls(" ");
-                if (listListener.getCaption().equals(collisionListenerTranslate))
-                    collisionControls(settingsPanel);
-                else if (listListener.getCaption().equals(aabbCollisionListenerTranslate))
-                    aabbCollisionControls(settingsPanel);
+            else if (event.source.is("activators")) {
+                GuiComboBoxCategory<Class<? extends LittleTriggerActivator>> listActivators = (GuiComboBoxCategory<Class<? extends LittleTriggerActivator>>) event.source;
+                createActivator(listActivators.getSelected().value);
+                createActivatorGui();
             } else if (event.source instanceof GuiMenuPart) {
                 String caption = ((GuiMenuPart) event.source).caption;
                 if (caption.equals("Move Up")) {
@@ -505,35 +454,18 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     triggers.remove(z);
                     updateList();
                 }
-            } else if (event.source instanceof GuiTextfield) {
-                GuiTextfield text = (GuiTextfield) event.source;
-                if (text.is("x_min", "x_max", "y_min", "y_max", "z_min", "z_max")) {
-                    double value = Double.parseDouble(text.text);
-                    if (text.is("x_min"))
-                        this.min = new Vec3d(value, this.min.y, this.min.z);
-                    else if (text.is("x_max"))
-                        this.max = new Vec3d(value, this.max.y, this.max.z);
-                    else if (text.is("y_min"))
-                        this.min = new Vec3d(this.min.x, value, this.min.z);
-                    else if (text.is("y_max"))
-                        this.max = new Vec3d(this.max.x, value, this.max.z);
-                    else if (text.is("z_min"))
-                        this.min = new Vec3d(this.min.x, this.min.y, value);
-                    else if (text.is("z_max"))
-                        this.max = new Vec3d(this.max.x, this.max.y, value);
-                    System.out.println(text.name);
-                }
             }
             if (trigger != null)
                 trigger.guiChangedEvent(event.source);
+            if (triggerActivator != null)
+                triggerActivator.guiChangedEvent(event.source);
         }
         
         public void updateList() {
             GuiScrollBox box = (GuiScrollBox) this.parent.get("box");
-            GuiPanel panel = (GuiPanel) this.parent.get("content");
+            GuiPanel panel = (GuiPanel) this.parent.get("settings");
             box.removeControls("popup");
-            panel.controls = new ArrayList<GuiControl>();
-            panel.refreshControls();
+            LittleTriggerObject.wipeControls(panel);
             for (int i = 0; i < triggers.size(); i++) {
                 LittleTriggerObject triggerObj = triggers.get(i);
                 triggerObj.id = i;
@@ -541,7 +473,15 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             }
         }
         
-        public void updateControls(String name) {
+        public void updateActivatorControls() {
+            if (this.triggerActivator != null) {
+                GuiPanel panel = triggerActivator.getPanel(parent);
+                LittleTriggerObject.wipeControls(panel);
+                triggerActivator.createGuiControls(panel, this.previews);
+            }
+        }
+        
+        public void updateObjectControls(String name) {
             for (LittleTriggerObject triggerObj : triggers) {
                 String objName = triggerObj.getName() + triggerObj.id;
                 if (objName.equals(name)) {
@@ -550,9 +490,9 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 }
             }
             if (trigger != null) {
-                GuiPanel panel = (GuiPanel) parent.get("content");
+                GuiPanel panel = trigger.getPanel(parent);
                 LittleTriggerObject.wipeControls(panel);
-                trigger.createGuiControls(this.parent, this.previews);
+                trigger.createGuiControls(panel, this.previews);
             }
         }
         
@@ -572,10 +512,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                         }
                     }
                     this.color = ColorUtils.YELLOW;
-                    updateControls(this.name);
-                } else if (button == 1) {/*
-                                         
-                                         */
+                    updateObjectControls(this.name);
                 }
             }
             
@@ -586,11 +523,9 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         }
         
         public class GuiTriggerBoxAddButton extends GuiButton {
-            LittleTriggerBoxStructureParser parser;
             
             public GuiTriggerBoxAddButton(LittleTriggerBoxStructureParser parser, String caption, int x, int y, int width) {
                 super(caption, x, y, width);
-                this.parser = parser;
             }
             
             @Override
@@ -598,7 +533,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 GuiScrollBox box = (GuiScrollBox) this.getGui().get("box");
                 GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (GuiComboBoxCategory<Class<? extends LittleTriggerObject>>) this.getGui().get("list");
                 int i = triggers.size();
-                parser.triggers.add(LittleTriggerRegistrar.getTriggerObject(list.getSelected().value, i));
+                triggers.add(LittleTriggerRegistrar.getTriggerObject(list.getSelected().value, i));
                 GuiTriggerEventButton bu = new GuiTriggerEventButton(list.getSelected().key + i, list.getCaption(), 0, i * 17, 119, 12);
                 box.addControl(bu);
             }

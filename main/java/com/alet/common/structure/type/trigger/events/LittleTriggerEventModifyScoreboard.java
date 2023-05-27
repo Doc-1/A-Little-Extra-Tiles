@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.creativemd.creativecore.common.gui.CoreControl;
-import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
@@ -53,9 +52,7 @@ public class LittleTriggerEventModifyScoreboard extends LittleTriggerEvent {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void createGuiControls(GuiParent parent, LittlePreviews previews) {
-        GuiPanel panel = (GuiPanel) parent.get("content");
-        wipeControls(panel);
+    public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         Scoreboard score = world.getScoreboard();
         Collection<ScoreObjective> objectives = score.getScoreObjectives();
         List<String> list = new ArrayList<String>();

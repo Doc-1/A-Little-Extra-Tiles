@@ -53,8 +53,21 @@ item.LTPremade.signal_quick_input32.name=Quick Input (32-bit) (WIP)
 
 itemGroup.alet=Little Circuits
 
+
+trigger.collision_area.name=Collision with Area
+trigger.global.name=Global
+trigger.trigger_selector.name=Target Selector
+trigger.right_click.name=On Right Click
+trigger.collision_tiles.name=Collision with Tiles
+
+trigger.category.simple.name=Simple
+trigger.category.advanced.name=Advanced
+
 trigger.tick_delay.name=Tick Delay
+trigger.has_item.name=Has Item
 trigger.successful_command.name=Successful Command
+trigger.is_entity.name=Is Entity
+trigger.scoreboard.name=Is Scoreboard
 
 trigger.modify_health.name=Modify Health
 trigger.modify_motion.name=Modify Motion
@@ -62,7 +75,6 @@ trigger.modify_inventory.name=Modify Inventory
 trigger.modify_scoreboard.name=Modify Scoreboard
 trigger.execute_command.name=Execute Command
 trigger.set_spawn.name=Set Spawn
-trigger.has_item.name=Has Item
 trigger.play_sound.name=Play Sound
 trigger.set_signal.name=Set Signal
 trigger.count_tick.name=Count Tick
@@ -99,7 +111,7 @@ config.alet.maxPixelText.comment=This will set the max number of pixels a text c
 config.alet.colorAccuracy.comment=This will change how many colors the printer has access to. Zero is all available colors.
 
 
-structure.trigger_box.name=(WIP)Trigger Box
+structure.trigger_box.name=Trigger Box
 structure.door_lock.name=Door Lock
 structure.state_activator.name=State Mutator
 structure.music_composer.name=Music Composer
