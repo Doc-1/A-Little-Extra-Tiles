@@ -48,18 +48,23 @@ public class LittleTriggerConditionScoreboard extends LittleTriggerCondition {
                     case 0:
                         if (sc.getScorePoints() == value)
                             return true;
+                        break;
                     case 1:
                         if (sc.getScorePoints() < value)
                             return true;
+                        break;
                     case 2:
                         if (sc.getScorePoints() > value)
                             return true;
+                        break;
                     case 3:
                         if (sc.getScorePoints() <= value)
                             return true;
+                        break;
                     case 4:
                         if (sc.getScorePoints() >= value)
                             return true;
+                        break;
                     default:
                         break;
                     }

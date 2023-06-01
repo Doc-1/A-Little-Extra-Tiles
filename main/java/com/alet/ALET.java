@@ -39,8 +39,6 @@ import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
 import com.alet.client.sounds.SoundsHandler;
 import com.alet.common.blocks.BasicBlock;
 import com.alet.common.blocks.TransparentBlock;
-import com.alet.common.entity.EntityRopeConnection;
-import com.alet.common.packet.PacketConnectLead;
 import com.alet.common.packet.PacketDropItem;
 import com.alet.common.packet.PacketGetServerCams;
 import com.alet.common.packet.PacketLeftClick;
@@ -55,10 +53,10 @@ import com.alet.common.packet.PacketUpdateStructureFromClient;
 import com.alet.common.structure.type.LittleAlwaysOnLight;
 import com.alet.common.structure.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
 import com.alet.common.structure.type.LittleCamPlayerALET;
-import com.alet.common.structure.type.LittleLeadConnectionALET;
 import com.alet.common.structure.type.LittleLockALET;
 import com.alet.common.structure.type.LittleMusicComposerALET;
 import com.alet.common.structure.type.LittleRemoteActivatorALET;
+import com.alet.common.structure.type.LittleRopeConnectionALET;
 import com.alet.common.structure.type.LittleStateMutatorALET;
 import com.alet.common.structure.type.premade.LittleAdjustableFixedStructure;
 import com.alet.common.structure.type.premade.LittleAnimatorBench;
@@ -124,7 +122,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -145,7 +142,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -259,8 +255,6 @@ public class ALET {
                 
             });
         }
-        
-        registerEntity();
         
         GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
             
@@ -442,7 +436,7 @@ public class ALET {
                 .registerStructureType("music_composer", "sound", LittleMusicComposerALET.class, LittleStructureAttribute.TICKING, LittleMusicComposerALET.LittleMusicComposerParserALET.class)
                 .addOutput("play", 1, SignalMode.TOGGLE).addInput("finished", 1);
         LittleStructureRegistry
-                .registerStructureType("lead_connection", "simple", LittleLeadConnectionALET.class, LittleStructureAttribute.TICK_RENDERING, LittleLeadConnectionALET.LittleLeadConnectionParserALET.class);
+                .registerStructureType("lead_connection", "simple", LittleRopeConnectionALET.class, LittleStructureAttribute.TICK_RENDERING, LittleRopeConnectionALET.LittleLeadConnectionParserALET.class);
         LittleStructureRegistry
                 .registerStructureType("remote_activator", "advance", LittleRemoteActivatorALET.class, LittleStructureAttribute.NONE, LittleRemoteActivatorALET.LittleRemoteActivatorParserALET.class);
         
@@ -502,7 +496,6 @@ public class ALET {
         CreativeCorePacket.registerPacket(PacketUpdateStructureFromClient.class);
         CreativeCorePacket.registerPacket(PacketSendGuiToClient.class);
         CreativeCorePacket.registerPacket(PacketDropItem.class);
-        CreativeCorePacket.registerPacket(PacketConnectLead.class);
         CreativeCorePacket.registerPacket(PacketUpdateBreakBlock.class);
         CreativeCorePacket.registerPacket(PacketUpdateMutateFromServer.class);
         CreativeCorePacket.registerPacket(PacketLeftClick.class);
@@ -755,15 +748,6 @@ public class ALET {
             fontTypeNames.add(fonts[i]);
         
         return fontTypeNames;
-    }
-    
-    public static void registerEntity() {
-        registerEntity("littleleash", EntityRopeConnection.class, 1, 250, 250, true);
-    }
-    
-    public static void registerEntity(String name, Class<? extends Entity> entity, int id, int range, int updateFrequence, boolean sendsVelocityUpdates) {
-        EntityRegistry.registerModEntity(new ResourceLocation(MODID, name), entity, name, id, instance, range, updateFrequence, sendsVelocityUpdates);
-        
     }
     
 }

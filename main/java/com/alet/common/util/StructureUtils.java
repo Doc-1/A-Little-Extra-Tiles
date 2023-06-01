@@ -27,6 +27,7 @@ import com.creativemd.littletiles.common.util.place.PlacementResult;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class StructureUtils {
@@ -65,6 +66,25 @@ public class StructureUtils {
             }
         }
         return null;
+    }
+    
+    public static Vec3d facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
+        double offset = 1D / contextSize;
+        switch (facing) {
+        case UP:
+            y -= offset;
+            break;
+        case EAST:
+            x -= offset;
+            break;
+        case SOUTH:
+            z -= offset;
+            break;
+        default:
+            break;
+        }
+        Vec3d vec = new Vec3d(x, y, z);
+        return vec;
     }
     
     public static LittleStructure findConnection(World worldIn, BlockPos structurePos, StructureRelative searchArea, @Nullable LittleStructure self, @Nullable Class<? extends LittleStructure> structureClass) {

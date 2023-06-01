@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiTapeMeasure;
 import com.alet.common.packet.PacketUpdateNBT;
+import com.alet.common.util.StructureUtils;
 import com.alet.common.util.TapeMeasureKeyEventHandler;
 import com.alet.render.tapemeasure.TapeRenderer;
 import com.alet.tiles.SelectLittleTile;
@@ -39,7 +40,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -152,7 +152,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         if (LittleAction.isUsingSecondMode(plr)) {
             position.facing = position.facing.getOpposite();
         }
-        Vec3d posOffsetted = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
+        Vec3d posOffsetted = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
         
         int additional = rightClick ? 1 : 2;
         if (GuiScreen.isCtrlKeyDown())
@@ -210,7 +210,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             
             int contextSize = ItemTapeMeasure.getContext(nbt);
             LittleAbsoluteVec pos = new LittleAbsoluteVec(result, LittleGridContext.get(contextSize));
-            Vec3d posEdit = facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, result.sideHit);
+            Vec3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, result.sideHit);
             
             SelectLittleTile tilePosMin = new SelectLittleTile(posEdit, LittleGridContext.get(contextSize));
             SelectLittleTile tilePosMax = new SelectLittleTile(posEdit, LittleGridContext.get(contextSize));
@@ -225,25 +225,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         if (pressedKey == TapeMeasureKeyEventHandler.CLEAR) {
             clear(stack, stack.getTagCompound().getInteger("index"), player);
         }
-    }
-    
-    public static Vec3d facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
-        double offset = 1D / contextSize;
-        switch (facing) {
-        case UP:
-            y -= offset;
-            break;
-        case EAST:
-            x -= offset;
-            break;
-        case SOUTH:
-            z -= offset;
-            break;
-        default:
-            break;
-        }
-        Vec3d vec = new Vec3d(x, y, z);
-        return vec;
     }
     
     @Override

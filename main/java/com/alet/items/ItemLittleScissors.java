@@ -3,7 +3,6 @@ package com.alet.items;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.entity.EntityRopeConnection;
 import com.creativemd.creativecore.common.utils.math.vec.Vec3;
 import com.creativemd.creativecore.common.utils.mc.TickUtils;
 import com.creativemd.littletiles.LittleTiles;
@@ -36,17 +35,11 @@ public class ItemLittleScissors extends Item {
         float f0 = Minecraft.getMinecraft().getRenderPartialTicks();
         Vec3d pos1 = playerPos.addVector(d0, d0, d0);
         Vec3d pos2 = playerPos.addVector(-d0, -d0, -d0);
-        List<EntityRopeConnection> entityList = worldIn.getEntitiesWithinAABB(EntityRopeConnection.class, new AxisAlignedBB(pos1, pos2));
-        for (EntityRopeConnection entity : entityList) {
-            findBoxes(playerIn, entity, f0);
-        }
         
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
     
-    public boolean findBoxes(EntityPlayer playerIn, EntityRopeConnection entity, float partialTicks) {
-        entity.entityFollowDoor();
-        World world = entity.getWorld();
+    public boolean findBoxes(EntityPlayer playerIn, float partialTicks) {
         List<AxisAlignedBB> boxes = new ArrayList<AxisAlignedBB>();
         float partialTickTime = TickUtils.getPartialTickTime();
         Vec3d pos = playerIn.getPositionEyes(partialTickTime);
@@ -73,8 +66,8 @@ public class ItemLittleScissors extends Item {
         return false;
     }
     
-    protected List<AxisAlignedBB> calcBoxes(EntityRopeConnection entityConnection, Entity entity, double x, double y, double z, double thickness, double tautness, float lightLevel, float partialTicks) {
-        
+    protected List<AxisAlignedBB> calcBoxes(Entity entity, double x, double y, double z, double thickness, double tautness, float lightLevel, float partialTicks) {
+        /*
         if (entity != null) {
             //System.out.println(entity);
             //point 0
@@ -129,7 +122,7 @@ public class ItemLittleScissors extends Item {
                 boxes.add(aabb1);
             }
             return boxes;
-        }
+        }*/
         return null;
     }
     

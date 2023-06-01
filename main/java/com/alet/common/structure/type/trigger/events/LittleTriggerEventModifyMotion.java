@@ -105,20 +105,14 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
     @Override
     public boolean runEvent() {
         for (Entity entity : this.getEntities()) {
-            
             entity.velocityChanged = true;
-            
-            double totalX = 0;
-            double totalY = this.yStrength;
-            double totalZ = 0;
-            if (addTo)
+            if (addTo) {
                 entity.addVelocity(xStrength, yStrength, zStrength);
-            else
+            } else
                 entity.setVelocity(xStrength, yStrength, zStrength);
-            entity.moveRelative(strafe != 0 ? 1F : 0F, 0F, 0F, (float) strafe);
-            entity.moveRelative(0F, 0F, forward != 0 ? 1F : 0F, (float) forward);
+            entity.moveRelative(strafe != 0F ? 1F : 0F, 0F, 0F, (float) strafe);
+            entity.moveRelative(0F, 0F, forward != 0F ? 1F : 0F, (float) forward);
             entity.fallDistance = 0;
-            System.out.println(entity.motionX + " " + entity.motionY + " " + entity.motionZ);
         }
         return true;
     }

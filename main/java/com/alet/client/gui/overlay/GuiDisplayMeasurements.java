@@ -7,6 +7,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
+import com.alet.common.util.StructureUtils;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.items.ItemTapeMeasure.PosData;
 import com.alet.render.tapemeasure.shape.TapeMeasureShape;
@@ -88,10 +89,10 @@ public class GuiDisplayMeasurements extends GuiControl {
                             int colorInt = nbt.hasKey("shape") ? nbt.getInteger("color") : ColorUtils.WHITE;
                             LittleAbsoluteVec pos = new LittleAbsoluteVec(data.result, LittleGridContext.get(contextSize));
                             
-                            Vec3d vec1 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                            Vec3d vec2 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                            Vec3d vec3 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                            Vec3d vec4 = ItemTapeMeasure.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec1 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec2 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec3 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec4 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
                             
                             if (nbt.hasKey("x1"))
                                 vec1 = new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1"));

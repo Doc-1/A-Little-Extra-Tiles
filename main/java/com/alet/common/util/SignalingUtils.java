@@ -10,6 +10,21 @@ public class SignalingUtils {
     private static final boolean[] FALSE_16 = new boolean[16];
     private static final boolean[] FALSE_32 = new boolean[32];
     
+    public static boolean[] stringToBool(String binary) {
+        if (!binary.equals("")) {
+            boolean[] bool = new boolean[binary.length()];
+            char[] c = binary.toCharArray();
+            for (int i = 0; i < binary.length(); i++)
+                if (c[i] == '0')
+                    bool[i] = false;
+                else if (c[i] == '1')
+                    bool[i] = true;
+                
+            return bool;
+        }
+        return null;
+    }
+    
     public static boolean[] randState(int bandwidth) {
         int max = (int) Math.pow(bandwidth, 2) + 1;
         Random random = new Random();
@@ -80,4 +95,5 @@ public class SignalingUtils {
         }
         return flip;
     }
+    
 }
