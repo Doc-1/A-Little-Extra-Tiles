@@ -1,22 +1,21 @@
 package com.alet.items;
 
 import com.alet.client.gui.SubGuiLittleRope;
-import com.alet.common.entity.RopeConnectionData;
+import com.alet.common.entity.RopeData;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.api.ILittleTool;
+import com.creativemd.littletiles.common.tile.math.location.StructureLocation;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,85 +35,41 @@ public class ItemLittleRope extends Item implements ILittleTool {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
         if (player.isSneaking()) {
             NBTTagCompound nbt = player.getHeldItemMainhand().getTagCompound();
-            nbt.removeTag("selected1");
-            nbt.removeTag("selected2");
+            nbt.removeTag("selected");
             player.getHeldItemMainhand().setTagCompound(nbt);
         }
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(handIn));
     }
     
-    public static RopeConnectionData writeDataFromNBT(NBTTagCompound nbt) {
-        return new RopeConnectionData(nbt.getInteger("color"), nbt.getDouble("thickness"), nbt.getDouble("tautness"));
+    public static RopeData writeDataFromNBT(NBTTagCompound nbt) {
+        return new RopeData(nbt.getInteger("color"), nbt.getDouble("thickness"), nbt.getDouble("tautness"));
     }
     
-    public static boolean hasSelected(int i, ItemStack rope) {
+    public static boolean hasSelected(ItemStack rope) {
         NBTTagCompound nbt = rope.getTagCompound();
-        if (nbt != null && nbt.hasKey("selected" + i))
+        if (nbt != null && (nbt.hasKey("selected")))
             return true;
         return false;
     }
     
-    public static boolean hasBothSelected(ItemStack rope) {
-        NBTTagCompound nbt = rope.getTagCompound();
-        if (nbt != null && (nbt.hasKey("selected1") && nbt.hasKey("selected2")))
-            return true;
-        return false;
-    }
-    
-    public static void addSelected(int i, ItemStack rope, int index, BlockPos pos) {
-        
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setInteger("index", index);
-        tag.setTag("pos", NBTUtil.createPosTag(pos));
-        
+    public static void addSelected(ItemStack rope, StructureLocation location) {
         NBTTagCompound nbt = rope.getTagCompound() == null ? new NBTTagCompound() : rope.getTagCompound();
-        nbt.setTag("selected" + i, tag);
+        nbt.setTag("selected", location.write());
         rope.setTagCompound(nbt);
         
     }
     
     public static void removeSelected(ItemStack rope) {
         NBTTagCompound nbt = rope.getTagCompound();
-        if (hasBothSelected(rope)) {
-            nbt.removeTag("selected1");
-            nbt.removeTag("selected2");
-            rope.setTagCompound(nbt);
-        }
-    }
-    
-    public static void removeSelected(int i, ItemStack rope) {
-        NBTTagCompound nbt = rope.getTagCompound();
-        nbt.removeTag("selected" + i);
+        nbt.removeTag("selected");
         rope.setTagCompound(nbt);
         
     }
     
-    public static BlockPos getSelectedPosition(int i, ItemStack rope) {
-        if (!hasBothSelected(rope))
-            return null;
-        else {
-            NBTTagCompound nbt = (NBTTagCompound) rope.getTagCompound().getTag("selected" + i);
-            nbt = (NBTTagCompound) nbt.getTag("pos");
-            return NBTUtil.getPosFromTag(nbt);
-        }
-    }
-    
-    public static int getSelectedIndex(int i, ItemStack rope) {
-        if (!hasBothSelected(rope))
-            return -1;
-        else {
-            NBTTagCompound nbt = (NBTTagCompound) rope.getTagCompound().getTag("selected" + i);
-            
-            return nbt.getInteger("index");
-        }
-    }
-    
-    public static boolean hasSameSelected(ItemStack rope, double x, double y, double z) {
-        if (!hasBothSelected(rope))
-            return false;
-        else {
-            return false;
-        }
+    public static StructureLocation getSelectedLocation(ItemStack rope) {
+        
+        return new StructureLocation(rope.getTagCompound().getCompoundTag("selected"));
+        
     }
     
     @SideOnly(Side.CLIENT)

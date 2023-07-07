@@ -30,7 +30,6 @@ import com.alet.client.gui.SubGuiItemScanner;
 import com.alet.client.gui.SubGuiLittleHopper;
 import com.alet.client.gui.SubGuiMagnitudeComparator;
 import com.alet.client.gui.SubGuiManual;
-import com.alet.client.gui.SubGuiMicroProcessor;
 import com.alet.client.gui.SubGuiNoticeAtJoin;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiSignalEventsALET;
@@ -67,7 +66,6 @@ import com.alet.common.structure.type.premade.PickupItemPremade;
 import com.alet.common.structure.type.premade.signal.LittleCircuitClock;
 import com.alet.common.structure.type.premade.signal.LittleCircuitDisplay16;
 import com.alet.common.structure.type.premade.signal.LittleCircuitMath;
-import com.alet.common.structure.type.premade.signal.LittleCircuitMicroprocessor;
 import com.alet.common.structure.type.premade.signal.LittleCircuitNVRAM;
 import com.alet.common.structure.type.premade.signal.LittleCircuitNumberToAscii;
 import com.alet.common.structure.type.premade.signal.LittleCircuitPulser;
@@ -86,6 +84,7 @@ import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner;
 import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
+import com.alet.common.structure.type.trigger.advanced.LittleAdvTriggerBoxALET;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemLittleManual;
 import com.alet.items.ItemLittleRope;
@@ -336,19 +335,6 @@ public class ALET {
                 return new SubContainerBasic(player);
             }
         });
-        GuiHandler.registerGuiHandler("programmer", new LittleStructureGuiHandler() {
-            
-            @Override
-            @SideOnly(Side.CLIENT)
-            public SubGui getGui(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
-                return new SubGuiMicroProcessor((LittleCircuitMicroprocessor) structure);
-            }
-            
-            @Override
-            public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt, LittleStructure structure) {
-                return new SubContainerBasic(player);
-            }
-        });
         GuiHandler.registerGuiHandler("manual", new CustomGuiHandler() {
             
             @Override
@@ -419,6 +405,9 @@ public class ALET {
                 return new SubContainerItemScanner(player);
             }
         });
+        LittleStructureRegistry
+                .registerStructureType("adv_trigger_box", "advance", LittleAdvTriggerBoxALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER | LittleStructureAttribute.TICKING, LittleAdvTriggerBoxALET.LittleAdvTriggerBoxStructureParser.class)
+                .addOutput("allow", 1, SignalMode.EQUAL).addInput("completed", 1);
         LittleStructureRegistry
                 .registerStructureType("always_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class)
                 .addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));

@@ -1,6 +1,7 @@
 package com.alet.client.gui.controls.menu;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.creativemd.creativecore.common.gui.GuiControl;
@@ -29,7 +30,7 @@ public class GuiPopupMenu extends GuiParent {
     
     @Override
     public boolean mousePressed(int x, int y, int button) {
-        return true;
+        return super.mousePressed(x, y, button);
     }
     
     /** Gets the control that the cursor is over
@@ -44,17 +45,15 @@ public class GuiPopupMenu extends GuiParent {
      *            List of controls to look through
      * @return
      *         Found control cursor is over. */
-    public GuiControl controlOver(int x, int y, int button, ArrayList<GuiControl> controls) {
+    public GuiControl controlOver(int x, int y, int button, List<GuiControl> controls) {
         for (GuiControl control : controls) {
-            if (!(control instanceof GuiMenuPart) && control.isMouseOver((x), (y))) {
-                selected = control;
-                this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
+            if (control.isMouseOver()) {
+                return control;
             }
             if (control instanceof GuiParent) {
                 GuiControl found = controlOver(x, y, button, ((GuiParent) control).controls);
                 if (found != null) {
-                    selected = found;
-                    this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
+                    return found;
                 }
             }
         }
@@ -97,7 +96,19 @@ public class GuiPopupMenu extends GuiParent {
     }
     
     @Override
+    public void mouseDragged(int x, int y, int button, long time) {
+        super.mouseDragged(x, y, button, time);
+        menu.closeAllMenus();
+        this.getParent().removeControl(menu);
+        pressed = false;
+    }
+    
+    @Override
     public void mouseReleased(int x, int y, int button) {
+        update(x, y, button);
+    }
+    
+    public void update(int x, int y, int button) {
         
         GuiMenuPart found = (GuiMenuPart) menuOver(x, y, button, this.getParent().controls);
         if (button == 1) {
@@ -105,20 +116,23 @@ public class GuiPopupMenu extends GuiParent {
                 menu.posX = x - 2;
                 menu.posY = y - 23;
                 menu.closeAllMenus();
-                this.getParent().controls.add(1, menu);
-                this.getParent().refreshControls();
+                this.getParent().controls.add(menu);
             } else {
                 menu.posX = x - 2;
                 menu.posY = y - 23;
                 menu.closeAllMenus();
             }
             pressed = true;
+            selected = controlOver(x, y, button, parent.getControls());
+            this.getParent().moveControlToTop(menu);
             this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
         } else if (button != 2 && (button == 0 && found == null || found.type.equals(EnumPartType.Leaf))) {
             menu.closeAllMenus();
             this.getParent().removeControl(menu);
             pressed = false;
+            selected = null;
         }
+        
     }
     
     @Override

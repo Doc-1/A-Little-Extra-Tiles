@@ -106,11 +106,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
         run = nbt.getBoolean("isRunning");
         tick = nbt.getInteger("currentTick");
         currentEvent = nbt.getInteger("currentEvent");
-        /*
-        if (nbt.hasKey("collisionArea")) {
-            NBTTagCompound n = (NBTTagCompound) nbt.getTag("collisionArea");
-            this.collisionArea = NBTUtils.readAABB(n);
-        }*/
         if (nbt.hasKey("consideredEventsConditions"))
             this.considerEventsConditions = nbt.getBoolean("consideredEventsConditions");
     }
@@ -197,14 +192,6 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     entitiesToLoad = null;
             }
             
-            /*
-                
-            if (triggerMode.equals("global"))
-                if (!world.loadedEntityList.isEmpty()) {
-                    this.entities.clear();
-                    entities.addAll(world.getLoadedEntityList());
-                    this.run = true;
-                }*/
             this.run = this.triggerActivator.shouldRun(world, entities);
             if (!this.entities.isEmpty() && this.run) {
                 boolean hasCondition = LittleTriggerObject.hasCondition(this.triggerObjs); //Will reset the run and tick values
@@ -257,6 +244,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                 }
             }
         }
+        
     }
     
     public static class LittleTriggerBoxStructureParser extends LittleStructureGuiParser {

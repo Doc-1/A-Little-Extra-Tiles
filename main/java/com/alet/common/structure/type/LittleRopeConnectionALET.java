@@ -1,14 +1,13 @@
 package com.alet.common.structure.type;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.BitSet;
+import java.util.HashMap;
 
 import javax.vecmath.Vector3d;
 
 import org.lwjgl.util.Color;
 
-import com.alet.common.entity.RopeConnectionData;
+import com.alet.common.entity.RopeData;
 import com.alet.common.structure.connection.RopeConnection;
 import com.alet.items.ItemLittleRope;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -19,7 +18,9 @@ import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.utils.math.vec.Vec3;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.creativemd.creativecore.common.world.IOrientatedWorld;
 import com.creativemd.littletiles.client.gui.controls.GuiTileViewer;
+import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
@@ -33,6 +34,7 @@ import com.creativemd.littletiles.common.structure.relative.StructureRelative;
 import com.creativemd.littletiles.common.structure.type.door.LittleAdvancedDoor;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.math.box.LittleBox;
+import com.creativemd.littletiles.common.tile.math.location.StructureLocation;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -59,11 +61,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
-    //Tails has headConnections
-    public List<RopeConnectionData> headConnections = new ArrayList<RopeConnectionData>();
-    
-    //Heads has tailConnections
-    public List<RopeConnection> tailConnections = new ArrayList<RopeConnection>();
+    public HashMap<Integer, RopeData> ropeData = new HashMap<Integer, RopeData>();
+    public HashMap<Integer, RopeConnection> connections = new HashMap<Integer, RopeConnection>();
     
     public LittleRopeConnectionALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -72,39 +71,53 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
     @Override
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
-        NBTTagList tailList = nbt.getTagList("tailList", Constants.NBT.TAG_COMPOUND);
-        for (NBTBase n : tailList) {
-            tailConnections.add(new RopeConnection(this, (NBTTagCompound) n));
+        NBTTagList conList = nbt.getTagList("conList", Constants.NBT.TAG_COMPOUND);
+        for (NBTBase n : conList) {
+            connections.put(((NBTTagCompound) n).getInteger("ropeID"), new RopeConnection(this, (NBTTagCompound) n));
         }
-        NBTTagList headList = nbt.getTagList("headList", Constants.NBT.TAG_COMPOUND);
-        for (NBTBase base : headList) {
-            NBTTagCompound n = (NBTTagCompound) base;
-            RopeConnectionData data = new RopeConnectionData(n.getInteger("color"), n.getDouble("thickness"), n.getDouble("tautness"));
-            data.headConnection = new RopeConnection(this, n);
-            headConnections.add(data);
+        NBTTagList dataList = nbt.getTagList("dataList", Constants.NBT.TAG_COMPOUND);
+        for (NBTBase n : dataList) {
+            ropeData.put(((NBTTagCompound) n).getInteger("ropeID"), new RopeData((NBTTagCompound) n));
         }
     }
     
     @Override
     protected void writeToNBTExtra(NBTTagCompound nbt) {
-        NBTTagList tailList = new NBTTagList();
-        for (RopeConnection tail : tailConnections)
-            tailList.appendTag(tail.writeToNBT(new NBTTagCompound()));
-        nbt.setTag("tailList", tailList);
-        NBTTagList headList = new NBTTagList();
-        NBTTagCompound n = new NBTTagCompound();
-        for (RopeConnectionData head : headConnections) {
-            n.setInteger("color", head.color);
-            n.setDouble("tautness", head.tautness);
-            n.setDouble("thickness", head.thickness);
-            headList.appendTag(head.headConnection.writeToNBT(n));
+        NBTTagList conList = new NBTTagList();
+        NBTTagList dataList = new NBTTagList();
+        for (RopeConnection con : connections.values()) {
+            con.getTarget();
+            con.getTargetCenter();
+            conList.appendTag(con.writeToNBT(new NBTTagCompound()));
+            if (!con.IS_HEAD)
+                continue;
+            RopeData data = this.ropeData.get(con.ropeID);
+            NBTTagCompound n = data.writeData();
+            n.setInteger("ropeID", con.ropeID);
+            dataList.appendTag(n);
         }
-        nbt.setTag("headList", headList);
+        nbt.setTag("conList", conList);
+        nbt.setTag("dataList", dataList);
+        
     }
     
     @Override
     protected void afterPlaced() {
-        System.out.println(this.getWorld());
+        for (RopeConnection d : this.connections.values()) {
+            try {
+                LittleStructure struct = d.getStructure();
+                if (struct instanceof LittleRopeConnectionALET) {
+                    LittleRopeConnectionALET rope = (LittleRopeConnectionALET) struct;
+                    RopeConnection con = rope.connections.get(d.ropeID);
+                    if (con != null && con.adaptStructureChange(this)) {
+                        struct.updateStructure();
+                    }
+                }
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                e.printStackTrace();
+            }
+            
+        }
     }
     
     public void bezier(Vec3 pFinal, Vec3 p0, Vec3 p1, Vec3 p2, float t) {
@@ -121,79 +134,91 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     @Override
     public boolean onBlockActivated(World world, LittleTile tile, BlockPos pos, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
         if (heldItem.getItem() instanceof ItemLittleRope) {
-            if (!ItemLittleRope.hasSelected(1, heldItem)) //Tail == 1
-                ItemLittleRope.addSelected(1, heldItem, this.getIndex(), pos);
-            else if (!ItemLittleRope.hasSelected(2, heldItem)) //Head == 2
-                ItemLittleRope.addSelected(2, heldItem, this.getIndex(), pos);
-            if (ItemLittleRope.hasBothSelected(heldItem)) {
-                RopeConnection tail = new RopeConnection(this, ItemLittleRope.getSelectedPosition(1, heldItem), ItemLittleRope.getSelectedIndex(1, heldItem), null);
-                this.tailConnections.add(tail);
+            if (!ItemLittleRope.hasSelected(heldItem)) //Tail == 1
+                ItemLittleRope.addSelected(heldItem, this.getStructureLocation());
+            else {
                 try {
-                    LittleRopeConnectionALET tailStructure = (LittleRopeConnectionALET) tail.getStructure();
-                    RopeConnection head = new RopeConnection(tailStructure, this.getPos(), this.getIndex(), null);
-                    RopeConnectionData data = ItemLittleRope.writeDataFromNBT(heldItem.getTagCompound());
-                    data.headConnection = head;
-                    if (!this.matchingConnection(data, tailStructure)) {
-                        tailStructure.headConnections.add(data);
-                        if (this.isClient())
-                            tailStructure.mainBlock.getTe().render.markRenderBoundingBoxDirty();
-                    }
-                    ItemLittleRope.removeSelected(heldItem);
-                } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                    StructureLocation tailLocation = ItemLittleRope.getSelectedLocation(heldItem);
+                    World w = this.getWorld();
+                    if (w instanceof IOrientatedWorld)
+                        w = ((IOrientatedWorld) w).getRealWorld();
+                    LittleRopeConnectionALET tail = (LittleRopeConnectionALET) tailLocation.find(w);
+                    BitSet set = new BitSet();
+                    this.fillInIDs(set);
+                    tail.fillInIDs(set);
+                    int ropeID = set.nextClearBit(0);
+                    RopeData data = ItemLittleRope.writeDataFromNBT(heldItem.getTagCompound());
+                    
+                    if (this.matchingConnection(data, tail))
+                        return true;
+                    
+                    tail.connections.put(ropeID, new RopeConnection(tail, this.getStructureLocation(), ropeID, false));
+                    this.connections.put(ropeID, new RopeConnection(this, tailLocation, ropeID, true));
+                    this.ropeData.put(ropeID, data);
+                    this.updateStructure();
+                    tail.updateStructure();
+                } catch (LittleActionException e) {
                     e.printStackTrace();
                 }
             }
-            
         }
+        
         return true;
         
     }
     
-    public boolean matchingConnection(RopeConnectionData data, LittleRopeConnectionALET otherStructure) {
-        try {
-            //Tail to head
-            //this = headStructure
-            for (RopeConnectionData head : otherStructure.headConnections) {
-                if (head.headConnection.getStructure().equals(this) && head.equals(data)) {
-                    return true;
+    public void fillInIDs(BitSet set) {
+        for (RopeConnection con : connections.values())
+            set.set(con.ropeID);
+    }
+    
+    public boolean matchingConnection(RopeData data, LittleRopeConnectionALET otherStructure) {
+        for (RopeConnection con : otherStructure.connections.values()) {
+            try {
+                if (con.getStructure() == this) {
+                    RopeData otherData = con.IS_HEAD ? otherStructure.ropeData.get(con.ropeID) : this.ropeData.get(con.ropeID);
+                    if (otherData.equals(data))
+                        return true;
                 }
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-            //head to tail
-            //this = tailStructure
-            for (RopeConnectionData head : this.headConnections) {
-                if (head.headConnection.getStructure().equals(otherStructure) && head.equals(data)) {
-                    return true;
+        }
+        
+        for (RopeConnection con : this.connections.values()) {
+            try {
+                if (con.getStructure() == this) {
+                    RopeData thisData = con.IS_HEAD ? this.ropeData.get(con.ropeID) : otherStructure.ropeData.get(con.ropeID);
+                    if (thisData.equals(data))
+                        return true;
                 }
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
         return false;
     }
     
     @Override
+    public void unload() {
+        connections.clear();
+        super.unload();
+    }
+    
+    @Override
     public void onStructureDestroyed() {
         super.onStructureDestroyed();
-        try {
-            for (RopeConnectionData head : this.headConnections) {
-                LittleRopeConnectionALET headStructure = (LittleRopeConnectionALET) head.headConnection.getStructure();
-                for (Iterator<RopeConnection> iterator = headStructure.tailConnections.iterator(); iterator.hasNext();) {
-                    if (this.equals((LittleRopeConnectionALET) iterator.next().getStructure())) {
-                        iterator.remove();
-                    }
-                }
+        for (RopeConnection con : this.connections.values()) {
+            try {
+                LittleRopeConnectionALET structure = (LittleRopeConnectionALET) con.getStructure();
+                structure.connections.remove(con.ropeID);
+                structure.ropeData.remove(con.ropeID);
+                structure.updateStructure();
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                e.printStackTrace();
             }
-            for (RopeConnection tail : this.tailConnections) {
-                LittleRopeConnectionALET headStructure = (LittleRopeConnectionALET) tail.getStructure();
-                for (Iterator<RopeConnectionData> iterator = headStructure.headConnections.iterator(); iterator.hasNext();) {
-                    if (this.equals(iterator.next().headConnection.getStructure())) {
-                        iterator.remove();
-                    }
-                }
-            }
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {
-            e.printStackTrace();
         }
     }
     
@@ -210,13 +235,16 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
         double maxY = center.y + 0.5;
         double maxZ = center.z + 0.5;
         
-        for (RopeConnectionData data : headConnections) {
-            minX = Math.min(data.getTargetCenter().x - data.thickness, minX);
-            minY = Math.min(data.getTargetCenter().y - data.thickness, minY);
-            minZ = Math.min(data.getTargetCenter().z - data.thickness, minZ);
-            maxX = Math.max(data.getTargetCenter().x + data.thickness, maxX);
-            maxY = Math.max(data.getTargetCenter().y + data.thickness, maxY);
-            maxZ = Math.max(data.getTargetCenter().z + data.thickness, maxZ);
+        for (RopeConnection con : connections.values()) {
+            if (!con.IS_HEAD)
+                continue;
+            RopeData data = ropeData.get(con.ropeID); //is Head
+            minX = Math.min(con.getTargetCenter().x - data.thickness, minX);
+            minY = Math.min(con.getTargetCenter().y - data.thickness, minY);
+            minZ = Math.min(con.getTargetCenter().z - data.thickness, minZ);
+            maxX = Math.max(con.getTargetCenter().x + data.thickness, maxX);
+            maxY = Math.max(con.getTargetCenter().y + data.thickness, maxY);
+            maxZ = Math.max(con.getTargetCenter().z + data.thickness, maxZ);
         }
         minX -= getPos().getX();
         minY -= getPos().getY();
@@ -230,27 +258,33 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
     @Override
     public void renderTick(BlockPos pos, double x, double y, double z, float partialTickTime) {
-        for (RopeConnectionData connection : this.headConnections) {
-            //TODO cache tail center
-            Vector3d tailPos = this.axisCenter.getCenter();
-            tailPos.x += pos.getX();
-            tailPos.y += pos.getY();
-            tailPos.z += pos.getZ();
-            Vector3d headPos = connection.getTargetCenter();
-            double p0x = tailPos.x;
-            double p0y = tailPos.y;
-            double p0z = tailPos.z;
-            double p2x = headPos.x;
-            double p2y = headPos.y;
-            double p2z = headPos.z;
+        
+        for (RopeConnection connection : this.connections.values()) {
+            if (!connection.IS_HEAD)
+                continue;
+            RopeData data = this.ropeData.get(connection.ropeID);
+            Vector3d headPos = this.axisCenter.getCenter();
+            // headPos.add(new Vector3d(1, 1, 1));
+            Vector3d vecPos = new Vector3d(pos.getX(), pos.getY(), pos.getZ());
+            LittleStructure target = connection.getTarget();
+            Vector3d tailPos = (Vector3d) connection.getTargetCenter().clone();
+            if (connection.hasMoved(tailPos))
+                this.mainBlock.getTe().render.markRenderBoundingBoxDirty();
+            tailPos.sub(vecPos);
+            double p0x = headPos.x;
+            double p0y = headPos.y;
+            double p0z = headPos.z;
+            double p2x = tailPos.x;
+            double p2y = tailPos.y;
+            double p2z = tailPos.z;
             double p1x = (p0x + p2x) / 2; //Middle
-            double p1y = ((p0y + p2y) / 2) - connection.tautness;//Middle
+            double p1y = ((p0y + p2y) / 2) - data.tautness;//Middle
             double p1z = (p0z + p2z) / 2;//Middle
             Vec3 startPoint = new Vec3(p0x, p0y, p0z);
             Vec3 midPoint = new Vec3(p1x, p1y, p1z);
             Vec3 endPoint = new Vec3(p2x, p2y, p2z);
             Vec3 drawPoint = new Vec3(0, 0, 0);
-            Color c = ColorUtils.IntToRGBA(connection.color);
+            Color c = ColorUtils.IntToRGBA(data.color);
             float red = c.getRed() / 255F;
             float green = c.getGreen() / 255F;
             float blue = c.getBlue() / 255F;
@@ -268,7 +302,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
             GlStateManager.disableLighting();
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
-            GlStateManager.translate(x - pos.getX(), y - pos.getY(), z - pos.getZ());
+            GlStateManager.translate(x, y, z);
+            //GlStateManager.translate(-translatePos.x, -translatePos.y, -translatePos.z);
             int count = (int) (startPoint.distance(endPoint) * 3);
             bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
             for (int j = 0; j <= count; ++j) {
@@ -283,8 +318,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                     b = Math.max(0, blue - 0.1F);
                 }
                 
-                bufferbuilder.pos(drawPoint.x - connection.thickness, drawPoint.y, drawPoint.z).color(r, g, b, alpha).endVertex();
-                bufferbuilder.pos(drawPoint.x + connection.thickness, drawPoint.y, drawPoint.z).color(r, g, b, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x - data.thickness, drawPoint.y, drawPoint.z).color(r, g, b, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x + data.thickness, drawPoint.y, drawPoint.z).color(r, g, b, alpha).endVertex();
                 
             }
             tessellator.draw();
@@ -304,8 +339,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                     b = Math.max(0, blue - 0.1F);
                 }
                 
-                bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z - connection.thickness).color(r, g, b, alpha).endVertex();
-                bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z + connection.thickness).color(r, g, b, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z - data.thickness).color(r, g, b, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x, drawPoint.y, drawPoint.z + data.thickness).color(r, g, b, alpha).endVertex();
             }
             
             tessellator.draw();
@@ -325,10 +360,9 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                     b = Math.max(0, blue - 0.1F);
                 }
                 
-                bufferbuilder.pos(drawPoint.x, drawPoint.y - connection.thickness, drawPoint.z).color(r, g, b, alpha).endVertex();
-                bufferbuilder.pos(drawPoint.x, drawPoint.y + connection.thickness, drawPoint.z).color(r, g, b, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x, drawPoint.y - data.thickness, drawPoint.z).color(r, g, b, alpha).endVertex();
+                bufferbuilder.pos(drawPoint.x, drawPoint.y + data.thickness, drawPoint.z).color(r, g, b, alpha).endVertex();
             }
-            
             tessellator.draw();
             GlStateManager.popMatrix();
             GlStateManager.enableTexture2D();

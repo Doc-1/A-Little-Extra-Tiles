@@ -3,6 +3,8 @@ package com.alet.client.gui.controls.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.client.gui.event.gui.GuiControlDragEvent;
+import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
@@ -32,6 +34,7 @@ public class GuiTreePart extends GuiControl {
     public int textColor = ColorUtils.WHITE;
     
     public boolean mousePressed = false;
+    public boolean wasOver = false;
     public boolean counting = false;
     public int tick = 0;
     
@@ -447,6 +450,13 @@ public class GuiTreePart extends GuiControl {
     }
     
     @Override
+    public void mouseDragged(int x, int y, int button, long time) {
+        super.mouseDragged(x, y, button, time);
+        if (this.selected && this.wasOver && !this.type.canHold())
+            this.raiseEvent(new GuiControlDragEvent(this, x, y, button));
+    }
+    
+    @Override
     public boolean isMouseOver(int posX, int posY) {
         boolean result = super.isMouseOver(posX, posY);
         if (result) {
@@ -477,10 +487,21 @@ public class GuiTreePart extends GuiControl {
     }
     
     @Override
+    public void mouseReleased(int x, int y, int button) {
+        if (wasOver) {
+            this.wasOver = false;
+            this.raiseEvent(new GuiControlReleaseEvent(this, x, y, button));
+        }
+    }
+    
+    @Override
     public boolean mousePressed(int x, int y, int button) {
         playSound(SoundEvents.UI_BUTTON_CLICK);
         onClicked(x, y, button);
         this.mousePressed = true;
+        this.wasOver = false;
+        if (super.isMouseOver(x, y))
+            this.wasOver = true;
         return true;
     }
     

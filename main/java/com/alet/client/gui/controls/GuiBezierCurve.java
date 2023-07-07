@@ -2,6 +2,7 @@ package com.alet.client.gui.controls;
 
 import javax.vecmath.Point2i;
 
+import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.common.util.RenderUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
@@ -19,19 +20,43 @@ public class GuiBezierCurve extends GuiParent {
     public GuiControl p0LockOn;
     public GuiControl p3LockOn;
     
-    public GuiBezierCurve(String name, int x, int y, GuiControl p0LockOn, GuiControl p3LockOn, int width, int height) {
-        super(name, x, y, width, height);
+    public GuiBezierCurve(String name, GuiControl p0LockOn, GuiControl p3LockOn, int width, int height) {
+        super(name, 0, 0, width, height);
         this.p0LockOn = p0LockOn;
         this.p3LockOn = p3LockOn;
+    }
+    
+    public GuiBezierCurve(String name, int x, int y, int width, int height) {
+        super(name, x, y, width, height);
     }
     
     @Override
     protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
         int multi = 20;
-        p0.x = p0LockOn.posX + p0LockOn.getParent().posX;
-        p3.x = p3LockOn.posX + p3LockOn.getParent().posX;
-        p0.y = p0LockOn.posY + p0LockOn.getParent().posY;
-        p3.y = p3LockOn.posY + p3LockOn.getParent().posY;
+        GuiNode node1 = (GuiNode) p0LockOn;
+        GuiNode node2 = (GuiNode) p3LockOn;
+        
+        if (p0LockOn != null && p3LockOn == null) {
+            int xOffSet1 = node1.isSender() ? node1.width - 2 : -5;
+            p0.x = (p0LockOn.posX + p0LockOn.getParent().posX) + xOffSet1;
+            p0.y = p0LockOn.posY + p0LockOn.getParent().posY;
+            p3.x = (int) getMousePos().x;
+            p3.y = (int) getMousePos().y;
+        } else if (p3LockOn != null && p0LockOn == null) {
+            int xOffSet2 = node2.isSender() ? node2.width - 2 : -5;
+            p0.x = (int) getMousePos().x;
+            p0.y = (int) getMousePos().y;
+            p3.x = (p3LockOn.posX + p3LockOn.getParent().posX) + xOffSet2;
+            p3.y = p3LockOn.posY + p3LockOn.getParent().posY;
+        } else {
+            int xOffSet2 = node2.isSender() ? node2.width - 2 : -5;
+            int xOffSet1 = node1.isSender() ? node1.width - 2 : -5;
+            p0.x = (p0LockOn.posX + p0LockOn.getParent().posX) + xOffSet1;
+            p0.y = p0LockOn.posY + p0LockOn.getParent().posY;
+            p3.x = (p3LockOn.posX + p3LockOn.getParent().posX) + xOffSet2;
+            p3.y = p3LockOn.posY + p3LockOn.getParent().posY;
+            
+        }
         
         int centerX = (p0.x - p3.x);
         

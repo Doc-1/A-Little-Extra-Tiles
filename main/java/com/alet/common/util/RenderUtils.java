@@ -53,35 +53,6 @@ public class RenderUtils {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-        /*
-        float f = (color >> 24 & 255) / 255.0F;
-        float f1 = (color >> 16 & 255) / 255.0F;
-        float f2 = (color >> 8 & 255) / 255.0F;
-        float f3 = (color & 255) / 255.0F;
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.shadeModel(7425);
-        GlStateManager.pushMatrix();
-        GlStateManager.glLineWidth(4F);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
-        bufferbuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
-        for (int i = 0; i < 25; i++) {
-        	t = i / 25;
-        	pFinal = cubicBezier(p0, p1, p2, p3, t, pFinal);
-        	
-        }
-        bufferbuilder.pos(0, 10, 0).color(f1, f2, f3, f).endVertex();
-        bufferbuilder.pos(0, 20, 0).color(f1, f2, f3, f).endVertex();
-        tessellator.draw();
-        GlStateManager.popMatrix();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-        */
     }
     
     public static Point2i cubicBezier(Point2i p0, Point2i p1, Point2i p2, Point2i p3, double t, Point2i pFinal) {

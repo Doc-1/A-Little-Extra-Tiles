@@ -54,6 +54,31 @@ item.LTPremade.signal_quick_input32.name=Quick Input (32-bit) (WIP)
 itemGroup.alet=Little Circuits
 
 
+trigger.advanced.category.event.name=Events
+trigger.advanced.category.condition.name=Conditions
+trigger.advanced.category.cast.name=Casts
+trigger.advanced.category.value.name=Values
+trigger.advanced.category.getter.name=Getters
+trigger.advanced.category.activator.name=Activators
+trigger.advanced.category.flow_control.name=Flow Controls
+
+trigger.advanced.join_string.name=Join String
+trigger.advanced.string.name=String
+trigger.advanced.integer.name=Integer
+trigger.advanced.double.name=Double
+trigger.advanced.double_to_int.name=Double to Int
+
+trigger.advanced.tile_collision.name=Collision With Tiles
+trigger.advanced.right_click.name=On Right Click
+
+trigger.advanced.equal_to.name=Equal To Integer
+trigger.advanced.modify_motion.name=Modify Motion
+trigger.advanced.message.name=Message To Chat
+trigger.advanced.branch.name=Branch
+
+trigger.advanced.get_entity_position.name=Get Entity Position
+trigger.advanced.get_entity_name.name=Get Entity Name
+
 trigger.collision_area.name=Collision with Area
 trigger.global.name=Global
 trigger.trigger_selector.name=Target Selector

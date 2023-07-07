@@ -36,9 +36,28 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 viewer.onLoaded(recipeGui.animationPreview);
                 
             } catch (NullPointerException e) {}
-            
             recipeGui.refreshControls();
-            if (name.equals("structure.music_composer.name")) {
+            if (name.equals("structure.adv_trigger_box.name")) {
+                
+                gui.height = 270;
+                gui.width = 580;
+                
+                recipeGui.get("tilescount").posX = 430;
+                recipeGui.get("pause").posX = 470;
+                recipeGui.get("play").posX = 490;
+                recipeGui.get("stop").posX = 510;
+                recipeGui.get("panel").width = 429;
+                recipeGui.get("panel").height = 211;
+                
+                recipeGui.get("save").posY = 243;
+                recipeGui.get("name").posY = 243;
+                recipeGui.get("clear").posY = 243;
+                viewer.moveViewPort(-72, 32);
+                viewer.posX = 430;
+                
+                recipeGui.refreshControls();
+                hasUpdated = true;
+            } else if (name.equals("structure.music_composer.name")) {
                 gui.height = 270;
                 gui.width = 406;
                 recipeGui.get("tilescount").posX = 258;

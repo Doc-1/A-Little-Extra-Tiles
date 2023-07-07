@@ -41,6 +41,8 @@ public abstract class LittleTriggerObject {
         return false;
     }
     
+    public abstract NBTTagCompound serializeNBT(NBTTagCompound nbt);
+    
     public abstract LittleTriggerObject deserializeNBT(NBTTagCompound nbt);
     
     public NBTTagCompound createNBT() {
@@ -53,8 +55,6 @@ public abstract class LittleTriggerObject {
     public GuiPanel getPanel(GuiParent parent) {
         return (GuiPanel) parent.get("settings");
     }
-    
-    public abstract NBTTagCompound serializeNBT(NBTTagCompound nbt);
     
     @SideOnly(Side.CLIENT)
     public abstract void createGuiControls(GuiPanel panel, LittlePreviews previews);
