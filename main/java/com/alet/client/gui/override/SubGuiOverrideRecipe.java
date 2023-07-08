@@ -41,19 +41,17 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 
                 gui.height = 270;
                 gui.width = 580;
-                
-                recipeGui.get("tilescount").posX = 430;
-                recipeGui.get("pause").posX = 470;
-                recipeGui.get("play").posX = 490;
-                recipeGui.get("stop").posX = 510;
-                recipeGui.get("panel").width = 429;
+                recipeGui.controls.remove(recipeGui.get("play"));
+                recipeGui.controls.remove(recipeGui.get("pause"));
+                recipeGui.controls.remove(recipeGui.get("stop"));
+                recipeGui.controls.remove(recipeGui.get("tilescount"));
+                recipeGui.controls.remove(recipeGui.get("renderer"));
+                recipeGui.get("panel").width = 574;
                 recipeGui.get("panel").height = 211;
                 
                 recipeGui.get("save").posY = 243;
                 recipeGui.get("name").posY = 243;
                 recipeGui.get("clear").posY = 243;
-                viewer.moveViewPort(-72, 32);
-                viewer.posX = 430;
                 
                 recipeGui.refreshControls();
                 hasUpdated = true;
