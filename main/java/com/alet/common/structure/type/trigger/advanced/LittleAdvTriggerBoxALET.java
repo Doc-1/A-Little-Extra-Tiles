@@ -10,8 +10,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.input.Keyboard;
+
 import com.alet.client.gui.controls.GuiBezierCurve;
 import com.alet.client.gui.controls.GuiDragablePanel;
+import com.alet.client.gui.controls.GuiIconDepressedButton;
+import com.alet.client.gui.controls.GuiKeyListener;
 import com.alet.client.gui.controls.menu.GuiMenu;
 import com.alet.client.gui.controls.menu.GuiMenuPart;
 import com.alet.client.gui.controls.menu.GuiPopupMenu;
@@ -25,9 +29,11 @@ import com.alet.client.gui.controls.programmable.blueprints.GuiBlueprint;
 import com.alet.client.gui.controls.programmable.blueprints.activators.BlueprintActivator;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.event.gui.GuiControlDragEvent;
+import com.alet.client.gui.event.gui.GuiControlKeyPressed;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.trigger.LittleTriggerObject;
 import com.alet.common.structure.type.trigger.activator.LittleTriggerActivator;
+import com.alet.common.util.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
@@ -273,7 +279,8 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
         public void createControls(LittlePreviews previews, LittleStructure structure) {
             
             LittleAdvTriggerBoxALET triggerBox = (LittleAdvTriggerBoxALET) structure;
-            GuiDragablePanel drag = new GuiDragablePanel("drag", 150, 0, 580, 388, 1000, 1000);
+            
+            GuiDragablePanel drag = new GuiDragablePanel("drag", 150, 19, 412, 180, 1000, 1000);
             List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
             GuiMenuPart name = new GuiMenuPart("", "Delete", EnumPartType.Leaf);
             listOfMenus.add(name);
@@ -298,6 +305,12 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
             box.addControl(tree);
             parent.addControl(drag);
             parent.addControl(box);
+            drag.addControl(new GuiKeyListener("key_listener"));
+            parent.addControl(new GuiIconDepressedButton("pointer", 150, 0, 4, true).setCustomTooltip("Not Implemented Yet"));
+            parent.addControl(new GuiIconDepressedButton("move", 170, 0, 0, false).setCustomTooltip("Not Implemented Yet"));
+            parent.addControl(new GuiIconDepressedButton("delete", 190, 0, 1, false).setCustomTooltip("Not Implemented Yet"));
+            parent.addControl(new GuiIconDepressedButton("select", 210, 0, 2, false).setCustomTooltip("Not Implemented Yet"));
+            parent.addControl(new GuiIconDepressedButton("drag_toggle", 230, 0, 3, false).setCustomTooltip("Not Implemented Yet"));
             /*
             BlueprintInteger i = new BlueprintInteger(0);
             BlueprintDouble bp = new BlueprintDouble(1);
@@ -327,7 +340,6 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
         public void controlChanged(GuiControlChangedEvent event) {
             if (event.source instanceof GuiMenuPart) {
                 GuiMenuPart menu = (GuiMenuPart) event.source;
-                System.out.println(menu.parent);
                 
             }
         }
@@ -337,8 +349,32 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
             if (event.source instanceof GuiTreePartHolder) {
                 GuiDragablePanel drag = (GuiDragablePanel) this.parent.get("drag");
                 GuiTreePart menu = (GuiTreePart) event.source;
-                System.out.println(drag.getMousePos());
-                
+            }
+        }
+        
+        @CustomEventSubscribe
+        public void keyPressed(GuiControlKeyPressed event) {
+            if (event.source.is("key_listener")) {
+                if (event.ctrl && Keyboard.KEY_W == event.key) {
+                    parent.raiseEvent(new GuiControlClickEvent(parent.get("move"), 0, 0, 0));
+                    MouseUtils.setCursor("move");
+                }
+                if (event.ctrl && Keyboard.KEY_A == event.key) {
+                    parent.raiseEvent(new GuiControlClickEvent(parent.get("delete"), 0, 0, 0));
+                    MouseUtils.setCursor("close");
+                }
+                if (event.ctrl && Keyboard.KEY_S == event.key) {
+                    parent.raiseEvent(new GuiControlClickEvent(parent.get("select"), 0, 0, 0));
+                    MouseUtils.setCursor("dotted_line");
+                }
+                if (event.ctrl && Keyboard.KEY_D == event.key) {
+                    parent.raiseEvent(new GuiControlClickEvent(parent.get("drag_toggle"), 0, 0, 0));
+                    MouseUtils.setCursor("open_hand");
+                }
+                if (event.ctrl && Keyboard.KEY_Q == event.key) {
+                    parent.raiseEvent(new GuiControlClickEvent(parent.get("pointer"), 0, 0, 0));
+                    MouseUtils.resetCursor();
+                }
             }
         }
         
@@ -418,10 +454,9 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
                     this.blueprints.add(pb);
                 }
             }
-            if (event.source instanceof GuiMenuPart) {
-                GuiMenuPart menu = (GuiMenuPart) event.source;
-                System.out.println(menu.parent);
-                
+            if (event.source instanceof GuiIconDepressedButton) {
+                this.parent.controls.stream().filter(x -> x instanceof GuiIconDepressedButton && !x.equals(event.source)).forEach(x -> ((GuiIconDepressedButton) x).value = false);
+                ((GuiIconDepressedButton) event.source).value = true;
             }
         }
         

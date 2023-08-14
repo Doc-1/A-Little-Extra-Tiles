@@ -2,6 +2,8 @@ package com.alet.client.gui;
 
 import org.lwjgl.util.Color;
 
+import com.alet.client.gui.tutorial.controls.GuiTutorialBox;
+import com.alet.client.gui.tutorial.controls.TutorialData;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
@@ -14,7 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class SubGuiLittleRope extends SubGuiConfigure {
     
     public SubGuiLittleRope(ItemStack stack) {
-        super(200, 200, stack);
+        super(134, 139, stack);
     }
     
     @Override
@@ -27,14 +29,27 @@ public class SubGuiLittleRope extends SubGuiConfigure {
         double thickness = nbt.hasKey("thickness") ? nbt.getDouble("thickness") : 0.3F;
         double tautness = nbt.hasKey("tautness") ? nbt.getDouble("tautness") : 0.5F;
         
-        controls.add(new GuiLabel("Rope's Thickness:", 0, 0));
-        controls.add(new GuiLabel("Rope's Tautness:", 0, 20));
-        controls.add(new GuiLabel("Rope's Light Level:", 0, 95));
+        controls.add(new GuiLabel("Rope's Radius:", 0, 0));
+        controls.add(new GuiLabel("Rope's Tautness:", 0, 35));
+        controls.add(new GuiLabel("Rope's Color:", 0, 70));
         
-        controls.add(new GuiAnalogeSlider("thickness", 94, 0, 100, 10, thickness, 0, 0.5));
-        controls.add(new GuiAnalogeSlider("tautness", 94, 20, 100, 10, tautness, 0, 10));
-        controls.add(new GuiColorPickerAlet("color", 0, 40, ColorUtils.IntToRGBA(color), true, 0));
+        controls.add(new GuiAnalogeSlider("thickness", 0, 15, 100, 10, thickness, 0.01, 0.5));
+        controls.add(new GuiAnalogeSlider("tautness", 0, 50, 100, 10, tautness, 0, 10));
+        controls.add(new GuiColorPickerAlet("color", 0, 85, ColorUtils.IntToRGBA(color), true, 0));
         
+        GuiTutorialBox tutBox = new GuiTutorialBox(name, 0, 0, 180, this.width, this.height);
+        tutBox.tutorialMap.add(new TutorialData(get("thickness"), "leftout", "This is used to set the radius of the rope. At 0.5 it will be the same size as a block."));
+        tutBox.tutorialMap.add(new TutorialData(get("tautness"), "leftout", "This is used to set how far the rope droops. At 0.1 the curve will be half a block down."));
+        tutBox.tutorialMap.add(new TutorialData(get("color"), "leftout", "This is used to set the color of the rope."));
+        GuiColorPickerAlet picker = (GuiColorPickerAlet) get("color");
+        tutBox.tutorialMap.add(new TutorialData(picker.get("r"), "leftout", "This is the red color slider."));
+        tutBox.tutorialMap.add(new TutorialData(picker.get("g"), "leftout", "This is the green color slider."));
+        tutBox.tutorialMap.add(new TutorialData(picker.get("b"), "leftout", "This is the blue color slider."));
+        tutBox.tutorialMap.add(new TutorialData(picker.get("a"), "leftout", "This is the alpha slider. How transparent the color is."));
+        tutBox.tutorialMap.add(new TutorialData(picker.get("s"), "leftout", "This is the shader slider. It allows you to easly change how dark or light a color is."));
+        tutBox.tutorialMap.add(new TutorialData(picker
+                .get("more"), "leftout", "Click on this to open the color palette. It allows you to save your currently selected color for later use."));
+        controls.add(tutBox);
     }
     
     @Override

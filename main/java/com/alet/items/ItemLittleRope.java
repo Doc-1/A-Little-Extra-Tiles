@@ -33,11 +33,9 @@ public class ItemLittleRope extends Item implements ILittleTool {
     
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
-        if (player.isSneaking()) {
-            NBTTagCompound nbt = player.getHeldItemMainhand().getTagCompound();
-            nbt.removeTag("selected");
-            player.getHeldItemMainhand().setTagCompound(nbt);
-        }
+        if (player.isSneaking())
+            removeSelected(player.getHeldItemMainhand());
+        
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(handIn));
     }
     

@@ -160,6 +160,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                 } catch (LittleActionException e) {
                     e.printStackTrace();
                 }
+                ItemLittleRope.removeSelected(heldItem);
             }
         }
         

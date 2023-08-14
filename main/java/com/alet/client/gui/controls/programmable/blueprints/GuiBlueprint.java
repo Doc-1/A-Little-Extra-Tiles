@@ -1,27 +1,18 @@
 package com.alet.client.gui.controls.programmable.blueprints;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Cursor;
-import org.lwjgl.input.Mouse;
-
-import com.alet.ALET;
 import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.programmable.blueprints.values.BlueprintValue;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeMethod;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.trigger.advanced.LittleAdvTriggerBoxALET;
+import com.alet.common.util.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -30,12 +21,10 @@ import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.util.Constants.NBT;
 
@@ -61,24 +50,6 @@ public abstract class GuiBlueprint extends GuiParent {
         
         public boolean isNeither() {
             return this.equals(NEITHER);
-        }
-    }
-    
-    private static final Cursor DEFAULT_CURSOR = Mouse.getNativeCursor();
-    private static Cursor moveCursor;
-    static {
-        try {
-            BufferedImage image = ImageIO
-                    .read(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(ALET.MODID, "textures/cursors/move.png")).getInputStream());
-            BufferedImage resizedImage = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graphics2D = resizedImage.createGraphics();
-            graphics2D.drawImage(image, 0, 0, 32, 32, null);
-            graphics2D.dispose();
-            moveCursor = new Cursor(resizedImage.getWidth(), resizedImage.getHeight(), resizedImage.getWidth() / 2, resizedImage.getHeight() / 2, 1, IntBuffer
-                    .wrap(resizedImage.getRGB(0, 0, resizedImage.getWidth(), resizedImage.getHeight(), null, 0, resizedImage.getWidth())), null);
-        } catch (Exception e) {
-            
-            e.printStackTrace();
         }
     }
     
@@ -351,13 +322,7 @@ public abstract class GuiBlueprint extends GuiParent {
         boolean result = super.mousePressed(x, y, button);
         
         if (this.controlOver(x, y, button, controls) == null) {
-            try {
-                if (moveCursor != null)
-                    Mouse.setNativeCursor(moveCursor);
-            } catch (LWJGLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            MouseUtils.setCursor("move");
             this.mousePosX = (int) this.getMousePos().x;
             this.mousePosY = (int) this.getMousePos().y;
             
@@ -372,11 +337,7 @@ public abstract class GuiBlueprint extends GuiParent {
     @Override
     public void mouseReleased(int x, int y, int button) {
         super.mouseReleased(x, y, button);
-        try {
-            Mouse.setNativeCursor(DEFAULT_CURSOR);
-        } catch (LWJGLException e) {
-            e.printStackTrace();
-        }
+        MouseUtils.resetCursor();
         this.raiseEvent(new GuiControlReleaseEvent(this, x, y, button));
         this.selected = false;
     }

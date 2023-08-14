@@ -407,19 +407,19 @@ public class ALET {
         });
         LittleStructureRegistry
                 .registerStructureType("adv_trigger_box", "advance", LittleAdvTriggerBoxALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER | LittleStructureAttribute.TICKING, LittleAdvTriggerBoxALET.LittleAdvTriggerBoxStructureParser.class)
-                .addOutput("allow", 1, SignalMode.EQUAL).addInput("completed", 1);
+                .addOutput("allow", 1, SignalMode.EQUAL).addInput("completed", 1).preventImportInSurvival();
         LittleStructureRegistry
                 .registerStructureType("always_on_light", "simple", LittleAlwaysOnLight.class, LittleStructureAttribute.LIGHT_EMITTER, LittleAlwaysOnLightStructureParser.class)
                 .addIngredient(new StructureIngredientScalerVolume(8), () -> new StackIngredient(new ItemStack(Items.GLOWSTONE_DUST)));
         LittleStructureRegistry
                 .registerStructureType("trigger_box", "advance", LittleTriggerBoxStructureALET.class, LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER | LittleStructureAttribute.TICKING, LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class)
-                .addOutput("allow", 1, SignalMode.EQUAL).addInput("completed", 1);
+                .addOutput("allow", 1, SignalMode.EQUAL).addInput("completed", 1).preventImportInSurvival();
         LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class, LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class)
                 .addOutput("lock", 1, SignalMode.TOGGLE, true);
         
         LittleStructureRegistry
                 .registerStructureType("state_activator", "advance", LittleStateMutatorALET.class, LittleStructureAttribute.NONE, LittleStateMutatorALET.LittleStateMutatorParserALET.class)
-                .addOutput("activate", 1, SignalMode.TOGGLE, true);
+                .addOutput("activate", 1, SignalMode.TOGGLE, true).preventImportInSurvival();
         
         LittleStructureRegistry
                 .registerStructureType("music_composer", "sound", LittleMusicComposerALET.class, LittleStructureAttribute.TICKING, LittleMusicComposerALET.LittleMusicComposerParserALET.class)
@@ -433,7 +433,7 @@ public class ALET {
         if (Loader.isModLoaded("cmdcam"))
             LittleStructureRegistry
                     .registerStructureType("cam_player", "advance", LittleCamPlayerALET.class, LittleStructureAttribute.TICKING, LittleCamPlayerALET.LittleCamPlayerParserALET.class)
-                    .addOutput("play", 1, SignalMode.TOGGLE);
+                    .addOutput("play", 1, SignalMode.TOGGLE).preventImportInSurvival();
         
         proxy.loadSidePre();
     }

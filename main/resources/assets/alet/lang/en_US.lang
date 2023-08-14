@@ -137,6 +137,7 @@ config.alet.colorAccuracy.comment=This will change how many colors the printer h
 
 
 structure.trigger_box.name=Trigger Box
+structure.adv_trigger_box.name=(WIP) Adv Trigger Box
 structure.door_lock.name=Door Lock
 structure.state_activator.name=State Mutator
 structure.music_composer.name=Music Composer

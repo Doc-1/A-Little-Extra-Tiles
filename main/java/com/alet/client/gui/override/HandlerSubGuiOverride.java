@@ -36,39 +36,36 @@ public class HandlerSubGuiOverride {
         }
     }
     
-    public static void updateGuiFrom(SubGui gui) {
-        
+    private static SubGuiOverride getOverrideManager(SubGui gui) {
         for (Class<? extends SubGui> clazz : guiToMod.keySet()) {
             try {
                 if (clazz.isInstance(gui)) {
-                    SubGuiOverride override = guiToMod.get(clazz);
-                    if (override.shouldUpdate) {
-                        override.updateControls(gui);
-                        
-                    }
-                    
+                    return guiToMod.get(clazz);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
             
         }
-        
+        return null;
+    }
+    
+    public static void closeGui(SubGui gui) {
+        SubGuiOverride override = getOverrideManager(gui);
+        if (override != null)
+            override.onClose(gui);
+    }
+    
+    public static void updateGui(SubGui gui) {
+        SubGuiOverride override = getOverrideManager(gui);
+        if (override != null && override.shouldUpdate)
+            override.updateControls(gui);
     }
     
     public static void overrideGuiFrom(SubGui gui) {
-        for (Class<? extends SubGui> clazz : guiToMod.keySet()) {
-            try {
-                if (clazz.isInstance(gui)) {
-                    SubGuiOverride override = guiToMod.get(clazz);
-                    override.modifyControls(gui);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-        }
-        
+        SubGuiOverride override = getOverrideManager(gui);
+        if (override != null)
+            override.modifyControls(gui);
     }
     
 }
