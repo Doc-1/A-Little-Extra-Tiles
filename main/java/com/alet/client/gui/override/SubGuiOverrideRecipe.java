@@ -21,11 +21,11 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
     @Override
     public void onClose(SubGui gui) {
         tempDeletedControls.clear();
-        System.out.println("closed");
     }
     
     @Override
     public void modifyControls(SubGui gui) {
+        System.out.println("mod");
         SubGuiRecipe recipeGui = (SubGuiRecipe) gui;
         recipeGui.controls.remove(recipeGui.get("renderer"));
         GuiComboBoxCategory typesComboBox = (GuiComboBoxCategory) recipeGui.get("types");
@@ -64,9 +64,11 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
         if (!name.equals(oldName))
             hasUpdated = false;
         if (!hasUpdated) {
+            System.out.println("update");
             recipeGui.get("types").width = 115;
             recipeGui.get("hierarchy").posX = 120;
             recipeGui.refreshControls();
+            reload(recipeGui);
             if (name.equals("structure.adv_trigger_box.name")) {
                 recipeGui.height = 270;
                 recipeGui.width = 580;
@@ -93,7 +95,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("name").posY = 243;
                 recipeGui.get("clear").posY = 243;
                 typesComboBox.select(index);
-                
+                modifyControls(gui);
             } else if (name.equals("structure.door_lock.name")) {
                 recipeGui.width = 406;
                 recipeGui.get("tilescount").posX = 258;
@@ -103,6 +105,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("panel").width = 256;
                 
                 typesComboBox.select(index);
+                modifyControls(gui);
             } else if (name.equals("structure.state_activator.name")) {
                 recipeGui.width = 456;
                 recipeGui.get("tilescount").posX = 308;
@@ -111,6 +114,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("stop").posX = 388;
                 recipeGui.get("panel").width = 306;
                 typesComboBox.select(index);
+                modifyControls(gui);
             } else if (name.equals("structure.trigger_box.name")) {
                 recipeGui.height = 300;
                 recipeGui.width = 456;
@@ -126,9 +130,9 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 recipeGui.get("clear").posY = 273;
                 
                 typesComboBox.select(index);
+                modifyControls(gui);
                 
-            } else
-                reload(recipeGui);
+            }
             
             hasUpdated = true;
             recipeGui.refreshControls();

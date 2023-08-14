@@ -34,6 +34,14 @@ public class ALETEventHandler {
         if (event.side == Side.CLIENT && event.phase == Phase.START) {
             Minecraft mc = Minecraft.getMinecraft();
             if (mc.player != null) {
+                if (phase == 2 && mc.player.openContainer instanceof ContainerSub) {
+                    SubGui g = ((ContainerSub) mc.player.openContainer).gui.getTopLayer();
+                    if (gui != null && g != gui) {
+                        gui = ((ContainerSub) mc.player.openContainer).gui.getTopLayer();
+                        HandlerSubGuiOverride.overrideGuiFrom(gui);
+                        phase = 2;
+                    }
+                }
                 if (phase == 1 && mc.player.openContainer instanceof ContainerSub) {
                     gui = ((ContainerSub) mc.player.openContainer).gui.getTopLayer();
                     HandlerSubGuiOverride.overrideGuiFrom(gui);
