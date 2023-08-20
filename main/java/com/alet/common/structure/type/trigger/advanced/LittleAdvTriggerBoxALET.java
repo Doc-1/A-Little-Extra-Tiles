@@ -69,6 +69,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -172,13 +173,12 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
     
     @Override
     public void tick() {
-        if (!this.entities.isEmpty()) {
-            for (Entity e : this.entities)
-                for (GuiBlueprint event : this.activator) {
-                    BlueprintExecutor.startScript((BlueprintActivator) event, e);
-                }
-            this.entities = new HashSet<Entity>();
-        }
+        if (!this.isClient())
+            if (!this.entities.isEmpty()) {
+                for (GuiBlueprint event : this.activator)
+                    BlueprintExecutor.startScript((BlueprintActivator) event, entities, (WorldServer) this.getWorld());
+                this.entities = new HashSet<Entity>();
+            }
     }
     
     /*
@@ -296,7 +296,6 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
                 
                 for (GuiBlueprint d : this.blueprints)
                     for (Pair<GuiNode, GuiNode> pair : d.nodeConnections) {
-                        
                         drag.addControl(new GuiBezierCurve("", pair.key, pair.value, 1000, 1000));
                     }
             }

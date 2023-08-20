@@ -2,8 +2,7 @@ package com.alet.client.gui.controls.programmable.blueprints.events;
 
 import com.alet.client.gui.controls.programmable.blueprints.GuiBlueprint;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public abstract class BlueprintEvent extends GuiBlueprint {
     
@@ -11,5 +10,5 @@ public abstract class BlueprintEvent extends GuiBlueprint {
         super(id);
     }
     
-    public abstract void runEvent(World world, Entity entity);
+    public abstract void runEvent(WorldServer server);
 }

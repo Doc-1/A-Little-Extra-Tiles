@@ -1,5 +1,8 @@
 package com.alet.client.gui.controls.programmable.blueprints.activators;
 
+import java.util.HashSet;
+import java.util.List;
+
 import com.alet.client.gui.controls.programmable.blueprints.GuiBlueprint;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.tile.LittleTile;
@@ -12,17 +15,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintTileCollision extends BlueprintActivator {
     
     public BlueprintTileCollision(int id) {
         super(id);
-    }
-    
-    @Override
-    public void onCollision(World worldIn, Entity entityIn) {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
@@ -38,7 +36,7 @@ public class BlueprintTileCollision extends BlueprintActivator {
     }
     
     @Override
-    public void setNodeValue(Entity entity) {
+    public void setNodeValue(WorldServer server) {
         // TODO Auto-generated method stub
         
     }
@@ -56,9 +54,20 @@ public class BlueprintTileCollision extends BlueprintActivator {
     }
     
     @Override
-    public boolean shouldRun(World world, Entity entities) {
+    public boolean shouldRun(World world, HashSet<Entity> entities) {
+        return entities != null && !entities.isEmpty();
+    }
+    
+    @Override
+    public void setNodes() {
         // TODO Auto-generated method stub
-        return true;
+        
+    }
+    
+    @Override
+    public void onCollision(World worldIn, List<Entity> entities) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

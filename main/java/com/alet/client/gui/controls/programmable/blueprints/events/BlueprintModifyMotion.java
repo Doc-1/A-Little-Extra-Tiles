@@ -4,11 +4,12 @@ import com.alet.client.gui.controls.programmable.blueprints.GuiBlueprint;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeBoolean;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeDouble;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeEntityUUID;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeFloat;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintModifyMotion extends BlueprintEvent {
     Double x = 0D;
@@ -55,7 +56,9 @@ public class BlueprintModifyMotion extends BlueprintEvent {
     }
     
     @Override
-    public void runEvent(World world, Entity entity) {
+    public void runEvent(WorldServer server) {
+        GuiNodeEntityUUID uuid = (GuiNodeEntityUUID) this.getNode("uuid");
+        Entity entity = server.getEntityFromUuid(uuid.getValue(server));
         if (this.add) {
             entity.addVelocity(x, y, z);
         } else {
@@ -66,8 +69,7 @@ public class BlueprintModifyMotion extends BlueprintEvent {
     }
     
     @Override
-    public void setNodeValue(Entity entity) {
-        
+    public void setNodeValue(WorldServer server) {
         GuiNodeDouble x = (GuiNodeDouble) this.getNode("x");
         GuiNodeDouble y = (GuiNodeDouble) this.getNode("y");
         GuiNodeDouble z = (GuiNodeDouble) this.getNode("z");
@@ -81,12 +83,12 @@ public class BlueprintModifyMotion extends BlueprintEvent {
         GuiNodeFloat nforward = (GuiNodeFloat) forward.senderConnection;
         GuiNodeFloat nstrafe = (GuiNodeFloat) strafe.senderConnection;
         GuiNodeBoolean nadd = (GuiNodeBoolean) add.senderConnection;
-        this.x = nx.getValue(entity);
-        this.y = ny.getValue(entity);
-        this.z = nz.getValue(entity);
-        this.forward = nforward.getValue(entity);
-        this.strafe = nstrafe.getValue(entity);
-        this.add = nadd.getValue(entity);
+        this.x = nx.getValue(server);
+        this.y = ny.getValue(server);
+        this.z = nz.getValue(server);
+        this.forward = nforward.getValue(server);
+        this.strafe = nstrafe.getValue(server);
+        this.add = nadd.getValue(server);
         x.setValue(this.x, true);
         y.setValue(this.y, true);
         z.setValue(this.z, true);

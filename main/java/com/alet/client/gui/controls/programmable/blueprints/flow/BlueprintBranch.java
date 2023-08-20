@@ -5,8 +5,8 @@ import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeBoolean;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeMethod;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintBranch extends BlueprintFlowControl {
     
@@ -37,10 +37,10 @@ public class BlueprintBranch extends BlueprintFlowControl {
     }
     
     @Override
-    public void setNodeValue(Entity entity) {
+    public void setNodeValue(WorldServer server) {
         GuiNodeBoolean b = (GuiNodeBoolean) this.getNode("b");
         GuiNodeBoolean node = (GuiNodeBoolean) b.senderConnection;
-        this.b = node.getValue(entity);
+        this.b = node.getValue(server);
         b.setValue(this.b, true);
     }
     
@@ -49,10 +49,10 @@ public class BlueprintBranch extends BlueprintFlowControl {
         GuiNodeMethod t = (GuiNodeMethod) this.getNode("true");
         GuiNodeMethod f = (GuiNodeMethod) this.getNode("false");
         if (this.b) {
-            if (t.receiverConnection != null)
-                return t.receiverConnection.getBlueprint();
-        } else if (f.receiverConnection != null)
-            return f.receiverConnection.getBlueprint();
+            if (t.receiverConnections != null && !t.receiverConnections.isEmpty())
+                return t.receiverConnections.get(0).getBlueprint();
+        } else if (f.receiverConnections != null && !t.receiverConnections.isEmpty())
+            return f.receiverConnections.get(0).getBlueprint();
         return null;
     }
     

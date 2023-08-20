@@ -5,8 +5,8 @@ import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeString;
 import com.creativemd.creativecore.common.gui.GuiControl;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintJoinString extends BlueprintValue {
     
@@ -34,12 +34,12 @@ public class BlueprintJoinString extends BlueprintValue {
     }
     
     @Override
-    public void setNodeValue(Entity entity) {
+    public void setNodeValue(WorldServer server) {
         GuiNodeString a = (GuiNodeString) this.getNode("a").senderConnection;
         GuiNodeString b = (GuiNodeString) this.getNode("b").senderConnection;
         if (a != null && b != null) {
             GuiNodeString joined = (GuiNodeString) this.getNode("joined");
-            joined.setValue(a.getValue(entity).concat(b.getValue(entity)), true);
+            joined.setValue(a.getValue(server).concat(b.getValue(server)), true);
         }
     }
     

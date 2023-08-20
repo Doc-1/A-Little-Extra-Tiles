@@ -2,7 +2,7 @@ package com.alet.client.gui.controls.programmable.nodes;
 
 import com.alet.client.gui.controls.programmable.blueprints.GuiBlueprint;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.WorldServer;
 
 public abstract class GuiNodeValue<V> extends GuiNode {
     
@@ -14,10 +14,10 @@ public abstract class GuiNodeValue<V> extends GuiNode {
     
     public abstract void setValue(V v, boolean updateModifiable);
     
-    public V getValue(Entity entity) {
+    public V getValue(WorldServer server) {
         GuiBlueprint bp = (GuiBlueprint) this.parent;
         if (this.v == null)
-            bp.setNodeValue(entity);
+            bp.setNodeValue(server);
         return this.v;
     }
     

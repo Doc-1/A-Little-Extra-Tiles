@@ -6,8 +6,8 @@ import com.alet.client.gui.controls.programmable.nodes.GuiNodeDouble;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeInteger;
 import com.creativemd.creativecore.common.gui.GuiControl;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintCastDoubleToInt extends BlueprintValue {
     
@@ -34,11 +34,11 @@ public class BlueprintCastDoubleToInt extends BlueprintValue {
     }
     
     @Override
-    public void setNodeValue(Entity entity) {
+    public void setNodeValue(WorldServer server) {
         GuiNodeDouble node = (GuiNodeDouble) this.getNode("double").senderConnection;
         if (node != null) {
             GuiNodeInteger intNode = (GuiNodeInteger) this.getNode("int");
-            intNode.setValue(node.getValue(entity).intValue(), true);
+            intNode.setValue(node.getValue(server).intValue(), true);
         }
     }
     

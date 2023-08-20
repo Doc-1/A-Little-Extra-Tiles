@@ -20,8 +20,6 @@ public abstract class GuiNode extends GuiParent {
     private final byte ATTRIBUTES;
     public final String TITLE;
     public GuiNode senderConnection;
-    public GuiNode receiverConnection;
-    public List<GuiNode> senderConnections = new ArrayList<GuiNode>();
     public List<GuiNode> receiverConnections = new ArrayList<GuiNode>();
     public boolean selected = false;
     public final int color;
@@ -48,7 +46,6 @@ public abstract class GuiNode extends GuiParent {
     }
     
     public boolean canConnect(GuiNode secondNode) {
-        
         if (secondNode == null)
             return false;
         if (this.getParent().equals(secondNode.parent))
@@ -57,11 +54,17 @@ public abstract class GuiNode extends GuiParent {
             return false;
         if (this.isReceiver() && secondNode.isReceiver())
             return false;
-        if (!this.isDataTypeEqual(secondNode))
-            return false;
         if (this.alreadyConnectedTo(secondNode))
             return false;
+        if (!this.isDataTypeEqual(secondNode))
+            return false;
+        if (this.isConnected() && this instanceof GuiNodeMethod)
+            return false;
+        if (secondNode.isConnected() && secondNode instanceof GuiNodeMethod)
+            return false;
         if (this.isReceiver() && this.isConnected())
+            return false;
+        if (secondNode.isReceiver() && secondNode.isConnected())
             return false;
         PairList<GuiNode, GuiNode> nodeConnections1 = ((GuiBlueprint) this.parent).nodeConnections;
         if (nodeConnections1.containsKey(this))
@@ -71,31 +74,24 @@ public abstract class GuiNode extends GuiParent {
     
     public void connect(GuiNode secondNode) {
         PairList<GuiNode, GuiNode> nodeConnections = ((GuiBlueprint) this.parent).nodeConnections;
-        
         if (secondNode.isReceiver()) {
-            if (secondNode instanceof GuiNodeMethod) {
-                secondNode.senderConnections.add(this);
-                this.receiverConnection = secondNode;
-            } else {
-                secondNode.senderConnection = this;
-                this.receiverConnections.add(secondNode);
-            }
-            
+            secondNode.senderConnection = this;
+            this.receiverConnections.add(secondNode);
         }
-        nodeConnections.add(new Pair<GuiNode, GuiNode>(this, secondNode));
+        if (this.isReceiver())
+            nodeConnections.add(new Pair<GuiNode, GuiNode>(this, secondNode));
+        else
+            nodeConnections.add(new Pair<GuiNode, GuiNode>(secondNode, this));
+        
     }
     
     public boolean isConnected() {
-        return !this.senderConnections.isEmpty() || !this.receiverConnections.isEmpty() || this.senderConnection != null || this.receiverConnection != null;
+        return !this.receiverConnections.isEmpty() || this.senderConnection != null;
     }
     
     public boolean alreadyConnectedTo(GuiNode secondNode) {
         if (this.senderConnection == secondNode)
             return true;
-        for (GuiNode node : this.senderConnections) {
-            if (node.equals(secondNode))
-                return true;
-        }
         for (GuiNode node : this.receiverConnections) {
             if (node.equals(secondNode))
                 return true;

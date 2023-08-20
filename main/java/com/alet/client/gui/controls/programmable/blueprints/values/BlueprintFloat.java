@@ -6,8 +6,8 @@ import com.alet.client.gui.controls.programmable.nodes.GuiNodeFloat;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintFloat extends BlueprintValue {
     public BlueprintFloat(int id) {
@@ -35,7 +35,7 @@ public class BlueprintFloat extends BlueprintValue {
     }
     
     @Override
-    public void setNodeValue(Entity entity) {
+    public void setNodeValue(WorldServer server) {
         GuiNodeFloat node = (GuiNodeFloat) this.getNode("float");
         node.setValue(this.value, true);
     }

@@ -5,8 +5,8 @@ import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeBoolean;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeInteger;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintEqualTo extends BlueprintCondition {
     
@@ -36,22 +36,19 @@ public class BlueprintEqualTo extends BlueprintCondition {
     }
     
     @Override
-    public boolean tryToPass(Entity entity) {
+    public boolean tryToPass() {
         return ret;
     }
     
     @Override
-    public void conditionPassed(Entity entity) {}
-    
-    @Override
-    public void setNodeValue(Entity entity) {
+    public void setNodeValue(WorldServer server) {
         GuiNodeInteger a = (GuiNodeInteger) this.getNode("a");
         GuiNodeInteger b = (GuiNodeInteger) this.getNode("b");
         GuiNodeInteger ac = (GuiNodeInteger) a.senderConnection;
         GuiNodeInteger bc = (GuiNodeInteger) b.senderConnection;
-        a.setValue(ac.getValue(entity), true);
-        b.setValue(bc.getValue(entity), true);
-        this.ret = a.getValue(entity) == b.getValue(entity);
+        a.setValue(ac.getValue(server), true);
+        b.setValue(bc.getValue(server), true);
+        this.ret = a.getValue(server) == b.getValue(server);
         ((GuiNodeBoolean) this.getNode("return")).setValue(ret, true);
     }
     

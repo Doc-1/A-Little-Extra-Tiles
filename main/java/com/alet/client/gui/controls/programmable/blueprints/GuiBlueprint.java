@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.programmable.blueprints.values.BlueprintValue;
@@ -26,6 +27,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants.NBT;
 
 public abstract class GuiBlueprint extends GuiParent {
@@ -85,8 +87,8 @@ public abstract class GuiBlueprint extends GuiParent {
     }
     
     public GuiBlueprint getNextBlueprint() {
-        if (this.sender.receiverConnection != null)
-            return this.sender.receiverConnection.getBlueprint();
+        if (this.sender.receiverConnections != null && !this.sender.receiverConnections.isEmpty())
+            return this.sender.receiverConnections.get(0).getBlueprint();
         else
             return null;
     }
@@ -130,11 +132,11 @@ public abstract class GuiBlueprint extends GuiParent {
             NBTTagCompound n = new NBTTagCompound();
             n.setString("node", node.name);
             NBTTagList list = new NBTTagList();
-            for (GuiNode sender : node.senderConnections) {
+            for (GuiNode receiver : node.receiverConnections) {
                 NBTTagCompound nb = new NBTTagCompound();
-                nb.setString("node", sender.name);
-                nb.setString("name", sender.getParent().name);
-                nb.setInteger("id", ((GuiBlueprint) sender.getParent()).id);
+                nb.setString("node", receiver.name);
+                nb.setString("name", receiver.getParent().name);
+                nb.setInteger("id", ((GuiBlueprint) receiver.getParent()).id);
                 list.appendTag(nb);
             }
             if (node.senderConnection != null) {
@@ -142,13 +144,6 @@ public abstract class GuiBlueprint extends GuiParent {
                 nb.setString("node", node.senderConnection.name);
                 nb.setString("name", node.senderConnection.getParent().name);
                 nb.setInteger("id", ((GuiBlueprint) node.senderConnection.getParent()).id);
-                list.appendTag(nb);
-            }
-            if (node.receiverConnection != null) {
-                NBTTagCompound nb = new NBTTagCompound();
-                nb.setString("node", node.receiverConnection.name);
-                nb.setString("name", node.receiverConnection.getParent().name);
-                nb.setInteger("id", ((GuiBlueprint) node.receiverConnection.getParent()).id);
                 list.appendTag(nb);
             }
             n.setTag("connections", list);
@@ -214,7 +209,7 @@ public abstract class GuiBlueprint extends GuiParent {
         return null;
     }
     
-    public abstract void setNodeValue(Entity entity);
+    public abstract void setNodeValue(WorldServer server);
     
     public void organizeNodes(List<GuiNode> nodes) {
         for (GuiNode node : nodes) {
@@ -242,6 +237,10 @@ public abstract class GuiBlueprint extends GuiParent {
     
     public HashSet<Entity> getEntities() {
         return this.structure.entities;
+    }
+    
+    public Entity getEntity(WorldServer world, UUID uuid) {
+        return world.getEntityFromUuid(uuid);
     }
     
     private void createMethodControls() {

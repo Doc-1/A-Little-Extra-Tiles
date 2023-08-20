@@ -6,8 +6,8 @@ import com.alet.client.gui.controls.programmable.nodes.GuiNodeInteger;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 
 public class BlueprintInteger extends BlueprintValue {
     
@@ -35,7 +35,7 @@ public class BlueprintInteger extends BlueprintValue {
     }
     
     @Override
-    public void setNodeValue(Entity entity) {
+    public void setNodeValue(WorldServer server) {
         GuiNodeInteger node = (GuiNodeInteger) this.getNode("int");
         node.setValue(this.value, true);
     }

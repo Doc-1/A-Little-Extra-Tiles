@@ -28,6 +28,7 @@ public class GuiNodeDouble extends GuiNodeValue<Double> {
     
     @Override
     public void setValue(Double v, boolean updateModifiable) {
+        this.v = v;
         if (updateModifiable && this.isModifiable()) {
             GuiTextfield value = (GuiTextfield) this.get("value");
             value.text = v + "";
