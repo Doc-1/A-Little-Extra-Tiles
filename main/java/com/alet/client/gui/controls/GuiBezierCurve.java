@@ -19,11 +19,13 @@ public class GuiBezierCurve extends GuiParent {
     
     public GuiControl p0LockOn;
     public GuiControl p3LockOn;
+    public int backColor;
     
-    public GuiBezierCurve(String name, GuiControl p0LockOn, GuiControl p3LockOn, int width, int height) {
+    public GuiBezierCurve(String name, GuiControl p0LockOn, GuiControl p3LockOn, int width, int height, int backColor) {
         super(name, 0, 0, width, height);
         this.p0LockOn = p0LockOn;
         this.p3LockOn = p3LockOn;
+        this.backColor = backColor;
     }
     
     public GuiBezierCurve(String name, int x, int y, int width, int height) {
@@ -65,7 +67,7 @@ public class GuiBezierCurve extends GuiParent {
         p2.x = (centerX / 2) + p3.x;
         p2.y = p3.y;
         RenderUtils
-                .drawCubicBezier(new Point2i((p0.x + 4) * multi, (p0.y + 4) * multi), new Point2i((p1.x * multi), (p1.y + 4) * multi), new Point2i((p2.x * multi), (p2.y + 4) * multi), new Point2i((p3.x + 4) * multi, (p3.y + 4) * multi));
+                .drawCubicBezier(new Point2i((p0.x + 4) * multi, (p0.y + 4) * multi), new Point2i((p1.x * multi), (p1.y + 4) * multi), new Point2i((p2.x * multi), (p2.y + 4) * multi), new Point2i((p3.x + 4) * multi, (p3.y + 4) * multi), backColor);
         
     }
     

@@ -296,7 +296,7 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
                 
                 for (GuiBlueprint d : this.blueprints)
                     for (Pair<GuiNode, GuiNode> pair : d.nodeConnections) {
-                        drag.addControl(new GuiBezierCurve("", pair.key, pair.value, 1000, 1000));
+                        drag.addControl(new GuiBezierCurve("", pair.key, pair.value, 1000, 1000, pair.key.color));
                     }
             }
             GuiTree tree = new GuiTree("tree", 0, 0, 194, BlueprintRegistar.treeList(), true, 0, 0, 50);
@@ -430,14 +430,14 @@ public class LittleAdvTriggerBoxALET extends LittleStructure {
                         sender.connect(receiver);
                         drag.removeControl(drag.get("temp"));
                         drag.refreshControls();
-                        drag.addControl(new GuiBezierCurve("", node, this.selectedNode, 1000, 1000));
+                        drag.addControl(new GuiBezierCurve("", node, this.selectedNode, 1000, 1000, node.color));
                         this.selectedNode.selected = false;
                         node.selected = false;
                         this.selectedNode = null;
                     }
                 } else {
                     blueprint.nodeClicked(node, true);
-                    drag.addControl(new GuiBezierCurve("temp", node, null, 1000, 1000));
+                    drag.addControl(new GuiBezierCurve("temp", node, null, 1000, 1000, node.color));
                     this.selectedNode = node;
                 }
             }

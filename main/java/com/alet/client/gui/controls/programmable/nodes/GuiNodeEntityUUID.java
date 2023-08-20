@@ -16,6 +16,7 @@ public class GuiNodeEntityUUID extends GuiNodeValue<UUID> {
     
     @Override
     public int setNodeColor() {
+        
         return 0xFFFFD700;
     }
     
