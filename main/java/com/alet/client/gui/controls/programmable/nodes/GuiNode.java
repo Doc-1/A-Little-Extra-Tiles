@@ -3,7 +3,7 @@ package com.alet.client.gui.controls.programmable.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.client.gui.controls.programmable.blueprints.GuiBlueprint;
+import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
@@ -14,31 +14,35 @@ import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
-public abstract class GuiNode extends GuiParent {
+public class GuiNode extends GuiParent {
     
-    public final static byte SENDER = 0b0001, RECEIVER = 0b0010, MODIFIABLE = 0b0100;
-    private final byte ATTRIBUTES;
+    public final boolean IS_SENDER, IS_RECIEVER, IS_MODIFIABLE;
     public final String TITLE;
     public GuiNode senderConnection;
     public List<GuiNode> receiverConnections = new ArrayList<GuiNode>();
     public boolean selected = false;
-    public final int color;
+    public final int COLOR;
     
-    public GuiNode(String name, String title, byte attributes) {
+    public GuiNode(String name, String title, int color, boolean isSender, boolean isReciever, boolean isModifiable) throws Exception {
         super(name, 0, 0, (!title.equals("")) ? font.getStringWidth(title) + 7 : 1, 1);
-        this.ATTRIBUTES = attributes;
         this.TITLE = title;
-        createControls();
-        color = setNodeColor();
+        this.IS_SENDER = isSender;
+        this.IS_RECIEVER = isReciever;
+        this.IS_MODIFIABLE = isModifiable;
+        if (IS_RECIEVER && IS_SENDER)
+            throw new Exception("A node cannot be both a reciever and sender");
+        
+        COLOR = color;
     }
     
-    public GuiBlueprint getBlueprint() {
-        return (GuiBlueprint) this.parent;
+    public GuiFunction getBlueprint() {
+        return (GuiFunction) this.parent;
     }
     
-    public abstract int setNodeColor();
-    
-    public void createControls() {}
+    public void createControls(List<GuiControl> controls) {
+        this.parent.getControls().add(controls);
+        this.parent.refreshControls();
+    }
     
     @Override
     public void mouseReleased(int x, int y, int button) {
@@ -50,35 +54,35 @@ public abstract class GuiNode extends GuiParent {
             return false;
         if (this.getParent().equals(secondNode.parent))
             return false;
-        if (this.isSender() && secondNode.isSender())
+        if (this.IS_SENDER && secondNode.IS_SENDER)
             return false;
-        if (this.isReceiver() && secondNode.isReceiver())
+        if (this.IS_RECIEVER && secondNode.IS_RECIEVER)
             return false;
         if (this.alreadyConnectedTo(secondNode))
             return false;
         if (!this.isDataTypeEqual(secondNode))
             return false;
-        if (this.isConnected() && this instanceof GuiNodeMethod)
+        if (this.isConnected() && GuiNodeRegistar.matchType(GuiNodeRegistar.FUNCTION_NODE, this))
             return false;
-        if (secondNode.isConnected() && secondNode instanceof GuiNodeMethod)
+        if (secondNode.isConnected() && GuiNodeRegistar.matchType(GuiNodeRegistar.FUNCTION_NODE, secondNode))
             return false;
-        if (this.isReceiver() && this.isConnected())
+        if (this.IS_RECIEVER && this.isConnected())
             return false;
-        if (secondNode.isReceiver() && secondNode.isConnected())
+        if (secondNode.IS_RECIEVER && secondNode.isConnected())
             return false;
-        PairList<GuiNode, GuiNode> nodeConnections1 = ((GuiBlueprint) this.parent).nodeConnections;
+        PairList<GuiNode, GuiNode> nodeConnections1 = ((GuiFunction) this.parent).nodeConnections;
         if (nodeConnections1.containsKey(this))
             return false;
         return true;
     }
     
     public void connect(GuiNode secondNode) {
-        PairList<GuiNode, GuiNode> nodeConnections = ((GuiBlueprint) this.parent).nodeConnections;
-        if (secondNode.isReceiver()) {
+        PairList<GuiNode, GuiNode> nodeConnections = ((GuiFunction) this.parent).nodeConnections;
+        if (secondNode.IS_RECIEVER) {
             secondNode.senderConnection = this;
             this.receiverConnections.add(secondNode);
         }
-        if (this.isReceiver())
+        if (this.IS_RECIEVER)
             nodeConnections.add(new Pair<GuiNode, GuiNode>(this, secondNode));
         else
             nodeConnections.add(new Pair<GuiNode, GuiNode>(secondNode, this));
@@ -103,26 +107,25 @@ public abstract class GuiNode extends GuiParent {
     protected void renderBackground(GuiRenderHelper helper, Style style) {
         super.renderBackground(helper, style);
         int xOffSet = 0;
-        if (this.isSender()) {
+        if (this.IS_SENDER) {
             font.drawStringWithShadow(this.TITLE, this.width - font.getStringWidth(TITLE) - 14, -1, ColorUtils.WHITE);
             xOffSet = this.width - 7;
-        } else if (this.isReceiver()) {
+        } else if (this.IS_RECIEVER) {
             font.drawStringWithShadow(this.TITLE, 8, -1, ColorUtils.WHITE);
             xOffSet = 0;
         }
         
-        helper.drawRect(-1 + xOffSet, -1, 6 + xOffSet, 6, color);
+        helper.drawRect(-1 + xOffSet, -1, 6 + xOffSet, 6, COLOR);
         if (!isConnected())
             helper.drawRect(0 + xOffSet, 0, 5 + xOffSet, 5, 0xff5a5a5a);
         if (selected)
             helper.drawRect(0 + xOffSet, 0, 5 + xOffSet, 5, 0xff000000);
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public boolean mousePressed(int x, int y, int button) {
         boolean results = super.mousePressed(x, y, button);
-        GuiBlueprint blueprint = (GuiBlueprint) topControl(this.getParent().getParent().getControls(), GuiBlueprint.class);
+        GuiFunction blueprint = (GuiFunction) topControl(this.getParent().getParent().getControls(), GuiFunction.class);
         GuiNode node = (GuiNode) topControl(blueprint.getControls(), this.getClass());
         if (node == this)
             this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
@@ -148,19 +151,16 @@ public abstract class GuiNode extends GuiParent {
     }
     
     public boolean isDataTypeEqual(GuiNode secondNode) {
-        return this.getClass().equals(secondNode.getClass());
+        return this.name.equals(secondNode.name);
     }
     
-    public boolean isSender() {
-        return (this.ATTRIBUTES & SENDER) != 0;
-    }
-    
-    public boolean isReceiver() {
-        return (this.ATTRIBUTES & RECEIVER) != 0;
-    }
-    
-    public boolean isModifiable() {
-        return (this.ATTRIBUTES & MODIFIABLE) != 0;
+    protected GuiNode clone(String name, String title, boolean isSender, boolean isReciever, boolean isModifiable) {
+        try {
+            return new GuiNode(name, title, COLOR, isSender, isReciever, isModifiable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
 }

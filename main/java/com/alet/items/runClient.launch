@@ -19,6 +19,7 @@
         <mapEntry key="nativesDirectory" value="D:\ALET\build\natives"/>
         <mapEntry key="tweakClass" value="net.minecraftforge.fml.common.launcher.FMLTweaker"/>
     </mapAttribute>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.minecraftforge.legacydev.MainClient"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ALET"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=SCAN,REGISTRIES,REGISTRYDUMP"/>

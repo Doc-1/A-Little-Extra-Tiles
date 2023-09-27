@@ -1,5 +1,6 @@
 package com.alet.common.structure.type;
 
+import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
@@ -19,9 +20,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
@@ -53,23 +56,31 @@ public class LittleRemoteActivatorALET extends LittleStructure {
     
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) {
-        
-        if (!worldIn.isRemote) {
-            
-            BlockPos newPos;
-            if (useAbsolutePos)
-                newPos = new BlockPos(linkedBlock.getX(), linkedBlock.getY(), linkedBlock.getZ());
-            else
-                newPos = new BlockPos(linkedBlock.getX() + this.getPos().getX(), linkedBlock.getY() + this.getPos().getY(), linkedBlock.getZ() + this.getPos().getZ());
-            
-            float f = (float) (hitX - (double) newPos.getX());
-            float f1 = (float) (hitY - (double) newPos.getY());
-            float f2 = (float) (hitZ - (double) newPos.getZ());
-            IBlockState iblockstate = worldIn.getBlockState(newPos);
-            boolean result = iblockstate.getBlock().onBlockActivated(worldIn, newPos, iblockstate, playerIn, hand, side, f, f1, f2);
-            if (result == false)
-                playerIn.sendMessage(new TextComponentString("Block: " + iblockstate + " at " + newPos + " failed to activate."));
+        if (worldIn.isRemote) {
+            return true;
         }
+        BlockPos newPos;
+        if (useAbsolutePos)
+            newPos = new BlockPos(linkedBlock.getX(), linkedBlock.getY(), linkedBlock.getZ());
+        else
+            newPos = new BlockPos(linkedBlock.getX() + this.getPos().getX(), linkedBlock.getY() + this.getPos().getY(), linkedBlock.getZ() + this.getPos().getZ());
+        
+        float f = (float) (hitX - (double) newPos.getX());
+        float f1 = (float) (hitY - (double) newPos.getY());
+        float f2 = (float) (hitZ - (double) newPos.getZ());
+        IBlockState iblockstate = worldIn.getBlockState(newPos);
+        TileEntity tileentity = worldIn.getTileEntity(newPos);
+        if (tileentity != null) {
+            double distance = new Vec3d(playerIn.posX, playerIn.posY, playerIn.posZ).distanceTo(new Vec3d(newPos.getX(), newPos.getY(), newPos.getZ()));
+            if (distance <= 8.5D) {
+                if (!iblockstate.getBlock().onBlockActivated(worldIn, newPos, iblockstate, playerIn, hand, side, f, f1, f2))
+                    playerIn.sendMessage(new TextComponentString("Block: " + iblockstate + " at " + newPos + " failed to activate."));
+            } else {
+                playerIn.sendMessage(new TextComponentString("Block: " + iblockstate + " at " + newPos + " is to farway. Must be within 8.5 blocks player."));
+            }
+        }
+        if (tileentity == null)
+            playerIn.sendMessage(new TextComponentString("Block: " + iblockstate + " at " + newPos + " doesn't have a tile entity."));
         return true;
     }
     
@@ -97,8 +108,13 @@ public class LittleRemoteActivatorALET extends LittleStructure {
             parent.addControl(x);
             parent.addControl(y);
             parent.addControl(z);
-            GuiCheckBox box = new GuiCheckBox("absolute", "Use Absolute Coordinates", 0, 55, guiLinker != null ? guiLinker.useAbsolutePos : true);
-            parent.addControl(box);
+            GuiConnectedCheckBoxes boxes = new GuiConnectedCheckBoxes("abs", 0, 55);
+            boxes.addCheckBox("absolute", "Use Absolute Coordinates");
+            boxes.addCheckBox("relative", "Use Relative Coordinates");
+            if (guiLinker != null)
+                boxes.setSelected(guiLinker.useAbsolutePos ? "absolute" : "relative");
+            //GuiCheckBox box = new GuiCheckBox("absolute", "Use Absolute Coordinates", 0, 55, guiLinker != null ? guiLinker.useAbsolutePos : true);
+            parent.addControl(boxes);
         }
         
         @Override

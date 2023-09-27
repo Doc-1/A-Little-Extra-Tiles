@@ -20,21 +20,72 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.wrapper.RangedWrapper;
 
 public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     
     public boolean addItem = true;
     public int stackCount = 1;
     public ItemStack stack = ItemStack.EMPTY;
-    public boolean inHand = true;
+    public final byte mainHand = 0, offHand = 1, helm = 2, chest = 3, legs = 4, boots = 5, specific = 6;
+    public byte selected = 1;
+    public int slotID = 0;
     
     public LittleTriggerEventModifyInventory(int id) {
         super(id);
         // TODO Auto-generated constructor stub
+    }
+    
+    public IItemHandler getSlot(EntityPlayer player) {
+        InventoryPlayer inv = player.inventory;
+        System.out.println(inv.getSizeInventory());
+        //off-hand = 40
+        //helm = 39
+        //chest = 38
+        //legs = 37
+        //boots = 36
+        switch (0) {
+            //main hand
+            case 0:
+                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                    null), inv.currentItem, inv.currentItem - 1 + 1);
+            //off-hand
+            case 1:
+                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 40, 41);
+            //helm
+            case 2:
+                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 39, 40);
+            //chest
+            case 3:
+                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 38, 39);
+            //legs
+            case 4:
+                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 37, 38);
+            //boots
+            case 5:
+                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 36, 37);
+            //specific
+            case 6:
+                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), this.slotID, this.slotID + 1);
+            //Any Slots
+            default:
+                return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        }
     }
     
     @Override
@@ -42,7 +93,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         addItem = nbt.getBoolean("addItem");
         stackCount = nbt.getInteger("stackCount");
         stack = new ItemStack(nbt.getCompoundTag("stack"));
-        inHand = nbt.getBoolean("inHand");
+        selected = nbt.getByte("selected");
         return this;
     }
     
@@ -53,7 +104,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         NBTTagCompound nbtItemStack = new NBTTagCompound();
         stack.writeToNBT(nbtItemStack);
         nbt.setTag("stack", nbtItemStack);
-        nbt.setBoolean("inHand", inHand);
+        nbt.setByte("selected", selected);
         return nbt;
     }
     
@@ -65,7 +116,8 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         panel.addControl(stack);
         if (!this.stack.isEmpty())
             stack.updateItemStack(this.stack);
-        panel.addControl(new GuiStackSelectorAll("preview", 0, 0, 110, player, new GuiStackSelectorAll.InventoryCollector(new LittleItemSelector()), true));
+        panel.addControl(
+            new GuiStackSelectorAll("preview", 0, 0, 110, player, new GuiStackSelectorAll.InventoryCollector(new LittleItemSelector()), true));
         
         panel.addControl(new GuiButton("use", "Use Item As Key", 25, 22) {
             @Override
@@ -81,19 +133,22 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         GuiTextfield count = new GuiTextfield("count", this.stackCount + "", 66, 45, 25, 10).setNumbersOnly();
         count.maxLength = 2;
         panel.addControl(count);
-        GuiConnectedCheckBoxes addRemove = new GuiConnectedCheckBoxes("addRemove", 0, 65).addCheckBox("add", "Add Item").addCheckBox("remove", "Remove Item");
+        GuiConnectedCheckBoxes addRemove = new GuiConnectedCheckBoxes("addRemove", 0, 65).addCheckBox("add",
+            "Add Item").addCheckBox("remove", "Remove Item");
         if (this.addItem)
             addRemove.setSelected("add");
         else
             addRemove.setSelected("remove");
         panel.addControl(addRemove);
-        GuiConnectedCheckBoxes handInventory = new GuiConnectedCheckBoxes("handInv", 0, 97).addCheckBox("inHand", "Check In Hand").addCheckBox("inInv", "Check In Inventory");
+        /*
+        GuiConnectedCheckBoxes handInventory = new GuiConnectedCheckBoxes("handInv", 0, 97).addCheckBox(
+            "inHand", "Add/Remove to Hand").addCheckBox("inInv", "Add/Remove to Inventory");
         if (this.inHand)
             handInventory.setSelected("inHand");
         else
             handInventory.setSelected("inInv");
         
-        panel.addControl(handInventory);
+        panel.addControl(handInventory);*/
     }
     
     @Override
@@ -106,9 +161,9 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
             GuiConnectedCheckBoxes boxes = (GuiConnectedCheckBoxes) source;
             if (source.is("addRemove")) {
                 this.addItem = boxes.getSelected().name.equals("add");
-            } else if (source.is("handInv")) {
-                this.inHand = boxes.getSelected().name.equals("inHand");
             }
+        } else if (source.is("selectedSlot")) {
+            //this.selected = boxes.getSelected();
         } else if (source.is("count")) {
             GuiTextfield count = (GuiTextfield) source;
             int c = Integer.parseInt(count.text);
@@ -135,18 +190,14 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
                     LittleIngredients ingredients = new LittleIngredients(new StackIngredient(stack));
                     try {
                         if (!addItem) {
-                            if (this.inHand) {
-                                ItemStack mainHand = player.getHeldItemMainhand();
-                                if (mainHand.getItem().equals(stack.getItem()) && mainHand.getCount() >= stack.getCount()) {
-                                    mainHand.shrink(stack.getCount());
-                                    return true;
-                                }
-                            } else {
-                                LittleAction.checkAndTake(player, new LittleInventory(player), ingredients);
-                                return true;
-                            }
+                            LittleAction.checkAndTake(player, new LittleInventory(player, getSlot(player)),
+                                ingredients);
+                            return true;
+                            
                         } else {
-                            LittleAction.checkAndGive(player, new LittleInventory(player), ingredients);
+                            LittleAction.checkAndGive(player, new LittleInventory(player, getSlot(player)),
+                                ingredients);
+                            
                             return true;
                         }
                     } catch (NotEnoughIngredientsException e) {

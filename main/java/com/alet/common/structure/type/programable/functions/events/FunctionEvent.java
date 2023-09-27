@@ -1,0 +1,18 @@
+package com.alet.common.structure.type.programable.functions.events;
+
+import com.alet.common.structure.type.programable.functions.Function;
+
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+public abstract class FunctionEvent extends Function {
+    
+    public FunctionEvent(String name, int color, boolean sender, boolean reciever) {
+        super(name, color, sender, reciever);
+        // TODO Auto-generated constructor stub
+    }
+    
+    @SideOnly(Side.SERVER)
+    public abstract void runEvent(WorldServer server);
+}

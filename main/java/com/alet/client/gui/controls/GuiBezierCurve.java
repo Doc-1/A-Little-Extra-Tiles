@@ -39,20 +39,20 @@ public class GuiBezierCurve extends GuiParent {
         GuiNode node2 = (GuiNode) p3LockOn;
         
         if (p0LockOn != null && p3LockOn == null) {
-            int xOffSet1 = node1.isSender() ? node1.width - 2 : -5;
+            int xOffSet1 = node1.IS_SENDER ? node1.width - 2 : -5;
             p0.x = (p0LockOn.posX + p0LockOn.getParent().posX) + xOffSet1;
             p0.y = p0LockOn.posY + p0LockOn.getParent().posY;
             p3.x = (int) getMousePos().x;
             p3.y = (int) getMousePos().y;
         } else if (p3LockOn != null && p0LockOn == null) {
-            int xOffSet2 = node2.isSender() ? node2.width - 2 : -5;
+            int xOffSet2 = node2.IS_SENDER ? node2.width - 2 : -5;
             p0.x = (int) getMousePos().x;
             p0.y = (int) getMousePos().y;
             p3.x = (p3LockOn.posX + p3LockOn.getParent().posX) + xOffSet2;
             p3.y = p3LockOn.posY + p3LockOn.getParent().posY;
         } else {
-            int xOffSet2 = node2.isSender() ? node2.width - 2 : -5;
-            int xOffSet1 = node1.isSender() ? node1.width - 2 : -5;
+            int xOffSet2 = node2.IS_SENDER ? node2.width - 2 : -5;
+            int xOffSet1 = node1.IS_SENDER ? node1.width - 2 : -5;
             p0.x = (p0LockOn.posX + p0LockOn.getParent().posX) + xOffSet1;
             p0.y = p0LockOn.posY + p0LockOn.getParent().posY;
             p3.x = (p3LockOn.posX + p3LockOn.getParent().posX) + xOffSet2;
@@ -66,8 +66,9 @@ public class GuiBezierCurve extends GuiParent {
         p1.y = p0.y;
         p2.x = (centerX / 2) + p3.x;
         p2.y = p3.y;
-        RenderUtils
-                .drawCubicBezier(new Point2i((p0.x + 4) * multi, (p0.y + 4) * multi), new Point2i((p1.x * multi), (p1.y + 4) * multi), new Point2i((p2.x * multi), (p2.y + 4) * multi), new Point2i((p3.x + 4) * multi, (p3.y + 4) * multi), backColor);
+        RenderUtils.drawCubicBezier(new Point2i((p0.x + 4) * multi, (p0.y + 4) * multi),
+            new Point2i((p1.x * multi), (p1.y + 4) * multi), new Point2i((p2.x * multi), (p2.y + 4) * multi),
+            new Point2i((p3.x + 4) * multi, (p3.y + 4) * multi), backColor);
         
     }
     

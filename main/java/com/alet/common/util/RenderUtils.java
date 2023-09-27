@@ -27,6 +27,7 @@ public class RenderUtils {
         GlStateManager.scale(0.05, 0.05, 1);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
+        
         bufferbuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         float f = (color >> 24 & 255) / 255.0F;
         float f1 = (color >> 16 & 255) / 255.0F;

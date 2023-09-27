@@ -25,7 +25,6 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
     
     @Override
     public void modifyControls(SubGui gui) {
-        System.out.println("mod");
         SubGuiRecipe recipeGui = (SubGuiRecipe) gui;
         recipeGui.controls.remove(recipeGui.get("renderer"));
         GuiComboBoxCategory typesComboBox = (GuiComboBoxCategory) recipeGui.get("types");
@@ -69,7 +68,8 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
             recipeGui.get("hierarchy").posX = 120;
             recipeGui.refreshControls();
             reload(recipeGui);
-            if (name.equals("structure.adv_trigger_box.name")) {
+            System.out.println(name);
+            if (name.equals("structure.programable_structure.name")) {
                 recipeGui.height = 270;
                 recipeGui.width = 580;
                 recipeGui.get("panel").width = 574;
