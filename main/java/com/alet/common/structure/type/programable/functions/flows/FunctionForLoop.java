@@ -2,6 +2,7 @@ package com.alet.common.structure.type.programable.functions.flows;
 
 import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.functions.Function;
+import com.alet.common.structure.type.programable.nodes.values.NodeInteger;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
@@ -57,7 +58,7 @@ public class FunctionForLoop extends FunctionFlowControl {
     
     @Override
     public void setFunctionNodes() {
-        
+        this.senderNodes.add(new NodeInteger("int_out", "int", false, true, false));
     }
     
 }

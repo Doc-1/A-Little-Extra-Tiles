@@ -703,13 +703,16 @@ public class ALET {
         for (ResourceLocation location : SoundEvent.REGISTRY.getKeys())
             sounds.add(location.toString());
         
-        GuiNodeRegistar.registerNodes();
-        GuiFunctionRegistar.registerFunctions();
     }
     
     @EventHandler
     public void PostInit(FMLPostInitializationEvent event) {
         proxy.loadSidePost();
+        
+        if (event.getSide().equals(Side.CLIENT)) {
+            GuiNodeRegistar.registerNodes();
+            GuiFunctionRegistar.registerFunctions();
+        }
     }
     
     public static void createStructureFolder() {

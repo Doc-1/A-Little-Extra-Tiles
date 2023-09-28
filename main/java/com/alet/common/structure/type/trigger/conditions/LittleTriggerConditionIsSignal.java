@@ -12,6 +12,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.client.gui.signal.SubGuiDialogSignal.GuiSignalComponent;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
@@ -37,8 +38,8 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     @Override
     public boolean conditionPassed() {
         try {
-            SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser(name), true, false);
-            ISignalComponent componet = (ISignalComponent) target.getTarget(this.structure);
+            SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser(name), false, false);
+            ISignalComponent componet = target.getTarget(this.structure);
             if (componet != null)
                 try {
                     if (BooleanUtils.equals(componet.getState(), this.state)) {
@@ -71,14 +72,15 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     
     @Override
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
-        List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(true, true, true);
+        List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(true,
+            true, true);
         //this.outputName = GuiSignalComponent.get(0).totalName;
         List<String> list = new ArrayList<String>();
         int index = 0;
         int i = 0;
         for (GuiSignalComponent o : GuiSignalComponent) {
             if (!o.totalName.equals("allow") && !o.totalName.equals("completed")) {
-                if (o.totalName.equals(name))
+                if (o.name.equals(name))
                     index = i;
                 list.add(o.name);
                 i++;
@@ -87,8 +89,10 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
         panel.addControl(new GuiLabel("Is Signal", 0, 0));
         panel.addControl(new GuiLabel("Signal Connections", 0, 20));
         GuiComboBox box = new GuiComboBox("outList", 0, 33, 153, list);
-        if (!list.isEmpty())
+        if (!list.isEmpty()) {
             box.select(index);
+            panel.raiseEvent(new GuiControlChangedEvent(box));
+        }
         panel.addControl(box);
         panel.addControl(new GuiLabel("If Signal is", 0, 57));
         GuiTextfield valueText = new GuiTextfield("value", value, 0, 70, 153, 14).setNumbersIncludingNegativeOnly();
