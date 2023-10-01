@@ -519,14 +519,18 @@ public class LittleMusicComposerALET extends LittleStructure {
                                                     pitch);
                                             else {
                                                 for (int k = 0; k < tracks.length; k++) {
+                                                    boolean flag = false;
                                                     for (int l = 0; l < LENGTH; l++) {
                                                         if (channelList.channels.get(l).isSpaceFor(null,
                                                             tick) && (instrument_names[k].equals(
                                                                 instrument_names[j]) || l > tracks.length)) {
                                                             control = channelList.channels.get(l).addKey(tick, pitch);
+                                                            flag = true;
                                                             break;
                                                         }
                                                     }
+                                                    if (flag)
+                                                        break;
                                                     if (control != null) {
                                                         channelList.adjustKeyPositionX(control);
                                                         channelList.adjustKeyPositionY(control);
