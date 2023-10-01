@@ -11,6 +11,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.custom.GuiItemComboBo
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.SubGuiRecipe.StructureHolder;
+import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.type.door.LittleDoorBase;
@@ -34,17 +35,19 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
     @Override
     public boolean conditionPassed() {
         try {
-            LittleDoorBase door = (LittleDoorBase) this.structure.getChild(childID).getStructure();
-            if (door.animation == null)
-                return false;
-            String s0 = door.animation.controller.toString();
-            String[] s1 = s0.split(">");
-            int i = -1;
-            if (s1.length > 1)
-                i = Integer.parseInt(s1[1].replace("-", ""));
-            if (i == tick && door.animation.controller.getCurrentState().name.equals("closed"))
-                return true;
-            
+            LittleStructure struct = this.structure.getChild(childID).getStructure();
+            if (struct instanceof LittleDoorBase) {
+                LittleDoorBase door = (LittleDoorBase) struct;
+                if (door.animation == null)
+                    return false;
+                String s0 = door.animation.controller.toString();
+                String[] s1 = s0.split(">");
+                int i = -1;
+                if (s1.length > 1)
+                    i = Integer.parseInt(s1[1].replace("-", ""));
+                if (i == tick && door.animation.controller.getCurrentState().name.equals("closed"))
+                    return true;
+            }
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

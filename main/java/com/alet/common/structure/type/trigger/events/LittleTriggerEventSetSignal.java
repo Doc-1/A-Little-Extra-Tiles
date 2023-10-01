@@ -46,14 +46,14 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
             } else if (componet instanceof SignalExternalOutputHandler) {
                 handler = ((SignalExternalOutputHandler) componet).handler;
             }
-            try {
-                boolean[] arr = new boolean[handler.getBandwidth()];
-                BooleanUtils.intToBool(outputValue, arr);
-                handler.schedule(arr);
-            } catch (CorruptedConnectionException | NotYetConnectedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            if (handler != null)
+                try {
+                    boolean[] arr = new boolean[handler.getBandwidth()];
+                    BooleanUtils.intToBool(outputValue, arr);
+                    handler.schedule(arr);
+                } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                    e.printStackTrace();
+                }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -71,28 +71,31 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setString("outputName", outputName);
         nbt.setInteger("outputValue", outputValue);
+        System.out.println(outputName);
         return nbt;
     }
     
     @Override
     @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
-        List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews
-                .getStructureType()).search(false, true, true);
+        List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(
+            false, true, true);
         //this.outputName = GuiSignalComponent.get(0).totalName;
         List<String> list = new ArrayList<String>();
+        List<String> title = new ArrayList<String>();
         int index = 0;
         int i = 0;
         for (GuiSignalComponent o : GuiSignalComponent) {
             if (!o.totalName.equals("allow") && !o.totalName.equals("completed")) {
                 if (o.totalName.equals(outputName))
                     index = i;
-                list.add(o.name);
+                title.add(o.display());
+                list.add(o.totalName);
                 i++;
             }
         }
         
-        GuiComboBox box = new GuiComboBox("outList", 0, 0, 100, list);
+        GuiTitledComboBox box = new GuiTitledComboBox("outList", 0, 0, 100, title, list);
         if (!list.isEmpty()) {
             box.select(index);
             panel.raiseEvent(new GuiControlChangedEvent(box));
@@ -107,13 +110,27 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("outList")) {
-            GuiComboBox combo = (GuiComboBox) source;
-            this.outputName = combo.getCaption();
+            GuiTitledComboBox combo = (GuiTitledComboBox) source;
+            this.outputName = combo.getSelected();
         }
         if (source.is("value")) {
             GuiTextfield text = (GuiTextfield) source;
             if (!text.text.isEmpty())
                 outputValue = Integer.parseInt(text.text);
+        }
+    }
+    
+    protected class GuiTitledComboBox extends GuiComboBox {
+        
+        List<String> titles = new ArrayList<>();
+        
+        public GuiTitledComboBox(String name, int x, int y, int width, List<String> titles, List<String> lines) {
+            super(name, x, y, width, titles);
+            this.titles = lines;
+        }
+        
+        public String getSelected() {
+            return titles.get(index);
         }
     }
     
