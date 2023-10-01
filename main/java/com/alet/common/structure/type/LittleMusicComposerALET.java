@@ -233,10 +233,8 @@ public class LittleMusicComposerALET extends LittleStructure {
         protected void createControls(LittlePreviews previews, LittleStructure structure) {
             LittleMusicComposerALET soundPlayer = structure instanceof LittleMusicComposerALET ? (LittleMusicComposerALET) structure : null;
             List<TimelineChannel> channels = new ArrayList<>();
-            for (int i = 0; i < LENGTH; i++)
-                channels.add(new TimelineChannelDouble("CH" + (i + 1)));
-            
             for (int i = 0; i < LENGTH; i++) {
+                channels.add(new TimelineChannelDouble("CH" + (i + 1)));
                 if (soundPlayer != null) {
                     ValueTimeline channel = soundPlayer.channels[i];
                     if (channel != null)
@@ -460,7 +458,7 @@ public class LittleMusicComposerALET extends LittleStructure {
                             Sequencer s = MidiSystem.getSequencer();
                             s.setSequence(sequence);
                             int tick = 0;
-                            //s.setTempoInBPM(120);
+                            s.setTempoInBPM(120);
                             double mod = (s.getTempoInBPM() * sequence.getResolution()) / 60D;
                             pauseUpdate = true;
                             Track[] tracks = s.getSequence().getTracks();
@@ -520,15 +518,22 @@ public class LittleMusicComposerALET extends LittleStructure {
                                                 control = channelList.channels.get(shortMesg.getChannel()).addKey(tick,
                                                     pitch);
                                             else {
-                                                for (int k = 0; k < tracks.length; k++)
-                                                    for (int l = 0; l < LENGTH; l++)
+                                                for (int k = 0; k < tracks.length; k++) {
+                                                    for (int l = 0; l < LENGTH; l++) {
                                                         if (channelList.channels.get(l).isSpaceFor(null,
                                                             tick) && (instrument_names[k].equals(
                                                                 instrument_names[j]) || l > tracks.length)) {
                                                             control = channelList.channels.get(l).addKey(tick, pitch);
                                                             break;
                                                         }
-                                                    
+                                                    }
+                                                    if (control != null) {
+                                                        channelList.adjustKeyPositionX(control);
+                                                        channelList.adjustKeyPositionY(control);
+                                                        channelList.addControl(control);
+                                                        channelList.raiseEvent(new GuiControlChangedEvent(channelList));
+                                                    }
+                                                }
                                             }
                                             
                                             if (control != null) {
@@ -562,15 +567,12 @@ public class LittleMusicComposerALET extends LittleStructure {
             LittleMusicComposerALET structure = createStructure(LittleMusicComposerALET.class, null);
             
             GuiTimeline timeline = (GuiTimeline) parent.get("timeline");
-            
             structure.duration = timeline.getDuration();
             
-            for (int i = 0; i < LENGTH; i++)
+            for (int i = 0; i < LENGTH; i++) {
                 structure.channels[i] = ValueTimeline.create(0, timeline.channels.get(i).getPairs());
-            
-            for (int j = 0; j < LENGTH; j++)
-                structure.channelSounds[j] = this.channelSounds[j];
-            
+                structure.channelSounds[i] = this.channelSounds[i];
+            }
             structure.volume = volume;
             structure.playLocal = local;
             return structure;
