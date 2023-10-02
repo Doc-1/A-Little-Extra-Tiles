@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -458,7 +459,7 @@ public class LittleMusicComposerALET extends LittleStructure {
                             Sequencer s = MidiSystem.getSequencer();
                             s.setSequence(sequence);
                             int tick = 0;
-                            s.setTempoInBPM(120);
+                            //s.setTempoInBPM(120);
                             double mod = (s.getTempoInBPM() * sequence.getResolution()) / 60D;
                             pauseUpdate = true;
                             Track[] tracks = s.getSequence().getTracks();
@@ -468,7 +469,7 @@ public class LittleMusicComposerALET extends LittleStructure {
                             Soundbank sb = synthesizer.getDefaultSoundbank();
                             if (sb != null)
                                 instrument_bank = sb.getInstruments();
-                            
+                            HashSet<Integer> skipChannels = new HashSet<Integer>();
                             for (int j = 0; j < tracks.length; j++) {
                                 Track track = tracks[j];
                                 for (int i = 0; i < track.size(); i++) {
@@ -476,6 +477,7 @@ public class LittleMusicComposerALET extends LittleStructure {
                                     MidiMessage message = event.getMessage();
                                     if (message instanceof ShortMessage) {
                                         ShortMessage shortMesg = (ShortMessage) message;
+                                        skipChannels.add(shortMesg.getChannel());
                                         if (instrument_bank != null && shortMesg.getCommand() == 192) {
                                             Instrument instrument = instrument_bank[shortMesg.getData1()];
                                             instrument_names[j] = instrument.getName();
@@ -483,7 +485,7 @@ public class LittleMusicComposerALET extends LittleStructure {
                                     }
                                 }
                             }
-                            
+                            System.out.println(skipChannels);
                             for (int j = 0; j < tracks.length; j++) {
                                 Track track = tracks[j];
                                 for (int i = 0; i < track.size(); i++) {
@@ -513,7 +515,6 @@ public class LittleMusicComposerALET extends LittleStructure {
                                             //Notes note2 = Notes.getNoteFromPitch((int) pitch);
                                             GuiTimeline channelList = (GuiTimeline) this.parent.get("timeline");
                                             KeyControl control = null;
-                                            
                                             if (channelList.channels.get(shortMesg.getChannel()).isSpaceFor(null, tick))
                                                 control = channelList.channels.get(shortMesg.getChannel()).addKey(tick,
                                                     pitch);
@@ -523,7 +524,7 @@ public class LittleMusicComposerALET extends LittleStructure {
                                                     for (int l = 0; l < LENGTH; l++) {
                                                         if (channelList.channels.get(l).isSpaceFor(null,
                                                             tick) && (instrument_names[k].equals(
-                                                                instrument_names[j]) || l > tracks.length)) {
+                                                                instrument_names[j]) || !skipChannels.contains(l))) {
                                                             control = channelList.channels.get(l).addKey(tick, pitch);
                                                             flag = true;
                                                             break;
@@ -590,7 +591,6 @@ public class LittleMusicComposerALET extends LittleStructure {
             
             for (int i = 0; i < LENGTH; i++)
                 channels[i] = ValueTimeline.create(0, timeline.channels.get(i).getPairs());
-            System.out.println(channelSounds);
             for (int i = 0; i < timeline.getDuration(); i++) {
                 for (int j = 0; j < LENGTH; j++) {
                     ValueTimeline channel = channels[j];
