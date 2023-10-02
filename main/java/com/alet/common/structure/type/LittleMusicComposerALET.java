@@ -34,6 +34,7 @@ import com.alet.common.util.CopyUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
@@ -87,9 +88,11 @@ public class LittleMusicComposerALET extends LittleStructure {
     public BlockPos pos;
     public boolean play = false;
     public int coursor;
-    
     public boolean playLocal = false;
     public int volume = 1;
+    
+    public int tempo = 0;
+    public boolean changeTempo = false;
     
     public LittleMusicComposerALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -116,6 +119,9 @@ public class LittleMusicComposerALET extends LittleStructure {
         
         nbt.setInteger("volume", volume);
         nbt.setBoolean("local", playLocal);
+        
+        nbt.setBoolean("change_tempo", changeTempo);
+        nbt.setInteger("tempo", tempo);
     }
     
     @Override
@@ -150,6 +156,11 @@ public class LittleMusicComposerALET extends LittleStructure {
         if (nbt.hasKey("local"))
             playLocal = nbt.getBoolean("local");
         
+        if (nbt.hasKey("change_tempo"))
+            changeTempo = nbt.getBoolean("change_tempo");
+        
+        if (nbt.hasKey("tempo"))
+            tempo = nbt.getInteger("tempo");
     }
     
     @Override
@@ -218,6 +229,8 @@ public class LittleMusicComposerALET extends LittleStructure {
         public boolean pauseUpdate = false;
         public List<String> possibleSounds;
         public String[] channelSounds = new String[LENGTH];
+        public int tempo = 120;
+        public boolean changeTempo = false;
         
         public LittleMusicComposerParserALET(GuiParent parent, AnimationGuiHandler handler) {
             super(parent, handler);
@@ -248,15 +261,17 @@ public class LittleMusicComposerALET extends LittleStructure {
             if (soundPlayer != null) {
                 volume = soundPlayer.volume;
                 local = soundPlayer.playLocal;
+                tempo = soundPlayer.tempo;
+                changeTempo = soundPlayer.changeTempo;
             }
-            GuiScrollBox box = new GuiScrollBox("scroll_box", 0, 0, 200, 167);
+            GuiScrollBox box = new GuiScrollBox("scroll_box", 0, 0, 200, 150);
             box.addControl(
                 new GuiTimeline("timeline", 0, 0, 192, 187, soundPlayer != null ? soundPlayer.duration : 100, channels, handler)
                         .setSidebarWidth(25));
             parent.controls.add(box);
             //parent.controls.add(new GuiTextfield("keyValue", "", 158, 0, 35, 10).setFloatOnly().setEnabled(false).setCustomTooltip("Pitch"));
             
-            parent.controls.add(new GuiComboBox("keyValue", 208, 0, 35, Notes.allNotes()) {
+            parent.controls.add(new GuiComboBox("keyValue", 209, 0, 35, Notes.allNotes()) {
                 @Override
                 public void closeBox() {
                     updateTimeLine();
@@ -284,11 +299,15 @@ public class LittleMusicComposerALET extends LittleStructure {
                 }
             });
             
-            parent.controls.add(new GuiTextfield("keyPosition", "", 208, 22, 35, 10).setNumbersOnly().setEnabled(false)
+            parent.controls.add(new GuiCheckBox("changeTempo", "Change Import Tempo", 85, 158, changeTempo));
+            
+            parent.controls.add(new GuiTextfield("keyPosition", "", 209, 22, 35, 10).setNumbersOnly().setEnabled(false)
                     .setCustomTooltip("Tick"));
             
+            parent.controls.add(new GuiTextfield("tempo", "0", 209, 157, 35, 10).setNumbersOnly().setEnabled(changeTempo)
+                    .setCustomTooltip("Import Tempo"));
             parent.controls.add(
-                new GuiTextfield("duration_s", structure instanceof LittleMusicComposerALET ? "" + ((LittleMusicComposerALET) structure).duration : "" + 10, 208, 40, 35, 8)
+                new GuiTextfield("duration_s", structure instanceof LittleMusicComposerALET ? "" + ((LittleMusicComposerALET) structure).duration : "" + 10, 209, 40, 35, 8)
                         .setNumbersOnly().setLangTooltip("gui.door.duration"));
             
             parent.controls.add(new GuiButtonSoundChannel("Sound Settings", this, 0, 175, 75, 8));
@@ -424,6 +443,16 @@ public class LittleMusicComposerALET extends LittleStructure {
                 }
             } else if (event.source.is("timeline") || event.source.is("keyValue"))
                 updateTimeLine();
+            else if (event.source.is("changeTempo")) {
+                GuiCheckBox box = (GuiCheckBox) parent.get("changeTempo");
+                GuiTextfield text = (GuiTextfield) parent.get("tempo");
+                text.setEnabled(box.value);
+                changeTempo = box.value;
+            } else if (event.source.is("tempo")) {
+                GuiTextfield text = (GuiTextfield) parent.get("tempo");
+                if (!text.text.isEmpty())
+                    tempo = Integer.parseInt(text.text);
+            }
         }
         
         public void clearKeys() {
@@ -458,7 +487,8 @@ public class LittleMusicComposerALET extends LittleStructure {
                             Sequence sequence = MidiSystem.getSequence(midiFile);
                             Sequencer s = MidiSystem.getSequencer();
                             s.setSequence(sequence);
-                            //s.setTempoInBPM(120);
+                            if (changeTempo)
+                                s.setTempoInBPM(tempo);
                             double mod = (s.getTempoInBPM() * sequence.getResolution()) / 60D;
                             pauseUpdate = true;
                             Track[] tracks = s.getSequence().getTracks();
@@ -497,13 +527,13 @@ public class LittleMusicComposerALET extends LittleStructure {
                             int duration = 0;
                             
                             List<List<NoteData>> organizedList = organize(notes);
-                            
                             for (int i = 0; i < organizedList.size(); i++) {
                                 List<NoteData> channelList = organizedList.get(i);
                                 for (int j = 0; j < channelList.size(); j++) {
                                     NoteData data = channelList.get(j);
                                     int key = data.key;
                                     int tick = data.tick;
+                                    duration = Math.max(duration, tick);
                                     double pitch = 0;
                                     if (key > 64) {
                                         pitch = key % 64;
@@ -526,10 +556,10 @@ public class LittleMusicComposerALET extends LittleStructure {
                                     }
                                 }
                             }
-                            duration = guiChannelList.getDuration();
+                            
                             GuiTextfield guiDuration = (GuiTextfield) this.parent.get("duration_s");
-                            guiDuration.text = 100 + "";
-                            guiChannelList.setDuration(100);
+                            guiDuration.text = duration + "";
+                            guiChannelList.setDuration(duration);
                             pauseUpdate = false;
                             updateTimeLine();
                         } catch (InvalidMidiDataException | IOException | MidiUnavailableException e) {
