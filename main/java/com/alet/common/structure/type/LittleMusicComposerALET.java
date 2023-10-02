@@ -458,7 +458,6 @@ public class LittleMusicComposerALET extends LittleStructure {
                             Sequence sequence = MidiSystem.getSequence(midiFile);
                             Sequencer s = MidiSystem.getSequencer();
                             s.setSequence(sequence);
-                            int tick = 0;
                             //s.setTempoInBPM(120);
                             double mod = (s.getTempoInBPM() * sequence.getResolution()) / 60D;
                             pauseUpdate = true;
@@ -467,11 +466,13 @@ public class LittleMusicComposerALET extends LittleStructure {
                             String instrument_names[] = new String[tracks.length];
                             Synthesizer synthesizer = MidiSystem.getSynthesizer();
                             Soundbank sb = synthesizer.getDefaultSoundbank();
+                            List<List<NoteData>> notes = new ArrayList<List<NoteData>>();
                             if (sb != null)
                                 instrument_bank = sb.getInstruments();
                             HashSet<Integer> skipChannels = new HashSet<Integer>();
                             for (int j = 0; j < tracks.length; j++) {
                                 Track track = tracks[j];
+                                List<NoteData> nd = new ArrayList<>();
                                 for (int i = 0; i < track.size(); i++) {
                                     MidiEvent event = track.get(i);
                                     MidiMessage message = event.getMessage();
@@ -482,81 +483,53 @@ public class LittleMusicComposerALET extends LittleStructure {
                                             Instrument instrument = instrument_bank[shortMesg.getData1()];
                                             instrument_names[j] = instrument.getName();
                                         }
-                                    }
-                                }
-                            }
-                            System.out.println(skipChannels);
-                            for (int j = 0; j < tracks.length; j++) {
-                                Track track = tracks[j];
-                                for (int i = 0; i < track.size(); i++) {
-                                    MidiEvent event = track.get(i);
-                                    DecimalFormat df = new DecimalFormat("#####.##");
-                                    double d = Double.parseDouble(df.format(event.getTick() / mod));
-                                    tick = (int) (d * 20D);
-                                    MidiMessage message = event.getMessage();
-                                    if (message instanceof ShortMessage) {
-                                        ShortMessage shortMesg = (ShortMessage) message;
-                                        
                                         if (shortMesg.getCommand() == 0x90) {
-                                            int key = shortMesg.getData1();
-                                            
-                                            //int octave = (key / 12) - 1;
-                                            //int note = key % 12;
-                                            //String noteName = NOTE_NAMES[note];
-                                            
-                                            double pitch = 0;
-                                            if (key > 64) {
-                                                pitch = key % 64;
-                                            } else if (key < 64) {
-                                                pitch = -(64 % key);
-                                            } else if (key == 64) {
-                                                pitch = 0;
-                                            }
-                                            //Notes note2 = Notes.getNoteFromPitch((int) pitch);
-                                            GuiTimeline channelList = (GuiTimeline) this.parent.get("timeline");
-                                            KeyControl control = null;
-                                            if (channelList.channels.get(shortMesg.getChannel()).isSpaceFor(null, tick))
-                                                control = channelList.channels.get(shortMesg.getChannel()).addKey(tick,
-                                                    pitch);
-                                            else {
-                                                for (int k = 0; k < tracks.length; k++) {
-                                                    boolean flag = false;
-                                                    for (int l = 0; l < LENGTH; l++) {
-                                                        if (channelList.channels.get(l).isSpaceFor(null,
-                                                            tick) && (instrument_names[k].equals(
-                                                                instrument_names[j]) || !skipChannels.contains(l))) {
-                                                            control = channelList.channels.get(l).addKey(tick, pitch);
-                                                            flag = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (flag)
-                                                        break;
-                                                    if (control != null) {
-                                                        channelList.adjustKeyPositionX(control);
-                                                        channelList.adjustKeyPositionY(control);
-                                                        channelList.addControl(control);
-                                                        channelList.raiseEvent(new GuiControlChangedEvent(channelList));
-                                                    }
-                                                }
-                                            }
-                                            
-                                            if (control != null) {
-                                                channelList.adjustKeyPositionX(control);
-                                                channelList.adjustKeyPositionY(control);
-                                                channelList.addControl(control);
-                                                channelList.raiseEvent(new GuiControlChangedEvent(channelList));
-                                            }
+                                            DecimalFormat df = new DecimalFormat("#####.##");
+                                            double d = Double.parseDouble(df.format(event.getTick() / mod));
+                                            int tick = (int) (d * 20D);
+                                            nd.add(new NoteData(tick, shortMesg.getData1()));
                                         }
                                     }
+                                }
+                                notes.add(nd);
+                            }
+                            GuiTimeline guiChannelList = (GuiTimeline) this.parent.get("timeline");
+                            int duration = 0;
+                            
+                            List<List<NoteData>> organizedList = organize(notes);
+                            
+                            for (int i = 0; i < organizedList.size(); i++) {
+                                List<NoteData> channelList = organizedList.get(i);
+                                for (int j = 0; j < channelList.size(); j++) {
+                                    NoteData data = channelList.get(j);
+                                    int key = data.key;
+                                    int tick = data.tick;
+                                    double pitch = 0;
+                                    if (key > 64) {
+                                        pitch = key % 64;
+                                    } else if (key < 64) {
+                                        pitch = -(64 % key);
+                                    } else if (key == 64) {
+                                        pitch = 0;
+                                    }
                                     
+                                    System.out.println(i + " " + tick);
+                                    KeyControl control = null;
+                                    if (guiChannelList.channels.get(i).isSpaceFor(null, tick))
+                                        control = guiChannelList.channels.get(i).addKey(tick, pitch);
+                                    
+                                    if (control != null) {
+                                        guiChannelList.adjustKeyPositionX(control);
+                                        guiChannelList.adjustKeyPositionY(control);
+                                        guiChannelList.addControl(control);
+                                        guiChannelList.raiseEvent(new GuiControlChangedEvent(guiChannelList));
+                                    }
                                 }
                             }
-                            
-                            GuiTimeline channelList = (GuiTimeline) this.parent.get("timeline");
-                            GuiTextfield duration = (GuiTextfield) this.parent.get("duration_s");
-                            duration.text = tick + "";
-                            channelList.setDuration(tick);
+                            duration = guiChannelList.getDuration();
+                            GuiTextfield guiDuration = (GuiTextfield) this.parent.get("duration_s");
+                            guiDuration.text = 100 + "";
+                            guiChannelList.setDuration(100);
                             pauseUpdate = false;
                             updateTimeLine();
                         } catch (InvalidMidiDataException | IOException | MidiUnavailableException e) {
@@ -565,6 +538,31 @@ public class LittleMusicComposerALET extends LittleStructure {
             } else
                 Layer.addLayer(parent.getGui(), new SubGuiNoPathMessage(".mid"));
             
+        }
+        
+        public List<List<NoteData>> organize(List<List<NoteData>> notes) {
+            List<List<NoteData>> newNotes = new ArrayList<List<NoteData>>();
+            boolean flag = true;
+            for (List<NoteData> list : notes) {
+                List<NoteData> newList = new ArrayList<>();
+                List<NoteData> overflowList = new ArrayList<>();
+                for (int i = 0; i < list.size(); i++) {
+                    if (i != 0 && list.get(i).tick == list.get(i - 1).tick) {
+                        overflowList.add(list.get(i));
+                    } else {
+                        newList.add(list.get(i));
+                    }
+                }
+                if (!overflowList.isEmpty()) {
+                    flag = false;
+                    newNotes.add(overflowList);
+                }
+                newNotes.add(newList);
+            }
+            if (flag)
+                return newNotes;
+            else
+                return organize(newNotes);
         }
         
         @Override
@@ -623,6 +621,16 @@ public class LittleMusicComposerALET extends LittleStructure {
                 
             }
             
+        }
+    }
+    
+    public static class NoteData {
+        public int tick;
+        public int key;
+        
+        public NoteData(int tick, int key) {
+            this.tick = tick;
+            this.key = key;
         }
     }
     

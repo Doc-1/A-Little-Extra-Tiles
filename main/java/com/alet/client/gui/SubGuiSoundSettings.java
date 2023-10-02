@@ -46,14 +46,14 @@ public class SubGuiSoundSettings extends SubGui {
     }
     
     public SubGuiSoundSettings(LittleMusicComposerParserALET littleSoundPlayerParserALET) {
-        super(350, 224);
+        super(350, 251);
         this.littleSoundPlayerParserALET = littleSoundPlayerParserALET;
     }
     
     @Override
     public void createControls() {
         
-        controls.add(new GuiButton("Done", 0, 180, 40) {
+        controls.add(new GuiButton("Done", 0, 231, 40) {
             @Override
             public void onClicked(int x, int y, int button) {
                 closeGui();
@@ -94,14 +94,14 @@ public class SubGuiSoundSettings extends SubGui {
                 Notes note = Notes.getNoteFromPitch(0);
                 playSound(new SoundEvent(new ResourceLocation(note.getResourceLocation(sound))));
                 
-                GuiComboBoxHeight[] comboBoxes = new GuiComboBoxHeight[16];
-                for (int i = 0; i < 16; i++)
+                GuiComboBoxHeight[] comboBoxes = new GuiComboBoxHeight[littleSoundPlayerParserALET.channelSounds.length];
+                for (int i = 0; i < littleSoundPlayerParserALET.channelSounds.length; i++)
                     comboBoxes[i] = (GuiComboBoxHeight) get("sounds" + (i + 1));
                 
                 GuiTextfield volume = (GuiTextfield) get("volume");
                 GuiCheckBox local = (GuiCheckBox) get("local");
                 
-                for (int i = 0; i < 16; i++)
+                for (int i = 0; i < littleSoundPlayerParserALET.channelSounds.length; i++)
                     littleSoundPlayerParserALET.channelSounds[i] = comboBoxes[i].getCaption();
                 
                 littleSoundPlayerParserALET.volume = Integer.parseInt(volume.text);

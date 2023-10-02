@@ -39,7 +39,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
         recipeGui.refreshControls();
         if (name.equals("structure.music_composer.name")) {
             viewer.moveViewPort(-25, 32);
-            viewer.posX = 272;
+            viewer.posX = 258;
         } else if (name.equals("structure.door_lock.name")) {
             viewer.moveViewPort(-25, 0);
             viewer.posX = 258;
@@ -84,7 +84,7 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
                 
             } else if (name.equals("structure.music_composer.name")) {
                 recipeGui.height = 270;
-                recipeGui.width = 420;
+                recipeGui.width = 406;
                 recipeGui.get("tilescount").posX = 258;
                 recipeGui.get("pause").posX = 298;
                 recipeGui.get("play").posX = 318;
