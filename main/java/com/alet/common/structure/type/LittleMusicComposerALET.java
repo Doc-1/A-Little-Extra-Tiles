@@ -27,6 +27,7 @@ import com.alet.client.gui.SubGuiSoundSettings;
 import com.alet.client.gui.controls.GuiLongTextField;
 import com.alet.client.gui.controls.Layer;
 import com.alet.client.gui.message.SubGuiNoPathMessage;
+import com.alet.client.gui.message.SubGuiTooManyChannels;
 import com.alet.client.sounds.Notes;
 import com.alet.common.packet.PacketSendSound;
 import com.alet.common.structure.sound.Sound;
@@ -167,10 +168,7 @@ public class LittleMusicComposerALET extends LittleStructure {
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
         if (worldIn.isRemote)
             return true;
-        if (!play) {
-            this.play = true;
-        }
-        
+        this.play = !this.play;
         return true;
     }
     
@@ -527,41 +525,44 @@ public class LittleMusicComposerALET extends LittleStructure {
                             int duration = 0;
                             
                             List<List<NoteData>> organizedList = organize(notes);
-                            for (int i = 0; i < organizedList.size(); i++) {
-                                List<NoteData> channelList = organizedList.get(i);
-                                for (int j = 0; j < channelList.size(); j++) {
-                                    NoteData data = channelList.get(j);
-                                    int key = data.key;
-                                    int tick = data.tick;
-                                    duration = Math.max(duration, tick);
-                                    double pitch = 0;
-                                    if (key > 64) {
-                                        pitch = key % 64;
-                                    } else if (key < 64) {
-                                        pitch = -(64 % key);
-                                    } else if (key == 64) {
-                                        pitch = 0;
-                                    }
-                                    
-                                    System.out.println(i + " " + tick);
-                                    KeyControl control = null;
-                                    if (guiChannelList.channels.get(i).isSpaceFor(null, tick))
-                                        control = guiChannelList.channels.get(i).addKey(tick, pitch);
-                                    
-                                    if (control != null) {
-                                        guiChannelList.adjustKeyPositionX(control);
-                                        guiChannelList.adjustKeyPositionY(control);
-                                        guiChannelList.addControl(control);
-                                        guiChannelList.raiseEvent(new GuiControlChangedEvent(guiChannelList));
+                            if (organizedList.size() <= LENGTH) {
+                                for (int i = 0; i < organizedList.size(); i++) {
+                                    List<NoteData> channelList = organizedList.get(i);
+                                    for (int j = 0; j < channelList.size(); j++) {
+                                        NoteData data = channelList.get(j);
+                                        int key = data.key;
+                                        int tick = data.tick;
+                                        duration = Math.max(duration, tick);
+                                        double pitch = 0;
+                                        if (key > 64) {
+                                            pitch = key % 64;
+                                        } else if (key < 64) {
+                                            pitch = -(64 % key);
+                                        } else if (key == 64) {
+                                            pitch = 0;
+                                        }
+                                        
+                                        KeyControl control = null;
+                                        if (guiChannelList.channels.get(i).isSpaceFor(null, tick))
+                                            control = guiChannelList.channels.get(i).addKey(tick, pitch);
+                                        
+                                        if (control != null) {
+                                            guiChannelList.adjustKeyPositionX(control);
+                                            guiChannelList.adjustKeyPositionY(control);
+                                            guiChannelList.addControl(control);
+                                            guiChannelList.raiseEvent(new GuiControlChangedEvent(guiChannelList));
+                                        }
                                     }
                                 }
+                                
+                                GuiTextfield guiDuration = (GuiTextfield) this.parent.get("duration_s");
+                                guiDuration.text = duration + "";
+                                guiChannelList.setDuration(duration);
+                                pauseUpdate = false;
+                                updateTimeLine();
+                            } else {
+                                Layer.addLayer(parent.getGui(), new SubGuiTooManyChannels(midiFile.getName()));
                             }
-                            
-                            GuiTextfield guiDuration = (GuiTextfield) this.parent.get("duration_s");
-                            guiDuration.text = duration + "";
-                            guiChannelList.setDuration(duration);
-                            pauseUpdate = false;
-                            updateTimeLine();
                         } catch (InvalidMidiDataException | IOException | MidiUnavailableException e) {
                             e.printStackTrace();
                         }

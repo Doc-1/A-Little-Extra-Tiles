@@ -28,19 +28,25 @@ public class ComponentSearch {
     }
     
     protected void addInput(LittlePreviews previews, LittleStructureType type, String prefix, String totalNamePrefix, List<GuiSignalComponent> list, boolean includeRelations) {
+        
+        String parentName = previews.getStructureName();
         if (type != null && type.inputs != null)
             for (int i = 0; i < type.inputs.size(); i++)
-                list.add(new GuiSignalComponent(prefix + "a" + i, totalNamePrefix, type.inputs.get(i), true, false, i));
+                list.add(new GuiSignalComponent(prefix + "a" + i, totalNamePrefix, type.inputs.get(
+                    i), true, false, i, parentName));
         for (int i = 0; i < previews.childrenCount(); i++) {
             LittlePreviews child = previews.getChild(i);
             if (child == this.previews)
                 continue;
             LittleStructureType structure = child.getStructureType();
             String name = child.getStructureName();
-            if (structure instanceof ISignalComponent && ((ISignalComponent) structure).getType() == SignalComponentType.INPUT)
-                list.add(new GuiSignalComponent(prefix + "i" + i, totalNamePrefix + (name != null ? name : "i" + i), (ISignalComponent) structure, true, i));
+            if (structure instanceof ISignalComponent && ((ISignalComponent) structure)
+                    .getType() == SignalComponentType.INPUT)
+                list.add(
+                    new GuiSignalComponent(prefix + "i" + i, totalNamePrefix + (name != null ? name : "i" + i), (ISignalComponent) structure, true, i, parentName));
             else if (includeRelations)
-                gatherInputs(child, child.getStructureType(), prefix + "c" + i + ".", totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
+                gatherInputs(child, child.getStructureType(), prefix + "c" + i + ".",
+                    totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
         }
     }
     
@@ -48,7 +54,8 @@ public class ComponentSearch {
         if (previews == this.previews)
             addInput(previews, type, "", "", list, includeRelations);
         if (searchForParent && previews.hasParent() && includeRelations) {
-            gatherInputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix, "p." + totalNamePrefix, list, includeRelations, true);
+            gatherInputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix,
+                "p." + totalNamePrefix, list, includeRelations, true);
             return;
         }
         if (previews != this.previews)
@@ -56,20 +63,25 @@ public class ComponentSearch {
     }
     
     protected void addOutput(LittlePreviews previews, LittleStructureType type, String prefix, String totalNamePrefix, List<GuiSignalComponent> list, boolean includeRelations) {
+        
+        String parentName = previews.getStructureName();
         if (type != null && type.outputs != null)
             for (int i = 0; i < type.outputs.size(); i++)
-                list.add(new GuiSignalComponent(prefix + "b" + i, totalNamePrefix, type.outputs.get(i), false, false, i));
+                list.add(new GuiSignalComponent(prefix + "b" + i, totalNamePrefix, type.outputs.get(
+                    i), false, false, i, parentName));
         for (int i = 0; i < previews.childrenCount(); i++) {
             LittlePreviews child = previews.getChild(i);
             if (child == this.previews)
                 continue;
             LittleStructureType structure = child.getStructureType();
             String name = child.getStructureName();
-            if (structure instanceof ISignalComponent && ((ISignalComponent) structure).getType() == SignalComponentType.OUTPUT)
-                list.add(new GuiSignalComponent(prefix + "o" + i, totalNamePrefix + (name != null ? name : "o" + i), (ISignalComponent) structure, true, i));
+            if (structure instanceof ISignalComponent && ((ISignalComponent) structure)
+                    .getType() == SignalComponentType.OUTPUT)
+                list.add(
+                    new GuiSignalComponent(prefix + "o" + i, totalNamePrefix + (name != null ? name : "o" + i), (ISignalComponent) structure, true, i, parentName));
             else if (includeRelations)
-                gatherOutputs(child, child
-                        .getStructureType(), prefix + "c" + i + ".", totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
+                gatherOutputs(child, child.getStructureType(), prefix + "c" + i + ".",
+                    totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
         }
     }
     
@@ -77,7 +89,8 @@ public class ComponentSearch {
         if (previews == this.previews)
             addOutput(previews, type, "", "", list, includeRelations);
         if (searchForParent && previews.hasParent() && includeRelations) {
-            gatherOutputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix, "p." + totalNamePrefix, list, includeRelations, searchForParent);
+            gatherOutputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix,
+                "p." + totalNamePrefix, list, includeRelations, searchForParent);
             return;
         }
         if (previews != this.previews)

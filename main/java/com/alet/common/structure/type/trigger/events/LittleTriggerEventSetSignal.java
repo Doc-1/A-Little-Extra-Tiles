@@ -21,6 +21,7 @@ import com.creativemd.littletiles.common.structure.signal.logic.SignalTarget;
 import com.creativemd.littletiles.common.structure.signal.output.InternalSignalOutput;
 import com.creativemd.littletiles.common.structure.signal.output.SignalExternalOutputHandler;
 import com.creativemd.littletiles.common.structure.signal.output.SignalOutputHandler;
+import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,11 +42,25 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
             SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser(outputName), true, false);
             ISignalComponent componet = target.getTarget(this.structure);
             SignalOutputHandler handler = null;
-            if (componet instanceof InternalSignalOutput) {
+            if (componet instanceof InternalSignalOutput)
                 handler = ((InternalSignalOutput) componet).handler;
-            } else if (componet instanceof SignalExternalOutputHandler) {
+            else if (componet instanceof SignalExternalOutputHandler)
                 handler = ((SignalExternalOutputHandler) componet).handler;
+            else if (componet instanceof LittleSignalOutput) {
+                LittleSignalOutput o = (LittleSignalOutput) componet;
+                if (o.getParent() != null) {
+                    SignalExternalOutputHandler x = o.getParent().getStructure().getExternalOutputHandler(o
+                            .getParent().childId);
+                    if (x != null)
+                        handler = x.handler;
+                }
+                if (handler == null) {
+                    boolean[] arr = new boolean[o.getBandwidth()];
+                    BooleanUtils.intToBool(outputValue, arr);
+                    o.updateState(arr);
+                }
             }
+            
             if (handler != null)
                 try {
                     boolean[] arr = new boolean[handler.getBandwidth()];
@@ -54,7 +69,7 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
                 } catch (CorruptedConnectionException | NotYetConnectedException e) {
                     e.printStackTrace();
                 }
-        } catch (ParseException e) {
+        } catch (ParseException | CorruptedConnectionException | NotYetConnectedException e) {
             e.printStackTrace();
         }
         return true;
@@ -71,7 +86,6 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setString("outputName", outputName);
         nbt.setInteger("outputValue", outputValue);
-        System.out.println(outputName);
         return nbt;
     }
     
@@ -90,12 +104,12 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
                 if (o.totalName.equals(outputName))
                     index = i;
                 title.add(o.display());
-                list.add(o.totalName);
+                list.add(o.name);
                 i++;
             }
         }
         
-        GuiTitledComboBox box = new GuiTitledComboBox("outList", 0, 0, 100, title, list);
+        GuiTitledComboBox box = new GuiTitledComboBox("outList", 0, 0, 153, title, list);
         if (!list.isEmpty()) {
             box.select(index);
             panel.raiseEvent(new GuiControlChangedEvent(box));
