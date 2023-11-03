@@ -22,14 +22,12 @@ import com.alet.client.gui.controls.menu.GuiTreePart;
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.menu.GuiTreePartHolder;
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
-import com.alet.client.gui.controls.programmable.functions.GuiFunctionRegistar;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.event.gui.GuiControlDragEvent;
 import com.alet.client.gui.event.gui.GuiControlKeyPressed;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.programable.functions.Function;
-import com.alet.common.structure.type.trigger.LittleTriggerObject;
-import com.alet.common.structure.type.trigger.activator.LittleTriggerActivator;
+import com.alet.common.structure.type.programable.functions.FunctionRegistar;
 import com.alet.common.util.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -71,11 +69,10 @@ public class LittleProgramableStructureALET extends LittleStructure {
     public HashSet<Entity> entities = new HashSet<>();
     public List<UUID> entitiesToLoad;
     public int tick = 0;
-    public Function startingBlueprint;
+    public Function resumeFrom;
     public boolean run = false;
-    public boolean considerEventsConditions = false;
-    private List<Function> blueprints = new ArrayList<Function>();
-    public List<Function> activator = new ArrayList<Function>();
+    private List<Function> functions = new ArrayList<Function>();
+    public List<Function> activators = new ArrayList<Function>();
     
     public LittleProgramableStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -114,13 +111,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
     }
     
     @Override
-    protected void writeToNBTExtra(NBTTagCompound nbt) {
-        NBTTagList list = new NBTTagList();
-        for (Function d : this.blueprints) {
-            list.appendTag(d.createNBT());
-        }
-        nbt.setTag("blueprints", list);
-    }
+    protected void writeToNBTExtra(NBTTagCompound nbt) {}
     
     public void organizeBlueprint() {/*
                                      if (blueprints.stream().anyMatch(x -> BlueprintActivator.class.isAssignableFrom(x.getClass()))) {
@@ -253,12 +244,10 @@ public class LittleProgramableStructureALET extends LittleStructure {
     }*/
     
     public static class LittleProgramableStructureParser extends LittleStructureGuiParser {
-        public List<GuiFunction> blueprints = new ArrayList<GuiFunction>();
-        LittleTriggerObject trigger = null;
+        public List<GuiFunction> guiFunctions = new ArrayList<GuiFunction>();
         public LittlePreviews previews;
         public boolean runWhileCollided = false;
         public AxisAlignedBB collisionArea;
-        public LittleTriggerActivator triggerActivator;
         public boolean consideredEventsConditions = false;
         public GuiNode selectedNode;
         NBTTagList list = new NBTTagList();
@@ -302,7 +291,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
             }
             */
             
-            GuiTree tree = new GuiTree("tree", 0, 0, 194, GuiFunctionRegistar.treeList(), true, 0, 0, 50);
+            GuiTree tree = new GuiTree("tree", 0, 0, 194, FunctionRegistar.treeList(), true, 0, 0, 50);
             GuiScrollBox box = new GuiScrollBox("scrole_box", 0, 0, 143, 199);
             box.addControl(tree);
             parent.addControl(drag);
@@ -395,11 +384,11 @@ public class LittleProgramableStructureALET extends LittleStructure {
                 GuiTreePartHolder<String> menu = (GuiTreePartHolder<String>) event.source;
                 if (drag.isMouseOver()) {
                     Vec3d pos = drag.getMousePos();
-                    GuiFunction bp = GuiFunctionRegistar.createFunction(menu.key, false, this.blueprints.size());
+                    GuiFunction bp = FunctionRegistar.createFunction(menu.key, false, this.guiFunctions.size());
                     
                     bp.posX = (int) pos.x;
                     bp.posY = (int) pos.y;
-                    this.blueprints.add(bp);
+                    this.guiFunctions.add(bp);
                     
                     drag.addControl(bp);
                 }
@@ -450,9 +439,9 @@ public class LittleProgramableStructureALET extends LittleStructure {
             if (event.source instanceof GuiTreePart && event.source.is("tree")) {
                 GuiTreePart part = (GuiTreePart) event.source;
                 if (part.type.equals(EnumPartType.Leaf)) {
-                    GuiFunction pb = GuiFunction.createBlueprintFrom(part.caption, this.blueprints.size() + 1);
+                    GuiFunction pb = GuiFunction.createBlueprintFrom(part.caption, this.guiFunctions.size() + 1);
                     drag.addControl(pb);
-                    this.blueprints.add(pb);
+                    this.guiFunctions.add(pb);
                 }
             }
             if (event.source instanceof GuiIconDepressedButton) {
@@ -474,7 +463,14 @@ public class LittleProgramableStructureALET extends LittleStructure {
         @SideOnly(Side.CLIENT)
         public LittleProgramableStructureALET parseStructure(LittlePreviews previews) {
             LittleProgramableStructureALET structure = createStructure(LittleProgramableStructureALET.class, null);
-            //structure.blueprints = blueprints;
+            for (GuiFunction gui : guiFunctions)
+                structure.functions.add(FunctionRegistar.getFunctionFromGui(gui));
+            
+            for (int i = 0; i < guiFunctions.size(); i++) {
+                GuiFunction gui = guiFunctions.get(i);
+                Function function = structure.functions.get(i);
+            }
+            
             return structure;
         }
         

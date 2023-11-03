@@ -63,6 +63,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
     public HashMap<Integer, RopeData> ropeData = new HashMap<Integer, RopeData>();
     public HashMap<Integer, RopeConnection> connections = new HashMap<Integer, RopeConnection>();
+    public int previousIndex = -1;
     
     public LittleRopeConnectionALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
@@ -79,6 +80,17 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
         for (NBTBase n : dataList) {
             ropeData.put(((NBTTagCompound) n).getInteger("ropeID"), new RopeData((NBTTagCompound) n));
         }
+        if (nbt.hasKey("previous_index"))
+            previousIndex = nbt.getInteger("previous_index");
+        else
+            previousIndex = -1;
+    }
+    
+    @Override
+    public NBTTagCompound writeToNBTPreview(NBTTagCompound nbt, BlockPos newCenter) {
+        nbt.setInteger("previous_index", mainBlock.getIndex());
+        
+        return super.writeToNBTPreview(nbt, newCenter);
     }
     
     @Override
@@ -105,7 +117,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     protected void afterPlaced() {
         for (RopeConnection d : this.connections.values()) {
             try {
-                LittleStructure struct = d.getStructure();
+                LittleStructure struct = d.getStructureEarly(mainBlock.getIndex());
                 if (struct instanceof LittleRopeConnectionALET) {
                     LittleRopeConnectionALET rope = (LittleRopeConnectionALET) struct;
                     RopeConnection con = rope.connections.get(d.ropeID);
@@ -118,6 +130,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
             }
             
         }
+        previousIndex = -1;
     }
     
     public void bezier(Vec3 pFinal, Vec3 p0, Vec3 p1, Vec3 p2, float t) {
@@ -177,7 +190,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
         for (RopeConnection con : otherStructure.connections.values()) {
             try {
                 if (con.getStructure() == this) {
-                    RopeData otherData = con.IS_HEAD ? otherStructure.ropeData.get(con.ropeID) : this.ropeData.get(con.ropeID);
+                    RopeData otherData = con.IS_HEAD ? otherStructure.ropeData.get(con.ropeID) : this.ropeData.get(
+                        con.ropeID);
                     if (otherData.equals(data))
                         return true;
                 }
@@ -190,7 +204,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
         for (RopeConnection con : this.connections.values()) {
             try {
                 if (con.getStructure() == this) {
-                    RopeData thisData = con.IS_HEAD ? this.ropeData.get(con.ropeID) : otherStructure.ropeData.get(con.ropeID);
+                    RopeData thisData = con.IS_HEAD ? this.ropeData.get(con.ropeID) : otherStructure.ropeData.get(
+                        con.ropeID);
                     if (thisData.equals(data))
                         return true;
                 }
@@ -294,8 +309,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
             GlStateManager.pushMatrix();
             //GlStateManager.disableLighting();
             GlStateManager.enableBlend();
-            GlStateManager
-                    .tryBlendFuncSeparate(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO,
+                GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             GlStateManager.color(red, green, blue, alpha);
             GlStateManager.disableTexture2D();
             GlStateManager.enableAlpha();
@@ -397,17 +412,17 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                 @Override
                 public void onClicked(int x, int y, int button) {
                     switch (viewer.getAxis()) {
-                    case X:
-                        viewer.setViewAxis(EnumFacing.Axis.Y);
-                        break;
-                    case Y:
-                        viewer.setViewAxis(EnumFacing.Axis.Z);
-                        break;
-                    case Z:
-                        viewer.setViewAxis(EnumFacing.Axis.X);
-                        break;
-                    default:
-                        break;
+                        case X:
+                            viewer.setViewAxis(EnumFacing.Axis.Y);
+                            break;
+                        case Y:
+                            viewer.setViewAxis(EnumFacing.Axis.Z);
+                            break;
+                        case Z:
+                            viewer.setViewAxis(EnumFacing.Axis.X);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }.setCustomTooltip("change view"));
@@ -452,8 +467,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
             });
             parent.controls.add(new GuiCheckBox("even", 107, 0, viewer.isEven()));
             
-            GuiStateButton contextBox = new GuiStateButton("grid", LittleGridContext.getNames().indexOf(viewer.getAxisContext() + ""), 107, 80, 20, 12, LittleGridContext.getNames()
-                    .toArray(new String[0]));
+            GuiStateButton contextBox = new GuiStateButton("grid", LittleGridContext.getNames().indexOf(viewer
+                    .getAxisContext() + ""), 107, 80, 20, 12, LittleGridContext.getNames().toArray(new String[0]));
             parent.controls.add(contextBox);
         }
         
@@ -470,7 +485,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                 viewer.setEven(false);
                 viewer.setAxis(new LittleBox(0, 0, 0, 1, 1, 1), viewer.context);
             }
-            handler.setCenter(new StructureAbsolute(new BlockPos(0, 75, 0), viewer.getBox().copy(), viewer.getAxisContext()));
+            handler.setCenter(new StructureAbsolute(new BlockPos(0, 75, 0), viewer.getBox().copy(), viewer
+                    .getAxisContext()));
         }
         
         @CustomEventSubscribe

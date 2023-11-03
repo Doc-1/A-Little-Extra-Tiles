@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public abstract class FunctionActivator extends Function {
     
-    public FunctionActivator(String name, int color, boolean sender, boolean reciever) {
-        super(name, color, sender, reciever);
+    public FunctionActivator(String name, int id, int color, boolean sender, boolean reciever) {
+        super(name, id, color, sender, reciever);
         // TODO Auto-generated constructor stub
     }
     

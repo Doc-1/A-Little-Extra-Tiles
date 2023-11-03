@@ -1,25 +1,30 @@
-package com.alet.client.gui.controls.programmable.functions;
+package com.alet.common.structure.type.programable.functions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.client.gui.controls.menu.GuiTreePart;
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.menu.GuiTreePartHolder;
-import com.alet.common.structure.type.programable.functions.Function;
+import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.common.structure.type.programable.functions.activators.FunctionOnRightClick;
+import com.alet.common.structure.type.programable.functions.events.FunctionDebugMessage;
 import com.alet.common.structure.type.programable.functions.flows.FunctionForLoop;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
 import net.minecraft.util.text.translation.I18n;
 
-public class GuiFunctionRegistar {
+public class FunctionRegistar {
     public static PairList<String, PairList<String, GuiFunction>> guiFunctions = new PairList<>();
     
+    public static PairList<String, Class<? extends Function>> functions = new PairList<String, Class<? extends Function>>();
+    
     public static void registerFunctions() {
-        registerFunction("activator", new FunctionOnRightClick());
-        registerFunction("flow_control", new FunctionForLoop());
+        registerFunction("activator", new FunctionOnRightClick(0));
+        registerFunction("flow_control", new FunctionForLoop(0));
+        registerFunction("event", new FunctionDebugMessage(0));
         /*
         registerTriggerObject("flow_control", "branch", 0xFFF4806D, BlueprintType.RECEIVER, BlueprintBranch.class);
         registerTriggerObject("flow_control", "sleep", 0xFFF4806D, BlueprintType.RECEIVER, BlueprintSleep.class);
@@ -51,9 +56,20 @@ public class GuiFunctionRegistar {
         }
         String name = function.getName();
         name = "programmable.advanced." + name + ".name";
-        System.out.println(function.setGuiNodes());
+        
         categoryList.add(name, new GuiFunction(name, getTranslatedName(name), function
                 .getColor(), function.IS_METHOD_SENDER, function.IS_METHOD_RECIEVER, function.setGuiNodes()));
+        functions.add(new Pair<String, Class<? extends Function>>(function.getName(), function.getClass()));
+    }
+    
+    public static Function getFunctionFromGui(GuiFunction guiFunction) {
+        try {
+            Function function = functions.getValue(guiFunction.name).getConstructor(int.class).newInstance(guiFunction.id);
+            return function;
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     public static String getTranslatedName(String name) {

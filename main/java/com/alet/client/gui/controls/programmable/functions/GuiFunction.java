@@ -1,16 +1,15 @@
 package com.alet.client.gui.controls.programmable.functions;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
-import com.alet.client.gui.controls.programmable.nodes.GuiNodeRegistar;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
-import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
+import com.alet.common.structure.type.programable.functions.FunctionRegistar;
+import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.alet.common.util.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
@@ -29,47 +28,45 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 public class GuiFunction extends GuiParent {
     
-    public LittleProgramableStructureALET structure;
-    
+    //GUI Fields
     private int mousePosX = 0;
     private int mousePosY = 0;
     public int color;
     public boolean selected = false;
+    public GuiNode selectedNode;
     
+    //Identification Fields
     public final String FUNCTION_TITLE;
     public int id;
     
-    public final boolean IS_SENDER;
-    public final boolean IS_RECEIVER;
+    //Nodes Fields
+    public GuiNode methodSender;
+    public GuiNode methodReceiver;
     public List<GuiNode> senderNodes = new ArrayList<GuiNode>();
     public List<GuiNode> receiverNodes = new ArrayList<GuiNode>();
-    public List<GuiNode> nodes = new ArrayList<GuiNode>();
-    public PairList<GuiNode, GuiNode> nodeConnections = new PairList<GuiNode, GuiNode>();
-    public GuiNode sender;
-    public GuiNode receiver;
-    public GuiNode selectedNode;
+    public final boolean IS_METHOD_SENDER;
+    public final boolean IS_METHOD_RECIEVER;
     
-    public GuiFunction(int id, String name, String title, int color, boolean isSender, boolean isReceiver, List<GuiNode> nodes) {
+    public GuiFunction(String title, String name, int id, int color, boolean isSender, boolean isReceiver, List<GuiNode> nodes) {
         super(name, 0, 0, 0, 0);
         this.id = id;
         this.color = color;
-        this.IS_SENDER = isSender;
-        this.IS_RECEIVER = isReceiver;
+        this.IS_METHOD_SENDER = isSender;
+        this.IS_METHOD_RECIEVER = isReceiver;
         setMethodNodes();
-        this.nodes = nodes;
-        organizeNodes(this.nodes);
+        organizeNodes(nodes);
         this.FUNCTION_TITLE = title;
         createControls();
         createMethodControls();
     }
     
     public GuiFunction(String name, String title, int color, boolean isSender, boolean isReceiver, List<GuiNode> nodes) {
-        this(0, name, title, color, isSender, isReceiver, nodes);
+        this(title, name, 0, color, isSender, isReceiver, nodes);
     }
     
     public GuiFunction getNextBlueprint() {
-        if (this.sender.receiverConnections != null && !this.sender.receiverConnections.isEmpty())
-            return this.sender.receiverConnections.get(0).getBlueprint();
+        if (this.methodSender.receiverConnections != null && !this.methodSender.receiverConnections.isEmpty())
+            return this.methodSender.receiverConnections.get(0).getBlueprint();
         else
             return null;
     }
@@ -83,8 +80,9 @@ public class GuiFunction extends GuiParent {
         return this.serializeNBT(this.createNodeNBT(nbt));
     }
     
-    protected GuiFunction clone(int id) {
-        return new GuiFunction(id, this.name, FUNCTION_TITLE, this.color, this.IS_SENDER, this.IS_RECEIVER, this.nodes);
+    public GuiFunction clone(int id) {
+        return new GuiFunction(FUNCTION_TITLE, this.name, id, this.color, this.IS_METHOD_SENDER, this.IS_METHOD_RECIEVER, this
+                .getNodes());
     }
     
     public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
@@ -99,8 +97,8 @@ public class GuiFunction extends GuiParent {
         NBTTagList l = new NBTTagList();
         List<GuiNode> combined = new ArrayList<GuiNode>();
         combined.addAll(this.receiverNodes);
-        if (this.receiver != null)
-            combined.add(this.receiver);
+        if (this.methodReceiver != null)
+            combined.add(this.methodReceiver);
         for (GuiNode node : combined) {
             NBTTagCompound n = new NBTTagCompound();
             n.setString("node", node.name);
@@ -126,24 +124,8 @@ public class GuiFunction extends GuiParent {
         return nbt;
     }
     
-    public static GuiFunction createBlueprintFromNBT(NBTTagCompound nbt) {
-        /*
-        try {
-            GuiFunction obj = BlueprintRegistar.getClass(nbt.getString("name"), false).getConstructor(int.class).newInstance(nbt.getInteger("id"));
-            obj.deserializeNBT(nbt);
-            if (obj instanceof BlueprintValue)
-                obj.setNodeValue(null);
-            obj.posX = nbt.getInteger("posX");
-            obj.posY = nbt.getInteger("5posY");
-            return obj;
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-        }*/
-        return null;
-    }
-    
     public static GuiFunction createBlueprintFrom(String name, int id) {
-        GuiFunction obj = GuiFunctionRegistar.createFunction(name, true, id);
+        GuiFunction obj = FunctionRegistar.createFunction(name, true, id);
         return obj;
     }
     
@@ -172,8 +154,17 @@ public class GuiFunction extends GuiParent {
         return blueprints.stream().filter(x -> (x.name.equals(name) && x.id == id)).findFirst().get();
     }
     
+    public List<GuiNode> getNodes() {
+        List<GuiNode> nodes = new ArrayList<>();
+        nodes.addAll(this.receiverNodes);
+        nodes.addAll(this.senderNodes);
+        nodes.add(this.methodReceiver);
+        nodes.add(this.methodSender);
+        return nodes;
+    }
+    
     public GuiNode getNode(String name) {
-        Optional<GuiNode> node = this.nodes.stream().filter(x -> x.name.equals(name)).findFirst();
+        Optional<GuiNode> node = this.getNodes().stream().filter(x -> x.name.equals(name)).findFirst();
         if (node.isPresent())
             return node.get();
         return null;
@@ -192,21 +183,16 @@ public class GuiFunction extends GuiParent {
     
     public void setMethodNodes() {
         try {
-            GuiNode receiver = GuiNodeRegistar.createNode(GuiNodeRegistar.FUNCTION_NODE, "method_receiver", "", false, true,
+            GuiNode receiver = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_receiver", "", false, true,
                 false);
-            GuiNode sender = GuiNodeRegistar.createNode(GuiNodeRegistar.FUNCTION_NODE, "method_sender", "", true, false,
-                false);
-            if (this.IS_RECEIVER)
-                this.receiver = receiver;
-            if (this.IS_SENDER)
-                this.sender = sender;
+            GuiNode sender = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_sender", "", true, false, false);
+            if (this.IS_METHOD_RECIEVER)
+                this.methodReceiver = receiver;
+            if (this.IS_METHOD_SENDER)
+                this.methodSender = sender;
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    
-    public HashSet<Entity> getEntities() {
-        return this.structure.entities;
     }
     
     public Entity getEntity(WorldServer world, UUID uuid) {
@@ -214,15 +200,15 @@ public class GuiFunction extends GuiParent {
     }
     
     private void createMethodControls() {
-        if (this.IS_RECEIVER && this.IS_SENDER) {
-            this.addControl(this.sender);
-            this.sender.posX = this.width - this.receiver.width - 6;
-            this.addControl(this.receiver);
-        } else if (this.IS_RECEIVER) {
-            this.addControl(this.receiver);
-        } else if (this.IS_SENDER) {
+        if (this.IS_METHOD_RECIEVER && this.IS_METHOD_SENDER) {
+            this.addControl(this.methodSender);
+            this.methodSender.posX = this.width - this.methodReceiver.width - 6;
+            this.addControl(this.methodReceiver);
+        } else if (this.IS_METHOD_RECIEVER) {
+            this.addControl(this.methodReceiver);
+        } else if (this.IS_METHOD_SENDER) {
             this.posX = this.width - 13;
-            this.addControl(this.sender);
+            this.addControl(this.methodSender);
         }
     }
     

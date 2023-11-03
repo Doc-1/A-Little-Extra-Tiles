@@ -8,8 +8,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class FunctionEvent extends Function {
     
-    public FunctionEvent(String name, int color, boolean sender, boolean reciever) {
-        super(name, color, sender, reciever);
+    public FunctionEvent(String name, int id, int color, boolean sender, boolean reciever) {
+        super(name, id, color, sender, reciever);
         // TODO Auto-generated constructor stub
     }
     

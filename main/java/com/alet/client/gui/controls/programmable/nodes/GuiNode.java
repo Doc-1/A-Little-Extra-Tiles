@@ -5,23 +5,25 @@ import java.util.List;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
+import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
-import com.creativemd.creativecore.common.utils.type.Pair;
-import com.creativemd.creativecore.common.utils.type.PairList;
 
 public class GuiNode extends GuiParent {
     
-    public final boolean IS_SENDER, IS_RECIEVER, IS_MODIFIABLE;
+    //GUI Fields
     public final String TITLE;
+    public final int COLOR;
+    public boolean selected = false;
+    
+    //Connection Fields
     public GuiNode senderConnection;
     public List<GuiNode> receiverConnections = new ArrayList<GuiNode>();
-    public boolean selected = false;
-    public final int COLOR;
+    public final boolean IS_SENDER, IS_RECIEVER, IS_MODIFIABLE;
     
     public GuiNode(String name, String title, int color, boolean isSender, boolean isReciever, boolean isModifiable) throws Exception {
         super(name, 0, 0, (!title.equals("")) ? font.getStringWidth(title) + 7 : 1, 1);
@@ -62,31 +64,35 @@ public class GuiNode extends GuiParent {
             return false;
         if (!this.isDataTypeEqual(secondNode))
             return false;
-        if (this.isConnected() && GuiNodeRegistar.matchType(GuiNodeRegistar.FUNCTION_NODE, this))
+        if (this.isConnected() && NodeRegistar.matchType(NodeRegistar.FUNCTION_NODE, this))
             return false;
-        if (secondNode.isConnected() && GuiNodeRegistar.matchType(GuiNodeRegistar.FUNCTION_NODE, secondNode))
+        if (secondNode.isConnected() && NodeRegistar.matchType(NodeRegistar.FUNCTION_NODE, secondNode))
             return false;
         if (this.IS_RECIEVER && this.isConnected())
             return false;
         if (secondNode.IS_RECIEVER && secondNode.isConnected())
             return false;
+        /*
         PairList<GuiNode, GuiNode> nodeConnections1 = ((GuiFunction) this.parent).nodeConnections;
         if (nodeConnections1.containsKey(this))
             return false;
+        */
         return true;
     }
     
     public void connect(GuiNode secondNode) {
-        PairList<GuiNode, GuiNode> nodeConnections = ((GuiFunction) this.parent).nodeConnections;
+        
         if (secondNode.IS_RECIEVER) {
             secondNode.senderConnection = this;
             this.receiverConnections.add(secondNode);
         }
+        /*
+        PairList<GuiNode, GuiNode> nodeConnections = ((GuiFunction) this.parent).nodeConnections;
         if (this.IS_RECIEVER)
             nodeConnections.add(new Pair<GuiNode, GuiNode>(this, secondNode));
         else
             nodeConnections.add(new Pair<GuiNode, GuiNode>(secondNode, this));
-        
+        */
     }
     
     public boolean isConnected() {
@@ -154,7 +160,7 @@ public class GuiNode extends GuiParent {
         return this.name.equals(secondNode.name);
     }
     
-    protected GuiNode clone(String name, String title, boolean isSender, boolean isReciever, boolean isModifiable) {
+    public GuiNode clone(String name, String title, boolean isSender, boolean isReciever, boolean isModifiable) {
         try {
             return new GuiNode(name, title, COLOR, isSender, isReciever, isModifiable);
         } catch (Exception e) {

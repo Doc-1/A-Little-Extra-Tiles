@@ -104,7 +104,7 @@ public class FunctionExecutor {
             } else
                 last = bp;
         }
-        if (executer.startingBlueprint == null && wipeEntities && (executer.activator.size() - 1 <= index || index == -1))
+        if (executer.resumeFrom == null && wipeEntities && (executer.activators.size() - 1 <= index || index == -1))
             executer.entities = new HashSet<Entity>();
     }
     

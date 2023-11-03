@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.alet.common.structure.type.programable.functions.Function;
 
-import net.minecraft.util.text.translation.I18n;
-
 public class Node {
     
     //GUI Fields
@@ -31,7 +29,4 @@ public class Node {
         this.IS_MODIFIABLE = isModifiable;
     }
     
-    public String getTranslatedName() {
-        return I18n.translateToLocal(name);
-    }
 }

@@ -144,7 +144,8 @@ public class RopeConnection {
             worldUUID = ((IOrientatedWorld) struct.getWorld()).getParentEntity().getUniqueID();
         else
             worldUUID = null;
-        return lastIndex != this.structureIndex || !lastRelPos.equals(this.relativePos) || !Objects.equal(lastWorldUUID, this.worldUUID);
+        return lastIndex != this.structureIndex || !lastRelPos.equals(this.relativePos) || !Objects.equal(lastWorldUUID,
+            this.worldUUID);
     }
     
     public LittleRopeConnectionALET getTarget() {
@@ -205,6 +206,27 @@ public class RopeConnection {
         IStructureTileList structure = te.getStructure(structureIndex);
         if (structure != null)
             return structure.getStructure();
+        throw new MissingStructureException(te.getPos());
+    }
+    
+    public LittleStructure getStructureEarly(int index) throws CorruptedConnectionException, NotYetConnectedException {
+        
+        TileEntityLittleTiles te = getTileEntity(getWorld());
+        if (!te.hasLoaded())
+            throw new NotYetConnectedException();
+        for (IStructureTileList tile : te.structures()) {
+            LittleStructure s = tile.getStructure();
+            if (s instanceof LittleRopeConnectionALET && ((LittleRopeConnectionALET) s).previousIndex == structureIndex) {
+                structureIndex = s.getIndex();
+                LittleRopeConnectionALET ropeStruct = (LittleRopeConnectionALET) s;
+                RopeConnection con = ropeStruct.connections.get(ropeID);
+                if (con != null) {
+                    ropeStruct.previousIndex = -1;
+                    return s;
+                }
+                break;
+            }
+        }
         throw new MissingStructureException(te.getPos());
     }
     

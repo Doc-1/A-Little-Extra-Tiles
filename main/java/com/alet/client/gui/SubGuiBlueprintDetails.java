@@ -62,7 +62,8 @@ public class SubGuiBlueprintDetails extends SubGui {
                     ItemStack stack = entry.getItemStack();
                     
                     scroll.addControl(new GuiAvatarLabel("", 0, (i * 18), ColorUtils.WHITE, new AvatarItemStack(stack)));
-                    scroll.addControl(new GuiLabel(BlockIngredient.printVolume(entry.value, false) + " " + stack.getDisplayName(), 20, (i * 18) + 4));
+                    scroll.addControl(new GuiLabel(BlockIngredient.printVolume(entry.value, false) + " " + stack
+                            .getDisplayName(), 20, (i * 18) + 4));
                     i++;
                 }
             }
@@ -89,7 +90,7 @@ public class SubGuiBlueprintDetails extends SubGui {
         GuiLabel child = new GuiLabel(previews.childrenCount() + "", 60, 42, ColorUtils.WHITE);
         GuiLabel hasSignal = new GuiLabel("Uses Signaling:", 0, 56, ColorUtils.WHITE);
         ComponentSearch search = new ComponentSearch(previews, previews.getStructureType());
-        List<GuiSignalComponent> searching = ((ComponentSearch) search).search(true, true, false);
+        List<GuiSignalComponent> searching = search.search(true, true, false);
         GuiLabel signal = new GuiLabel((!searching.isEmpty()) + "", 76, 56, ColorUtils.WHITE);
         GuiLabel fileSize = new GuiLabel("File Size:", 0, 70, ColorUtils.WHITE);
         GuiLabel size = new GuiLabel((file.length() / 1000D) + " KB", 47, 70, ColorUtils.WHITE);
@@ -159,9 +160,11 @@ public class SubGuiBlueprintDetails extends SubGui {
         }
         
         protected void addInput(LittlePreviews previews, LittleStructureType type, String prefix, String totalNamePrefix, List<GuiSignalComponent> list, boolean includeRelations) {
+            String longName = previews.getStructureName();
             if (type != null && type.inputs != null)
                 for (int i = 0; i < type.inputs.size(); i++)
-                    list.add(new GuiSignalComponent(prefix + "a" + i, totalNamePrefix, type.inputs.get(i), true, false, i));
+                    list.add(new GuiSignalComponent(prefix + "a" + i, totalNamePrefix, type.inputs.get(
+                        i), true, false, i, longName));
                 
             for (int i = 0; i < previews.childrenCount(); i++) {
                 LittlePreviews child = previews.getChild(i);
@@ -169,11 +172,13 @@ public class SubGuiBlueprintDetails extends SubGui {
                     continue;
                 LittleStructureType structure = child.getStructureType();
                 String name = child.getStructureName();
-                if (structure instanceof ISignalComponent && ((ISignalComponent) structure).getType() == SignalComponentType.INPUT)
-                    list.add(new GuiSignalComponent(prefix + "i" + i, totalNamePrefix + (name != null ? name : "i" + i), (ISignalComponent) structure, true, i));
+                if (structure instanceof ISignalComponent && ((ISignalComponent) structure)
+                        .getType() == SignalComponentType.INPUT)
+                    list.add(
+                        new GuiSignalComponent(prefix + "i" + i, totalNamePrefix + (name != null ? name : "i" + i), (ISignalComponent) structure, true, i, longName));
                 else if (includeRelations)
-                    gatherInputs(child, child
-                            .getStructureType(), prefix + "c" + i + ".", totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
+                    gatherInputs(child, child.getStructureType(), prefix + "c" + i + ".",
+                        totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
             }
         }
         
@@ -182,7 +187,8 @@ public class SubGuiBlueprintDetails extends SubGui {
                 addInput(previews, type, "", "", list, includeRelations);
             
             if (searchForParent && previews.hasParent() && includeRelations) {
-                gatherInputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix, "p." + totalNamePrefix, list, includeRelations, true);
+                gatherInputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix,
+                    "p." + totalNamePrefix, list, includeRelations, true);
                 return;
             }
             
@@ -191,9 +197,11 @@ public class SubGuiBlueprintDetails extends SubGui {
         }
         
         protected void addOutput(LittlePreviews previews, LittleStructureType type, String prefix, String totalNamePrefix, List<GuiSignalComponent> list, boolean includeRelations) {
+            String longName = previews.getStructureName();
             if (type != null && type.outputs != null)
                 for (int i = 0; i < type.outputs.size(); i++)
-                    list.add(new GuiSignalComponent(prefix + "b" + i, totalNamePrefix, type.outputs.get(i), false, false, i));
+                    list.add(new GuiSignalComponent(prefix + "b" + i, totalNamePrefix, type.outputs.get(
+                        i), false, false, i, longName));
                 
             for (int i = 0; i < previews.childrenCount(); i++) {
                 LittlePreviews child = previews.getChild(i);
@@ -201,11 +209,13 @@ public class SubGuiBlueprintDetails extends SubGui {
                     continue;
                 LittleStructureType structure = child.getStructureType();
                 String name = child.getStructureName();
-                if (structure instanceof ISignalComponent && ((ISignalComponent) structure).getType() == SignalComponentType.OUTPUT)
-                    list.add(new GuiSignalComponent(prefix + "o" + i, totalNamePrefix + (name != null ? name : "o" + i), (ISignalComponent) structure, true, i));
+                if (structure instanceof ISignalComponent && ((ISignalComponent) structure)
+                        .getType() == SignalComponentType.OUTPUT)
+                    list.add(
+                        new GuiSignalComponent(prefix + "o" + i, totalNamePrefix + (name != null ? name : "o" + i), (ISignalComponent) structure, true, i, longName));
                 else if (includeRelations)
-                    gatherOutputs(child, child
-                            .getStructureType(), prefix + "c" + i + ".", totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
+                    gatherOutputs(child, child.getStructureType(), prefix + "c" + i + ".",
+                        totalNamePrefix + (name != null ? name + "." : "c" + i + "."), list, includeRelations, false);
             }
         }
         
@@ -214,7 +224,8 @@ public class SubGuiBlueprintDetails extends SubGui {
                 addOutput(previews, type, "", "", list, includeRelations);
             
             if (searchForParent && previews.hasParent() && includeRelations) {
-                gatherOutputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix, "p." + totalNamePrefix, list, includeRelations, searchForParent);
+                gatherOutputs(previews.getParent(), previews.getParent().getStructureType(), "p." + prefix,
+                    "p." + totalNamePrefix, list, includeRelations, searchForParent);
                 return;
             }
             

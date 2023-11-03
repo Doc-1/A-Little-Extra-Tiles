@@ -4,13 +4,12 @@ import com.alet.common.structure.type.programable.LittleProgramableStructureALET
 import com.alet.common.structure.type.programable.functions.Function;
 import com.alet.common.structure.type.programable.nodes.values.NodeInteger;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 
 public class FunctionForLoop extends FunctionFlowControl {
     
-    public FunctionForLoop() {
-        super("for_loop", FLOW_COLOR, false, false);
+    public FunctionForLoop(int id) {
+        super("for_loop", id, FLOW_COLOR, false, false);
         // TODO Auto-generated constructor stub
     }
     
@@ -48,12 +47,6 @@ public class FunctionForLoop extends FunctionFlowControl {
     public void setValues() {
         // TODO Auto-generated method stub
         
-    }
-    
-    @Override
-    public NBTTagCompound createNBT() {
-        // TODO Auto-generated method stub
-        return null;
     }
     
     @Override

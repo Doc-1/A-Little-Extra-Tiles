@@ -7,8 +7,8 @@ import net.minecraft.world.WorldServer;
 
 public abstract class FunctionFlowControl extends Function {
     
-    public FunctionFlowControl(String name, int color, boolean sender, boolean reciever) {
-        super(name, color, sender, reciever);
+    public FunctionFlowControl(String name, int id, int color, boolean sender, boolean reciever) {
+        super(name, id, color, sender, reciever);
         // TODO Auto-generated constructor stub
     }
     

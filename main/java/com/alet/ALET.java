@@ -34,8 +34,6 @@ import com.alet.client.gui.SubGuiNoticeAtJoin;
 import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiSignalEventsALET;
 import com.alet.client.gui.SubGuiTypeWriter;
-import com.alet.client.gui.controls.programmable.functions.GuiFunctionRegistar;
-import com.alet.client.gui.controls.programmable.nodes.GuiNodeRegistar;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
 import com.alet.client.sounds.SoundsHandler;
 import com.alet.common.blocks.BasicBlock;
@@ -86,6 +84,8 @@ import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner;
 import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
 import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
+import com.alet.common.structure.type.programable.functions.FunctionRegistar;
+import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.alet.common.structure.type.trigger.LittleTriggerBoxStructureALET;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemLittleManual;
@@ -710,8 +710,8 @@ public class ALET {
         proxy.loadSidePost();
         
         if (event.getSide().equals(Side.CLIENT)) {
-            GuiNodeRegistar.registerNodes();
-            GuiFunctionRegistar.registerFunctions();
+            NodeRegistar.registerNodes();
+            FunctionRegistar.registerFunctions();
         }
     }
     

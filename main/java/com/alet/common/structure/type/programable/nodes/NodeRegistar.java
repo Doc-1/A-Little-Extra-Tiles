@@ -1,11 +1,12 @@
-package com.alet.client.gui.controls.programmable.nodes;
+package com.alet.common.structure.type.programable.nodes;
 
+import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.common.structure.type.programable.nodes.values.NodeFunction;
 import com.alet.common.structure.type.programable.nodes.values.NodeInteger;
 import com.alet.common.structure.type.programable.nodes.values.NodeValue;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
-public class GuiNodeRegistar {
+public class NodeRegistar {
     
     public static PairList<String, GuiNode> guiNodes = new PairList<>();
     public static final String FUNCTION_NODE = "function";

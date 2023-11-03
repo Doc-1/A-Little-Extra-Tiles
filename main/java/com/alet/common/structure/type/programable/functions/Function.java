@@ -3,12 +3,12 @@ package com.alet.common.structure.type.programable.functions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.nodes.values.NodeFunction;
 import com.alet.common.structure.type.programable.nodes.values.NodeValue;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -16,6 +16,8 @@ public abstract class Function {
     
     //Executing structure
     public LittleProgramableStructureALET structure;
+    
+    //Identification Field
     public int id;
     
     //Nodes Fields
@@ -37,13 +39,18 @@ public abstract class Function {
     protected final static int CAST_COLOR = 0xFFFFFF;
     protected final static int FLOW_COLOR = 0xFFFFFF;
     
-    public Function(String name, int color, boolean sender, boolean reciever) {
+    public Function(String name, int id, int color, boolean sender, boolean reciever) {
         this.NAME = name;
+        this.id = id;
         this.COLOR = color;
         this.IS_METHOD_SENDER = sender;
         this.IS_METHOD_RECIEVER = reciever;
         setMethodNodes();
         setFunctionNodes();
+    }
+    
+    public static Function guiToFunction(GuiFunction guiFunction) {
+        return null;
     }
     
     private void setMethodNodes() {
@@ -87,5 +94,4 @@ public abstract class Function {
         return COLOR;
     }
     
-    public abstract NBTTagCompound createNBT();
 }
