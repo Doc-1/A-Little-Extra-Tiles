@@ -14,6 +14,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerConditionIsEntity extends LittleTriggerCondition {
     
@@ -47,6 +49,7 @@ public class LittleTriggerConditionIsEntity extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiLabel("Is Entity", 0, 0));
         List<String> nameList = new ArrayList<String>();
@@ -68,6 +71,7 @@ public class LittleTriggerConditionIsEntity extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("nameList")) {
             GuiComboBox comboBox = (GuiComboBox) source;

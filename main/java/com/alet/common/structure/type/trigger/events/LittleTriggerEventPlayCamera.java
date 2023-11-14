@@ -28,6 +28,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerEventPlayCamera extends LittleTriggerEvent {
     
@@ -100,6 +102,7 @@ public class LittleTriggerEventPlayCamera extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         
@@ -119,7 +122,8 @@ public class LittleTriggerEventPlayCamera extends LittleTriggerEvent {
         panel.addControl(new GuiTextfield("duration", duration + "", 50, 40, 20, 10));
         panel.addControl(new GuiTextfield("loop", loop + "", 50, 60, 20, 10));
         
-        panel.addControl(new GuiTextBox("text", "Use the /cam-server add command to add a new path to the drop down menu. Duration cannot be zero. It will not play.", 110, 0, 82));
+        panel.addControl(
+            new GuiTextBox("text", "Use the /cam-server add command to add a new path to the drop down menu. Duration cannot be zero. It will not play.", 110, 0, 82));
         
         if (!player.isCreative()) {
             for (GuiControl control : panel.controls) {
@@ -132,6 +136,7 @@ public class LittleTriggerEventPlayCamera extends LittleTriggerEvent {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("cameras"))
             this.camToPlay = ((GuiComboBox) source).getCaption();

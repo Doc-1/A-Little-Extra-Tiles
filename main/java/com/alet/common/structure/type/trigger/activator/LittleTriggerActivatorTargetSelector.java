@@ -28,6 +28,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerActivatorTargetSelector extends LittleTriggerActivator {
     
@@ -104,11 +106,13 @@ public class LittleTriggerActivatorTargetSelector extends LittleTriggerActivator
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiWrappedTextField("target", target, 0, 0, 153, 37));
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("target")) {
             GuiWrappedTextField text = (GuiWrappedTextField) source;

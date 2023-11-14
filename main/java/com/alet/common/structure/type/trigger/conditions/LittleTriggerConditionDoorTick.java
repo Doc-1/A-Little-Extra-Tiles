@@ -21,6 +21,8 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
     
@@ -70,6 +72,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         List<StructureHolder> doorHierarchy = new ArrayList<StructureHolder>();
         List<ItemStack> stacks = new ArrayList<ItemStack>();
@@ -91,6 +94,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
         panel.addControl(new GuiTextfield("door_tick", tick + "", 0, 30, 50, 10).setNumbersOnly());
     }
     
+    @SideOnly(Side.CLIENT)
     public LittlePreviews findParent(LittlePreviews previews) {
         LittlePreviews parentPreview = previews.getParent();
         if (parentPreview != null)
@@ -100,6 +104,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
         return parentPreview;
     }
     
+    @SideOnly(Side.CLIENT)
     protected static void addPreviews(LittlePreviews previews, List<StructureHolder> hierarchy, List<ItemStack> stacks, List<String> lines, List<Integer> childIDs, String prefix, StructureHolder parent, int childId, int index) {
         StructureHolder holder = new StructureHolder(parent, childId, hierarchy.size());
         holder.previews = previews;
@@ -142,6 +147,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
         }
     }
     
+    @SideOnly(Side.CLIENT)
     public String getDisplayName(LittlePreviews previews, int childId) {
         String name = previews.getStructureName();
         if (name == null)
@@ -153,6 +159,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source instanceof GuiTextfield) {
             GuiTextfield text = (GuiTextfield) source;

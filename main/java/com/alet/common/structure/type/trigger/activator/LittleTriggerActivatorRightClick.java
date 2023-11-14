@@ -18,6 +18,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerActivatorRightClick extends LittleTriggerActivator {
     
@@ -41,12 +43,14 @@ public class LittleTriggerActivatorRightClick extends LittleTriggerActivator {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         // TODO Auto-generated method stub
         
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         // TODO Auto-generated method stub
         

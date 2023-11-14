@@ -42,31 +42,30 @@ public class LittleTriggerConditionScoreboard extends LittleTriggerCondition {
         for (Entity entity : this.getEntities()) {
             Scoreboard scoreBoard = world.getScoreboard();
             for (Score sc : scoreBoard.getScores()) {
-                System.out.println(sc.getPlayerName());
                 if (sc.getObjective().getName().equals(scoreName)) {
                     switch (operation) {
-                    case 0:
-                        if (sc.getScorePoints() == value)
-                            return true;
-                        break;
-                    case 1:
-                        if (sc.getScorePoints() < value)
-                            return true;
-                        break;
-                    case 2:
-                        if (sc.getScorePoints() > value)
-                            return true;
-                        break;
-                    case 3:
-                        if (sc.getScorePoints() <= value)
-                            return true;
-                        break;
-                    case 4:
-                        if (sc.getScorePoints() >= value)
-                            return true;
-                        break;
-                    default:
-                        break;
+                        case 0:
+                            if (sc.getScorePoints() == value)
+                                return true;
+                            break;
+                        case 1:
+                            if (sc.getScorePoints() < value)
+                                return true;
+                            break;
+                        case 2:
+                            if (sc.getScorePoints() > value)
+                                return true;
+                            break;
+                        case 3:
+                            if (sc.getScorePoints() <= value)
+                                return true;
+                            break;
+                        case 4:
+                            if (sc.getScorePoints() >= value)
+                                return true;
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -98,7 +97,7 @@ public class LittleTriggerConditionScoreboard extends LittleTriggerCondition {
         Collection<ScoreObjective> objectives = score.getScoreObjectives();
         List<String> list = new ArrayList<String>();
         for (Iterator<ScoreObjective> iterator = objectives.iterator(); iterator.hasNext();) {
-            ScoreObjective obj = (ScoreObjective) iterator.next();
+            ScoreObjective obj = iterator.next();
             list.add(obj.getName());
         }
         panel.addControl(new GuiLabel("Type:", 0, 100));
@@ -126,23 +125,23 @@ public class LittleTriggerConditionScoreboard extends LittleTriggerCondition {
         });
         String cap = "";
         switch (operation) {
-        case 0:
-            cap = "=";
-            break;
-        case 1:
-            cap = "<";
-            break;
-        case 2:
-            cap = ">";
-            break;
-        case 3:
-            cap = "<=";
-            break;
-        case 4:
-            cap = ">=";
-            break;
-        default:
-            break;
+            case 0:
+                cap = "=";
+                break;
+            case 1:
+                cap = "<";
+                break;
+            case 2:
+                cap = ">";
+                break;
+            case 3:
+                cap = "<=";
+                break;
+            case 4:
+                cap = ">=";
+                break;
+            default:
+                break;
         }
         op.setCaption(cap);
         panel.addControl(op);
@@ -199,23 +198,23 @@ public class LittleTriggerConditionScoreboard extends LittleTriggerCondition {
                 scoreName = cBox.getCaption();
             } else if (cBox.is("operation")) {
                 switch (cBox.getCaption()) {
-                case "=":
-                    this.operation = 0;
-                    break;
-                case "<":
-                    this.operation = 1;
-                    break;
-                case ">":
-                    this.operation = 2;
-                    break;
-                case "<=":
-                    this.operation = 3;
-                    break;
-                case ">=":
-                    this.operation = 4;
-                    break;
-                default:
-                    break;
+                    case "=":
+                        this.operation = 0;
+                        break;
+                    case "<":
+                        this.operation = 1;
+                        break;
+                    case ">":
+                        this.operation = 2;
+                        break;
+                    case "<=":
+                        this.operation = 3;
+                        break;
+                    case ">=":
+                        this.operation = 4;
+                        break;
+                    default:
+                        break;
                 }
             }
         }

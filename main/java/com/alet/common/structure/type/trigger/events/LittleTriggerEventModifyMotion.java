@@ -68,7 +68,8 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
         panel.addControl(new GuiLabel("z", "Z:", 0, 59));
         panel.addControl(new GuiLabel("ford", "Forward:", 0, 79));
         panel.addControl(new GuiLabel("straf", "Strafe:", 0, 99));
-        GuiConnectedCheckBoxes checkBoxes = new GuiConnectedCheckBoxes("", -3, 115).addCheckBox("add", "Add To Velocity").addCheckBox("set", "Set To Velocity");
+        GuiConnectedCheckBoxes checkBoxes = new GuiConnectedCheckBoxes("", -3, 115).addCheckBox("add", "Add To Velocity")
+                .addCheckBox("set", "Set To Velocity");
         panel.addControl(checkBoxes);
         if (addTo)
             checkBoxes.setSelected("add");
@@ -108,8 +109,11 @@ public class LittleTriggerEventModifyMotion extends LittleTriggerEvent {
             entity.velocityChanged = true;
             if (addTo) {
                 entity.addVelocity(xStrength, yStrength, zStrength);
-            } else
-                entity.setVelocity(xStrength, yStrength, zStrength);
+            } else {
+                entity.motionX = xStrength;
+                entity.motionY = yStrength;
+                entity.motionZ = zStrength;
+            }
             entity.moveRelative(strafe != 0F ? 1F : 0F, 0F, 0F, (float) strafe);
             entity.moveRelative(0F, 0F, forward != 0F ? 1F : 0F, (float) forward);
             entity.fallDistance = 0;

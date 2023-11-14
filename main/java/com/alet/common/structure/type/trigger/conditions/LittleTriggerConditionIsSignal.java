@@ -23,6 +23,8 @@ import com.creativemd.littletiles.common.structure.signal.logic.SignalTarget;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     
@@ -71,6 +73,7 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(true,
             true, true);
@@ -100,6 +103,7 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("outList")) {
             GuiComboBox combo = (GuiComboBox) source;

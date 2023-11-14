@@ -53,6 +53,7 @@ public class LittleTriggerConditionSuccessfulCommand extends LittleTriggerCondit
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiLabel("Command", 0, 37));
         panel.addControl(new GuiWrappedTextField("command", command, 0, 50, 153, 123));

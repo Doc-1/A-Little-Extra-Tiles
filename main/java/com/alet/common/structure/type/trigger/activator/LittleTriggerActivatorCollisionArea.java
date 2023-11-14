@@ -23,6 +23,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerActivatorCollisionArea extends LittleTriggerActivator {
     
@@ -58,6 +60,7 @@ public class LittleTriggerActivatorCollisionArea extends LittleTriggerActivator 
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiCheckBox("while_collided", "Run Only While Collided", 0, 0, runWhileCollided));
         panel.addControl(new GuiLabel("X1:", 0, 14));
@@ -66,12 +69,18 @@ public class LittleTriggerActivatorCollisionArea extends LittleTriggerActivator 
         panel.addControl(new GuiLabel("Y2:", 52, 29));
         panel.addControl(new GuiLabel("Z1:", 104, 14));
         panel.addControl(new GuiLabel("Z2:", 104, 29));
-        panel.addControl(new GuiTextfield("x_min", collisionArea != null ? collisionArea.minX + "" : "", 18, 14, 30, 8).setFloatOnly());
-        panel.addControl(new GuiTextfield("x_max", collisionArea != null ? collisionArea.maxX + "" : "", 18, 29, 30, 8).setFloatOnly());
-        panel.addControl(new GuiTextfield("y_min", collisionArea != null ? collisionArea.minY + "" : "", 70, 14, 30, 8).setFloatOnly());
-        panel.addControl(new GuiTextfield("y_max", collisionArea != null ? collisionArea.maxY + "" : "", 70, 29, 30, 8).setFloatOnly());
-        panel.addControl(new GuiTextfield("z_min", collisionArea != null ? collisionArea.minZ + "" : "", 122, 14, 30, 8).setFloatOnly());
-        panel.addControl(new GuiTextfield("z_max", collisionArea != null ? collisionArea.maxZ + "" : "", 122, 29, 30, 8).setFloatOnly());
+        panel.addControl(new GuiTextfield("x_min", collisionArea != null ? collisionArea.minX + "" : "", 18, 14, 30, 8)
+                .setFloatOnly());
+        panel.addControl(new GuiTextfield("x_max", collisionArea != null ? collisionArea.maxX + "" : "", 18, 29, 30, 8)
+                .setFloatOnly());
+        panel.addControl(new GuiTextfield("y_min", collisionArea != null ? collisionArea.minY + "" : "", 70, 14, 30, 8)
+                .setFloatOnly());
+        panel.addControl(new GuiTextfield("y_max", collisionArea != null ? collisionArea.maxY + "" : "", 70, 29, 30, 8)
+                .setFloatOnly());
+        panel.addControl(new GuiTextfield("z_min", collisionArea != null ? collisionArea.minZ + "" : "", 122, 14, 30, 8)
+                .setFloatOnly());
+        panel.addControl(new GuiTextfield("z_max", collisionArea != null ? collisionArea.maxZ + "" : "", 122, 29, 30, 8)
+                .setFloatOnly());
         
     }
     
@@ -80,6 +89,7 @@ public class LittleTriggerActivatorCollisionArea extends LittleTriggerActivator 
     
     }*/
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("x_min", "x_max", "y_min", "y_max", "z_min", "z_max")) {
             GuiTextfield text = (GuiTextfield) source;
@@ -98,7 +108,6 @@ public class LittleTriggerActivatorCollisionArea extends LittleTriggerActivator 
             else if (text.is("z_max"))
                 this.z_max = value;
             this.collisionArea = new AxisAlignedBB(x_min, y_min, z_min, x_max, y_max, z_max);
-            System.out.println(this.collisionArea);
         }
         
     }

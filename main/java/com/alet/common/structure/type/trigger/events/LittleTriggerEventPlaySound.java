@@ -42,7 +42,8 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
     public boolean runEvent() {
         for (Entity entity : this.getEntities()) {
             if (entity instanceof EntityPlayer)
-                PacketHandler.sendPacketToPlayer(new PacketPlaySound(pitch, volume, false, this.structure.getPos(), selected), (EntityPlayerMP) entity);
+                PacketHandler.sendPacketToPlayer(new PacketPlaySound(pitch, volume, false, this.structure
+                        .getPos(), selected), (EntityPlayerMP) entity);
         }
         return true;
     }
@@ -91,6 +92,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
         });
     }
     
+    @SideOnly(Side.CLIENT)
     public SoundEvent getSelected() {
         ResourceLocation location = getSelectionLocation();
         if (location != null)
@@ -98,6 +100,7 @@ public class LittleTriggerEventPlaySound extends LittleTriggerEvent {
         return null;
     }
     
+    @SideOnly(Side.CLIENT)
     public ResourceLocation getSelectionLocation() {
         if (selected != null && !selected.isEmpty())
             return new ResourceLocation(selected);

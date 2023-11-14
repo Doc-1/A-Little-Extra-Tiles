@@ -19,6 +19,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleTriggerActivatorCollisionTiles extends LittleTriggerActivator {
     
@@ -41,29 +43,30 @@ public class LittleTriggerActivatorCollisionTiles extends LittleTriggerActivator
     
     @Override
     public LittleTriggerObject deserializeNBT(NBTTagCompound nbt) {
-        this.runWhileCollided = nbt.getBoolean("while_collided");
+        //this.runWhileCollided = nbt.getBoolean("while_collided");
         return this;
     }
     
     @Override
     public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
-        nbt.setBoolean("while_collided", runWhileCollided);
+        //nbt.setBoolean("while_collided", runWhileCollided);
         return nbt;
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         panel.addControl(new GuiCheckBox("while_collided", "Run Only While Collided", 0, 0, this.runWhileCollided));
-        
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
+        
         if (source.is("while_collided")) {
             GuiCheckBox checkbox = (GuiCheckBox) source;
             runWhileCollided = checkbox.value;
         }
-        
     }
     
     @Override
@@ -74,7 +77,6 @@ public class LittleTriggerActivatorCollisionTiles extends LittleTriggerActivator
     
     @Override
     public void onCollision(World worldIn, Collection<Entity> entities) {
-        System.out.println(entities);
         structure.entities.clear();
         structure.entities.addAll(entities);
     }
