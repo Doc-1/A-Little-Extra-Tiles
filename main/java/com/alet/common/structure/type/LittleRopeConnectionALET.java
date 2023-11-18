@@ -67,7 +67,6 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
     public LittleRopeConnectionALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
-        
     }
     
     @Override
@@ -89,8 +88,12 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     @Override
     public NBTTagCompound writeToNBTPreview(NBTTagCompound nbt, BlockPos newCenter) {
         nbt.setInteger("previous_index", mainBlock.getIndex());
-        
         return super.writeToNBTPreview(nbt, newCenter);
+    }
+    
+    @Override
+    protected void writeToNBTExtraInternal(NBTTagCompound nbt, boolean preview) {
+        super.writeToNBTExtraInternal(nbt, preview);
     }
     
     @Override
@@ -110,7 +113,6 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
         }
         nbt.setTag("conList", conList);
         nbt.setTag("dataList", dataList);
-        
     }
     
     @Override
@@ -126,7 +128,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                     }
                 }
             } catch (CorruptedConnectionException | NotYetConnectedException e) {
-                e.printStackTrace();
+                
             }
             
         }

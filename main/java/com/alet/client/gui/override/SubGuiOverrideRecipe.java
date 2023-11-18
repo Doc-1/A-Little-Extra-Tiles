@@ -63,12 +63,10 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
         if (!name.equals(oldName))
             hasUpdated = false;
         if (!hasUpdated) {
-            System.out.println("update");
             recipeGui.get("types").width = 115;
             recipeGui.get("hierarchy").posX = 120;
             recipeGui.refreshControls();
             reload(recipeGui);
-            System.out.println(name);
             if (name.equals("structure.programable_structure.name")) {
                 recipeGui.height = 270;
                 recipeGui.width = 580;
@@ -145,7 +143,6 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
         boolean flag = false;
         for (int i = 0; i < recipeGui.controls.size(); i++) {
             GuiControl c = recipeGui.controls.get(i);
-            System.out.println(c);
             for (GuiControl control : controls) {
                 if (c.equals(control)) {
                     flag = true;
@@ -157,16 +154,13 @@ public class SubGuiOverrideRecipe extends SubGuiOverride {
         if (flag)
             for (GuiControl control : controls)
                 recipeGui.controls.remove(control);
-        System.out.println(this.tempDeletedControls);
     }
     
     private void reload(SubGuiRecipe recipeGui) {
         for (Entry<Integer, GuiControl> set : this.tempDeletedControls.entrySet()) {
             recipeGui.controls.add(set.getKey(), set.getValue());
-            System.out.println(set.getValue());
         }
         this.tempDeletedControls.clear();
-        System.out.println(recipeGui.controls);
         recipeGui.width = 356;
         recipeGui.height = 206;
         recipeGui.get("tilescount").posX = 208;

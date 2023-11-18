@@ -37,7 +37,7 @@ import net.minecraft.world.chunk.Chunk;
 public class RopeConnection {
     
     private UUID worldUUID;
-    public final int ropeID;
+    public int ropeID;
     private final IWorldPositionProvider parent;
     
     private int structureIndex;
@@ -151,7 +151,9 @@ public class RopeConnection {
     public LittleRopeConnectionALET getTarget() {
         if (this.target == null)
             try {
-                target = (LittleRopeConnectionALET) getStructure();
+                LittleStructure tar = getStructure();
+                if (tar instanceof LittleRopeConnectionALET)
+                    this.target = (LittleRopeConnectionALET) tar;
             } catch (CorruptedConnectionException | NotYetConnectedException e) {}
         return target;
     }
@@ -216,12 +218,16 @@ public class RopeConnection {
             throw new NotYetConnectedException();
         for (IStructureTileList tile : te.structures()) {
             LittleStructure s = tile.getStructure();
+            if (s instanceof LittleRopeConnectionALET) {
+                LittleRopeConnectionALET r = (LittleRopeConnectionALET) s;
+                System.out.println(r + " " + r.previousIndex + " " + this.ropeID + " " + this.structureIndex);
+            }
+            
             if (s instanceof LittleRopeConnectionALET && ((LittleRopeConnectionALET) s).previousIndex == structureIndex) {
                 structureIndex = s.getIndex();
                 LittleRopeConnectionALET ropeStruct = (LittleRopeConnectionALET) s;
                 RopeConnection con = ropeStruct.connections.get(ropeID);
                 if (con != null) {
-                    ropeStruct.previousIndex = -1;
                     return s;
                 }
                 break;
