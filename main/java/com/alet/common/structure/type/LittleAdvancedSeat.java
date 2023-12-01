@@ -106,7 +106,7 @@ public class LittleAdvancedSeat extends LittleAdvancedDoor {
     }
     
     @Override
-    protected void afterPlaced() {
+    public void afterPlaced() {
         super.afterPlaced();
         if (sitUUID != null) {
             World world = getWorld();
@@ -181,17 +181,17 @@ public class LittleAdvancedSeat extends LittleAdvancedDoor {
                 @Override
                 public void onClicked(int x, int y, int button) {
                     switch (viewer.getAxis()) {
-                    case X:
-                        viewer.setViewAxis(EnumFacing.Axis.Y);
-                        break;
-                    case Y:
-                        viewer.setViewAxis(EnumFacing.Axis.Z);
-                        break;
-                    case Z:
-                        viewer.setViewAxis(EnumFacing.Axis.X);
-                        break;
-                    default:
-                        break;
+                        case X:
+                            viewer.setViewAxis(EnumFacing.Axis.Y);
+                            break;
+                        case Y:
+                            viewer.setViewAxis(EnumFacing.Axis.Z);
+                            break;
+                        case Z:
+                            viewer.setViewAxis(EnumFacing.Axis.X);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }.setCustomTooltip("change view"));
@@ -236,8 +236,8 @@ public class LittleAdvancedSeat extends LittleAdvancedDoor {
             });
             parent.controls.add(new GuiCheckBox("even", 107, 0, viewer.isEven()));
             
-            GuiStateButton contextBox = new GuiStateButton("grid", LittleGridContext.getNames().indexOf(viewer.getAxisContext() + ""), 107, 80, 20, 12, LittleGridContext.getNames()
-                    .toArray(new String[0]));
+            GuiStateButton contextBox = new GuiStateButton("grid", LittleGridContext.getNames().indexOf(viewer
+                    .getAxisContext() + ""), 107, 80, 20, 12, LittleGridContext.getNames().toArray(new String[0]));
             parent.controls.add(contextBox);
         }
         
@@ -256,7 +256,8 @@ public class LittleAdvancedSeat extends LittleAdvancedDoor {
                 viewer.setEven(false);
                 viewer.setAxis(new LittleBox(0, 0, 0, 1, 1, 1), viewer.context);
             }
-            handler.setCenter(new StructureAbsolute(new BlockPos(0, 75, 0), viewer.getBox().copy(), viewer.getAxisContext()));
+            handler.setCenter(new StructureAbsolute(new BlockPos(0, 75, 0), viewer.getBox().copy(), viewer
+                    .getAxisContext()));
         }
         
         @CustomEventSubscribe

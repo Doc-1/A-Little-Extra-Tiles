@@ -1,6 +1,7 @@
 package com.alet.common.util;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
@@ -71,17 +72,17 @@ public class StructureUtils {
     public static Vec3d facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
         double offset = 1D / contextSize;
         switch (facing) {
-        case UP:
-            y -= offset;
-            break;
-        case EAST:
-            x -= offset;
-            break;
-        case SOUTH:
-            z -= offset;
-            break;
-        default:
-            break;
+            case UP:
+                y -= offset;
+                break;
+            case EAST:
+                x -= offset;
+                break;
+            case SOUTH:
+                z -= offset;
+                break;
+            default:
+                break;
         }
         Vec3d vec = new Vec3d(x, y, z);
         return vec;
@@ -93,7 +94,8 @@ public class StructureUtils {
         double searchX = searchArea.getCenter().x;
         double searchY = searchArea.getCenter().y;
         double searchZ = searchArea.getCenter().z;
-        BlockPos posSearch = new BlockPos(structurePos.getX() + searchX, structurePos.getY() + searchY, structurePos.getZ() + searchZ);
+        BlockPos posSearch = new BlockPos(structurePos.getX() + searchX, structurePos.getY() + searchY, structurePos
+                .getZ() + searchZ);
         HashMapList<BlockPos, LittleBox> boxesSearch = new HashMapList<BlockPos, LittleBox>();
         foundBox.split(searchArea.getContext(), structurePos, boxesSearch, null);
         for (Entry<BlockPos, ArrayList<LittleBox>> b : boxesSearch.entrySet())
@@ -149,14 +151,16 @@ public class StructureUtils {
     public static void placeStructure(LittleStructure structure, World worldIn, BlockPos pos, LittleVec offset, EnumFacing facing, EntityPlayer playerIn) {
         try {
             LittlePreviews preview = structure.getPreviews(pos);
-            PlacementPreview placePreview = new PlacementPreview(worldIn, preview, PlacementMode.fill, preview.getSurroundingBox(), true, pos, offset, facing);
+            PlacementPreview placePreview = new PlacementPreview(worldIn, preview, PlacementMode.fill, preview
+                    .getSurroundingBox(), true, pos, offset, facing);
             Placement place = new Placement(playerIn, placePreview);
             place.tryPlace();
         } catch (CorruptedConnectionException | NotYetConnectedException e) {}
     }
     
     public static boolean placePreview(LittlePreviews preview, World worldIn, BlockPos pos, LittleVec offset, EnumFacing facing, EntityPlayer playerIn) {
-        PlacementPreview placePreview = new PlacementPreview(worldIn, preview, PlacementMode.fill, preview.getSurroundingBox(), true, pos, offset, facing);
+        PlacementPreview placePreview = new PlacementPreview(worldIn, preview, PlacementMode.fill, preview
+                .getSurroundingBox(), true, pos, offset, facing);
         Placement place = new Placement(playerIn, placePreview);
         PlacementResult results = place.tryPlace();
         return results != null;
@@ -206,5 +210,16 @@ public class StructureUtils {
             }
         } catch (CorruptedConnectionException | NotYetConnectedException e) {}
         return false;
+    }
+    
+    public static List<BlockPos> getBlockArea(LittleStructure structure) {
+        try {
+            List<BlockPos> blockPositions = new ArrayList<BlockPos>();
+            for (TileEntityLittleTiles te : structure.blocks()) {
+                blockPositions.add(te.getPos());
+            }
+            return blockPositions;
+        } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+        return null;
     }
 }

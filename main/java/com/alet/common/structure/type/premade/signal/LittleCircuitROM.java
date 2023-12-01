@@ -20,7 +20,7 @@ public class LittleCircuitROM extends LittleCircuitPremade {
     }
     
     @Override
-    protected void afterPlaced() {
+    public void afterPlaced() {
         super.afterPlaced();
         boolean isBinary = true;
         boolean hasChar = false;

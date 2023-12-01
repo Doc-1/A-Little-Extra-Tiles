@@ -65,9 +65,7 @@ public class ItemLittleRope extends Item implements ILittleTool {
     }
     
     public static StructureLocation getSelectedLocation(ItemStack rope) {
-        
         return new StructureLocation(rope.getTagCompound().getCompoundTag("selected"));
-        
     }
     
     @SideOnly(Side.CLIENT)

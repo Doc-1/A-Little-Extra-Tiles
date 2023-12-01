@@ -44,7 +44,7 @@ public abstract class LittleCircuitPremade extends LittleStructurePremade {
     }
     
     @Override
-    protected void afterPlaced() {
+    public void afterPlaced() {
         activate();
     }
     
