@@ -84,6 +84,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
         NBTTagList list = nbt.getTagList("triggers", Constants.NBT.TAG_COMPOUND);
         int i = 0;
+        triggerObjs.clear();
         for (NBTBase base : list) {
             if (base instanceof NBTTagCompound) {
                 NBTTagCompound n = (NBTTagCompound) base;
