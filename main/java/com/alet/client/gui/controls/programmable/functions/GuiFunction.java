@@ -10,7 +10,7 @@ import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.programable.functions.FunctionRegistar;
 import com.alet.common.structure.type.programable.nodes.NodeRegistar;
-import com.alet.common.util.MouseUtils;
+import com.alet.common.utils.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;

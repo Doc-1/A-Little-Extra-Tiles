@@ -7,14 +7,15 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALETConfig;
 import com.alet.client.gui.controls.GuiColorablePanel;
+import com.alet.common.utils.shape.TapemeasureShapeRegistar;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.alet.littletiles.gui.controls.GuiColoredSteppedSliderAlet;
-import com.alet.render.tapemeasure.shape.TapeMeasureShape;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -27,34 +28,26 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 public class SubGuiTapeMeasure extends SubGuiConfigure {
     
-    public GuiComboBox measurmentTypeBox;
-    public GuiComboBox contextBox;
-    public GuiComboBox shapeBox;
-    public GuiComboBox indexBox;
-    public GuiColorPickerAlet colorPicker;
-    public GuiColorablePanel colorDisp;
-    
-    public int selectedIndex = 0;
-    
     public SubGuiTapeMeasure(ItemStack stack) {
-        super(141, 100, stack);
+        super(141, 200, stack);
     }
     
     @Override
     public void saveConfiguration() {
-        int index = indexBox.index;
+        int index = ((GuiComboBox) this.get("indexSelector")).index;
         saveConfiguration(index);
     }
     
     public void saveConfiguration(int index) {
         NBTTagCompound stackNBT = stack.getTagCompound();
-        int context = contextBox.index;
-        String shape = shapeBox.getCaption();
+        int context = ((GuiComboBox) this.get("context")).index;
+        String shape = ((GuiComboBox) this.get("shape")).getCaption();
+        GuiColorPickerAlet colorPicker = (GuiColorPickerAlet) this.get("picker");
         GuiColoredSteppedSliderAlet sliderR = colorPicker.sliderR;
         GuiColoredSteppedSliderAlet sliderG = colorPicker.sliderG;
         GuiColoredSteppedSliderAlet sliderB = colorPicker.sliderB;
         
-        ItemTapeMeasure.measurementType = measurmentTypeBox.index;
+        ItemTapeMeasure.measurementType = ((GuiComboBox) this.get("measurmentType")).index;
         
         int r = (int) sliderR.value;
         int g = (int) sliderG.value;
@@ -100,53 +93,26 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         List<String> relativeMeasurement = new ArrayList<String>();
         relativeMeasurement.add("tile");
         relativeMeasurement.addAll(ALETConfig.tapeMeasure.measurementName);
-        measurmentTypeBox = new GuiComboBox("measurmenttype", 85, 0, 25, relativeMeasurement);
+        GuiComboBox measurmentTypeBox = new GuiComboBox("measurmentType", 85, 0, 25, relativeMeasurement);
         measurmentTypeBox.select(ItemTapeMeasure.measurementType);
         measurmentTypeBox.index = ItemTapeMeasure.measurementType;
         controls.add(measurmentTypeBox);
         
-        contextBox = new GuiComboBox("grid", 120, 0, 15, LittleGridContext.getNames());
+        GuiComboBox contextBox = new GuiComboBox("context", 120, 0, 15, LittleGridContext.getNames());
         contextBox.select(contextNames.indexOf(contextSize + ""));
         contextBox.index = contextNames.indexOf(contextSize + "");
         controls.add(contextBox);
         
-        colorDisp = new GuiColorablePanel("colorDisp", 120, 22, 14, 14, new Color(0, 0, 0), ColorUtils.IntToRGBA(colorInt));
+        GuiColorablePanel colorDisp = new GuiColorablePanel("colorDisp", 120, 22, 14, 14, new Color(0, 0, 0), ColorUtils
+                .IntToRGBA(colorInt));
         controls.add(colorDisp);
-        
-        GuiButton clearButton = (new GuiButton("Clear", 0, 0, 40) {
-            @Override
-            public void onClicked(int x, int y, int button) {
-                ItemTapeMeasure thisTapeMeasure = (ItemTapeMeasure) stack.getItem();
-                if (GuiScreen.isShiftKeyDown())
-                    thisTapeMeasure.clear(stack, indexBox.index, this.getPlayer());
-                else
-                    thisTapeMeasure.clear(stack);
-                
-            }
-        });
-        clearButton.setCustomTooltip("Click: Deletes all measurements", "Hold Shift and Click: Deletes selected measurement");
-        controls.add(clearButton);
-        
-        List<String> shapes = new ArrayList<String>();
-        shapes.addAll(TapeMeasureShape.registeredShapes.keySet());
-        shapeBox = new GuiComboBox("shape", 0, 22, 100, shapes);
-        controls.add(shapeBox);
-        shapeBox.select(shape);
-        colorPicker = (new GuiColorPickerAlet("picker", 35, 45, ColorUtilsAlet.IntToRGBA(colorInt), false, 255) {
-            @Override
-            public void onColorChanged() {
-                super.onColorChanged();
-                colorDisp.setBackgroundColor(ColorUtilsAlet.RGBAToInt(color));
-            }
-        });
-        controls.add(colorPicker);
         
         List<String> indexMax = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             indexMax.add(String.valueOf(i));
         }
         
-        indexBox = (new GuiComboBox("indexSelector", 0, 80, 20, indexMax) {
+        GuiComboBox indexBox = (new GuiComboBox("indexSelector", 0, 80, 20, indexMax) {
             @Override
             protected GuiComboBoxExtension createBox() {
                 return (new GuiComboBoxExtension(name + "extension", this, posX, posY + height, width - getContentOffset() * 2, 100, lines) {
@@ -162,6 +128,40 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         indexBox.select(index);
         indexBox.index = index;
         controls.add(indexBox);
+        
+        GuiButton clearButton = (new GuiButton("Clear", 0, 0, 40) {
+            @Override
+            public void onClicked(int x, int y, int button) {
+                ItemTapeMeasure thisTapeMeasure = (ItemTapeMeasure) stack.getItem();
+                if (GuiScreen.isShiftKeyDown())
+                    thisTapeMeasure.clear(stack, indexBox.index, this.getPlayer());
+                else
+                    thisTapeMeasure.clear(stack);
+                
+            }
+        });
+        clearButton.setCustomTooltip("Click: Deletes all measurements",
+            "Hold Shift and Click: Deletes selected measurement");
+        controls.add(clearButton);
+        
+        List<String> shapes = new ArrayList<String>();
+        shapes.addAll(TapemeasureShapeRegistar.registeredShapes.keySet());
+        GuiComboBox shapeBox = new GuiComboBox("shape", 0, 22, 100, shapes);
+        controls.add(shapeBox);
+        shapeBox.select(shape);
+        GuiColorPickerAlet colorPicker = (new GuiColorPickerAlet("picker", 35, 45, ColorUtilsAlet.IntToRGBA(
+            colorInt), false, 255) {
+            @Override
+            public void onColorChanged() {
+                super.onColorChanged();
+                colorDisp.setBackgroundColor(ColorUtilsAlet.RGBAToInt(color));
+            }
+        });
+        controls.add(colorPicker);
+        
+        GuiScrollBox settings = new GuiScrollBox("settings", 0, 102, 135, 92);
+        controls.add(settings);
+        
     }
     
     private void updateControls(NBTTagCompound stackNBT, int index) {
@@ -176,8 +176,9 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
         String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         
-        colorDisp.setBackgroundColor(colorInt);
+        ((GuiColorablePanel) this.get("colorDisp")).setBackgroundColor(colorInt);
         
+        GuiColorPickerAlet colorPicker = (GuiColorPickerAlet) this.get("picker");
         GuiColoredSteppedSliderAlet sliderR = colorPicker.sliderR;
         GuiColoredSteppedSliderAlet sliderG = colorPicker.sliderG;
         GuiColoredSteppedSliderAlet sliderB = colorPicker.sliderB;
@@ -188,10 +189,11 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         sliderB.value = ColorUtilsAlet.IntToRGBA(colorInt).getBlue();
         colorPicker.updateShadeSlider();
         
+        GuiComboBox contextBox = (GuiComboBox) this.get("context");
         contextBox.select(contextNames.indexOf(contextSize + ""));
         contextBox.index = contextNames.indexOf(contextSize + "");
         
-        shapeBox.select(shape);
+        ((GuiComboBox) this.get("shape")).select(shape);
         
     }
 }

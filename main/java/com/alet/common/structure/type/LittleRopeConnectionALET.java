@@ -62,6 +62,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
+    //@StructureDirectional
     public List<RopeConnection> connections = new ArrayList<RopeConnection>();
     public int prevStructureIndex = -1;
     public BlockPos prevBlockPosition;
@@ -116,22 +117,17 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     @Override
     public void afterPlaced() {
         super.afterPlaced();
-        for (RopeConnection d : this.connections) {
+        List<RopeConnection> connectionsToRemove = new ArrayList<RopeConnection>();
+        for (RopeConnection con : this.connections) {
             try {
-                d.scanAfterPlace();
-                /*
-                if (struct instanceof LittleRopeConnectionALET) {
-                    LittleRopeConnectionALET rope = (LittleRopeConnectionALET) struct;
-                    RopeConnection con = rope.connections.get(d.targetConnectionID);
-                    if (con != null && con.adaptStructureChange(this)) {
-                        struct.updateStructure();
-                    }
-                }*/
-            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                LittleRopeConnectionALET rope = con.scanAfterPlace();
                 
+                //con.adaptStructureChange(rope);
+            } catch (CorruptedConnectionException | NotYetConnectedException e) {
+                connectionsToRemove.add(con);
             }
-            
         }
+        this.connections.removeAll(connectionsToRemove);
     }
     
     @Override
@@ -258,7 +254,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
             RopeData data = con.ropeData; //is Head
             Vector3d vecCenter = con.getTargetCenter();
             
-            if (vecCenter != null) {
+            if (vecCenter != null && data != null) {
                 minX = Math.min(vecCenter.x - data.thickness, minX);
                 minY = Math.min(vecCenter.y - data.thickness, minY);
                 minZ = Math.min(vecCenter.z - data.thickness, minZ);
@@ -288,7 +284,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
             // headPos.add(new Vector3d(1, 1, 1));
             Vector3d vecPos = new Vector3d(pos.getX(), pos.getY(), pos.getZ());
             Vector3d tailPos = con.getTargetCenter();
-            if (tailPos == null)
+            if (tailPos == null || data == null)
                 continue;
             tailPos = (Vector3d) tailPos.clone();
             if (con.hasMoved(tailPos))

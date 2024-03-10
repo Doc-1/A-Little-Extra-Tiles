@@ -3,7 +3,7 @@ package com.alet.client.gui.controls;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 
-import com.alet.common.util.CopyUtils;
+import com.alet.common.utils.CopyUtils;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 
 import net.minecraft.client.gui.GuiScreen;

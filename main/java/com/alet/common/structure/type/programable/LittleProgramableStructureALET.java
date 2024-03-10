@@ -28,7 +28,7 @@ import com.alet.client.gui.event.gui.GuiControlKeyPressed;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.programable.functions.Function;
 import com.alet.common.structure.type.programable.functions.FunctionRegistar;
-import com.alet.common.util.MouseUtils;
+import com.alet.common.utils.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;

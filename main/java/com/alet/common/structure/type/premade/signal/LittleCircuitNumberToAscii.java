@@ -1,6 +1,6 @@
 package com.alet.common.structure.type.premade.signal;
 
-import com.alet.common.util.SignalingUtils;
+import com.alet.common.utils.SignalingUtils;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;

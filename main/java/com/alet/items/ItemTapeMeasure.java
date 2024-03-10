@@ -1,18 +1,16 @@
 package com.alet.items;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
 import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiTapeMeasure;
+import com.alet.client.render.tapemeasure.TapeRenderer;
 import com.alet.common.packet.PacketUpdateNBT;
-import com.alet.common.util.StructureUtils;
-import com.alet.common.util.TapeMeasureKeyEventHandler;
-import com.alet.render.tapemeasure.TapeRenderer;
+import com.alet.common.utils.NBTUtils;
+import com.alet.common.utils.StructureUtils;
+import com.alet.common.utils.TapeMeasureKeyEventHandler;
 import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
@@ -50,7 +48,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip {
     
-    public static PosData data;
     public static int measurementType = 0;
     
     public void clear(ItemStack stack) {
@@ -64,23 +61,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public void clear(ItemStack stack, int index, EntityPlayer player) {
         NBTTagCompound nbt = stack.getTagCompound();
         
-        List<String> allMatches = new ArrayList<String>();
-        index *= 2;
-        
-        Matcher m1 = Pattern.compile("[a-zA-Z]+" + (index + 1)).matcher(nbt.toString());
-        while (m1.find()) {
-            allMatches.add(m1.group());
-        }
-        
-        Matcher m2 = Pattern.compile("[a-zA-Z]+" + (index)).matcher(nbt.toString());
-        while (m2.find()) {
-            allMatches.add(m2.group());
-        }
-        
-        for (String key : allMatches) {
-            if (!key.contains("context") && !key.contains("color") && !key.contains("shape"))
-                nbt.removeTag(key);
-        }
         PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
     }
     
@@ -135,13 +115,12 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         NBTTagCompound nbt = new NBTTagCompound();
         if (stack.hasTagCompound()) {
             stackNBT = getNBTData(stack);
-            index = stackNBT.getInteger("index");
-            
+            index = stackNBT.hasKey("index") ? stackNBT.getInteger("index") : 0;
         }
         
-        if (stackNBT.hasKey("measurement_" + index)) {
-            NBTTagList l = stackNBT.getTagList("measurement_" + index, NBT.TAG_COMPOUND);
-            nbt = l.getCompoundTagAt(0);
+        if (stackNBT.hasKey("measurements")) {
+            NBTTagList list = stackNBT.getTagList("measurements", NBT.TAG_COMPOUND);
+            
         }
         
         int contextSize = getContext(nbt);
@@ -149,25 +128,34 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         LittleGridContext context = LittleGridContext.get(contextSize);
         RayTraceResult res = plr.rayTrace(6.0, (float) 0.1);
         LittleAbsoluteVec pos = new LittleAbsoluteVec(res, context);
-        if (LittleAction.isUsingSecondMode(plr)) {
+        
+        if (LittleAction.isUsingSecondMode(plr))
             position.facing = position.facing.getOpposite();
-        }
-        Vec3d posOffsetted = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, position.facing);
+        
+        Vec3d posOffsetted = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize,
+            position.facing);
         
         int additional = rightClick ? 1 : 2;
         if (GuiScreen.isCtrlKeyDown())
             additional += 2;
+        NBTUtils.writeDoubleArrayFrom(posOffsetted.x, posOffsetted.y, posOffsetted.z);
         
-        nbt.setDouble("x" + additional, posOffsetted.x);
-        nbt.setDouble("y" + additional, posOffsetted.y);
-        nbt.setDouble("z" + additional, posOffsetted.z);
         nbt.setString("facing", position.facing.getName());
+        nbt.setInteger("context", contextSize);
         NBTTagList list = new NBTTagList();
         list.appendTag(nbt);
         stackNBT.setTag("measurement_" + index, list);
+        
+        /*
+        NBTUtils.writeDoubleArrayFrom(nbt, "pos_" + additional, posOffsetted.x, posOffsetted.y, posOffsetted.z);
+        nbt.setString("facing", position.facing.getName());
+         nbt.setInteger("context", contextSize);
+        NBTTagList list = new NBTTagList();
+        list.appendTag(nbt);
+        stackNBT.setTag("measurement_" + index, list);
+        */
         writeNBTData(stack, stackNBT);
         PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
-        
         return false;
         
     }
@@ -175,9 +163,9 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public static int getContext(NBTTagCompound nbt) {
         List<String> contextList = LittleGridContext.getNames();
         int contextSize = ItemMultiTiles.currentContext.size;
-        if (nbt.hasKey("context") && nbt.getInteger("context") >= 0) {
+        if (nbt.hasKey("context") && nbt.getInteger("context") > 0)
             contextSize = Integer.parseInt(contextList.get(nbt.getInteger("context")));
-        }
+        
         return contextSize;
         
     }
@@ -191,6 +179,13 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         public PosData(SelectLittleTile posMin, SelectLittleTile posMax, SelectLittleTile posCursor, RayTraceResult res) {
             tilePosMin = posMin;
             tilePosMax = posMax;
+            tilePosCursor = posCursor;
+            result = res;
+        }
+        
+        public PosData(SelectLittleTile pos, SelectLittleTile posCursor, RayTraceResult res) {
+            tilePosMin = pos;
+            tilePosMax = pos;
             tilePosCursor = posCursor;
             result = res;
         }
@@ -210,12 +205,10 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             
             int contextSize = ItemTapeMeasure.getContext(nbt);
             LittleAbsoluteVec pos = new LittleAbsoluteVec(result, LittleGridContext.get(contextSize));
-            Vec3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, result.sideHit);
+            Vec3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize,
+                result.sideHit);
             
-            SelectLittleTile tilePosMin = new SelectLittleTile(posEdit, LittleGridContext.get(contextSize));
-            SelectLittleTile tilePosMax = new SelectLittleTile(posEdit, LittleGridContext.get(contextSize));
             SelectLittleTile tilePosCursor = new SelectLittleTile(posEdit, LittleGridContext.get(contextSize));
-            data = new PosData(tilePosMin, tilePosMax, tilePosCursor, result);
             
             TapeRenderer.renderCursor(stackNBT, index, contextSize, tilePosCursor);
         }
@@ -299,8 +292,8 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     
     @Override
     public Object[] tooltipData(ItemStack stack) {
-        return new Object[] { LittleTilesClient.configure.getDisplayName(), LittleTilesClient.up.getDisplayName(), LittleTilesClient.down
-                .getDisplayName(), ALETClient.clearMeasurment.getDisplayName() };
+        return new Object[] { LittleTilesClient.configure.getDisplayName(), LittleTilesClient.up
+                .getDisplayName(), LittleTilesClient.down.getDisplayName(), ALETClient.clearMeasurment.getDisplayName() };
     }
     
     @Override

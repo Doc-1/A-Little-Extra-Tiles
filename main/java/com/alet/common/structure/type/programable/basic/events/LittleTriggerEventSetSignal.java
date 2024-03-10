@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.common.structure.type.programable.basic.LittleTriggerObject;
-import com.alet.common.util.ComponentSearch;
+import com.alet.common.utils.ComponentSearch;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;

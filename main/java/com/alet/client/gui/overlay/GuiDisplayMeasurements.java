@@ -1,22 +1,15 @@
 package com.alet.client.gui.overlay;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
-import com.alet.common.util.StructureUtils;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.items.ItemTapeMeasure.PosData;
-import com.alet.render.tapemeasure.shape.TapeMeasureShape;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
-import com.creativemd.creativecore.common.utils.mc.ColorUtils;
-import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVecContext;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -27,12 +20,9 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.util.Constants.NBT;
 
 public class GuiDisplayMeasurements extends GuiControl {
     
@@ -74,7 +64,7 @@ public class GuiDisplayMeasurements extends GuiControl {
             GL11.glFlush();
             GlStateManager.enableCull();
             if (stack.hasTagCompound()) {
-                PosData data = ItemTapeMeasure.data;
+                /*
                 if (data != null) {
                     
                     NBTTagCompound stackNBT = stack.getTagCompound();
@@ -89,10 +79,14 @@ public class GuiDisplayMeasurements extends GuiControl {
                             int colorInt = nbt.hasKey("shape") ? nbt.getInteger("color") : ColorUtils.WHITE;
                             LittleAbsoluteVec pos = new LittleAbsoluteVec(data.result, LittleGridContext.get(contextSize));
                             
-                            Vec3d vec1 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                            Vec3d vec2 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                            Vec3d vec3 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
-                            Vec3d vec4 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize, data.result.sideHit);
+                            Vec3d vec1 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                                contextSize, data.result.sideHit);
+                            Vec3d vec2 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                                contextSize, data.result.sideHit);
+                            Vec3d vec3 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                                contextSize, data.result.sideHit);
+                            Vec3d vec4 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                                contextSize, data.result.sideHit);
                             
                             if (nbt.hasKey("x1"))
                                 vec1 = new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1"));
@@ -111,8 +105,8 @@ public class GuiDisplayMeasurements extends GuiControl {
                                     listOfPoints.add(vec2);
                                     listOfPoints.add(vec3);
                                     listOfPoints.add(vec4);
-                                    TapeMeasureShape shape = TapeMeasureShape.registeredShapes.get(shapeName).getConstructor(List.class, int.class)
-                                            .newInstance(listOfPoints, contextSize);
+                                    TapeMeasureShape shape = TapemeasureShapeRegistar.registeredShapes.get(shapeName)
+                                            .getConstructor(List.class, int.class).newInstance(listOfPoints, contextSize);
                                     textList.addText("Measurment " + (i + 1), ColorUtils.WHITE);
                                     shape.getText(textList, colorInt);
                                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -125,7 +119,7 @@ public class GuiDisplayMeasurements extends GuiControl {
                     
                     textList.renderControl(helper, 0, getRect());
                     
-                }
+                }*/
             }
             GlStateManager.popMatrix();
         }
@@ -208,7 +202,8 @@ public class GuiDisplayMeasurements extends GuiControl {
         double distance = 0, x3, y3, z3 = 0;
         for (int i = 0, m = boxes.size(); i < m; i++) {
             box = boxes.get(i);
-            endPos = playerPos.addVector(playerLookVector.x * maxDistance, playerLookVector.y * maxDistance, playerLookVector.z * maxDistance);
+            endPos = playerPos.addVector(playerLookVector.x * maxDistance, playerLookVector.y * maxDistance,
+                playerLookVector.z * maxDistance);
             endPos = new Vec3d(endPos.x, endPos.y, endPos.z);
             startPos = new Vec3d(playerPos.x, playerPos.y, playerPos.z);
             distance = startPos.distanceTo(endPos);
@@ -236,11 +231,14 @@ public class GuiDisplayMeasurements extends GuiControl {
         y = context.toGridAccurate(y);
         z = context.toGridAccurate(z);
         
-        BlockPos pos = new BlockPos((int) Math.floor(context.toVanillaGrid(x)), (int) Math.floor(context.toVanillaGrid(y)), (int) Math.floor(context.toVanillaGrid(z)));
-        LittleVecContext contextVec = new LittleVecContext(new LittleVec((int) (x - context.toGridAccurate(pos.getX())), (int) (y - context
-                .toGridAccurate(pos.getY())), (int) (z - context.toGridAccurate(pos.getZ()))), context);
+        BlockPos pos = new BlockPos((int) Math.floor(context.toVanillaGrid(x)), (int) Math.floor(context.toVanillaGrid(
+            y)), (int) Math.floor(context.toVanillaGrid(z)));
+        LittleVecContext contextVec = new LittleVecContext(new LittleVec((int) (x - context.toGridAccurate(pos
+                .getX())), (int) (y - context.toGridAccurate(pos.getY())), (int) (z - context.toGridAccurate(pos
+                        .getZ()))), context);
         
-        return new Vec3d(pos.getX() + contextVec.getPosX(), pos.getY() + contextVec.getPosY(), pos.getZ() + contextVec.getPosZ());
+        return new Vec3d(pos.getX() + contextVec.getPosX(), pos.getY() + contextVec.getPosY(), pos.getZ() + contextVec
+                .getPosZ());
     }
     
     /** Returns if the supplied Vec3D is completely inside the bounding box */

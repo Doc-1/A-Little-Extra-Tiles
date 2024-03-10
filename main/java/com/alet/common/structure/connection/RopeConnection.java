@@ -140,18 +140,26 @@ public class RopeConnection {
         vec.add(origin.center());
     }
     
-    public boolean adaptStructureChange(LittleStructure struct) {
+    public void adaptStructureChange(LittleStructure struct) {
+        UUID newWorldUUID = null;
+        BlockPos newRelPos = struct.getPos().subtract(this.parent.getPos());
+        if (struct.getWorld() instanceof IOrientatedWorld)
+            newWorldUUID = ((IOrientatedWorld) struct.getWorld()).getParentEntity().getUniqueID();
+        else
+            newWorldUUID = null;
+        if (shouldStructureChange(newWorldUUID, newRelPos)) {
+            this.relativePos = newRelPos;
+            this.worldUUID = newWorldUUID;
+        }
+    }
+    
+    public boolean shouldStructureChange(UUID newWorldUUID, BlockPos newRelPos) {
         BlockPos lastRelPos = this.relativePos;
         UUID lastWorldUUID = this.worldUUID;
         targetStructure = null;
         lastTargetCenter = null;
         
-        this.relativePos = struct.getPos().subtract(this.parent.getPos());
-        if (struct.getWorld() instanceof IOrientatedWorld)
-            worldUUID = ((IOrientatedWorld) struct.getWorld()).getParentEntity().getUniqueID();
-        else
-            worldUUID = null;
-        return !lastRelPos.equals(this.relativePos) || !Objects.equal(lastWorldUUID, this.worldUUID);
+        return !lastRelPos.equals(newRelPos) || !Objects.equal(lastWorldUUID, newWorldUUID);
     }
     
     public LittleRopeConnectionALET getTarget() {
@@ -225,9 +233,11 @@ public class RopeConnection {
         throw new MissingStructureException(te.getPos());
     }
     
-    public LittleStructure scanAfterPlace() throws CorruptedConnectionException, NotYetConnectedException {
+    public LittleRopeConnectionALET scanAfterPlace() throws CorruptedConnectionException, NotYetConnectedException {
         
         this.backupTargetCenter = null;
+        if (((LittleRopeConnectionALET) parent).prevBlockPosition == null)
+            throw new MissingBlockException(null);
         BlockPos absoluteCoord = getStructurePosition();
         World world = getWorld();
         if (world == null)

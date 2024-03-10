@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.util.SignalingUtils;
+import com.alet.common.utils.SignalingUtils;
 import com.alet.font.FontReader;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.structure.LittleStructure;

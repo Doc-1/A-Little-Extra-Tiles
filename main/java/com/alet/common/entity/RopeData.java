@@ -4,9 +4,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class RopeData {
     
-    public int color;
-    public double thickness;
-    public double tautness;
+    public int color = 0;
+    public double thickness = 1.0F;
+    public double tautness = 0.0F;
     
     public RopeData(int color, double thickness, double tautness) {
         this.color = color;

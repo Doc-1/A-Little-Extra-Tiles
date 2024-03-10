@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import com.alet.common.structure.type.programable.basic.LittleTriggerObject;
-import com.alet.common.util.NBTUtils;
+import com.alet.common.utils.NBTUtils;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;

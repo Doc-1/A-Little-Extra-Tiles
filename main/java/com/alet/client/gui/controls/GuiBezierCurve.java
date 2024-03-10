@@ -3,7 +3,7 @@ package com.alet.client.gui.controls;
 import javax.vecmath.Point2i;
 
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
-import com.alet.common.util.RenderUtils;
+import com.alet.common.utils.RenderUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;

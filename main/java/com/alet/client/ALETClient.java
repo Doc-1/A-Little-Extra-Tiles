@@ -6,15 +6,14 @@ import org.lwjgl.input.Keyboard;
 
 import com.alet.client.gui.overlay.GuiAxisIndicatorAletControl;
 import com.alet.client.gui.overlay.GuiDisplayMeasurements;
+import com.alet.client.render.tapemeasure.TapeRenderer;
 import com.alet.common.command.UpdateFontsCommand;
 import com.alet.common.event.ALETEventHandler;
-import com.alet.common.util.TapeMeasureKeyEventHandler;
-import com.alet.common.util.shape.DragShapeCenteredBox;
-import com.alet.common.util.shape.DragShapeCenteredCylinder;
-import com.alet.common.util.shape.DragShapeCenteredSphere;
-import com.alet.common.util.shape.DragShapePixel;
-import com.alet.common.util.shape.LittleShapeMagicWand;
-import com.alet.render.tapemeasure.TapeRenderer;
+import com.alet.common.utils.shape.draw.DragShapeCenteredBox;
+import com.alet.common.utils.shape.draw.DragShapeCenteredCylinder;
+import com.alet.common.utils.shape.draw.DragShapeCenteredSphere;
+import com.alet.common.utils.shape.draw.DragShapePixel;
+import com.alet.common.utils.shape.draw.LittleShapeMagicWand;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;
 import com.creativemd.littletiles.client.LittleTilesClient;
@@ -82,12 +81,14 @@ public class ALETClient extends LittleTilesServer {
         
         ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
         
-        MinecraftForge.EVENT_BUS.register(new TapeRenderer());
-        MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
+        //MinecraftForge.EVENT_BUS.register(new TapeRenderer());
+        //MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
         MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
         
-        LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
-        LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER).setShouldRender(() -> TapeRenderer.inInv));
+        LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER)
+                .setShouldRender(() -> TapeRenderer.slotID != -1));
+        LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER)
+                .setShouldRender(() -> TapeRenderer.slotID != -1));
         
         for (Item item : renderedItems) {
             CreativeCoreClient.registerItemColorHandler(item);
@@ -96,7 +97,8 @@ public class ALETClient extends LittleTilesServer {
     
     public static void registerItemRenderer(Item item) {
         for (int i = 0; i <= 18; i++) {
-            ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(item
+                    .getRegistryName(), "inventory"));
         }
     }
 }

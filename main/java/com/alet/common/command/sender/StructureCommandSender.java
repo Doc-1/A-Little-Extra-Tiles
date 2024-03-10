@@ -25,7 +25,7 @@ public class StructureCommandSender implements ICommandSender {
         this.entity = entity;
         this.structure = structure;
         try {
-            center = structure.getSurroundingBox().getAABB().getCenter();
+            center = structure.getSurroundingBox().getHighestCenterVec();
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

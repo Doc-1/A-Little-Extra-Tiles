@@ -3,7 +3,7 @@ package com.alet.common.structure.type.premade.signal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.util.StructureUtils;
+import com.alet.common.utils.StructureUtils;
 import com.creativemd.creativecore.client.rendering.RenderBox;
 import com.creativemd.creativecore.common.utils.math.RotationUtils;
 import com.creativemd.creativecore.common.utils.math.box.AlignedBox;

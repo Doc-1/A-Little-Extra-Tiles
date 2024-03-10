@@ -99,16 +99,19 @@ public class SubGuiSoundSettings extends SubGui {
                     comboBoxes[i] = (GuiComboBoxHeight) get("sounds" + (i + 1));
                 
                 GuiTextfield volume = (GuiTextfield) get("volume");
-                GuiCheckBox local = (GuiCheckBox) get("local");
                 
                 for (int i = 0; i < littleSoundPlayerParserALET.channelSounds.length; i++)
                     littleSoundPlayerParserALET.channelSounds[i] = comboBoxes[i].getCaption();
                 
                 littleSoundPlayerParserALET.volume = Integer.parseInt(volume.text);
-                littleSoundPlayerParserALET.local = local.value;
                 littleSoundPlayerParserALET.updateTimeLine();
             }
         }
+        if (event.source.is("local")) {
+            GuiCheckBox local = (GuiCheckBox) get("local");
+            littleSoundPlayerParserALET.local = local.value;
+        }
+        
         return super.raiseEvent(event);
     }
     

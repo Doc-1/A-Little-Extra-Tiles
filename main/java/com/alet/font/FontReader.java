@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.io.IOUtils;
 
 import com.alet.ALET;
-import com.alet.photo.PhotoReader;
+import com.alet.common.utils.photo.PhotoReader;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.common.block.BlockLittleDyeable;

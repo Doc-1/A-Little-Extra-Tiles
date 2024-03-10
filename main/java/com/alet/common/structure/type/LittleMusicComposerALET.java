@@ -31,7 +31,7 @@ import com.alet.client.gui.message.SubGuiTooManyChannels;
 import com.alet.client.sounds.Notes;
 import com.alet.common.packet.PacketSendSound;
 import com.alet.common.structure.sound.Sound;
-import com.alet.common.util.CopyUtils;
+import com.alet.common.utils.CopyUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
@@ -166,6 +166,7 @@ public class LittleMusicComposerALET extends LittleStructure {
     
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
+        
         if (worldIn.isRemote)
             return true;
         this.play = !this.play;

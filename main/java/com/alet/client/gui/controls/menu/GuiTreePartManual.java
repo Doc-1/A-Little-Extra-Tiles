@@ -1,6 +1,6 @@
 package com.alet.client.gui.controls.menu;
 
-import com.alet.common.util.text.translation.ManualTranslator;
+import com.alet.common.utils.text.translation.ManualTranslator;
 
 public class GuiTreePartManual extends GuiTreePart {
     public final String pageName;

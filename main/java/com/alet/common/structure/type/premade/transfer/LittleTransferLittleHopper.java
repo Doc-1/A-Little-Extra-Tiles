@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.alet.client.container.SubContainerLittleHopper;
-import com.alet.common.util.StructureUtils;
+import com.alet.common.utils.StructureUtils;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.creativecore.common.utils.mc.InventoryUtils;
 import com.creativemd.creativecore.common.utils.type.HashMapList;

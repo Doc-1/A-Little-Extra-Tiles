@@ -56,15 +56,10 @@ public class PacketSendSound extends CreativeCorePacket {
         Notes note = Notes.getNoteFromPitch(pitch);
         Minecraft mc = Minecraft.getMinecraft();
         SoundEvent sound = new SoundEvent(new ResourceLocation(note.getResourceLocation(instermentName)));
-        //m.sndHandler = new SoundHandler(m, mc.gameSettings);
-        //System.out.println(sound);
-        //player.playSound(sound, 1.0F, note.getPitch());
-        //mc.world.playSound(player, player.posX, player.posY, player.posZ, sound, SoundCategory.AMBIENT, 1.0F, note.getPitch());
         if (local)
-            mc.world.playSound(pos, sound, SoundCategory.AMBIENT, volume, note.getPitch(), true);
+            mc.world.playSound(pos, sound, SoundCategory.RECORDS, volume, note.getPitch(), true);
         else
-            mc.world.playSound(player.getPosition(), sound, SoundCategory.AMBIENT, volume, note.getPitch(), true);
-        //mc.getSoundHandler().playSound(new StationarySound(sound, pos, 1.0F, pitch, SoundCategory.AMBIENT));
+            mc.world.playSound(player.getPosition(), sound, SoundCategory.RECORDS, volume, note.getPitch(), true);
     }
     
     @Override
