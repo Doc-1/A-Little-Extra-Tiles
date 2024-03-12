@@ -76,8 +76,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         
     }
     
-    public void readNBTData(ItemStack stack) {}
-    
     public NBTTagCompound getNBTData(ItemStack stack) {
         return stack.getTagCompound();
     }
@@ -120,7 +118,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         
         if (stackNBT.hasKey("measurements")) {
             NBTTagList list = stackNBT.getTagList("measurements", NBT.TAG_COMPOUND);
-            
+            System.out.println(list);
         }
         
         int contextSize = getContext(nbt);
@@ -141,10 +139,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         NBTUtils.writeDoubleArrayFrom(posOffsetted.x, posOffsetted.y, posOffsetted.z);
         
         nbt.setString("facing", position.facing.getName());
-        nbt.setInteger("context", contextSize);
-        NBTTagList list = new NBTTagList();
-        list.appendTag(nbt);
-        stackNBT.setTag("measurement_" + index, list);
         
         /*
         NBTUtils.writeDoubleArrayFrom(nbt, "pos_" + additional, posOffsetted.x, posOffsetted.y, posOffsetted.z);
@@ -161,13 +155,11 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     }
     
     public static int getContext(NBTTagCompound nbt) {
-        List<String> contextList = LittleGridContext.getNames();
-        int contextSize = ItemMultiTiles.currentContext.size;
-        if (nbt.hasKey("context") && nbt.getInteger("context") > 0)
-            contextSize = Integer.parseInt(contextList.get(nbt.getInteger("context")));
-        
+        int contextSize = LittleGridContext.getNames().indexOf(ItemMultiTiles.currentContext.size + "");
+        if (nbt.hasKey("context") && nbt.getInteger("context") > 0) {
+            contextSize = nbt.getInteger("context");
+        }
         return contextSize;
-        
     }
     
     public class PosData {

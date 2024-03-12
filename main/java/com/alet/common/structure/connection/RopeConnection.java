@@ -9,6 +9,8 @@ import javax.vecmath.Vector3d;
 
 import com.alet.common.entity.RopeData;
 import com.alet.common.structure.type.LittleRopeConnectionALET;
+import com.creativemd.creativecore.common.utils.math.Rotation;
+import com.creativemd.creativecore.common.utils.math.RotationUtils;
 import com.creativemd.creativecore.common.utils.math.collision.MatrixUtils;
 import com.creativemd.creativecore.common.utils.math.vec.IVecOrigin;
 import com.creativemd.creativecore.common.utils.mc.TickUtils;
@@ -32,6 +34,7 @@ import com.google.common.base.Objects;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
@@ -43,6 +46,7 @@ public class RopeConnection {
     private final IWorldPositionProvider parent;
     
     private BlockPos relativePos;
+    private BlockPos unrotatedPos;
     private TileEntityLittleTiles cachedTe;
     private Vector3d targetCenter;
     public Vector3d backupTargetCenter;
@@ -57,6 +61,7 @@ public class RopeConnection {
         this.parent = parent;
         this.IS_HEAD = isHead;
         this.relativePos = location.pos.subtract(this.parent.getPos());
+        this.unrotatedPos = relativePos;
         if (location.worldUUID != null)
             worldUUID = location.worldUUID;
         this.targetStructureIndex = targetStructureIndex;
@@ -71,6 +76,11 @@ public class RopeConnection {
             relativePos = new BlockPos(array[0], array[1], array[2]);
         else
             throw new InvalidParameterException("No valid coord given " + nbt);
+        array = nbt.getIntArray("unrotCoord");
+        if (array.length == 3)
+            unrotatedPos = new BlockPos(array[0], array[1], array[2]);
+        else
+            unrotatedPos = relativePos;
         if (nbt.hasKey("world"))
             this.worldUUID = UUID.fromString(nbt.getString("world"));
         if (nbt.hasKey("xCenter") && nbt.hasKey("yCenter") && nbt.hasKey("zCenter"))
@@ -88,6 +98,7 @@ public class RopeConnection {
         if (this.worldUUID != null)
             nbt.setString("world", worldUUID.toString());
         nbt.setIntArray("coord", new int[] { relativePos.getX(), relativePos.getY(), relativePos.getZ() });
+        nbt.setIntArray("unrotCoord", new int[] { unrotatedPos.getX(), unrotatedPos.getY(), unrotatedPos.getZ() });
         if (targetCenter != null) {
             nbt.setDouble("xCenter", targetCenter.x);
             nbt.setDouble("yCenter", targetCenter.y);
@@ -242,7 +253,7 @@ public class RopeConnection {
         World world = getWorld();
         if (world == null)
             throw new MissingStructureException(absoluteCoord);
-        BlockPos original = relativePos.add(((LittleRopeConnectionALET) parent).prevBlockPosition);
+        BlockPos original = unrotatedPos.add(((LittleRopeConnectionALET) parent).prevBlockPosition);
         MutableBlockPos mPos = new MutableBlockPos();
         for (int x = absoluteCoord.getX() - 1; x <= absoluteCoord.getX() + 1; x++)
             for (int y = absoluteCoord.getY() - 1; y <= absoluteCoord.getY() + 1; y++)
@@ -329,6 +340,14 @@ public class RopeConnection {
     
     public boolean isLinkToAnotherWorld() {
         return this.worldUUID != null;
+    }
+    
+    public void rotateConnection(Rotation rot) {
+        relativePos = rot.getMatrix().transform(relativePos);
+    }
+    
+    public void mirrorConnection(Axis axis) {
+        relativePos = RotationUtils.flip(relativePos, axis);
     }
     
     /*

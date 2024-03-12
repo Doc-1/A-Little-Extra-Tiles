@@ -24,6 +24,7 @@ import com.creativemd.littletiles.common.action.LittleActionException;
 import com.creativemd.littletiles.common.action.block.LittleActionActivated;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.animation.AnimationGuiHandler;
+import com.creativemd.littletiles.common.structure.directional.StructureDirectional;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureGuiParser;
@@ -48,22 +49,20 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
-    //@StructureDirectional
+    @StructureDirectional(saveKey = "conList")
     public List<RopeConnection> connections = new ArrayList<RopeConnection>();
+    
     public int prevStructureIndex = -1;
     public BlockPos prevBlockPosition;
     
@@ -73,12 +72,14 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
     @Override
     protected void loadFromNBTExtra(NBTTagCompound nbt) {
+        /*
         NBTTagList conList = nbt.getTagList("conList", Constants.NBT.TAG_COMPOUND);
         connections.clear();
         for (NBTBase n : conList) {
             RopeConnection c = new RopeConnection(this, (NBTTagCompound) n);
             connections.add(c);
         }
+        */
         if (nbt.hasKey("prev_data")) {
             int[] data = nbt.getIntArray("prev_data");
             if (data.length == 4) {
@@ -97,6 +98,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
     
     @Override
     protected void writeToNBTExtra(NBTTagCompound nbt) {
+        /*
         NBTTagList conList = new NBTTagList();
         for (RopeConnection con : connections) {
             con.getTarget();
@@ -105,6 +107,7 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
             conList.appendTag(nb);
         }
         nbt.setTag("conList", conList);
+        */
     }
     
     @Override
@@ -278,6 +281,8 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
         //System.out.println(this.connections);
         for (RopeConnection con : this.connections) {
             if (!con.IS_HEAD)
+                continue;
+            if (con.getTarget() == null)
                 continue;
             RopeData data = con.ropeData;
             Vector3d headPos = this.axisCenter.getCenter();

@@ -54,20 +54,19 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         int b = (int) sliderB.value;
         
         int color = ColorUtilsAlet.RGBAToInt(r, g, b, 0);
-        NBTTagList list = new NBTTagList();
-        
-        NBTTagCompound nbt = new NBTTagCompound();
-        if (stackNBT.hasKey("measurement_" + index)) {
-            NBTTagList l = stackNBT.getTagList("measurement_" + index, NBT.TAG_COMPOUND);
-            nbt = l.getCompoundTagAt(0);
+        NBTTagCompound data = new NBTTagCompound();
+        NBTTagCompound measurementList = new NBTTagCompound();
+        if (stackNBT.hasKey("measurements")) {
+            measurementList = (NBTTagCompound) stackNBT.getTag("measurements");
         }
-        nbt.setInteger("context", context);
-        nbt.setString("shape", shape);
-        nbt.setInteger("color", color);
-        list.appendTag(nbt);
-        stackNBT.setTag("measurement_" + index, list);
+        data.setInteger("context", context);
+        data.setString("shape", shape);
+        data.setInteger("color", color);
+        measurementList.setTag(index + "", data);
+        stackNBT.setTag("measurements", measurementList);
         stackNBT.setInteger("index", index);
         stack.setTagCompound(stackNBT);
+        System.out.println(context);
     }
     
     @Override
@@ -82,9 +81,9 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         int index = stackNBT.getInteger("index");
         
         NBTTagCompound nbt = new NBTTagCompound();
-        if (stackNBT.hasKey("measurement_" + index)) {
-            NBTTagList l = stackNBT.getTagList("measurement_" + index, NBT.TAG_COMPOUND);
-            nbt = l.getCompoundTagAt(0);
+        if (stackNBT.hasKey("measurements")) {
+            NBTTagCompound measurementList = (NBTTagCompound) stackNBT.getTag("measurements");
+            nbt = (NBTTagCompound) measurementList.getTag(index + "");
         }
         int contextSize = ItemTapeMeasure.getContext(nbt);
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
@@ -98,9 +97,9 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         measurmentTypeBox.index = ItemTapeMeasure.measurementType;
         controls.add(measurmentTypeBox);
         
-        GuiComboBox contextBox = new GuiComboBox("context", 120, 0, 15, LittleGridContext.getNames());
-        contextBox.select(contextNames.indexOf(contextSize + ""));
-        contextBox.index = contextNames.indexOf(contextSize + "");
+        GuiComboBox contextBox = new GuiComboBox("context", 120, 0, 15, contextNames);
+        contextBox.select(contextSize);
+        contextBox.index = contextSize;
         controls.add(contextBox);
         
         GuiColorablePanel colorDisp = new GuiColorablePanel("colorDisp", 120, 22, 14, 14, new Color(0, 0, 0), ColorUtils
@@ -190,8 +189,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         colorPicker.updateShadeSlider();
         
         GuiComboBox contextBox = (GuiComboBox) this.get("context");
-        contextBox.select(contextNames.indexOf(contextSize + ""));
-        contextBox.index = contextNames.indexOf(contextSize + "");
+        contextBox.select(contextSize);
+        contextBox.index = contextSize;
         
         ((GuiComboBox) this.get("shape")).select(shape);
         

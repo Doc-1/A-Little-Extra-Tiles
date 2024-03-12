@@ -49,6 +49,7 @@ import com.alet.common.packet.PacketUpdateBreakBlock;
 import com.alet.common.packet.PacketUpdateMutateFromServer;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
+import com.alet.common.structure.connection.RopeConnection;
 import com.alet.common.structure.type.LittleAlwaysOnLight;
 import com.alet.common.structure.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
 import com.alet.common.structure.type.LittleCamPlayerALET;
@@ -99,11 +100,14 @@ import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.opener.CustomGuiHandler;
 import com.creativemd.creativecore.common.gui.opener.GuiHandler;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
+import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.dialogs.SubGuiSignalEvents.GuiSignalEventsButton;
 import com.creativemd.littletiles.client.gui.handler.LittleStructureGuiHandler;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.structure.attribute.LittleStructureAttribute;
+import com.creativemd.littletiles.common.structure.directional.StructureDirectionalField;
+import com.creativemd.littletiles.common.structure.directional.StructureDirectionalType;
 import com.creativemd.littletiles.common.structure.exception.CorruptedConnectionException;
 import com.creativemd.littletiles.common.structure.exception.NotYetConnectedException;
 import com.creativemd.littletiles.common.structure.registry.LittleStructureRegistry;
@@ -116,6 +120,8 @@ import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSig
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalInput.LittleStructureTypeInput;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput.LittleStructureTypeOutput;
+import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.ingredient.StackIngredient;
 import com.creativemd.littletiles.server.LittleTilesServer;
 
@@ -128,7 +134,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -256,7 +264,42 @@ public class ALET {
                 
             });
         }
-        
+        StructureDirectionalType.register(RopeConnection.class, new StructureDirectionalType<RopeConnection>() {
+            
+            @Override
+            public RopeConnection read(StructureDirectionalField field, LittleStructure structure, NBTBase nbt) {
+                return new RopeConnection(structure, (NBTTagCompound) nbt);
+            }
+            
+            @Override
+            public NBTBase write(StructureDirectionalField field, RopeConnection value) {
+                return value.writeToNBT(new NBTTagCompound());
+            }
+            
+            @Override
+            public RopeConnection move(StructureDirectionalField field, RopeConnection value, LittleGridContext context, LittleVec offset) {
+                return value;
+            }
+            
+            @Override
+            public RopeConnection mirror(StructureDirectionalField field, RopeConnection value, LittleGridContext context, Axis axis, LittleVec doubledCenter) {
+                value.mirrorConnection(axis);
+                return value;
+            }
+            
+            @Override
+            public RopeConnection rotate(StructureDirectionalField field, RopeConnection value, LittleGridContext context, Rotation rotation, LittleVec doubledCenter) {
+                value.rotateConnection(rotation);
+                System.out.println("hello");
+                return value;
+            }
+            
+            @Override
+            public Object getDefault(StructureDirectionalField field, LittleStructure structure, Object defaultValue) {
+                return defaultValue;
+            }
+            
+        });
         GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
             
             @Override
@@ -502,6 +545,7 @@ public class ALET {
             CreativeCorePacket.registerPacket(PacketSendServerCams.class);
             CreativeCorePacket.registerPacket(PacketGetServerCams.class);
         }
+        
         LittleStructurePremade.registerPremadeStructureType(
             new LittleStructureTypeInput("single_input32", "premade", LittleSignalInput.class, LittleStructureAttribute.EXTRA_RENDERING, ALET.MODID, 32));
         LittleStructurePremade.registerPremadeStructureType(
