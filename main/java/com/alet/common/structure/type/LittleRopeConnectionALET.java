@@ -183,7 +183,6 @@ public class LittleRopeConnectionALET extends LittleAdvancedDoor {
                 ItemLittleRope.removeSelected(heldItem);
             }
         }
-        System.out.println(this.getIndex());
         
         return true;
         

@@ -1,13 +1,17 @@
 package com.alet.items;
 
+import java.util.List;
+
 import com.alet.client.gui.SubGuiLittleRope;
 import com.alet.common.entity.RopeData;
 import com.creativemd.creativecore.common.utils.math.Rotation;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.api.ILittleTool;
 import com.creativemd.littletiles.common.tile.math.location.StructureLocation;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,6 +44,7 @@ public class ItemLittleRope extends Item implements ILittleTool {
     }
     
     public static RopeData writeDataFromNBT(NBTTagCompound nbt) {
+        System.out.println(nbt);
         return new RopeData(nbt.getInteger("color"), nbt.getDouble("thickness"), nbt.getDouble("tautness"));
     }
     
@@ -48,6 +53,17 @@ public class ItemLittleRope extends Item implements ILittleTool {
         if (nbt != null && (nbt.hasKey("selected")))
             return true;
         return false;
+    }
+    
+    @Override
+    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        if (worldIn != null && !stack.hasTagCompound()) {
+            NBTTagCompound stackNBT = new NBTTagCompound();
+            stackNBT.setDouble("thickness", 0.3F);
+            stackNBT.setDouble("tautness", 0.5F);
+            stackNBT.setInteger("color", ColorUtils.BLACK);
+            stack.setTagCompound(stackNBT);
+        }
     }
     
     public static void addSelected(ItemStack rope, StructureLocation location) {
