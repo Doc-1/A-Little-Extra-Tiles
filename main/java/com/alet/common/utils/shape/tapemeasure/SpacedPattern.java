@@ -4,31 +4,33 @@ import java.util.List;
 
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.tiles.SelectLittleTile;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.util.math.Vec3d;
 
 public class SpacedPattern extends TapeMeasureShape {
     
-    public SpacedPattern(List<Vec3d> listOfPoints, int contextSz) {
-        super(listOfPoints, contextSz);
+    public SpacedPattern(List<Vec3d> listOfPoints, LittleGridContext context) {
+        super(listOfPoints, context);
+        this.pointsNeeded = 2;
+        // TODO Auto-generated constructor stub
     }
     
-    public SpacedPattern() {
+    @Override
+    protected void getText(GuiOverlayTextList textList, int colorInt) {
+        // TODO Auto-generated method stub
         
     }
     
     @Override
-    public void getText(GuiOverlayTextList textList, int colorInt) {
+    protected void drawShape(float red, float green, float blue, float alpha, List<SelectLittleTile> listOfTilePos) {
+        // TODO Auto-generated method stub
         
     }
     
     @Override
-    public void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha) {
-        
-    }
-    
-    @Override
-    protected void calculateDistance(List<Vec3d> listOfPoints, int contextSize) {
+    public void calculateDistance() {
+        // TODO Auto-generated method stub
         
     }
     

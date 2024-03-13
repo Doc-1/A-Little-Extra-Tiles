@@ -6,6 +6,7 @@ import com.alet.ALETConfig;
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.tiles.SelectLittleTile;
+import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -15,12 +16,9 @@ import net.minecraft.util.math.Vec3d;
 
 public class Box extends TapeMeasureShape {
     
-    public Box(List<Vec3d> listOfPoints, int contextSize) {
-        super(listOfPoints, contextSize);
-    }
-    
-    public Box() {
-        
+    public Box(List<Vec3d> listOfPoints, LittleGridContext context) {
+        super(listOfPoints, context);
+        this.pointsNeeded = 2;
     }
     
     public static String xString = "";
@@ -94,23 +92,23 @@ public class Box extends TapeMeasureShape {
     }
     
     @Override
-    protected void calculateDistance(List<Vec3d> listOfPoints, int contextSize) {
+    public void calculateDistance() {
         Vec3d pos = listOfPoints.get(0);
         Vec3d pos2 = listOfPoints.get(1);
-        double xDistence = getDistence(pos.x, pos2.x, contextSize);
-        double yDistence = getDistence(pos.y, pos2.y, contextSize);
-        double zDistence = getDistence(pos.z, pos2.z, contextSize);
+        double xDistence = getDistence(pos.x, pos2.x, context.size);
+        double yDistence = getDistence(pos.y, pos2.y, context.size);
+        double zDistence = getDistence(pos.z, pos2.z, context.size);
         
-        double contDecimal = 1D / contextSize;
-        int denominator = contextSize;
+        double contDecimal = 1D / context.size;
+        int denominator = context.size;
         String[] xDis = String.valueOf(xDistence).split("\\.");
-        double xNumerator = contextSize * Double.parseDouble("0." + xDis[1]);
+        double xNumerator = context.size * Double.parseDouble("0." + xDis[1]);
         
         String[] yDis = String.valueOf(yDistence).split("\\.");
-        double yNumerator = contextSize * Double.parseDouble("0." + yDis[1]);
+        double yNumerator = context.size * Double.parseDouble("0." + yDis[1]);
         
         String[] zDis = String.valueOf(zDistence).split("\\.");
-        double zNumerator = contextSize * Double.parseDouble("0." + zDis[1]);
+        double zNumerator = context.size * Double.parseDouble("0." + zDis[1]);
         
         String xStr = "";
         String yStr = "";
@@ -150,14 +148,14 @@ public class Box extends TapeMeasureShape {
     }
     
     @Override
-    public void getText(GuiOverlayTextList textList, int colorInt) {
+    protected void getText(GuiOverlayTextList textList, int colorInt) {
         textList.addText("X: " + xString, colorInt);
         textList.addText("Y: " + yString, colorInt);
         textList.addText("Z: " + zString, colorInt);
     }
     
     @Override
-    public void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha) {
+    protected void drawShape(float red, float green, float blue, float alpha, List<SelectLittleTile> listOfTilePos) {
         SelectLittleTile tilePosMin = listOfTilePos.get(0);
         SelectLittleTile tilePosMax = listOfTilePos.get(1);
         double centerX_1 = tilePosMin.centerX;
@@ -167,8 +165,8 @@ public class Box extends TapeMeasureShape {
         double centerX_2 = tilePosMax.centerX;
         double centerY_2 = tilePosMax.centerY;
         double centerZ_2 = tilePosMax.centerZ;
-        drawBox(tilePosMin, contextSize, 1.0F, 0.0F, 0.0F, alpha);
-        drawBox(tilePosMax, contextSize, 0.0F, 1.0F, 0.0F, alpha);
+        drawBox(tilePosMin, context.size, 1.0F, 0.0F, 0.0F, alpha);
+        drawBox(tilePosMax, context.size, 0.0F, 1.0F, 0.0F, alpha);
         //System.out.println(new LittleAbsoluteVec(new BlockPos(centerX_1, centerY_1, centerZ_1), LittleGridContext.get(contextSize)));
         if (centerX_1 < centerX_2 && centerY_1 > centerY_2 && centerZ_1 > centerZ_2) {
             drawBoundingBox(tilePosMin.corner_6, tilePosMax.corner_2, red, green, blue, alpha);
@@ -232,4 +230,5 @@ public class Box extends TapeMeasureShape {
         }
         
     }
+    
 }

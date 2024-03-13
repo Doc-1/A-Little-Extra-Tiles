@@ -55,18 +55,19 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         
         int color = ColorUtilsAlet.RGBAToInt(r, g, b, 0);
         NBTTagCompound data = new NBTTagCompound();
-        NBTTagCompound measurementList = new NBTTagCompound();
-        if (stackNBT.hasKey("measurements")) {
-            measurementList = (NBTTagCompound) stackNBT.getTag("measurements");
-        }
+        NBTTagCompound measurements = new NBTTagCompound();
+        if (stackNBT.hasKey("measurements"))
+            measurements = (NBTTagCompound) stackNBT.getTag("measurements");
+        if (measurements.hasKey(index + ""))
+            data = measurements.getCompoundTag(index + "");
+        
         data.setInteger("context", context);
         data.setString("shape", shape);
         data.setInteger("color", color);
-        measurementList.setTag(index + "", data);
-        stackNBT.setTag("measurements", measurementList);
+        measurements.setTag(index + "", data);
+        stackNBT.setTag("measurements", measurements);
         stackNBT.setInteger("index", index);
         stack.setTagCompound(stackNBT);
-        System.out.println(stackNBT);
     }
     
     @Override

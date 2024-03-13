@@ -14,6 +14,7 @@ import com.alet.common.utils.TapeMeasureKeyEventHandler;
 import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
@@ -102,7 +103,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             NBTTagCompound data = new NBTTagCompound();
             data.setInteger("context", ItemMultiTiles.currentContext.index);
             data.setString("shape", "Box");
-            data.setInteger("color", 0);
+            data.setInteger("color", ColorUtils.WHITE);
             measurementList.setTag("0", data);
             stackNBT.setTag("measurements", measurementList);
             stackNBT.setInteger("index", 0);
@@ -141,7 +142,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         Vec3d posOffsetted = StructureUtils.facingOffset(absPos.getPosX(), absPos.getPosY(), absPos.getPosZ(), contextSize,
             position.facing);
         
-        int additional = rightClick ? 0 : 1;
+        int additional = rightClick ? 1 : 0;
         if (GuiScreen.isCtrlKeyDown())
             additional += 2;
         NBTTagCompound data = ((NBTTagCompound) stackNBT.getTag("measurements")).getCompoundTag(index + "");
@@ -160,7 +161,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     }
     
     public static LittleGridContext getContext(NBTTagCompound nbt) {
-        
         return (nbt.hasKey("context") && nbt.getInteger("context") > 0 && nbt.getInteger(
             "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[nbt.getInteger(
                 "context")] : ItemMultiTiles.currentContext;
@@ -199,14 +199,12 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
                 nbt = l.getCompoundTagAt(0);
             }
             
-            int contextSize = ItemTapeMeasure.getContext(nbt).size;
-            LittleAbsoluteVec pos = new LittleAbsoluteVec(result, LittleGridContext.get(contextSize));
-            Vec3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), contextSize,
+            LittleGridContext context = ItemTapeMeasure.getContext(nbt);
+            LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
+            Vec3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
                 result.sideHit);
             
-            SelectLittleTile tilePosCursor = new SelectLittleTile(posEdit, LittleGridContext.get(contextSize));
-            
-            TapeRenderer.renderCursor(stackNBT, index, contextSize, tilePosCursor);
+            TapeRenderer.renderCursor(posEdit, context);
         }
     }
     
@@ -231,6 +229,15 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             else if (index < 0)
                 index = 9;
             stackNBT.setInteger("index", index);
+            if (!stackNBT.getCompoundTag("measurements").hasKey(index + "")) {
+                NBTTagCompound measurementList = stackNBT.getCompoundTag("measurements");
+                NBTTagCompound data = new NBTTagCompound();
+                data.setInteger("context", ItemMultiTiles.currentContext.index);
+                data.setString("shape", "Box");
+                data.setInteger("color", ColorUtils.WHITE);
+                measurementList.setTag(index + "", data);
+                stackNBT.setTag("measurements", measurementList);
+            }
             stack.setTagCompound(stackNBT);
             
         }

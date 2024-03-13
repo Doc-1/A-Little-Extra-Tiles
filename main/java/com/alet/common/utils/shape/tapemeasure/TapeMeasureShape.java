@@ -17,17 +17,13 @@ import net.minecraft.util.math.Vec3d;
 public abstract class TapeMeasureShape {
     
     public static Minecraft mc = Minecraft.getMinecraft();
-    private List<Vec3d> listOfPoints = new ArrayList<Vec3d>();
-    private int contextSize;
+    protected List<Vec3d> listOfPoints = new ArrayList<Vec3d>();
+    protected LittleGridContext context;
+    protected byte pointsNeeded = 2;
     
-    public TapeMeasureShape(List<Vec3d> listOfPoints, int contextSz) {
+    public TapeMeasureShape(List<Vec3d> listOfPoints, LittleGridContext context) {
         this.listOfPoints = listOfPoints;
-        contextSize = contextSz;
-        calculateDistance();
-    }
-    
-    public TapeMeasureShape() {
-        
+        this.context = context;
     }
     
     public static double getDistence(double pos_1, double pos_2, int contextSize) {
@@ -37,6 +33,28 @@ public abstract class TapeMeasureShape {
         double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
         
         return distence;
+    }
+    
+    protected List<SelectLittleTile> getSelectedTiles(byte numberOfPoints) {
+        List<SelectLittleTile> selectedTiles = new ArrayList<>();
+        
+        if (numberOfPoints >= 1 && listOfPoints.size() >= 1 && listOfPoints.get(0) != null) {
+            SelectLittleTile tilePosMin = new SelectLittleTile(listOfPoints.get(0), context);
+            selectedTiles.add(tilePosMin);
+        }
+        if (numberOfPoints >= 2 && listOfPoints.size() >= 2 && listOfPoints.get(1) != null) {
+            SelectLittleTile tilePosMax = new SelectLittleTile(listOfPoints.get(1), context);
+            selectedTiles.add(tilePosMax);
+        }
+        if (numberOfPoints >= 3 && listOfPoints.size() >= 3 && listOfPoints.get(2) != null) {
+            SelectLittleTile secondTilePosMin = new SelectLittleTile(listOfPoints.get(2), context);
+            selectedTiles.add(secondTilePosMin);
+        }
+        if (numberOfPoints >= 4 && listOfPoints.size() >= 4 && listOfPoints.get(3) != null) {
+            SelectLittleTile secondTilePosMax = new SelectLittleTile(listOfPoints.get(3), context);
+            selectedTiles.add(secondTilePosMax);
+        }
+        return selectedTiles.size() >= numberOfPoints ? selectedTiles : null;
     }
     
     protected static double cleanDouble(double doub) {
@@ -124,13 +142,25 @@ public abstract class TapeMeasureShape {
         return 0;
     }
     
-    public abstract void getText(GuiOverlayTextList textList, int colorInt);
-    
-    public abstract void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha);
-    
-    protected abstract void calculateDistance(List<Vec3d> listOfPoints, int contextSize);
-    
-    public void calculateDistance() {
-        calculateDistance(listOfPoints, contextSize);
+    public void tryGetText(GuiOverlayTextList textList, int colorInt) {
+        List<SelectLittleTile> listOfTilePos = this.getSelectedTiles(this.pointsNeeded);
+        if (listOfTilePos != null) {
+            calculateDistance();
+            getText(textList, colorInt);
+        }
     }
+    
+    protected abstract void getText(GuiOverlayTextList textList, int colorInt);
+    
+    public void tryDrawShape(float red, float green, float blue, float alpha) {
+        List<SelectLittleTile> listOfTilePos = this.getSelectedTiles(this.pointsNeeded);
+        if (listOfTilePos != null) {
+            drawShape(red, green, blue, alpha, listOfTilePos);
+        }
+    }
+    
+    protected abstract void drawShape(float red, float green, float blue, float alpha, List<SelectLittleTile> listOfTilePos);
+    
+    public abstract void calculateDistance();
+    
 }

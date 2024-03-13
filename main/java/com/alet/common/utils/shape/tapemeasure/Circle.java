@@ -15,8 +15,10 @@ import net.minecraft.util.math.Vec3d;
 
 public class Circle extends TapeMeasureShape {
     
-    public Circle(List<Vec3d> listOfPoints, int contextSz) {
-        super(listOfPoints, contextSz);
+    public Circle(List<Vec3d> listOfPoints, LittleGridContext context) {
+        super(listOfPoints, context);
+        this.pointsNeeded = 2;
+        // TODO Auto-generated constructor stub
     }
     
     public static void drawCircle(Vec3d pos, Vec3d pos2, float red, float green, float blue, float alpha) {
@@ -43,19 +45,19 @@ public class Circle extends TapeMeasureShape {
     }
     
     @Override
-    protected void calculateDistance(List<Vec3d> listOfPoints, int contextSize) {
+    protected void getText(GuiOverlayTextList textList, int colorInt) {
         // TODO Auto-generated method stub
         
     }
     
     @Override
-    public void getText(GuiOverlayTextList textList, int colorInt) {
+    protected void drawShape(float red, float green, float blue, float alpha, List<SelectLittleTile> listOfTilePos) {
         // TODO Auto-generated method stub
         
     }
     
     @Override
-    public void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha) {
+    public void calculateDistance() {
         // TODO Auto-generated method stub
         
     }

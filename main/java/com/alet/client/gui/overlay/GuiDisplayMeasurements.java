@@ -3,126 +3,142 @@ package com.alet.client.gui.overlay;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Color;
 
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
-import com.alet.items.ItemTapeMeasure;
+import com.alet.client.render.tapemeasure.TapeRenderer;
+import com.alet.common.utils.shape.tapemeasure.TapeMeasureShape;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVec;
 import com.creativemd.littletiles.common.tile.math.vec.LittleVecContext;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
-import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 
 public class GuiDisplayMeasurements extends GuiControl {
     
     public static Style transparentStyle = new Style("Transparent", new ColoredDisplayStyle(0, 0, 0, 40), new ColoredDisplayStyle(90, 90, 90, 60), new ColoredDisplayStyle(90, 90, 90, 50), new ColoredDisplayStyle(198, 198, 198), new ColoredDisplayStyle(0, 0, 0, 100));
-    public static EntityPlayer player;
     protected static ScaledResolution scaledResolution;
+    public static int slotID = -1;
+    public static Tessellator tessellator = Tessellator.getInstance();
+    public static BufferBuilder bufferbuilder = tessellator.getBuffer();
+    public static Minecraft mc = Minecraft.getMinecraft();
     
     public GuiDisplayMeasurements(String name) {
-        super(name, 0, 0, 0, 0);
+        super(name, 0, 0, 100, 100);
     }
     
     @Override
     protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
-        player = Minecraft.getMinecraft().player;
+        EntityPlayer player = mc.player;
         scaledResolution = new ScaledResolution(mc);
-        
         posX = 0;
         posY = 0;
+        ItemStack stack = TapeRenderer.tapemeasure;
         
-        ItemStack stack = ItemStack.EMPTY;
-        LittleInventory inventory = new LittleInventory(player);
-        
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).getItem() instanceof ItemTapeMeasure) {
-                stack = inventory.get(i);
-                break;
-            }
-        }
-        if (!stack.isEmpty() && !Minecraft.getMinecraft().gameSettings.showDebugInfo) {
-            
+        if (!stack.isEmpty() && stack.hasTagCompound() && !Minecraft.getMinecraft().gameSettings.showDebugInfo) {
             GuiOverlayTextList textList = new GuiOverlayTextList("measurement", 0, 90, 140, getParent());
             textList.setStyle(transparentStyle);
             
+            NBTTagCompound stackNBT = stack.getTagCompound();
+            if (stackNBT.hasKey("measurements")) {
+                NBTTagCompound measurements = (NBTTagCompound) stackNBT.getTag("measurements");
+                for (String key : measurements.getKeySet()) {
+                    NBTTagCompound measurement = (NBTTagCompound) measurements.getTag(key);
+                    int index = Integer.parseInt(key);
+                    Color color = ColorUtils.IntToRGBA(measurement.getInteger("color"));
+                    TapeMeasureShape shape = null;
+                    if (TapeRenderer.cachedMeasurements.containsKey(index))
+                        shape = TapeRenderer.cachedMeasurements.get(index);
+                    String title = "Measurment " + (index + 1);
+                    if (index == stackNBT.getInteger("index"))
+                        title = TextFormatting.UNDERLINE + title;
+                    textList.addText(title, ColorUtils.WHITE);
+                    shape.tryGetText(textList, ColorUtils.RGBAToInt(color));
+                }
+            }
             GlStateManager.pushMatrix();
-            GlStateManager.translate(0, 0, 50);
             GlStateManager.disableCull();
             GlStateManager.scale(0.9F, 0.9F, 0.0F);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glFlush();
             GlStateManager.enableCull();
-            if (stack.hasTagCompound()) {
-                /*
-                if (data != null) {
-                    
-                    NBTTagCompound stackNBT = stack.getTagCompound();
-                    NBTTagList list = new NBTTagList();
-                    for (int i = 0; i < 10; i++) {
-                        list = stackNBT.getTagList("measurement_" + i, NBT.TAG_COMPOUND);
-                        NBTTagCompound nbt = list.getCompoundTagAt(0);
-                        String shapeName = nbt.getString("shape");
-                        if (!shapeName.equals("")) {
-                            int contextSize = ItemTapeMeasure.getContext(nbt);
-                            
-                            int colorInt = nbt.hasKey("shape") ? nbt.getInteger("color") : ColorUtils.WHITE;
-                            LittleAbsoluteVec pos = new LittleAbsoluteVec(data.result, LittleGridContext.get(contextSize));
-                            
-                            Vec3d vec1 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
-                                contextSize, data.result.sideHit);
-                            Vec3d vec2 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
-                                contextSize, data.result.sideHit);
-                            Vec3d vec3 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
-                                contextSize, data.result.sideHit);
-                            Vec3d vec4 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
-                                contextSize, data.result.sideHit);
-                            
-                            if (nbt.hasKey("x1"))
-                                vec1 = new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1"));
-                            if (nbt.hasKey("x2"))
-                                vec2 = new Vec3d(nbt.getDouble("x2"), nbt.getDouble("y2"), nbt.getDouble("z2"));
-                            
-                            if (nbt.hasKey("x3"))
-                                vec3 = new Vec3d(nbt.getDouble("x3"), nbt.getDouble("y3"), nbt.getDouble("z3"));
-                            if (nbt.hasKey("x4"))
-                                vec4 = new Vec3d(nbt.getDouble("x4"), nbt.getDouble("y4"), nbt.getDouble("z4"));
-                            
-                            if (nbt.hasKey("x1") || nbt.hasKey("x2") || nbt.hasKey("x3") || nbt.hasKey("x4")) {
-                                try {
-                                    List<Vec3d> listOfPoints = new ArrayList<Vec3d>();
-                                    listOfPoints.add(vec1);
-                                    listOfPoints.add(vec2);
-                                    listOfPoints.add(vec3);
-                                    listOfPoints.add(vec4);
-                                    TapeMeasureShape shape = TapemeasureShapeRegistar.registeredShapes.get(shapeName)
-                                            .getConstructor(List.class, int.class).newInstance(listOfPoints, contextSize);
-                                    textList.addText("Measurment " + (i + 1), ColorUtils.WHITE);
-                                    shape.getText(textList, colorInt);
-                                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                    
-                    textList.renderControl(helper, 0, getRect());
-                    
-                }*/
-            }
+            textList.renderControl(helper, 0, getRect());
             GlStateManager.popMatrix();
         }
+        
+        /*
+        if (data != null) {
+            
+            NBTTagCompound stackNBT = stack.getTagCompound();
+            NBTTagList list = new NBTTagList();
+            for (int i = 0; i < 10; i++) {
+                list = stackNBT.getTagList("measurement_" + i, NBT.TAG_COMPOUND);
+                NBTTagCompound nbt = list.getCompoundTagAt(0);
+                String shapeName = nbt.getString("shape");
+                if (!shapeName.equals("")) {
+                    int contextSize = ItemTapeMeasure.getContext(nbt);
+                    
+                    int colorInt = nbt.hasKey("shape") ? nbt.getInteger("color") : ColorUtils.WHITE;
+                    LittleAbsoluteVec pos = new LittleAbsoluteVec(data.result, LittleGridContext.get(contextSize));
+                    
+                    Vec3d vec1 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                        contextSize, data.result.sideHit);
+                    Vec3d vec2 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                        contextSize, data.result.sideHit);
+                    Vec3d vec3 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                        contextSize, data.result.sideHit);
+                    Vec3d vec4 = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(),
+                        contextSize, data.result.sideHit);
+                    
+                    if (nbt.hasKey("x1"))
+                        vec1 = new Vec3d(nbt.getDouble("x1"), nbt.getDouble("y1"), nbt.getDouble("z1"));
+                    if (nbt.hasKey("x2"))
+                        vec2 = new Vec3d(nbt.getDouble("x2"), nbt.getDouble("y2"), nbt.getDouble("z2"));
+                    
+                    if (nbt.hasKey("x3"))
+                        vec3 = new Vec3d(nbt.getDouble("x3"), nbt.getDouble("y3"), nbt.getDouble("z3"));
+                    if (nbt.hasKey("x4"))
+                        vec4 = new Vec3d(nbt.getDouble("x4"), nbt.getDouble("y4"), nbt.getDouble("z4"));
+                    
+                    if (nbt.hasKey("x1") || nbt.hasKey("x2") || nbt.hasKey("x3") || nbt.hasKey("x4")) {
+                        try {
+                            List<Vec3d> listOfPoints = new ArrayList<Vec3d>();
+                            listOfPoints.add(vec1);
+                            listOfPoints.add(vec2);
+                            listOfPoints.add(vec3);
+                            listOfPoints.add(vec4);
+                            TapeMeasureShape shape = TapemeasureShapeRegistar.registeredShapes.get(shapeName)
+                                    .getConstructor(List.class, int.class).newInstance(listOfPoints, contextSize);
+                            textList.addText("Measurment " + (i + 1), ColorUtils.WHITE);
+                            shape.getText(textList, colorInt);
+                        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            
+            textList.renderControl(helper, 0, getRect());
+            
+        }*/
+        
     }
     
     /*

@@ -15,11 +15,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 
 public class Line extends TapeMeasureShape {
-    public Line() {}
     
-    public Line(List<Vec3d> listOfPoints, int contextSize) {
-        super(listOfPoints, contextSize);
-        calculateDistance();
+    public Line(List<Vec3d> listOfPoints, LittleGridContext context) {
+        super(listOfPoints, context);
+        this.pointsNeeded = 2;
     }
     
     public static String distance = "";
@@ -48,14 +47,13 @@ public class Line extends TapeMeasureShape {
     }
     
     @Override
-    protected void calculateDistance(List<Vec3d> listOfPoints, int contextSize) {
+    public void calculateDistance() {
         Vec3d pos = listOfPoints.get(0);
         Vec3d pos2 = listOfPoints.get(1);
-        LittleGridContext context = LittleGridContext.get(contextSize);
         
-        double xDist = getDistence(pos.x, pos2.x, contextSize);
-        double yDist = getDistence(pos.y, pos2.y, contextSize);
-        double zDist = getDistence(pos.z, pos2.z, contextSize);
+        double xDist = getDistence(pos.x, pos2.x, context.size);
+        double yDist = getDistence(pos.y, pos2.y, context.size);
+        double zDist = getDistence(pos.z, pos2.z, context.size);
         
         double dist = 0.0;
         if (xDist >= yDist && xDist >= zDist)
@@ -75,27 +73,27 @@ public class Line extends TapeMeasureShape {
                 distance = (int) (numerator) + "/" + denominator + " TILE";
             else
                 distance = distArr[0] + " BLOCK " + (int) (numerator) + "/" + denominator + " TILE";
-            distance = dist + "";
+            
         } else {
             String measurementName = ALETConfig.tapeMeasure.measurementName.get(ItemTapeMeasure.measurementType - 1);
-            double modifier = 1D / contextSize;
+            double modifier = 1D / context.size;
             distance = cleanDouble(changeMesurmentType((Math.floor((pos.distanceTo(
-                pos2) + modifier) * contextSize)) / contextSize)) + " " + measurementName;
+                pos2) + modifier) * context.size)) / context.size)) + " " + measurementName;
         }
         
     }
     
     @Override
-    public void getText(GuiOverlayTextList textList, int colorInt) {
+    protected void getText(GuiOverlayTextList textList, int colorInt) {
         textList.addText("Line: " + distance, colorInt);
     }
     
     @Override
-    public void drawShape(List<SelectLittleTile> listOfTilePos, int contextSize, float red, float green, float blue, float alpha) {
+    protected void drawShape(float red, float green, float blue, float alpha, List<SelectLittleTile> listOfTilePos) {
         SelectLittleTile tilePosMin = listOfTilePos.get(0);
         SelectLittleTile tilePosMax = listOfTilePos.get(1);
-        Box.drawBox(tilePosMin, contextSize, red, green, blue, 1.0F);
-        Box.drawBox(tilePosMax, contextSize, red, green, blue, 1.0F);
+        Box.drawBox(tilePosMin, context.size, red, green, blue, 1.0F);
+        Box.drawBox(tilePosMax, context.size, red, green, blue, 1.0F);
         EntityPlayer player = Minecraft.getMinecraft().player;
         
         Tessellator tessellator = Tessellator.getInstance();

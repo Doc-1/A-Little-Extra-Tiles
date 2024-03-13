@@ -81,14 +81,14 @@ public class ALETClient extends LittleTilesServer {
         
         ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
         
-        //MinecraftForge.EVENT_BUS.register(new TapeRenderer());
+        MinecraftForge.EVENT_BUS.register(new TapeRenderer());
         //MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
         MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
         
         LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER)
                 .setShouldRender(() -> TapeRenderer.slotID != -1));
         LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER)
-                .setShouldRender(() -> TapeRenderer.slotID != -1));
+                .setShouldRender(() -> !TapeRenderer.tapemeasure.isEmpty()));
         
         for (Item item : renderedItems) {
             CreativeCoreClient.registerItemColorHandler(item);
