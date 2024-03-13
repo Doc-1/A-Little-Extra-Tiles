@@ -290,7 +290,6 @@ public class ALET {
             @Override
             public RopeConnection rotate(StructureDirectionalField field, RopeConnection value, LittleGridContext context, Rotation rotation, LittleVec doubledCenter) {
                 value.rotateConnection(rotation);
-                System.out.println("hello");
                 return value;
             }
             

@@ -66,7 +66,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         stackNBT.setTag("measurements", measurementList);
         stackNBT.setInteger("index", index);
         stack.setTagCompound(stackNBT);
-        System.out.println(context);
+        System.out.println(stackNBT);
     }
     
     @Override
@@ -85,7 +85,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
             NBTTagCompound measurementList = (NBTTagCompound) stackNBT.getTag("measurements");
             nbt = (NBTTagCompound) measurementList.getTag(index + "");
         }
-        int contextSize = ItemTapeMeasure.getContext(nbt);
+        LittleGridContext contextSize = ItemTapeMeasure.getContext(nbt);
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
         String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         
@@ -98,8 +98,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         controls.add(measurmentTypeBox);
         
         GuiComboBox contextBox = new GuiComboBox("context", 120, 0, 15, contextNames);
-        contextBox.select(contextSize);
-        contextBox.index = contextSize;
+        contextBox.select(contextSize.index);
+        contextBox.index = contextSize.index;
         controls.add(contextBox);
         
         GuiColorablePanel colorDisp = new GuiColorablePanel("colorDisp", 120, 22, 14, 14, new Color(0, 0, 0), ColorUtils
@@ -171,7 +171,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         }
         List<String> contextNames = LittleGridContext.getNames();
         
-        int contextSize = ItemTapeMeasure.getContext(nbt);
+        int contextSize = ItemTapeMeasure.getContext(nbt).size;
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
         String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         

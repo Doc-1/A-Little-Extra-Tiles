@@ -31,9 +31,9 @@ public class NBTUtils {
     public static NBTTagList writeDoubleArray(double[] doubleArr) {
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < doubleArr.length; i++) {
-            NBTTagCompound n = new NBTTagCompound();
-            n.setDouble("", doubleArr[i]);
-            list.appendTag(n);
+            NBTTagDouble d = new NBTTagDouble(doubleArr[i]);
+            
+            list.appendTag(d);
         }
         return list;
     }
