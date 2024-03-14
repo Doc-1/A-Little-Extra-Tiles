@@ -131,7 +131,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             index = stackNBT.hasKey("index") ? stackNBT.getInteger("index") : 0;
         }
         
-        LittleGridContext context = getContext(nbt);
+        LittleGridContext context = getSelectedContext(stackNBT);
         int contextSize = context.size;
         RayTraceResult res = plr.rayTrace(6.0, Minecraft.getMinecraft().getRenderPartialTicks());
         LittleAbsoluteVec absPos = new LittleAbsoluteVec(res, context);
@@ -160,9 +160,19 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         
     }
     
-    public static LittleGridContext getContext(NBTTagCompound nbt) {
-        return (nbt.hasKey("context") && nbt.getInteger("context") > 0 && nbt.getInteger(
-            "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[nbt.getInteger(
+    public static LittleGridContext getSelectedContext(NBTTagCompound stackNBT) {
+        NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(stackNBT.getInteger("index") + "");
+        
+        return (selected.hasKey("context") && selected.getInteger("context") > 0 && selected.getInteger(
+            "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
+                "context")] : ItemMultiTiles.currentContext;
+    }
+    
+    public static LittleGridContext getContextAt(NBTTagCompound stackNBT, int index) {
+        NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(index + "");
+        
+        return (selected.hasKey("context") && selected.getInteger("context") > 0 && selected.getInteger(
+            "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
                 "context")] : ItemMultiTiles.currentContext;
     }
     
@@ -199,7 +209,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
                 nbt = l.getCompoundTagAt(0);
             }
             
-            LittleGridContext context = ItemTapeMeasure.getContext(nbt);
+            LittleGridContext context = LittleGridContext.get(4);
             LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
             Vec3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
                 result.sideHit);

@@ -72,7 +72,7 @@ public class TapeRenderer {
                     int index = Integer.parseInt(key);
                     String shapeName = measurement.getString("shape");
                     Color color = ColorUtils.IntToRGBA(measurement.getInteger("color"));
-                    LittleGridContext context = ItemTapeMeasure.getContext(measurement);
+                    LittleGridContext context = ItemTapeMeasure.getContextAt(stackNBT, index);
                     
                     Vec3d tilePosMin = lastKnownCursorPos;
                     Vec3d tilePosMax = lastKnownCursorPos;

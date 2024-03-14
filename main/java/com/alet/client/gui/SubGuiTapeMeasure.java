@@ -86,7 +86,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
             NBTTagCompound measurementList = (NBTTagCompound) stackNBT.getTag("measurements");
             nbt = (NBTTagCompound) measurementList.getTag(index + "");
         }
-        LittleGridContext contextSize = ItemTapeMeasure.getContext(nbt);
+        LittleGridContext contextSize = ItemTapeMeasure.getSelectedContext(nbt);
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
         String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         
@@ -172,7 +172,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         }
         List<String> contextNames = LittleGridContext.getNames();
         
-        int contextSize = ItemTapeMeasure.getContext(nbt).size;
+        int contextSize = ItemTapeMeasure.getSelectedContext(nbt).size;
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
         String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         
