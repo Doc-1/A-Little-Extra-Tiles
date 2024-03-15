@@ -5,25 +5,35 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+import javax.vecmath.Point3d;
+
 import com.alet.ALETConfig;
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.tiles.SelectLittleTile;
+import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class TapeMeasureShape {
+public abstract class MeasurementShape {
     
-    public static Minecraft mc = Minecraft.getMinecraft();
-    protected List<Vec3d> listOfPoints = new ArrayList<Vec3d>();
-    protected LittleGridContext context;
-    protected byte pointsNeeded = 2;
+    protected int pointsNeeded;
+    protected final String shapeName;
     
-    public TapeMeasureShape(List<Vec3d> listOfPoints, LittleGridContext context) {
-        this.listOfPoints = listOfPoints;
-        this.context = context;
+    public MeasurementShape(int pointsNeeded, String shapeName) {
+        this.pointsNeeded = pointsNeeded;
+        this.shapeName = shapeName;
+    }
+    
+    public String getKey() {
+        return shapeName;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public String getLocalizedName() {
+        return GuiControl.translateOrDefault("shape." + getKey(), getKey());
     }
     
     public static double getDistence(double pos_1, double pos_2, int contextSize) {
@@ -33,28 +43,6 @@ public abstract class TapeMeasureShape {
         double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
         
         return distence;
-    }
-    
-    protected List<SelectLittleTile> getSelectedTiles(byte numberOfPoints) {
-        List<SelectLittleTile> selectedTiles = new ArrayList<>();
-        
-        if (numberOfPoints >= 1 && listOfPoints.size() >= 1 && listOfPoints.get(0) != null) {
-            SelectLittleTile tilePosMin = new SelectLittleTile(listOfPoints.get(0), context);
-            selectedTiles.add(tilePosMin);
-        }
-        if (numberOfPoints >= 2 && listOfPoints.size() >= 2 && listOfPoints.get(1) != null) {
-            SelectLittleTile tilePosMax = new SelectLittleTile(listOfPoints.get(1), context);
-            selectedTiles.add(tilePosMax);
-        }
-        if (numberOfPoints >= 3 && listOfPoints.size() >= 3 && listOfPoints.get(2) != null) {
-            SelectLittleTile secondTilePosMin = new SelectLittleTile(listOfPoints.get(2), context);
-            selectedTiles.add(secondTilePosMin);
-        }
-        if (numberOfPoints >= 4 && listOfPoints.size() >= 4 && listOfPoints.get(3) != null) {
-            SelectLittleTile secondTilePosMax = new SelectLittleTile(listOfPoints.get(3), context);
-            selectedTiles.add(secondTilePosMax);
-        }
-        return selectedTiles.size() >= numberOfPoints ? selectedTiles : null;
     }
     
     protected static double cleanDouble(double doub) {
@@ -142,25 +130,31 @@ public abstract class TapeMeasureShape {
         return 0;
     }
     
-    public void tryGetText(GuiOverlayTextList textList, int colorInt) {
-        List<SelectLittleTile> listOfTilePos = this.getSelectedTiles(this.pointsNeeded);
-        if (listOfTilePos != null) {
-            calculateDistance();
-            getText(textList, colorInt);
+    public void tryGetText(GuiOverlayTextList textList, List<Point3d> points, LittleGridContext context, int colorInt) {
+        List<String> measurementUnits = tryGetMeasurementUnits(points, context);
+        if (!measurementUnits.isEmpty())
+            getText(textList, measurementUnits, colorInt);
+    }
+    
+    protected abstract void getText(GuiOverlayTextList textList, List<String> measurementUnits, int colorInt);
+    
+    public void tryDrawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+        
+        if (points != null && !points.isEmpty() && points.size() >= this.pointsNeeded) {
+            drawShape(points, context, red, green, blue, alpha);
         }
     }
     
-    protected abstract void getText(GuiOverlayTextList textList, int colorInt);
+    protected abstract void drawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha);
     
-    public void tryDrawShape(float red, float green, float blue, float alpha) {
-        List<SelectLittleTile> listOfTilePos = this.getSelectedTiles(this.pointsNeeded);
-        if (listOfTilePos != null) {
-            drawShape(red, green, blue, alpha, listOfTilePos);
-        }
+    public List<String> tryGetMeasurementUnits(List<Point3d> points, LittleGridContext context) {
+        if (points != null && points.size() >= this.pointsNeeded)
+            return getMeasurementUnits(points, context);
+        return new ArrayList<String>();
     }
     
-    protected abstract void drawShape(float red, float green, float blue, float alpha, List<SelectLittleTile> listOfTilePos);
+    protected abstract List<String> getMeasurementUnits(List<Point3d> points, LittleGridContext context);
     
-    public abstract void calculateDistance();
+    public abstract List<GuiControl> getCustomSettings(NBTTagCompound nbt, LittleGridContext context);
     
 }

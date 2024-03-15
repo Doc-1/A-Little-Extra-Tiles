@@ -7,7 +7,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.client.render.tapemeasure.TapeRenderer;
-import com.alet.common.utils.shape.tapemeasure.TapeMeasureShape;
+import com.alet.common.utils.shape.tapemeasure.MeasurementShape;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
@@ -62,14 +62,14 @@ public class GuiDisplayMeasurements extends GuiControl {
                     NBTTagCompound measurement = (NBTTagCompound) measurements.getTag(key);
                     int index = Integer.parseInt(key);
                     Color color = ColorUtils.IntToRGBA(measurement.getInteger("color"));
-                    TapeMeasureShape shape = null;
+                    MeasurementShape shape = null;
                     if (TapeRenderer.cachedMeasurements.containsKey(index))
                         shape = TapeRenderer.cachedMeasurements.get(index);
                     String title = "Measurment " + (index + 1);
                     if (index == stackNBT.getInteger("index"))
                         title = TextFormatting.UNDERLINE + title;
                     textList.addText(title, ColorUtils.WHITE);
-                    shape.tryGetText(textList, ColorUtils.RGBAToInt(color));
+                    // shape.tryGetText(textList, null, null, ColorUtils.RGBAToInt(color));
                 }
             }
             GlStateManager.pushMatrix();

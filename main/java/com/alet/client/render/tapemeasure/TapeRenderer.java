@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.vecmath.Point3d;
+
 import org.lwjgl.util.Color;
 
 import com.alet.common.utils.NBTUtils;
-import com.alet.common.utils.shape.TapemeasureShapeRegistar;
-import com.alet.common.utils.shape.tapemeasure.Box;
-import com.alet.common.utils.shape.tapemeasure.TapeMeasureShape;
+import com.alet.common.utils.shape.MeasurementShapeRegistar;
+import com.alet.common.utils.shape.tapemeasure.MeasurementShape;
+import com.alet.common.utils.shape.tapemeasure.MeasurementShapeBox;
 import com.alet.items.ItemTapeMeasure;
-import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.ingredient.LittleInventory;
@@ -24,7 +25,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -37,8 +37,8 @@ public class TapeRenderer {
     public static Tessellator tessellator = Tessellator.getInstance();
     public static BufferBuilder bufferbuilder = tessellator.getBuffer();
     public static ItemStack tapemeasure = ItemStack.EMPTY;
-    public static HashMap<Integer, TapeMeasureShape> cachedMeasurements = new HashMap<>();
-    public static Vec3d lastKnownCursorPos;
+    public static HashMap<Integer, MeasurementShape> cachedMeasurements = new HashMap<>();
+    public static Point3d lastKnownCursorPos;
     
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
@@ -74,43 +74,42 @@ public class TapeRenderer {
                     Color color = ColorUtils.IntToRGBA(measurement.getInteger("color"));
                     LittleGridContext context = ItemTapeMeasure.getContextAt(stackNBT, index);
                     
-                    Vec3d tilePosMin = lastKnownCursorPos;
-                    Vec3d tilePosMax = lastKnownCursorPos;
-                    Vec3d secondTilePosMin = lastKnownCursorPos;
-                    Vec3d secondTilePosMax = lastKnownCursorPos;
+                    Point3d point1 = lastKnownCursorPos;
+                    Point3d point2 = lastKnownCursorPos;
+                    Point3d point3 = lastKnownCursorPos;
+                    Point3d point4 = lastKnownCursorPos;
                     
                     if (measurement.hasKey("positions")) {
                         NBTTagCompound positions = measurement.getCompoundTag("positions");
                         if (positions.hasKey("0")) {
                             double[] p0 = NBTUtils.readDoubleArray(positions.getCompoundTag("0"), "pos", NBT.TAG_DOUBLE);
-                            tilePosMin = new Vec3d(p0[0], p0[1], p0[2]);
+                            point1 = new Point3d(p0[0], p0[1], p0[2]);
                         }
                         if (positions.hasKey("1")) {
                             double[] p1 = NBTUtils.readDoubleArray(positions.getCompoundTag("1"), "pos", NBT.TAG_DOUBLE);
-                            tilePosMax = new Vec3d(p1[0], p1[1], p1[2]);
+                            point2 = new Point3d(p1[0], p1[1], p1[2]);
                         }
                         if (positions.hasKey("2")) {
                             double[] p2 = NBTUtils.readDoubleArray(positions.getCompoundTag("2"), "pos", NBT.TAG_DOUBLE);
-                            secondTilePosMin = new Vec3d(p2[0], p2[1], p2[2]);
+                            point3 = new Point3d(p2[0], p2[1], p2[2]);
                         }
                         if (positions.hasKey("3")) {
                             double[] p3 = NBTUtils.readDoubleArray(positions.getCompoundTag("3"), "pos", NBT.TAG_DOUBLE);
-                            secondTilePosMax = new Vec3d(p3[0], p3[1], p3[2]);
+                            point4 = new Point3d(p3[0], p3[1], p3[2]);
                         }
                         //NBTUtils.readDoubleArray(positions, key)
                     }
-                    List<Vec3d> listOfPos = new ArrayList<>();
-                    listOfPos.add(tilePosMin);
-                    listOfPos.add(tilePosMax);
-                    listOfPos.add(secondTilePosMin);
-                    listOfPos.add(secondTilePosMax);
-                    
-                    TapeMeasureShape shape = TapemeasureShapeRegistar.createNewShape(shapeName, listOfPos, context);
+                    List<Point3d> listOfPoints = new ArrayList<>();
+                    listOfPoints.add(point1);
+                    listOfPoints.add(point2);
+                    listOfPoints.add(point3);
+                    listOfPoints.add(point4);
+                    MeasurementShape shape = MeasurementShapeRegistar.getMeasurementShape(shapeName);
                     cachedMeasurements.put(index, shape);
                     float r = color.getRed() / 255F;
                     float g = color.getGreen() / 255F;
                     float b = color.getBlue() / 255F;
-                    
+                    GlStateManager.pushMatrix();
                     GlStateManager.enableBlend();
                     GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
                         GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
@@ -118,22 +117,28 @@ public class TapeRenderer {
                     GlStateManager.glLineWidth(2.0F);
                     GlStateManager.enableAlpha();
                     
+                    double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * mc.getRenderPartialTicks();
+                    double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * mc.getRenderPartialTicks();
+                    double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * mc.getRenderPartialTicks();
+                    GlStateManager.translate(-d0, -d1, -d2);
                     GlStateManager.disableTexture2D();
                     GlStateManager.depthMask(false);
                     GlStateManager.disableDepth();
                     
                     bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
-                    shape.tryDrawShape(r, g, b, 1F);
+                    shape.tryDrawShape(listOfPoints, context, r, g, b, 1F);
                     tessellator.draw();
                     
                     GlStateManager.enableDepth();
                     GlStateManager.depthMask(true);
                     GlStateManager.enableTexture2D();
                     GlStateManager.disableBlend();
+                    GlStateManager.popMatrix();
                 }
                 
             }
         }
+        
         /*
         if (!tapemeasure.isEmpty()) {
             PosData data = ItemTapeMeasure.data;
@@ -218,13 +223,13 @@ public class TapeRenderer {
         */
     }
     
-    public static void renderCursor(Vec3d posCursor, LittleGridContext context) {
+    public static void renderCursor(Point3d posCursor, LittleGridContext context) {
         
         Color color = ColorUtils.IntToRGBA(ColorUtils.WHITE);
         float r = color.getRed() / 255F;
         float g = color.getGreen() / 255F;
         float b = color.getBlue() / 255F;
-        
+        GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
             GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -232,10 +237,16 @@ public class TapeRenderer {
         GlStateManager.disableTexture2D();
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * mc.getRenderPartialTicks();
+        double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * mc.getRenderPartialTicks();
+        double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * mc.getRenderPartialTicks();
+        GlStateManager.translate(-d0, -d1, -d2);
         bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
         
-        SelectLittleTile tilePosCursor = new SelectLittleTile(posCursor, context);
-        Box.drawBox(tilePosCursor, context.size, r, g, b, 1.0F);
+        //SelectLittleTile tilePosCursor = new SelectLittleTile(posCursor, context);
+        
+        MeasurementShapeBox.drawCube(posCursor, context.size, r, g, b, 1.0F);
         lastKnownCursorPos = posCursor;
         tessellator.draw();
         
@@ -243,5 +254,6 @@ public class TapeRenderer {
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 }

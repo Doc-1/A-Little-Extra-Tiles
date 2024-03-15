@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Point3d;
 
 import com.creativemd.creativecore.common.utils.type.HashMapList;
 import com.creativemd.creativecore.common.utils.type.Pair;
@@ -28,7 +29,6 @@ import com.creativemd.littletiles.common.util.place.PlacementResult;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class StructureUtils {
@@ -69,7 +69,7 @@ public class StructureUtils {
         return null;
     }
     
-    public static Vec3d facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
+    public static Point3d facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
         double offset = 1D / contextSize;
         switch (facing) {
             case UP:
@@ -84,7 +84,7 @@ public class StructureUtils {
             default:
                 break;
         }
-        Vec3d vec = new Vec3d(x, y, z);
+        Point3d vec = new Point3d(x, y, z);
         return vec;
     }
     

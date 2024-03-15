@@ -7,7 +7,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALETConfig;
 import com.alet.client.gui.controls.GuiColorablePanel;
-import com.alet.common.utils.shape.TapemeasureShapeRegistar;
+import com.alet.common.utils.shape.MeasurementShapeRegistar;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
@@ -86,7 +86,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
             NBTTagCompound measurementList = (NBTTagCompound) stackNBT.getTag("measurements");
             nbt = (NBTTagCompound) measurementList.getTag(index + "");
         }
-        LittleGridContext contextSize = ItemTapeMeasure.getSelectedContext(nbt);
+        LittleGridContext contextSize = ItemTapeMeasure.getContextAt(stackNBT, index);
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
         String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";
         
@@ -145,7 +145,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         controls.add(clearButton);
         
         List<String> shapes = new ArrayList<String>();
-        shapes.addAll(TapemeasureShapeRegistar.registeredShapes.keySet());
+        shapes.addAll(MeasurementShapeRegistar.getAllMeasurmentShapeNames());
         GuiComboBox shapeBox = new GuiComboBox("shape", 0, 22, 100, shapes);
         controls.add(shapeBox);
         shapeBox.select(shape);

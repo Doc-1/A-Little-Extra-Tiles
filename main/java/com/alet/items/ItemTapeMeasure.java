@@ -3,6 +3,7 @@ package com.alet.items;
 import java.util.List;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Point3d;
 
 import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiTapeMeasure;
@@ -39,12 +40,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -139,7 +137,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         if (LittleAction.isUsingSecondMode(plr))
             position.facing = position.facing.getOpposite();
         
-        Vec3d posOffsetted = StructureUtils.facingOffset(absPos.getPosX(), absPos.getPosY(), absPos.getPosZ(), contextSize,
+        Point3d posOffsetted = StructureUtils.facingOffset(absPos.getPosX(), absPos.getPosY(), absPos.getPosZ(), contextSize,
             position.facing);
         
         int additional = rightClick ? 1 : 0;
@@ -163,7 +161,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public static LittleGridContext getSelectedContext(NBTTagCompound stackNBT) {
         NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(stackNBT.getInteger("index") + "");
         
-        return (selected.hasKey("context") && selected.getInteger("context") > 0 && selected.getInteger(
+        return (selected.hasKey("context") && selected.getInteger("context") >= 0 && selected.getInteger(
             "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
                 "context")] : ItemMultiTiles.currentContext;
     }
@@ -171,7 +169,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public static LittleGridContext getContextAt(NBTTagCompound stackNBT, int index) {
         NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(index + "");
         
-        return (selected.hasKey("context") && selected.getInteger("context") > 0 && selected.getInteger(
+        return (selected.hasKey("context") && selected.getInteger("context") >= 0 && selected.getInteger(
             "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
                 "context")] : ItemMultiTiles.currentContext;
     }
@@ -201,17 +199,12 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public void tick(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
         NBTTagCompound stackNBT = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
         
-        if (stackNBT.hasKey("index")) {
-            int index = stackNBT.getInteger("index");
-            NBTTagCompound nbt = new NBTTagCompound();
-            if (stackNBT.hasKey("measurement_" + index)) {
-                NBTTagList l = stackNBT.getTagList("measurement_" + index, NBT.TAG_COMPOUND);
-                nbt = l.getCompoundTagAt(0);
-            }
-            
-            LittleGridContext context = LittleGridContext.get(4);
+        if (!stackNBT.hasNoTags()) {
+            LittleGridContext context = getSelectedContext(stackNBT);
             LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
-            Vec3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
+            if (LittleAction.isUsingSecondMode(player))
+                result.sideHit = result.sideHit.getOpposite();
+            Point3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
                 result.sideHit);
             
             TapeRenderer.renderCursor(posEdit, context);
