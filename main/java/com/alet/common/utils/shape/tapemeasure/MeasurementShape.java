@@ -8,11 +8,12 @@ import java.util.Stack;
 import javax.vecmath.Point3d;
 
 import com.alet.ALETConfig;
-import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
+import com.alet.client.render.tapemeasure.TapeRenderer;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -130,13 +131,75 @@ public abstract class MeasurementShape {
         return 0;
     }
     
-    public void tryGetText(GuiOverlayTextList textList, List<Point3d> points, LittleGridContext context, int colorInt) {
-        List<String> measurementUnits = tryGetMeasurementUnits(points, context);
-        if (!measurementUnits.isEmpty())
-            getText(textList, measurementUnits, colorInt);
+    private static void drawBoundingBox(BufferBuilder buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha) {
+        buffer.pos(minX, minY, minZ).color(red, green, blue, 0.0F).endVertex();
+        buffer.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(minX, maxY, maxZ).color(red, green, blue, 0.0F).endVertex();
+        buffer.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(maxX, maxY, maxZ).color(red, green, blue, 0.0F).endVertex();
+        buffer.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(maxX, maxY, minZ).color(red, green, blue, 0.0F).endVertex();
+        buffer.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(maxX, minY, minZ).color(red, green, blue, 0.0F).endVertex();
     }
     
-    protected abstract void getText(GuiOverlayTextList textList, List<String> measurementUnits, int colorInt);
+    public static List<Point3d> drawCube(Point3d point, int contextSize, float red, float green, float blue, float alpha) {
+        double conDiv = 1D / contextSize;
+        double minX = (point.x);
+        double minY = (point.y);
+        double minZ = (point.z);
+        
+        double maxX = (point.x + conDiv);
+        double maxY = (point.y + conDiv);
+        double maxZ = (point.z + conDiv);
+        List<Point3d> points = new ArrayList<>();
+        points.add(new Point3d(minX, minY, minZ));
+        points.add(new Point3d(maxX, maxY, maxZ));
+        drawBoundingBox(TapeRenderer.bufferbuilder, minX - 0.001, minY - 0.001, minZ - 0.001, maxX + 0.001, maxY + 0.001,
+            maxZ + 0.001, red, green, blue, alpha);
+        return points;
+    }
+    
+    public static List<Point3d> drawBox(Point3d point1, Point3d point2, int contextSize, float red, float green, float blue, float alpha) {
+        double conDiv = 1D / contextSize;
+        double minX = point1.x;
+        double minY = point1.y;
+        double minZ = point1.z;
+        
+        double maxX = point2.x + conDiv;
+        double maxY = point2.y + conDiv;
+        double maxZ = point2.z + conDiv;
+        
+        if (minX >= maxX) {
+            minX += conDiv;
+            maxX -= conDiv;
+        }
+        if (minZ >= maxZ) {
+            minZ += conDiv;
+            maxZ -= conDiv;
+        }
+        if (minY >= maxY) {
+            minY += conDiv;
+            maxY -= conDiv;
+        }
+        List<Point3d> points = new ArrayList<>();
+        points.add(new Point3d(minX, minY, minZ));
+        points.add(new Point3d(maxX, maxY, maxZ));
+        drawBoundingBox(TapeRenderer.bufferbuilder, minX - 0.001, minY - 0.001, minZ - 0.001, maxX + 0.001, maxY + 0.001,
+            maxZ + 0.001, red, green, blue, alpha);
+        return points;
+    }
+    
+    protected abstract void drawText(List<Point3d> points, List<String> measurementUnits, int contextSize, int colorInt);
     
     public void tryDrawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         

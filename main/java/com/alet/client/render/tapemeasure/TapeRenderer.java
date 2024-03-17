@@ -129,9 +129,9 @@ public class TapeRenderer {
                     shape.tryDrawShape(listOfPoints, context, r, g, b, 1F);
                     tessellator.draw();
                     
+                    GlStateManager.enableTexture2D();
                     GlStateManager.enableDepth();
                     GlStateManager.depthMask(true);
-                    GlStateManager.enableTexture2D();
                     GlStateManager.disableBlend();
                     GlStateManager.popMatrix();
                 }

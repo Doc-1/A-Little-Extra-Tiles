@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.vecmath.Point3d;
 
-import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -44,12 +43,6 @@ public class Circle extends MeasurementShape {
     }
     
     @Override
-    protected void getText(GuiOverlayTextList textList, List<String> measurementUnits, int colorInt) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
     protected void drawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         // TODO Auto-generated method stub
         
@@ -65,6 +58,12 @@ public class Circle extends MeasurementShape {
     public List<GuiControl> getCustomSettings(NBTTagCompound nbt, LittleGridContext context) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    protected void drawText(List<Point3d> points, List<String> measurementUnits, int contextSize, int colorInt) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

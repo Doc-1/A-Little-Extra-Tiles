@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.vecmath.Point3d;
 
-import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
@@ -19,18 +18,12 @@ public class MeasurementShapeCompass extends MeasurementShape {
     }
     
     @Override
-    protected void getText(GuiOverlayTextList textList, List<String> measurementUnits, int colorInt) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
     protected void drawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         Point3d p1 = points.get(0);
         Point3d p2 = points.get(1);
         Point3d p3 = points.get(2);
-        MeasurementShapeLine.drawLine(p1, p2, red, green, blue, alpha);
-        MeasurementShapeLine.drawLine(p2, p3, red, green, blue, alpha);
+        MeasurementShapeLine.drawLine(p1, p2, context.size, red, green, blue, alpha);
+        MeasurementShapeLine.drawLine(p2, p3, context.size, red, green, blue, alpha);
         MeasurementShapeBox.drawCube(p1, context.size, 1.0F, 0.0F, 0.0F, alpha);
         MeasurementShapeBox.drawCube(p2, context.size, 0.0F, 1.0F, 0.0F, alpha);
         MeasurementShapeBox.drawCube(p3, context.size, 0.0F, 0.0F, 1.0F, alpha);
@@ -61,6 +54,12 @@ public class MeasurementShapeCompass extends MeasurementShape {
     public List<GuiControl> getCustomSettings(NBTTagCompound nbt, LittleGridContext context) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    protected void drawText(List<Point3d> points, List<String> measurementUnits, int contextSize, int colorInt) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

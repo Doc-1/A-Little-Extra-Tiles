@@ -1,8 +1,5 @@
 package com.alet.items;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
 
 import com.alet.client.ALETClient;
@@ -35,7 +32,6 @@ import com.creativemd.littletiles.common.util.tooltip.IItemTooltip;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -51,7 +47,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public static int measurementType = 0;
     
     public void clear(ItemStack stack) {
-        writeNBTData(stack, new NBTTagCompound());
+        stack.setTagCompound(new NBTTagCompound());
     }
     
     /*** @param stack
@@ -76,14 +72,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         
     }
     
-    public NBTTagCompound getNBTData(ItemStack stack) {
-        return stack.getTagCompound();
-    }
-    
-    public void writeNBTData(ItemStack stack, NBTTagCompound nbt) {
-        stack.setTagCompound(nbt);
-    }
-    
     public static void setMax(int maxMeasurements) {
         
     }
@@ -92,21 +80,25 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         return 50;
     }
     
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        if (worldIn != null && !stack.hasTagCompound()) {
-            NBTTagCompound stackNBT = new NBTTagCompound();
-            NBTTagCompound measurementList = new NBTTagCompound();
-            NBTTagCompound data = new NBTTagCompound();
-            data.setInteger("context", ItemMultiTiles.currentContext.index);
-            data.setString("shape", "Box");
-            data.setInteger("color", ColorUtils.WHITE);
-            measurementList.setTag("0", data);
-            stackNBT.setTag("measurements", measurementList);
-            stackNBT.setInteger("index", 0);
-            stack.setTagCompound(stackNBT);
-        }
+    public static void setDefaultStackNBT(ItemStack stack) {
+        NBTTagCompound nbtStack = new NBTTagCompound();
+        nbtStack.setInteger("index", 0);
+        nbtStack.setTag("measurements", new NBTTagCompound());
+        stack.setTagCompound(nbtStack);
+    }
+    
+    public static void setDefaultMeasurmentNBT(ItemStack stack, int index) {
+        NBTTagCompound stackNBT = stack.getTagCompound();
+        NBTTagCompound measurements = stackNBT.getCompoundTag("measurements");
+        NBTTagCompound data = new NBTTagCompound();
+        data.setInteger("context", ItemMultiTiles.currentContext.index);
+        data.setString("shape", "Box");
+        data.setInteger("color", ColorUtils.WHITE);
+        data.setTag("positions", new NBTTagCompound());
+        measurements.setTag(index + "", data);
+        stackNBT.setTag("measurements", measurements);
+        stack.setTagCompound(stackNBT);
+        
     }
     
     @Override
@@ -123,10 +115,13 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         
         int index = 0;
         NBTTagCompound stackNBT = new NBTTagCompound();
-        NBTTagCompound nbt = new NBTTagCompound();
         if (stack.hasTagCompound()) {
-            stackNBT = getNBTData(stack);
+            stackNBT = stack.getTagCompound();
             index = stackNBT.hasKey("index") ? stackNBT.getInteger("index") : 0;
+        } else {
+            setDefaultStackNBT(stack);
+            setDefaultMeasurmentNBT(stack, 0);
+            stackNBT = stack.getTagCompound();
         }
         
         LittleGridContext context = getSelectedContext(stackNBT);
@@ -152,7 +147,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         pos.setString("facing", position.facing.getName());
         positions.setTag(additional + "", pos);
         data.setTag("positions", positions);
-        writeNBTData(stack, stackNBT);
+        stack.setTagCompound(stackNBT);
         PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
         return false;
         
@@ -233,13 +228,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
                 index = 9;
             stackNBT.setInteger("index", index);
             if (!stackNBT.getCompoundTag("measurements").hasKey(index + "")) {
-                NBTTagCompound measurementList = stackNBT.getCompoundTag("measurements");
-                NBTTagCompound data = new NBTTagCompound();
-                data.setInteger("context", ItemMultiTiles.currentContext.index);
-                data.setString("shape", "Box");
-                data.setInteger("color", ColorUtils.WHITE);
-                measurementList.setTag(index + "", data);
-                stackNBT.setTag("measurements", measurementList);
+                setDefaultMeasurmentNBT(stack, index);
             }
             stack.setTagCompound(stackNBT);
             
