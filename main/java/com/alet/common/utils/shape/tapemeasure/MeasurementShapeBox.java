@@ -3,7 +3,7 @@ package com.alet.common.utils.shape.tapemeasure;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 
 import com.alet.ALETConfig;
 import com.alet.common.utils.text.draw.DrawString3d;
@@ -22,8 +22,8 @@ public class MeasurementShapeBox extends MeasurementShape {
     }
     
     @Override
-    protected void drawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha) {
-        List<Point3d> boxPoints = drawBox(points.get(0), points.get(1), context.size, red, green, blue, alpha);
+    protected void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+        List<Point3f> boxPoints = drawBox(points.get(0), points.get(1), context.size, red, green, blue, alpha);
         drawCube(points.get(0), context.size, 1.0F, 0.0F, 0.0F, alpha);
         drawCube(points.get(1), context.size, 0.0F, 1.0F, 0.0F, alpha);
         drawText(boxPoints, tryGetMeasurementUnits(points, context), context.size, ColorUtils.WHITE);
@@ -36,9 +36,9 @@ public class MeasurementShapeBox extends MeasurementShape {
     }
     
     @Override
-    protected List<String> getMeasurementUnits(List<Point3d> points, LittleGridContext context) {
-        Point3d pos = points.get(0);
-        Point3d pos2 = points.get(1);
+    protected List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context) {
+        Point3f pos = points.get(0);
+        Point3f pos2 = points.get(1);
         List<String> measurmentUnits = new ArrayList<>();
         double xDistence = getDistence(pos.x, pos2.x, context.size);
         double yDistence = getDistence(pos.y, pos2.y, context.size);
@@ -99,14 +99,33 @@ public class MeasurementShapeBox extends MeasurementShape {
     }
     
     @Override
-    protected void drawText(List<Point3d> points, List<String> measurementUnits, int contextSize, int colorInt) {
-        Point3d p2 = (Point3d) points.get(0).clone();
-        p2.x = points.get(1).x;
-        DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0), p2, 0, 0, 0,
-            ColorUtils.WHITE, true);
-        // DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Center, points.get(0), points.get(
-        //    1), 0, -90, 0, ColorUtils.WHITE, true);
+    protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
+        DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0), points.get(
+            1), 0, 0, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(2), points.get(
+            3), 0, -90, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(1), points.get(
+            3), 0, -90, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(0), points.get(
+            2), 0, -90, 0, ColorUtils.WHITE, true);
         
+        DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(4), points.get(
+            5), 0, 0, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(6), points.get(
+            7), 0, -90, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(5), points.get(
+            7), 0, -90, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(4), points.get(
+            6), 0, -90, 0, ColorUtils.WHITE, true);
+        
+        DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(0), points.get(
+            7), 0, -90, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(1), points.get(
+            6), 0, -90, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(2), points.get(
+            5), 0, -90, 0, ColorUtils.WHITE, true);
+        DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(3), points.get(
+            4), 0, -90, 0, ColorUtils.WHITE, true);
     }
     
 }

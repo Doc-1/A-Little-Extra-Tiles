@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 import com.alet.ALETConfig;
 import com.alet.client.render.tapemeasure.TapeRenderer;
@@ -14,6 +15,7 @@ import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,6 +46,57 @@ public abstract class MeasurementShape {
         double distence = (Math.abs(pos_1 - pos_2)) + contDecimal;
         
         return distence;
+    }
+    
+    public static Vector3f rotateVector(Vector3f vec, Vector3f axis, double theta) {
+        double x, y, z;
+        double u, v, w;
+        x = vec.getX();
+        y = vec.getY();
+        z = vec.getZ();
+        u = axis.getX();
+        v = axis.getY();
+        w = axis.getZ();
+        float xPrime = (float) (u * (u * x + v * y + w * z) * (1d - Math.cos(theta)) + x * Math.cos(
+            theta) + (-w * y + v * z) * Math.sin(theta));
+        float yPrime = (float) (v * (u * x + v * y + w * z) * (1d - Math.cos(theta)) + y * Math.cos(
+            theta) + (w * x - u * z) * Math.sin(theta));
+        float zPrime = (float) (w * (u * x + v * y + w * z) * (1d - Math.cos(theta)) + z * Math.cos(
+            theta) + (-v * x + u * y) * Math.sin(theta));
+        return new Vector3f(xPrime, yPrime, zPrime);
+    }
+    
+    public static Point3f getMidPoint(Point3f point2, Point3f point1) {
+        return new Point3f((point2.x + point1.x) / 2, (point2.y + point1.y) / 2, (point2.z + point1.z) / 2);
+    }
+    
+    public static float[] getLineAngle(Point3f startPoint, Point3f endPoint) {
+        float deltaX = startPoint.x - endPoint.x;
+        float deltaY = startPoint.y - endPoint.y;
+        float deltaZ = startPoint.z - endPoint.z;
+        float yaw = (float) Math.atan2(deltaZ, deltaX);
+        float pitch = (float) Math.atan2(Math.sqrt(deltaZ * deltaZ + deltaX * deltaX), deltaY);
+        return new float[] { (float) Math.toDegrees(pitch), (float) Math.toDegrees(yaw) };
+    }
+    
+    public static float[] getAngles(Point3f point1, Point3f point2, Point3f point3) {
+        if (point1 != null && point2 != null && point3 != null) {
+            Point3f C = point1; //is angle C
+            Point3f A = point2; //is angle A
+            Point3f B = point3; //is angle B
+            
+            double a = C.distance(B);
+            double b = A.distance(C);
+            double c = A.distance(B);
+            
+            float a2 = (float) Math.pow(a, 2);
+            float b2 = (float) Math.pow(b, 2);
+            float c2 = (float) Math.pow(c, 2);
+            
+            return new float[] { (float) Math.toDegrees(Math.acos((b2 + c2 - a2) / (2 * b * c))), (float) Math.toDegrees(Math
+                    .acos((c2 + a2 - b2) / (2 * c * a))), (float) Math.toDegrees(Math.acos((a2 + b2 - c2) / (2 * a * b))) };
+        }
+        return new float[0];
     }
     
     protected static double cleanDouble(double doub) {
@@ -152,7 +205,29 @@ public abstract class MeasurementShape {
         buffer.pos(maxX, minY, minZ).color(red, green, blue, 0.0F).endVertex();
     }
     
-    public static List<Point3d> drawCube(Point3d point, int contextSize, float red, float green, float blue, float alpha) {
+    public static List<Point3f> drawLine(Point3f p1, Point3f p2, int contextSize, float red, float green, float blue, float alpha) {
+        
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        double conDiv = 0.5D / contextSize;
+        double minX = p1.x + conDiv;
+        double minY = p1.y + conDiv;
+        double minZ = p1.z + conDiv;
+        
+        double maxX = p2.x + conDiv;
+        double maxY = p2.y + conDiv;
+        double maxZ = p2.z + conDiv;
+        List<Point3f> points = new ArrayList<>();
+        points.add(new Point3f((float) minX, (float) minY, (float) minZ));
+        points.add(new Point3f((float) maxX, (float) maxY, (float) maxZ));
+        
+        bufferbuilder.pos(minX - 0.001, minY - 0.001, minZ - 0.001).color(red, green, blue, 0.0F).endVertex();
+        bufferbuilder.pos(maxX - 0.001, maxY - 0.001, maxZ - 0.001).color(red, green, blue, 1.0F).endVertex();
+        bufferbuilder.pos(minX - 0.001, minY - 0.001, minZ - 0.001).color(red, green, blue, 0.0F).endVertex();
+        return points;
+    }
+    
+    public static List<Point3f> drawCube(Point3f point, int contextSize, float red, float green, float blue, float alpha) {
         double conDiv = 1D / contextSize;
         double minX = (point.x);
         double minY = (point.y);
@@ -161,23 +236,23 @@ public abstract class MeasurementShape {
         double maxX = (point.x + conDiv);
         double maxY = (point.y + conDiv);
         double maxZ = (point.z + conDiv);
-        List<Point3d> points = new ArrayList<>();
-        points.add(new Point3d(minX, minY, minZ));
-        points.add(new Point3d(maxX, maxY, maxZ));
+        List<Point3f> points = new ArrayList<>();
+        points.add(new Point3f((float) minX, (float) minY, (float) minZ));
+        points.add(new Point3f((float) maxX, (float) maxY, (float) maxZ));
         drawBoundingBox(TapeRenderer.bufferbuilder, minX - 0.001, minY - 0.001, minZ - 0.001, maxX + 0.001, maxY + 0.001,
             maxZ + 0.001, red, green, blue, alpha);
         return points;
     }
     
-    public static List<Point3d> drawBox(Point3d point1, Point3d point2, int contextSize, float red, float green, float blue, float alpha) {
-        double conDiv = 1D / contextSize;
-        double minX = point1.x;
-        double minY = point1.y;
-        double minZ = point1.z;
+    public static List<Point3f> drawBox(Point3f point1, Point3f point2, int contextSize, float red, float green, float blue, float alpha) {
+        float conDiv = (float) (1D / contextSize);
+        float minX = point1.x;
+        float minY = point1.y;
+        float minZ = point1.z;
         
-        double maxX = point2.x + conDiv;
-        double maxY = point2.y + conDiv;
-        double maxZ = point2.z + conDiv;
+        float maxX = point2.x + conDiv;
+        float maxY = point2.y + conDiv;
+        float maxZ = point2.z + conDiv;
         
         if (minX >= maxX) {
             minX += conDiv;
@@ -191,32 +266,39 @@ public abstract class MeasurementShape {
             minY += conDiv;
             maxY -= conDiv;
         }
-        List<Point3d> points = new ArrayList<>();
-        points.add(new Point3d(minX, minY, minZ));
-        points.add(new Point3d(maxX, maxY, maxZ));
+        List<Point3f> points = new ArrayList<>();
+        points.add(new Point3f(minX, minY, minZ));
+        points.add(new Point3f(maxX, minY, minZ));
+        points.add(new Point3f(minX, minY, maxZ));
+        points.add(new Point3f(maxX, minY, maxZ));
+        
+        points.add(new Point3f(maxX, maxY, maxZ));
+        points.add(new Point3f(minX, maxY, maxZ));
+        points.add(new Point3f(maxX, maxY, minZ));
+        points.add(new Point3f(minX, maxY, minZ));
         drawBoundingBox(TapeRenderer.bufferbuilder, minX - 0.001, minY - 0.001, minZ - 0.001, maxX + 0.001, maxY + 0.001,
             maxZ + 0.001, red, green, blue, alpha);
         return points;
     }
     
-    protected abstract void drawText(List<Point3d> points, List<String> measurementUnits, int contextSize, int colorInt);
+    protected abstract void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt);
     
-    public void tryDrawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+    public void tryDrawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         
         if (points != null && !points.isEmpty() && points.size() >= this.pointsNeeded) {
             drawShape(points, context, red, green, blue, alpha);
         }
     }
     
-    protected abstract void drawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha);
+    protected abstract void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha);
     
-    public List<String> tryGetMeasurementUnits(List<Point3d> points, LittleGridContext context) {
+    public List<String> tryGetMeasurementUnits(List<Point3f> points, LittleGridContext context) {
         if (points != null && points.size() >= this.pointsNeeded)
             return getMeasurementUnits(points, context);
         return new ArrayList<String>();
     }
     
-    protected abstract List<String> getMeasurementUnits(List<Point3d> points, LittleGridContext context);
+    protected abstract List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context);
     
     public abstract List<GuiControl> getCustomSettings(NBTTagCompound nbt, LittleGridContext context);
     

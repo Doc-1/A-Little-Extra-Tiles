@@ -1,6 +1,6 @@
 package com.alet.items;
 
-import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 
 import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiTapeMeasure;
@@ -132,7 +132,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         if (LittleAction.isUsingSecondMode(plr))
             position.facing = position.facing.getOpposite();
         
-        Point3d posOffsetted = StructureUtils.facingOffset(absPos.getPosX(), absPos.getPosY(), absPos.getPosZ(), contextSize,
+        Point3f posOffsetted = StructureUtils.facingOffset(absPos.getPosX(), absPos.getPosY(), absPos.getPosZ(), contextSize,
             position.facing);
         
         int additional = rightClick ? 1 : 0;
@@ -199,7 +199,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
             if (LittleAction.isUsingSecondMode(player))
                 result.sideHit = result.sideHit.getOpposite();
-            Point3d posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
+            Point3f posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
                 result.sideHit);
             
             TapeRenderer.renderCursor(posEdit, context);

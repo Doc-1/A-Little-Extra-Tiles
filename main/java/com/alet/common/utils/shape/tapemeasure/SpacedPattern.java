@@ -2,7 +2,7 @@ package com.alet.common.utils.shape.tapemeasure;
 
 import java.util.List;
 
-import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -17,13 +17,19 @@ public class SpacedPattern extends MeasurementShape {
     }
     
     @Override
-    protected void drawShape(List<Point3d> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+    protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
         // TODO Auto-generated method stub
         
     }
     
     @Override
-    protected List<String> getMeasurementUnits(List<Point3d> points, LittleGridContext context) {
+    protected void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    protected List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -32,12 +38,6 @@ public class SpacedPattern extends MeasurementShape {
     public List<GuiControl> getCustomSettings(NBTTagCompound nbt, LittleGridContext context) {
         // TODO Auto-generated method stub
         return null;
-    }
-    
-    @Override
-    protected void drawText(List<Point3d> points, List<String> measurementUnits, int contextSize, int colorInt) {
-        // TODO Auto-generated method stub
-        
     }
     
 }

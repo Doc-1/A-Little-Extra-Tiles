@@ -1,10 +1,14 @@
 package com.alet.common.utils.text.draw;
 
-import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+
+import com.alet.common.utils.shape.tapemeasure.MeasurementShape;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.math.Vec3d;
 
 public class DrawString3d {
     
@@ -14,24 +18,48 @@ public class DrawString3d {
         Right()
     }
     
-    public static void drawStringOnLine(String text, int contextSize, DrawPosition position, Point3d point1, Point3d point2, float roll, float yaw, float pitch, int color, boolean dropShadow) {
+    public static void drawStringOnLine(String text, int contextSize, DrawPosition position, Point3f startPoint, Point3f endPoint, float roll, float yaw, float pitch, int color, boolean dropShadow) {
+        
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        
         int i = fontRenderer.getStringWidth(text);
         int h = fontRenderer.FONT_HEIGHT;
-        Point3d midPoint = new Point3d((point2.x + point1.x) / 2, (point2.y + point1.y) / 2, (point2.z + point1.z) / 2);
+        Point3f midPoint = MeasurementShape.getMidPoint(startPoint, endPoint);
+        Vec3d vecEye = player.getPositionEyes(Minecraft.getMinecraft().getRenderPartialTicks());
+        
         GlStateManager.pushMatrix();
         GlStateManager.enableTexture2D();
         GlStateManager.translate(midPoint.x, midPoint.y, midPoint.z);
-        GlStateManager.rotate(roll, 1F, 0, 0);
-        GlStateManager.rotate(yaw, 0, 1F, 0);
-        GlStateManager.rotate(pitch, 0, 0, 1F);
-        float scale = 0.143F / Math.max(16, contextSize);
-        GlStateManager.scale(-scale, -scale, 0);
-        GlStateManager.translate(-i / 2, 2, 0);
-        fontRenderer.drawString(text, 0, 0, color, dropShadow);
+        GlStateManager.rotate(0, 0, 1, 0);
+        // GlStateManager.rotate(yaw, 0, 1F, 0);
+        // GlStateManager.rotate(pitch, 0, 0, 1F);
+        // GlStateManager.rotate(new Quaternion((float) look.x, (float) look.y, (float) look.z, 0));
         
+        float scale = 0.143F / Math.max(32, contextSize + contextSize);
+        //GlStateManager.rotate(90, 0, 1, 0);
+        GlStateManager.pushMatrix();
+        GlStateManager.rotate(-player.rotationYaw, 0, 1, 0);
+        GlStateManager.rotate(player.rotationPitch, 1, 0, 0);
+        //GlStateManager.rotate(-playerHeadAngle[0], 1F, 0F, 0F);
+        GlStateManager.scale(-scale, -scale, 0);
+        GlStateManager.translate(-i / 2, 0, 0);
+        fontRenderer.drawString(text, 0, 0, color, dropShadow);
+        GlStateManager.popMatrix();
         GlStateManager.disableTexture2D();
         GlStateManager.popMatrix();
         
     }
 }
+
+/*
+ * 
+        GlStateManager.pushMatrix();
+        GlStateManager.rotate(180, 0F, 1F, 0F);
+        //GlStateManager.rotate(playerHeadAngle[0], 1F, 0F, 0);
+        GlStateManager.scale(-scale, -scale, 0);
+        GlStateManager.translate(-i / 2, 2, 0);
+        fontRenderer.drawString(text, 0, 0, color, dropShadow);
+        GlStateManager.popMatrix();
+        
+ */

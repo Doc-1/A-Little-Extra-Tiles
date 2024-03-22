@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 
 import org.lwjgl.util.Color;
 
@@ -38,7 +38,7 @@ public class TapeRenderer {
     public static BufferBuilder bufferbuilder = tessellator.getBuffer();
     public static ItemStack tapemeasure = ItemStack.EMPTY;
     public static HashMap<Integer, MeasurementShape> cachedMeasurements = new HashMap<>();
-    public static Point3d lastKnownCursorPos;
+    public static Point3f lastKnownCursorPos;
     
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
@@ -74,32 +74,32 @@ public class TapeRenderer {
                     Color color = ColorUtils.IntToRGBA(measurement.getInteger("color"));
                     LittleGridContext context = ItemTapeMeasure.getContextAt(stackNBT, index);
                     
-                    Point3d point1 = lastKnownCursorPos;
-                    Point3d point2 = lastKnownCursorPos;
-                    Point3d point3 = lastKnownCursorPos;
-                    Point3d point4 = lastKnownCursorPos;
+                    Point3f point1 = lastKnownCursorPos;
+                    Point3f point2 = lastKnownCursorPos;
+                    Point3f point3 = lastKnownCursorPos;
+                    Point3f point4 = lastKnownCursorPos;
                     
                     if (measurement.hasKey("positions")) {
                         NBTTagCompound positions = measurement.getCompoundTag("positions");
                         if (positions.hasKey("0")) {
                             double[] p0 = NBTUtils.readDoubleArray(positions.getCompoundTag("0"), "pos", NBT.TAG_DOUBLE);
-                            point1 = new Point3d(p0[0], p0[1], p0[2]);
+                            point1 = new Point3f((float) p0[0], (float) p0[1], (float) p0[2]);
                         }
                         if (positions.hasKey("1")) {
                             double[] p1 = NBTUtils.readDoubleArray(positions.getCompoundTag("1"), "pos", NBT.TAG_DOUBLE);
-                            point2 = new Point3d(p1[0], p1[1], p1[2]);
+                            point2 = new Point3f((float) p1[0], (float) p1[1], (float) p1[2]);
                         }
                         if (positions.hasKey("2")) {
                             double[] p2 = NBTUtils.readDoubleArray(positions.getCompoundTag("2"), "pos", NBT.TAG_DOUBLE);
-                            point3 = new Point3d(p2[0], p2[1], p2[2]);
+                            point3 = new Point3f((float) p2[0], (float) p2[1], (float) p2[2]);
                         }
                         if (positions.hasKey("3")) {
                             double[] p3 = NBTUtils.readDoubleArray(positions.getCompoundTag("3"), "pos", NBT.TAG_DOUBLE);
-                            point4 = new Point3d(p3[0], p3[1], p3[2]);
+                            point4 = new Point3f((float) p3[0], (float) p3[1], (float) p3[2]);
                         }
                         //NBTUtils.readDoubleArray(positions, key)
                     }
-                    List<Point3d> listOfPoints = new ArrayList<>();
+                    List<Point3f> listOfPoints = new ArrayList<>();
                     listOfPoints.add(point1);
                     listOfPoints.add(point2);
                     listOfPoints.add(point3);
@@ -223,7 +223,7 @@ public class TapeRenderer {
         */
     }
     
-    public static void renderCursor(Point3d posCursor, LittleGridContext context) {
+    public static void renderCursor(Point3f posCursor, LittleGridContext context) {
         
         Color color = ColorUtils.IntToRGBA(ColorUtils.WHITE);
         float r = color.getRed() / 255F;

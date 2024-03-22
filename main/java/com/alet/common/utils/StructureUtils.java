@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 
 import com.creativemd.creativecore.common.utils.type.HashMapList;
 import com.creativemd.creativecore.common.utils.type.Pair;
@@ -69,7 +69,7 @@ public class StructureUtils {
         return null;
     }
     
-    public static Point3d facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
+    public static Point3f facingOffset(double x, double y, double z, int contextSize, EnumFacing facing) {
         double offset = 1D / contextSize;
         switch (facing) {
             case UP:
@@ -84,7 +84,7 @@ public class StructureUtils {
             default:
                 break;
         }
-        Point3d vec = new Point3d(x, y, z);
+        Point3f vec = new Point3f((float) x, (float) y, (float) z);
         return vec;
     }
     

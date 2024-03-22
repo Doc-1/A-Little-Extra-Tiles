@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 
 import com.alet.client.gui.overlay.GuiAxisIndicatorAletControl;
-import com.alet.client.gui.overlay.GuiDisplayMeasurements;
 import com.alet.client.render.tapemeasure.TapeRenderer;
 import com.alet.common.command.UpdateFontsCommand;
 import com.alet.common.event.ALETEventHandler;
@@ -87,8 +86,8 @@ public class ALETClient extends LittleTilesServer {
         
         LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER)
                 .setShouldRender(() -> TapeRenderer.slotID != -1));
-        LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER)
-                .setShouldRender(() -> !TapeRenderer.tapemeasure.isEmpty()));
+        //LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER)
+        //        .setShouldRender(() -> !TapeRenderer.tapemeasure.isEmpty()));
         
         for (Item item : renderedItems) {
             CreativeCoreClient.registerItemColorHandler(item);
