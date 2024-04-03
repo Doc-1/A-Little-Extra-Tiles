@@ -461,7 +461,7 @@ public class ALET {
         LittleStructureRegistry.registerStructureType("trigger_box", "advance", LittleTriggerBoxStructureALET.class,
             LittleStructureAttribute.NOCOLLISION | LittleStructureAttribute.COLLISION_LISTENER | LittleStructureAttribute.TICKING,
             LittleTriggerBoxStructureALET.LittleTriggerBoxStructureParser.class).addOutput("allow", 1, SignalMode.EQUAL)
-                .addInput("completed", 1).preventImportInSurvival();
+                .addOutput("activate", 1, SignalMode.EQUAL).addInput("completed", 1).preventImportInSurvival();
         LittleStructureRegistry.registerStructureType("door_lock", "door", LittleLockALET.class,
             LittleStructureAttribute.NONE, LittleLockALET.LittleLockParserALET.class).addOutput("lock", 1, SignalMode.TOGGLE,
                 true);
