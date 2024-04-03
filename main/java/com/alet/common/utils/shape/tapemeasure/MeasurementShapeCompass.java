@@ -72,11 +72,11 @@ public class MeasurementShapeCompass extends MeasurementShape {
     @Override
     protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
         DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(1), points.get(
-            1), 0, 0, 0, ColorUtils.WHITE, true);
+            1), ColorUtils.WHITE, true, 0);
         DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(0), points.get(
-            1), 0, 0, 0, ColorUtils.WHITE, true);
+            1), ColorUtils.WHITE, true, 0);
         DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(1), points.get(
-            2), 0, 0, 0, ColorUtils.WHITE, true);
+            2), ColorUtils.WHITE, true, 0);
         
     }
     

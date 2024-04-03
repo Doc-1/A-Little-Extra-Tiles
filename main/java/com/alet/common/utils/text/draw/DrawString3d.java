@@ -18,7 +18,7 @@ public class DrawString3d {
         Right()
     }
     
-    public static void drawStringOnLine(String text, int contextSize, DrawPosition position, Point3f startPoint, Point3f endPoint, float roll, float yaw, float pitch, int color, boolean dropShadow) {
+    public static void drawStringOnLine(String text, int contextSize, DrawPosition position, Point3f startPoint, Point3f endPoint, int color, boolean dropShadow, int yOffset) {
         
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -32,18 +32,18 @@ public class DrawString3d {
         GlStateManager.enableTexture2D();
         GlStateManager.translate(midPoint.x, midPoint.y, midPoint.z);
         GlStateManager.rotate(0, 0, 1, 0);
-        // GlStateManager.rotate(yaw, 0, 1F, 0);
-        // GlStateManager.rotate(pitch, 0, 0, 1F);
+        //GlStateManager.rotate(yaw, 0, 1F, 0);
+        //GlStateManager.rotate(pitch, 0, 0, 1F);
         // GlStateManager.rotate(new Quaternion((float) look.x, (float) look.y, (float) look.z, 0));
-        
-        float scale = 0.143F / Math.max(32, contextSize + contextSize);
+        //MeasurementShape.drawLine(midPoint, p, contextSize, 0, 1, 1, 1);
+        float scale = 0.143F / Math.max(16, contextSize);
         //GlStateManager.rotate(90, 0, 1, 0);
         GlStateManager.pushMatrix();
         GlStateManager.rotate(-player.rotationYaw, 0, 1, 0);
         GlStateManager.rotate(player.rotationPitch, 1, 0, 0);
         //GlStateManager.rotate(-playerHeadAngle[0], 1F, 0F, 0F);
         GlStateManager.scale(-scale, -scale, 0);
-        GlStateManager.translate(-i / 2, 0, 0);
+        GlStateManager.translate(-i / 2, yOffset, 0);
         fontRenderer.drawString(text, 0, 0, color, dropShadow);
         GlStateManager.popMatrix();
         GlStateManager.disableTexture2D();

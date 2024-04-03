@@ -81,7 +81,7 @@ public class MeasurementShapeLine extends MeasurementShape {
     protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
         float[] angles = getLineAngle(points.get(0), points.get(1));
         DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0), points.get(
-            1), 0, -angles[1] - 180, angles[0] - 90, ColorUtils.WHITE, true);
+            1), ColorUtils.WHITE, true, 0);
     }
     
 }
