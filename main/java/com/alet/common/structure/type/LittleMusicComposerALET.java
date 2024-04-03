@@ -123,11 +123,12 @@ public class LittleMusicComposerALET extends LittleStructure {
         
         nbt.setBoolean("change_tempo", changeTempo);
         nbt.setInteger("tempo", tempo);
+        nbt.setBoolean("playing", play);
     }
     
     @Override
     public void performInternalOutputChange(InternalSignalOutput output) {
-        if (output.component.is("play")) {
+        if (output.component.is("play") && output.getState()[0] != play) {
             play = !play;
         }
     }
@@ -147,6 +148,9 @@ public class LittleMusicComposerALET extends LittleStructure {
                 if (audioSetting.hasKey("chs" + j))
                     channelSounds[j] = audioSetting.getString("chs" + j);
         }
+        
+        if (nbt.hasKey("playing"))
+            play = nbt.getBoolean("playing");
         
         if (nbt.hasKey("duration"))
             duration = nbt.getInteger("duration");
