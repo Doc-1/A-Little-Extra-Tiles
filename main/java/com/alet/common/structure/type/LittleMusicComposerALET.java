@@ -178,7 +178,10 @@ public class LittleMusicComposerALET extends LittleStructure {
     }
     
     @Override
+    @SideOnly(Side.SERVER)
     public void tick() {
+        if (this.isClient())
+            return;
         if (play) {
             this.pos = getPos();
             tick++;
