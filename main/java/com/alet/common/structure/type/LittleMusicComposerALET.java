@@ -170,15 +170,13 @@ public class LittleMusicComposerALET extends LittleStructure {
     
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
-        
-        if (worldIn.isRemote)
-            return true;
-        this.play = !this.play;
+        if (!worldIn.isRemote) {
+            this.getOutput(0).toggle();
+        }
         return true;
     }
     
     @Override
-    @SideOnly(Side.SERVER)
     public void tick() {
         if (this.isClient())
             return;
@@ -194,7 +192,6 @@ public class LittleMusicComposerALET extends LittleStructure {
             }
         } else {
             tick = 0;
-            
         }
         
     }
