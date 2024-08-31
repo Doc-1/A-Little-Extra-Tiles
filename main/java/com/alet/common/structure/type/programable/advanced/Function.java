@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.programable.functions;
+package com.alet.common.structure.type.programable.advanced;
 
 import java.util.ArrayList;
 import java.util.List;

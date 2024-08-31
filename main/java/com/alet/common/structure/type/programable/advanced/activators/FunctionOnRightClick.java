@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.programable.functions.activators;
+package com.alet.common.structure.type.programable.advanced.activators;
 
 import com.alet.common.structure.type.programable.nodes.values.NodeInteger;
 

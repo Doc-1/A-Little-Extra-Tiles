@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.programable.functions;
+package com.alet.common.structure.type.programable.advanced;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -8,9 +8,9 @@ import com.alet.client.gui.controls.menu.GuiTreePart;
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.menu.GuiTreePartHolder;
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
-import com.alet.common.structure.type.programable.functions.activators.FunctionOnRightClick;
-import com.alet.common.structure.type.programable.functions.events.FunctionDebugMessage;
-import com.alet.common.structure.type.programable.functions.flows.FunctionForLoop;
+import com.alet.common.structure.type.programable.advanced.activators.FunctionOnRightClick;
+import com.alet.common.structure.type.programable.advanced.events.FunctionDebugMessage;
+import com.alet.common.structure.type.programable.advanced.flows.FunctionForLoop;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 

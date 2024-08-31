@@ -1,6 +1,6 @@
-package com.alet.common.structure.type.programable.functions.conditions;
+package com.alet.common.structure.type.programable.advanced.conditions;
 
-import com.alet.common.structure.type.programable.functions.Function;
+import com.alet.common.structure.type.programable.advanced.Function;
 
 public abstract class FunctionCondition extends Function {
     

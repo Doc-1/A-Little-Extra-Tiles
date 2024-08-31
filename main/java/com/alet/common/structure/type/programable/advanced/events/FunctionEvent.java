@@ -1,6 +1,6 @@
-package com.alet.common.structure.type.programable.functions.events;
+package com.alet.common.structure.type.programable.advanced.events;
 
-import com.alet.common.structure.type.programable.functions.Function;
+import com.alet.common.structure.type.programable.advanced.Function;
 
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;

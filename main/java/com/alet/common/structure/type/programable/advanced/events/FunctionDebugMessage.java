@@ -1,4 +1,4 @@
-package com.alet.common.structure.type.programable.functions.events;
+package com.alet.common.structure.type.programable.advanced.events;
 
 import net.minecraft.world.WorldServer;
 

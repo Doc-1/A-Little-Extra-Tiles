@@ -1,8 +1,8 @@
-package com.alet.common.structure.type.programable.functions.activators;
+package com.alet.common.structure.type.programable.advanced.activators;
 
 import java.util.HashSet;
 
-import com.alet.common.structure.type.programable.functions.Function;
+import com.alet.common.structure.type.programable.advanced.Function;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
