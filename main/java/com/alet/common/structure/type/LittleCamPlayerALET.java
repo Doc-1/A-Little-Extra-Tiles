@@ -115,29 +115,32 @@ public class LittleCamPlayerALET extends LittleStructure {
             
             LittleCamPlayerALET camPlayer = structure instanceof LittleCamPlayerALET ? (LittleCamPlayerALET) structure : null;
             if (camPlayer != null)
-                PacketHandler.sendPacketToServer(new PacketGetServerCams(parent.getID(), camPlayer.camToPlay));
+                PacketHandler.sendPacketToServer(new PacketGetServerCams(camPlayer.camToPlay));
             else
-                PacketHandler.sendPacketToServer(new PacketGetServerCams(parent.getID()));
+                PacketHandler.sendPacketToServer(new PacketGetServerCams(""));
             
             List<String> list = new ArrayList<String>();
             GuiComboBox box = new GuiComboBox("cameras", 0, 0, 100, list);
             
             box.enabled = false;
             parent.controls.add(box);
-            parent.controls.add(new GuiCheckBox("plyrCam", "Player Is Camera", 0, 22, camPlayer == null ? true : camPlayer.playerIsCamera));
+            parent.controls.add(
+                new GuiCheckBox("plyrCam", "Player Is Camera", 0, 22, camPlayer == null ? true : camPlayer.playerIsCamera));
             parent.controls.add(new GuiLabel("Duration: ", 0, 40));
             parent.controls.add(new GuiLabel("Loop: ", 0, 60));
-            parent.controls.add(new GuiTextfield("duration", camPlayer == null ? "0" : camPlayer.duration + "", 50, 40, 20, 10));
+            parent.controls.add(
+                new GuiTextfield("duration", camPlayer == null ? "0" : camPlayer.duration + "", 50, 40, 20, 10));
             parent.controls.add(new GuiTextfield("loop", camPlayer == null ? "0" : camPlayer.loop + "", 50, 60, 20, 10));
             
-            parent.controls
-                    .add(new GuiTextBox("text", "Use the /cam-server add command to add a new path to the drop down menu. Duration cannot be zero. It will not play.", 110, 0, 82));
+            parent.controls.add(
+                new GuiTextBox("text", "Use the /cam-server add command to add a new path to the drop down menu. Duration cannot be zero. It will not play.", 110, 0, 82));
             
             if (!player.isCreative()) {
                 for (GuiControl control : parent.controls) {
                     control.enabled = false;
                 }
-                parent.controls.add(new GuiTextBox("message", "These settings are only avalible in creative mode", 140, 45, 50));
+                parent.controls.add(
+                    new GuiTextBox("message", "These settings are only avalible in creative mode", 140, 45, 50));
                 parent.get("text").visible = false;
             }
         }

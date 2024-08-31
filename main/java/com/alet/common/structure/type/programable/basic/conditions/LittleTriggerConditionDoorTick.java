@@ -49,7 +49,8 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
                     i = Integer.parseInt(s1[1].replace("-", ""));
                 if (i == tick && door.animation.controller.getCurrentState().name.equals("closed"))
                     return true;
-            }
+            } else
+                return false;
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -168,7 +169,8 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
         }
         if (source.is("doorList")) {
             GuiDoorComboBox combo = (GuiDoorComboBox) source;
-            this.childID = combo.childIDs.get(combo.index);
+            if (!combo.lines.isEmpty())
+                this.childID = combo.childIDs.get(combo.index);
         }
     }
     

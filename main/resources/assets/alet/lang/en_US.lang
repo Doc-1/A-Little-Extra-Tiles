@@ -104,7 +104,8 @@ trigger.play_sound.name=Play Sound
 trigger.set_signal.name=Set Signal
 trigger.count_tick.name=Count Tick
 trigger.mouse_activation.name=Mouse Activation
-trigger.signal_activation.name=Signal Activation
+trigger.is_signal.name=Is Signal
+trigger.is_door_tick.name=Is Door Tick
 
 trigger.listener.collision.name=Collision with Tiles
 trigger.listener.right_click.name=Right Click

@@ -182,7 +182,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             WorldServer server = (WorldServer) world;
             if (this.entitiesToLoad != null) {
                 for (Iterator<UUID> iterator = entitiesToLoad.iterator(); iterator.hasNext();) {
-                    UUID uuid = (UUID) iterator.next();
+                    UUID uuid = iterator.next();
                     Entity en = server.getEntityFromUuid(uuid);
                     if (en != null) {
                         this.entities.add(en);
@@ -213,20 +213,23 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     } else if (shouldContinue && triggerObj instanceof LittleTriggerEvent) {
                         LittleTriggerEvent triggerEvent = (LittleTriggerEvent) triggerObj;
                         boolean event = triggerEvent.runEvent();
-                        if (this.considerEventsConditions)
-                            shouldContinue = event;
+                        if (!event && this.considerEventsConditions) {
+                            this.run = false;
+                            this.tick = 0;
+                            this.currentEvent = 0;
+                            this.entities.clear();
+                            for (LittleTriggerObject triggerObj2 : this.triggerObjs)
+                                if (triggerObj2 instanceof LittleTriggerCondition)
+                                    ((LittleTriggerCondition) triggerObj2).completed = false;
+                        }
+                        
                     }
                     if (!shouldContinue)
                         break;
                     this.currentEvent++;
                     
                 }
-                //Will stop the loop if there is no entities inside the collision area.
-                /*
-                if (!triggerMode.equals("rightClick") && runWhileCollided) {
-                    flag2 = this.entities.isEmpty();
-                    entities.clear();
-                }*/
+                
                 this.triggerActivator.loopRules(entities, shouldContinue, flag);
                 if (hasCondition && shouldContinue && !flag)
                     this.getInput(0).updateState(new boolean[] { true });
@@ -323,6 +326,7 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
                     return "";
                 }
                 
+                @Override
                 public boolean select(int index) {
                     int currentIndex = 0;
                     if (index == -1)
@@ -365,7 +369,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             parent.addControl(add);
             if (triggers != null && !triggers.isEmpty()) {
                 for (int i = 0; i < triggers.size(); i++) {
-                    box.addControl(new GuiTriggerEventButton(triggers.get(i).getName() + i, I18n.translateToLocal(triggers.get(i).getName()), 0, i * 17, 119, 12));
+                    box.addControl(new GuiTriggerEventButton(triggers.get(i).getName() + i, I18n.translateToLocal(triggers
+                            .get(i).getName()), 0, i * 17, 119, 12));
                 }
             }
             parent.addControl(new GuiCheckBox("consider", "Make Events Conditional", 0, 208, consideredEventsConditions));
@@ -458,7 +463,8 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             for (int i = 0; i < triggers.size(); i++) {
                 LittleTriggerObject triggerObj = triggers.get(i);
                 triggerObj.id = i;
-                box.addControl(new GuiTriggerEventButton(triggerObj.getName() + i, I18n.translateToLocal(triggerObj.getName()), 0, i * 17, 119, 12));
+                box.addControl(new GuiTriggerEventButton(triggerObj.getName() + i, I18n.translateToLocal(triggerObj
+                        .getName()), 0, i * 17, 119, 12));
             }
         }
         
@@ -520,10 +526,12 @@ public class LittleTriggerBoxStructureALET extends LittleStructure {
             @Override
             public void onClicked(int x, int y, int button) {
                 GuiScrollBox box = (GuiScrollBox) this.getGui().get("box");
-                GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (GuiComboBoxCategory<Class<? extends LittleTriggerObject>>) this.getGui().get("list");
+                GuiComboBoxCategory<Class<? extends LittleTriggerObject>> list = (GuiComboBoxCategory<Class<? extends LittleTriggerObject>>) this
+                        .getGui().get("list");
                 int i = triggers.size();
                 triggers.add(LittleTriggerRegistrar.getTriggerObject(list.getSelected().value, i));
-                GuiTriggerEventButton bu = new GuiTriggerEventButton(list.getSelected().key + i, list.getCaption(), 0, i * 17, 119, 12);
+                GuiTriggerEventButton bu = new GuiTriggerEventButton(list.getSelected().key + i, list
+                        .getCaption(), 0, i * 17, 119, 12);
                 box.addControl(bu);
             }
         }

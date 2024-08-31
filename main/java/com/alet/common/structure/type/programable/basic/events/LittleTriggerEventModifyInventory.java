@@ -1,5 +1,7 @@
 package com.alet.common.structure.type.programable.basic.events;
 
+import javax.annotation.Nullable;
+
 import com.alet.client.gui.LittleItemSelector;
 import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.alet.client.gui.controls.GuiFakeSlot;
@@ -35,57 +37,74 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
     public boolean addItem = true;
     public int stackCount = 1;
     public ItemStack stack = ItemStack.EMPTY;
-    public final byte mainHand = 0, offHand = 1, helm = 2, chest = 3, legs = 4, boots = 5, specific = 6;
-    public byte selected = 1;
+    public Slot selected = Slot.MAIN_HAND;
     public int slotID = 0;
+    
+    public enum Slot {
+        MAIN_HAND("main_hand"),
+        OFF_HAND("off_hand"),
+        HELM("helm"),
+        CHEST("chest"),
+        LEGS("legs"),
+        BOOTS("boots"),
+        SPECIFIC("specific"),
+        ANY("any");
+        
+        private String name;
+        
+        Slot(String name) {
+            this.name = name;
+        }
+        
+        public static Slot getSlotFrom(NBTTagCompound nbt) {
+            String name = nbt.getString("selected");
+            for (Slot s : Slot.values())
+                if (s.name.equals(name))
+                    return s;
+            return MAIN_HAND;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public IItemHandler getSlotHandler(EntityPlayer player, @Nullable Integer specificID) {
+            InventoryPlayer inv = player.inventory;
+            
+            switch (this) {
+                case MAIN_HAND:
+                    System.out.println(inv.currentItem);
+                    return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), inv.currentItem, inv.currentItem + 1);
+                case OFF_HAND:
+                    return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 40, 41);
+                case HELM:
+                    return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 39, 40);
+                case CHEST:
+                    return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 38, 39);
+                case LEGS:
+                    return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 37, 38);
+                case BOOTS:
+                    return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 36, 37);
+                case SPECIFIC:
+                    return specificID != null ? new RangedWrapper((IItemHandlerModifiable) player.getCapability(
+                        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), specificID, specificID + 1) : null;
+                case ANY:
+                    return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                default:
+                    return null;
+            }
+        }
+    }
     
     public LittleTriggerEventModifyInventory(int id) {
         super(id);
         // TODO Auto-generated constructor stub
-    }
-    
-    public IItemHandler getSlot(EntityPlayer player) {
-        InventoryPlayer inv = player.inventory;
-        System.out.println(inv.getSizeInventory());
-        //off-hand = 40
-        //helm = 39
-        //chest = 38
-        //legs = 37
-        //boots = 36
-        switch (0) {
-            //main hand
-            case 0:
-                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
-                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
-                    null), inv.currentItem, inv.currentItem - 1 + 1);
-            //off-hand
-            case 1:
-                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
-                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 40, 41);
-            //helm
-            case 2:
-                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
-                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 39, 40);
-            //chest
-            case 3:
-                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
-                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 38, 39);
-            //legs
-            case 4:
-                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
-                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 37, 38);
-            //boots
-            case 5:
-                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
-                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), 36, 37);
-            //specific
-            case 6:
-                return new RangedWrapper((IItemHandlerModifiable) player.getCapability(
-                    CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), this.slotID, this.slotID + 1);
-            //Any Slots
-            default:
-                return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        }
     }
     
     @Override
@@ -93,7 +112,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         addItem = nbt.getBoolean("addItem");
         stackCount = nbt.getInteger("stackCount");
         stack = new ItemStack(nbt.getCompoundTag("stack"));
-        selected = nbt.getByte("selected");
+        selected = Slot.getSlotFrom(nbt);
         return this;
     }
     
@@ -104,7 +123,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         NBTTagCompound nbtItemStack = new NBTTagCompound();
         stack.writeToNBT(nbtItemStack);
         nbt.setTag("stack", nbtItemStack);
-        nbt.setByte("selected", selected);
+        nbt.setString("selected", selected != null ? selected.getName() : Slot.MAIN_HAND.name);
         return nbt;
     }
     
@@ -119,7 +138,7 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         panel.addControl(
             new GuiStackSelectorAll("preview", 0, 0, 110, player, new GuiStackSelectorAll.InventoryCollector(new LittleItemSelector()), true));
         
-        panel.addControl(new GuiButton("use", "Use Item As Key", 25, 22) {
+        panel.addControl(new GuiButton("use", "Use Item", 25, 22) {
             @Override
             public void onClicked(int x, int y, int button) {
                 GuiStackSelectorAll preview = (GuiStackSelectorAll) parent.get("preview");
@@ -133,8 +152,8 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         GuiTextfield count = new GuiTextfield("count", this.stackCount + "", 66, 45, 25, 10).setNumbersOnly();
         count.maxLength = 2;
         panel.addControl(count);
-        GuiConnectedCheckBoxes addRemove = new GuiConnectedCheckBoxes("addRemove", 0, 65).addCheckBox("add",
-            "Add Item").addCheckBox("remove", "Remove Item");
+        GuiConnectedCheckBoxes addRemove = new GuiConnectedCheckBoxes("addRemove", 0, 65).addCheckBox("add", "Add Item")
+                .addCheckBox("remove", "Remove Item");
         if (this.addItem)
             addRemove.setSelected("add");
         else
@@ -142,11 +161,11 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
         panel.addControl(addRemove);
         /*
         GuiConnectedCheckBoxes handInventory = new GuiConnectedCheckBoxes("handInv", 0, 97).addCheckBox(
-            "inHand", "Add/Remove to Hand").addCheckBox("inInv", "Add/Remove to Inventory");
+        "inHand", "Add/Remove to Hand").addCheckBox("inInv", "Add/Remove to Inventory");
         if (this.inHand)
-            handInventory.setSelected("inHand");
+        handInventory.setSelected("inHand");
         else
-            handInventory.setSelected("inInv");
+        handInventory.setSelected("inInv");
         
         panel.addControl(handInventory);*/
     }
@@ -190,18 +209,16 @@ public class LittleTriggerEventModifyInventory extends LittleTriggerEvent {
                     LittleIngredients ingredients = new LittleIngredients(new StackIngredient(stack));
                     try {
                         if (!addItem) {
-                            LittleAction.checkAndTake(player, new LittleInventory(player, getSlot(player)),
-                                ingredients);
+                            LittleAction.checkAndTake(player, new LittleInventory(player, this.selected.getSlotHandler(
+                                player, slotID)), ingredients);
                             return true;
-                            
                         } else {
-                            LittleAction.checkAndGive(player, new LittleInventory(player, getSlot(player)),
-                                ingredients);
-                            
+                            LittleAction.checkAndGive(player, new LittleInventory(player, this.selected.getSlotHandler(
+                                player, slotID)), ingredients);
                             return true;
                         }
                     } catch (NotEnoughIngredientsException e) {
-                        e.printStackTrace();
+                        return false;
                     }
                 }
             }

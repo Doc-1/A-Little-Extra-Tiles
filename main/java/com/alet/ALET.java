@@ -40,6 +40,7 @@ import com.alet.common.blocks.BasicBlock;
 import com.alet.common.blocks.TransparentBlock;
 import com.alet.common.packet.PacketDropItem;
 import com.alet.common.packet.PacketGetServerCams;
+import com.alet.common.packet.PacketGetServerScoreboard;
 import com.alet.common.packet.PacketLeftClick;
 import com.alet.common.packet.PacketPlaySound;
 import com.alet.common.packet.PacketSendGuiToClient;
@@ -85,8 +86,8 @@ import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner;
 import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
 import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
+import com.alet.common.structure.type.programable.advanced.FunctionRegistar;
 import com.alet.common.structure.type.programable.basic.LittleTriggerBoxStructureALET;
-import com.alet.common.structure.type.programable.functions.FunctionRegistar;
 import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemLittleManual;
@@ -539,6 +540,7 @@ public class ALET {
         CreativeCorePacket.registerPacket(PacketUpdateBreakBlock.class);
         CreativeCorePacket.registerPacket(PacketUpdateMutateFromServer.class);
         CreativeCorePacket.registerPacket(PacketLeftClick.class);
+        CreativeCorePacket.registerPacket(PacketGetServerScoreboard.class);
         
         if (Loader.isModLoaded("cmdcam")) {
             CreativeCorePacket.registerPacket(PacketSendServerCams.class);

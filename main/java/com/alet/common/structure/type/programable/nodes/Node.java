@@ -3,7 +3,7 @@ package com.alet.common.structure.type.programable.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.structure.type.programable.functions.Function;
+import com.alet.common.structure.type.programable.advanced.Function;
 
 public class Node {
     

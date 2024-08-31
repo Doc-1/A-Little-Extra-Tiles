@@ -7,12 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import com.alet.common.packet.PacketGetServerScoreboard;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
+import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 
 import net.minecraft.entity.Entity;
@@ -93,6 +95,8 @@ public class LittleTriggerConditionScoreboard extends LittleTriggerCondition {
     @Override
     @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
+        PacketHandler.sendPacketToServer(new PacketGetServerScoreboard());
+        panel.getGui().getPlayer();
         Scoreboard score = world.getScoreboard();
         Collection<ScoreObjective> objectives = score.getScoreObjectives();
         List<String> list = new ArrayList<String>();

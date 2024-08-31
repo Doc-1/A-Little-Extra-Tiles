@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import com.alet.common.structure.type.programable.functions.Function;
-import com.alet.common.structure.type.programable.functions.activators.FunctionActivator;
-import com.alet.common.structure.type.programable.functions.conditions.FunctionCondition;
-import com.alet.common.structure.type.programable.functions.events.FunctionEvent;
-import com.alet.common.structure.type.programable.functions.flows.FunctionFlowControl;
-import com.alet.common.structure.type.programable.functions.flows.FunctionForLoop;
-import com.alet.common.structure.type.programable.functions.getters.FunctionGetter;
+import com.alet.common.structure.type.programable.advanced.Function;
+import com.alet.common.structure.type.programable.advanced.activators.FunctionActivator;
+import com.alet.common.structure.type.programable.advanced.conditions.FunctionCondition;
+import com.alet.common.structure.type.programable.advanced.events.FunctionEvent;
+import com.alet.common.structure.type.programable.advanced.flows.FunctionFlowControl;
+import com.alet.common.structure.type.programable.advanced.flows.FunctionForLoop;
+import com.alet.common.structure.type.programable.advanced.getters.FunctionGetter;
 import com.alet.common.structure.type.programable.nodes.values.NodeFunction;
 import com.alet.common.structure.type.programable.nodes.values.NodeValue;
 

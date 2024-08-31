@@ -18,7 +18,6 @@ import com.creativemd.littletiles.common.structure.exception.NotYetConnectedExce
 import com.creativemd.littletiles.common.structure.signal.component.ISignalComponent;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalPatternParser;
 import com.creativemd.littletiles.common.structure.signal.logic.SignalTarget;
-import com.creativemd.littletiles.common.structure.signal.output.InternalSignalOutput;
 import com.creativemd.littletiles.common.structure.signal.output.SignalExternalOutputHandler;
 import com.creativemd.littletiles.common.structure.signal.output.SignalOutputHandler;
 import com.creativemd.littletiles.common.structure.type.premade.signal.LittleSignalOutput;
@@ -42,11 +41,7 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
             SignalTarget target = SignalTarget.parseTarget(new SignalPatternParser(outputName), true, false);
             ISignalComponent componet = target.getTarget(this.structure);
             SignalOutputHandler handler = null;
-            if (componet instanceof InternalSignalOutput)
-                handler = ((InternalSignalOutput) componet).handler;
-            else if (componet instanceof SignalExternalOutputHandler)
-                handler = ((SignalExternalOutputHandler) componet).handler;
-            else if (componet instanceof LittleSignalOutput) {
+            if (componet instanceof LittleSignalOutput) {
                 LittleSignalOutput o = (LittleSignalOutput) componet;
                 if (o.getParent() != null) {
                     SignalExternalOutputHandler x = o.getParent().getStructure().getExternalOutputHandler(o
@@ -93,14 +88,14 @@ public class LittleTriggerEventSetSignal extends LittleTriggerEvent {
     @SideOnly(Side.CLIENT)
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         List<GuiSignalComponent> GuiSignalComponent = new ComponentSearch(previews, previews.getStructureType()).search(
-            false, true, true);
+            false, true, false);
         //this.outputName = GuiSignalComponent.get(0).totalName;
         List<String> list = new ArrayList<String>();
         List<String> title = new ArrayList<String>();
         int index = 0;
         int i = 0;
         for (GuiSignalComponent o : GuiSignalComponent) {
-            if (!o.totalName.equals("allow") && !o.totalName.equals("completed")) {
+            if (!o.totalName.equals("allow") && !o.totalName.equals("completed") && !o.totalName.equals("activate")) {
                 if (o.totalName.equals(outputName))
                     index = i;
                 title.add(o.display());

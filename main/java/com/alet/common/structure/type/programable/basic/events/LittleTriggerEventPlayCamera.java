@@ -106,10 +106,7 @@ public class LittleTriggerEventPlayCamera extends LittleTriggerEvent {
     public void createGuiControls(GuiPanel panel, LittlePreviews previews) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         
-        if (!camToPlay.equals(""))
-            PacketHandler.sendPacketToServer(new PacketGetServerCams(panel.getParent().getID(), camToPlay));
-        else
-            PacketHandler.sendPacketToServer(new PacketGetServerCams(panel.getParent().getID()));
+        PacketHandler.sendPacketToServer(new PacketGetServerCams(camToPlay));
         
         List<String> list = new ArrayList<String>();
         GuiComboBox box = new GuiComboBox("cameras", 0, 0, 100, list);

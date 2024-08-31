@@ -3,7 +3,7 @@ package com.alet.common.structure.type.programable.nodes.values;
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.controls.programmable.nodes.values.GuiNodeValue;
-import com.alet.common.structure.type.programable.functions.Function;
+import com.alet.common.structure.type.programable.advanced.Function;
 import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 

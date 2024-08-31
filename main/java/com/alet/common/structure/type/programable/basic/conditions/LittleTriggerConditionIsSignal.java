@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.alet.common.structure.type.programable.basic.LittleTriggerObject;
 import com.alet.common.utils.ComponentSearch;
-import com.alet.common.utils.SignalingUtils;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
@@ -29,8 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     
     public String name = "";
-    public boolean[] state;
-    public String value = "";
+    public int value = 0;
     
     public LittleTriggerConditionIsSignal(int id) {
         super(id);
@@ -44,12 +42,11 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
             ISignalComponent componet = target.getTarget(this.structure);
             if (componet != null)
                 try {
-                    if (BooleanUtils.equals(componet.getState(), this.state)) {
-                        return true;
-                    }
+                    boolean[] arr = new boolean[componet.getBandwidth()];
+                    BooleanUtils.intToBool(value, arr);
+                    return BooleanUtils.equals(componet.getState(), arr);
                 } catch (CorruptedConnectionException | NotYetConnectedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    return false;
                 }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -60,15 +57,14 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     @Override
     public LittleTriggerObject deserializeNBT(NBTTagCompound nbt) {
         this.name = nbt.getString("name");
-        this.value = nbt.getString("value");
-        this.state = SignalingUtils.stringToBool(value);
+        this.value = nbt.getInteger("value");
         return this;
     }
     
     @Override
     public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setString("name", this.name);
-        nbt.setString("value", this.value);
+        nbt.setInteger("value", this.value);
         return nbt;
     }
     
@@ -79,26 +75,30 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
             true, true);
         //this.outputName = GuiSignalComponent.get(0).totalName;
         List<String> list = new ArrayList<String>();
+        List<String> title = new ArrayList<String>();
         int index = 0;
         int i = 0;
         for (GuiSignalComponent o : GuiSignalComponent) {
-            if (!o.totalName.equals("allow") && !o.totalName.equals("completed")) {
-                if (o.name.equals(name))
+            if (!o.totalName.equals("allow") && !o.totalName.equals("completed") && !o.totalName.equals("activate")) {
+                if (o.totalName.equals(name))
                     index = i;
+                title.add(o.display());
                 list.add(o.name);
                 i++;
             }
         }
-        panel.addControl(new GuiLabel("Is Signal", 0, 0));
+        panel.addControl(new GuiLabel("Is Signal Equal", 0, 0));
         panel.addControl(new GuiLabel("Signal Connections", 0, 20));
-        GuiComboBox box = new GuiComboBox("outList", 0, 33, 153, list);
+        GuiTitledComboBox box = new GuiTitledComboBox("outList", 0, 33, 153, title, list);
         if (!list.isEmpty()) {
             box.select(index);
             panel.raiseEvent(new GuiControlChangedEvent(box));
         }
+        
         panel.addControl(box);
-        panel.addControl(new GuiLabel("If Signal is", 0, 57));
-        GuiTextfield valueText = new GuiTextfield("value", value, 0, 70, 153, 14).setNumbersIncludingNegativeOnly();
+        panel.addControl(new GuiLabel("If Signal is equal to", 0, 57));
+        GuiTextfield valueText = new GuiTextfield("value", value + "", 0, 70, 153, 14).setNumbersOnly();
+        valueText.setCustomTooltip("Enter value as a decimal");
         panel.addControl(valueText);
     }
     
@@ -106,13 +106,26 @@ public class LittleTriggerConditionIsSignal extends LittleTriggerCondition {
     @SideOnly(Side.CLIENT)
     public void guiChangedEvent(CoreControl source) {
         if (source.is("outList")) {
-            GuiComboBox combo = (GuiComboBox) source;
-            this.name = combo.getCaption();
+            GuiTitledComboBox combo = (GuiTitledComboBox) source;
+            this.name = combo.getSelected();
         } else if (source.is("value")) {
             GuiTextfield valueText = (GuiTextfield) source;
             if (!valueText.text.equals(""))
-                this.value = valueText.text;
+                this.value = Integer.parseInt(valueText.text);
         }
     }
     
+    protected class GuiTitledComboBox extends GuiComboBox {
+        
+        List<String> titles = new ArrayList<>();
+        
+        public GuiTitledComboBox(String name, int x, int y, int width, List<String> titles, List<String> lines) {
+            super(name, x, y, width, titles);
+            this.titles = lines;
+        }
+        
+        public String getSelected() {
+            return titles.get(index);
+        }
+    }
 }

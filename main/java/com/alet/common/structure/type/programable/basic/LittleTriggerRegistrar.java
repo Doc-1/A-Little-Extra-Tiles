@@ -12,7 +12,6 @@ import com.alet.common.structure.type.programable.basic.conditions.LittleTrigger
 import com.alet.common.structure.type.programable.basic.conditions.LittleTriggerConditionHasItem;
 import com.alet.common.structure.type.programable.basic.conditions.LittleTriggerConditionIsEntity;
 import com.alet.common.structure.type.programable.basic.conditions.LittleTriggerConditionIsSignal;
-import com.alet.common.structure.type.programable.basic.conditions.LittleTriggerConditionScoreboard;
 import com.alet.common.structure.type.programable.basic.conditions.LittleTriggerConditionSuccessfulCommand;
 import com.alet.common.structure.type.programable.basic.conditions.LittleTriggerConditionTickDelay;
 import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventExecuteCommand;
@@ -20,7 +19,6 @@ import com.alet.common.structure.type.programable.basic.events.LittleTriggerEven
 import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventModifyInventory;
 import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventModifyMotion;
 import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventModifyScoreboard;
-import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventPlayCamera;
 import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventPlaySound;
 import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventSetSignal;
 import com.alet.common.structure.type.programable.basic.events.LittleTriggerEventSetSpawn;
@@ -42,13 +40,14 @@ public class LittleTriggerRegistrar {
         registerTriggerActivator("simple", "global", LittleTriggerActivatorGlobal.class);
         registerTriggerActivator("advanced", "collision_area", LittleTriggerActivatorCollisionArea.class);
         registerTriggerActivator("advanced", "trigger_selector", LittleTriggerActivatorTargetSelector.class);
+        //registerTriggerActivator("advanced", "is_scoreboard", LittleTriggerActivatorIsScoreboard.class);
         registerTriggerObject("codition", "tick_delay", LittleTriggerConditionTickDelay.class);
         registerTriggerObject("codition", "has_item", LittleTriggerConditionHasItem.class);
         registerTriggerObject("codition", "is_door_tick", LittleTriggerConditionDoorTick.class);
         registerTriggerObject("codition", "successful_command", LittleTriggerConditionSuccessfulCommand.class);
         registerTriggerObject("codition", "is_entity", LittleTriggerConditionIsEntity.class);
         registerTriggerObject("codition", "is_signal", LittleTriggerConditionIsSignal.class);
-        registerTriggerObject("codition", "scoreboard", LittleTriggerConditionScoreboard.class);
+        //registerTriggerObject("codition", "scoreboard", LittleTriggerConditionScoreboard.class);
         registerTriggerObject("event", "modify_health", LittleTriggerEventModifyHealth.class);
         registerTriggerObject("event", "modify_motion", LittleTriggerEventModifyMotion.class);
         registerTriggerObject("event", "modify_inventory", LittleTriggerEventModifyInventory.class);
@@ -56,7 +55,7 @@ public class LittleTriggerRegistrar {
         registerTriggerObject("event", "execute_command", LittleTriggerEventExecuteCommand.class);
         registerTriggerObject("event", "set_spawn", LittleTriggerEventSetSpawn.class);
         registerTriggerObject("event", "play_sound", LittleTriggerEventPlaySound.class);
-        registerTriggerObject("event", "play_camera", LittleTriggerEventPlayCamera.class);
+        //registerTriggerObject("event", "play_camera", LittleTriggerEventPlayCamera.class);
         registerTriggerObject("event", "set_signal", LittleTriggerEventSetSignal.class);
     }
     

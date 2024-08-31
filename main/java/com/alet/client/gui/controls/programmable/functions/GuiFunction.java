@@ -8,7 +8,7 @@ import java.util.UUID;
 import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
-import com.alet.common.structure.type.programable.functions.FunctionRegistar;
+import com.alet.common.structure.type.programable.advanced.FunctionRegistar;
 import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.alet.common.utils.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
