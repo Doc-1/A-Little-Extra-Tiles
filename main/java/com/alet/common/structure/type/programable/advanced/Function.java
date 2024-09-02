@@ -6,8 +6,8 @@ import java.util.List;
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
-import com.alet.common.structure.type.programable.nodes.values.NodeFunction;
-import com.alet.common.structure.type.programable.nodes.values.NodeValue;
+import com.alet.common.structure.type.programable.advanced.nodes.values.NodeFunction;
+import com.alet.common.structure.type.programable.advanced.nodes.values.NodeValue;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -18,6 +18,7 @@ public abstract class Function {
     public LittleProgramableStructureALET structure;
     
     //Identification Field
+    private final String NAME;
     public int id;
     
     //Nodes Fields
@@ -25,11 +26,10 @@ public abstract class Function {
     public NodeFunction methodReciever;
     public List<NodeValue> senderNodes = new ArrayList<>();
     public List<NodeValue> recieverNodes = new ArrayList<>();
-    public final boolean IS_METHOD_SENDER;
-    public final boolean IS_METHOD_RECIEVER;
+    private boolean isMethodSender;
+    private boolean isMethodReciever;
     
     //GUI Fields
-    private final String NAME;
     private final int COLOR;
     protected final static int ACTIVATOR_COLOR = 0xFFFFFF;
     protected final static int EVENT_COLOR = 0xFFFFFF;
@@ -39,14 +39,24 @@ public abstract class Function {
     protected final static int CAST_COLOR = 0xFFFFFF;
     protected final static int FLOW_COLOR = 0xFFFFFF;
     
-    public Function(String name, int id, int color, boolean sender, boolean reciever) {
+    public Function(String name, int id, int color) {
         this.NAME = name;
         this.id = id;
         this.COLOR = color;
-        this.IS_METHOD_SENDER = sender;
-        this.IS_METHOD_RECIEVER = reciever;
+        this.isMethodReciever = false;
+        this.isMethodSender = false;
         setMethodNodes();
         setFunctionNodes();
+    }
+    
+    public Function setAsSender() {
+        this.isMethodSender = true;
+        return this;
+    }
+    
+    public Function setAsReciever() {
+        this.isMethodReciever = true;
+        return this;
     }
     
     public static Function guiToFunction(GuiFunction guiFunction) {
@@ -54,10 +64,10 @@ public abstract class Function {
     }
     
     private void setMethodNodes() {
-        if (IS_METHOD_SENDER)
-            this.methodSender = new NodeFunction("method_sender", "", true, false, false);
-        if (IS_METHOD_RECIEVER)
-            this.methodReciever = new NodeFunction("method_reciever", "", false, true, false);
+        if (this.isMethodSender())
+            this.methodSender = new NodeFunction("method_sender", "", false);
+        if (this.isMethodReciever())
+            this.methodReciever = new NodeFunction("method_reciever", "", false);
     }
     
     @SideOnly(Side.CLIENT)
@@ -94,4 +104,19 @@ public abstract class Function {
         return COLOR;
     }
     
+    public boolean isMethodReciever() {
+        return isMethodReciever;
+    }
+    
+    public boolean isMethodSender() {
+        return isMethodSender;
+    }
+    
+    public enum FunctionType {
+        ACTIVATOR,
+        EVENTS,
+        CONDITION,
+        FLOW,
+        GETTER;
+    }
 }

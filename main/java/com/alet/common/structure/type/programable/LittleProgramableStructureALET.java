@@ -13,7 +13,6 @@ import org.lwjgl.input.Keyboard;
 import com.alet.client.gui.controls.GuiBezierCurve;
 import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.GuiIconDepressedButton;
-import com.alet.client.gui.controls.GuiKeyListener;
 import com.alet.client.gui.controls.menu.GuiMenu;
 import com.alet.client.gui.controls.menu.GuiMenuPart;
 import com.alet.client.gui.controls.menu.GuiPopupMenu;
@@ -27,7 +26,9 @@ import com.alet.client.gui.event.gui.GuiControlDragEvent;
 import com.alet.client.gui.event.gui.GuiControlKeyPressed;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.programable.advanced.Function;
+import com.alet.common.structure.type.programable.advanced.Function.FunctionType;
 import com.alet.common.structure.type.programable.advanced.FunctionRegistar;
+import com.alet.common.structure.type.programable.advanced.activators.FunctionOnRightClick;
 import com.alet.common.utils.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -71,53 +72,20 @@ public class LittleProgramableStructureALET extends LittleStructure {
     public int tick = 0;
     public Function resumeFrom;
     public boolean run = false;
-    private List<Function> functions = new ArrayList<Function>();
-    public List<Function> activators = new ArrayList<Function>();
+    private HashMap<FunctionType, Function> functions = new HashMap<>();
     
     public LittleProgramableStructureALET(LittleStructureType type, IStructureTileList mainBlock) {
         super(type, mainBlock);
     }
     
     @Override
-    protected void loadFromNBTExtra(NBTTagCompound nbt) {
-        /*
-        NBTTagList list = nbt.getTagList("blueprints", NBT.TAG_COMPOUND);
-        for (NBTBase base : list) {
-            if (base instanceof NBTTagCompound) {
-                NBTTagCompound nb = (NBTTagCompound) base;
-                GuiFunction obj = GuiFunction.createBlueprintFromNBT(nb);
-                obj.structure = this;
-                this.blueprints.add(obj);
-            }
-        }
-        
-        for (NBTBase base : list) {
-            if (base instanceof NBTTagCompound) {
-                NBTTagCompound nb = (NBTTagCompound) base;
-                GuiFunction obj = GuiFunction.getBlueprintObjectFromNBT(blueprints, nb);
-                NBTTagList ls = GuiFunction.getNodeNBTList(nb);
-                for (NBTBase b : ls) {
-                    if (b instanceof NBTTagCompound) {
-                        NBTTagCompound n = (NBTTagCompound) b;
-                        List<Pair<GuiFunction, GuiNode>> bpList = GuiFunction.getBlueprintFromNodeNBT(this.blueprints, n);
-                        for (Pair<GuiFunction, GuiNode> bp : bpList)
-                            bp.value.connect((GuiNode) obj.get(n.getString("node")));
-                    }
-                }
-            }
-        }
-        if (!blueprints.isEmpty())
-            organizeBlueprint();*/
-    }
+    protected void loadFromNBTExtra(NBTTagCompound nbt) {}
     
     @Override
     protected void writeToNBTExtra(NBTTagCompound nbt) {}
     
-    public void organizeBlueprint() {/*
-                                     if (blueprints.stream().anyMatch(x -> BlueprintActivator.class.isAssignableFrom(x.getClass()))) {
-                                     activator = blueprints.stream().filter(x -> BlueprintActivator.class.isAssignableFrom(x.getClass())).collect(Collectors.toList());
-                                     //blueprints.removeAll(events);
-                                     }*/
+    public void organizeBlueprint() {
+        
     }
     
     @Override
@@ -141,35 +109,17 @@ public class LittleProgramableStructureALET extends LittleStructure {
     public void checkForAnimationCollision(EntityAnimation animation, HashMap<Entity, AxisAlignedBB> entities) throws CorruptedConnectionException, NotYetConnectedException {
         if (animation.world.isRemote)
             return;
-        //this.triggerActivator.onCollision(animation.world, entities.keySet());
     }
     
     @Override
     public boolean onBlockActivated(World worldIn, LittleTile tile, BlockPos pos, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ, LittleActionActivated action) throws LittleActionException {
-        //if (!this.isClient())
-        //this.triggerActivator.onRightClick(worldIn, tile, pos, playerIn, hand, heldItem, side, hitX, hitY, hitZ, action);
         
-        /*for (GuiFunction event : this.activator)
-            if (event instanceof BlueprintActivator) {
-                BlueprintActivator bpa = (BlueprintActivator) event;
-                bpa.onRightClick(worldIn, tile, pos, playerIn, hand, heldItem, side, hitX, hitY, hitZ, action);
-            }*/
         return true;
     }
     
     @Override
-    public void tick() {/*
-                        if (!this.isClient())
-                        if (!this.entities.isEmpty()) {
-                        if (this.startingBlueprint == null)
-                        for (int i = 0; i < this.activator.size(); i++) {
-                        BlueprintActivator event = (BlueprintActivator) this.activator.get(i);
-                        BlueprintExecutor.startScript(this, event, i);
-                        }
-                        else {
-                        BlueprintExecutor.resumeScript(this, startingBlueprint);
-                        }
-                        }*/
+    public void tick() {
+        
     }
     
     /*
@@ -296,7 +246,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
             box.addControl(tree);
             parent.addControl(drag);
             parent.addControl(box);
-            drag.addControl(new GuiKeyListener("key_listener"));
+            //drag.addControl(new GuiKeyListener("key_listener"));
             parent.addControl(new GuiIconDepressedButton("pointer", 150, 0, 4, true).setCustomTooltip(
                 "Not Implemented Yet"));
             parent.addControl(new GuiIconDepressedButton("move", 170, 0, 0, false).setCustomTooltip("Not Implemented Yet"));
@@ -306,6 +256,9 @@ public class LittleProgramableStructureALET extends LittleStructure {
                 "Not Implemented Yet"));
             parent.addControl(new GuiIconDepressedButton("drag_toggle", 230, 0, 3, false).setCustomTooltip(
                 "Not Implemented Yet"));
+            FunctionOnRightClick r = new FunctionOnRightClick(0);
+            drag.addControl(FunctionRegistar.createFunctionGui("programmable.advanced.on_right_click.name", false, 0));
+            drag.addControl(FunctionRegistar.createFunctionGui("programmable.advanced.debug_message.name", false, 1));
             /*
             BlueprintInteger i = new BlueprintInteger(0);
             BlueprintDouble bp = new BlueprintDouble(1);
@@ -384,7 +337,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
                 GuiTreePartHolder<String> menu = (GuiTreePartHolder<String>) event.source;
                 if (drag.isMouseOver()) {
                     Vec3d pos = drag.getMousePos();
-                    GuiFunction bp = FunctionRegistar.createFunction(menu.key, false, this.guiFunctions.size());
+                    GuiFunction bp = FunctionRegistar.createFunctionGui(menu.key, false, this.guiFunctions.size());
                     
                     bp.posX = (int) pos.x;
                     bp.posY = (int) pos.y;
@@ -404,12 +357,12 @@ public class LittleProgramableStructureALET extends LittleStructure {
                 GuiNode node = (GuiNode) event.source;
                 if (this.selectedNode != null) {
                     
-                    GuiNode sender = node.IS_SENDER ? node : null;
+                    GuiNode sender = node.isSender() ? node : null;
                     if (sender == null)
-                        sender = selectedNode.IS_SENDER ? selectedNode : null;
-                    GuiNode receiver = node.IS_RECIEVER ? node : null;
+                        sender = selectedNode.isSender() ? selectedNode : null;
+                    GuiNode receiver = node.isReciever() ? node : null;
                     if (receiver == null)
-                        receiver = selectedNode.IS_RECIEVER ? selectedNode : null;
+                        receiver = selectedNode.isReciever() ? selectedNode : null;
                     
                     if (node.equals(this.selectedNode)) {
                         drag.removeControl(drag.get("temp"));
@@ -439,7 +392,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
             if (event.source instanceof GuiTreePart && event.source.is("tree")) {
                 GuiTreePart part = (GuiTreePart) event.source;
                 if (part.type.equals(EnumPartType.Leaf)) {
-                    GuiFunction pb = GuiFunction.createBlueprintFrom(part.caption, this.guiFunctions.size() + 1);
+                    GuiFunction pb = GuiFunction.createFunctionFrom(part.caption, this.guiFunctions.size() + 1);
                     drag.addControl(pb);
                     this.guiFunctions.add(pb);
                 }
@@ -463,8 +416,8 @@ public class LittleProgramableStructureALET extends LittleStructure {
         @SideOnly(Side.CLIENT)
         public LittleProgramableStructureALET parseStructure(LittlePreviews previews) {
             LittleProgramableStructureALET structure = createStructure(LittleProgramableStructureALET.class, null);
-            for (GuiFunction gui : guiFunctions)
-                structure.functions.add(FunctionRegistar.getFunctionFromGui(gui));
+            //for (GuiFunction gui : guiFunctions)
+            //structure.functions.add(FunctionRegistar.getFunctionFromGui(gui));
             
             for (int i = 0; i < guiFunctions.size(); i++) {
                 GuiFunction gui = guiFunctions.get(i);

@@ -87,8 +87,8 @@ import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner
 import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
 import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.advanced.FunctionRegistar;
+import com.alet.common.structure.type.programable.advanced.nodes.NodeRegistar;
 import com.alet.common.structure.type.programable.basic.LittleTriggerBoxStructureALET;
-import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.alet.items.ItemJumpTool;
 import com.alet.items.ItemLittleManual;
 import com.alet.items.ItemLittleRope;

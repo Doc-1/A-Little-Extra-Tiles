@@ -4,8 +4,8 @@ import com.alet.common.structure.type.programable.advanced.Function;
 
 public abstract class FunctionGetter extends Function {
     
-    public FunctionGetter(String name, int id, int color, boolean sender, boolean reciever) {
-        super(name, id, color, sender, reciever);
+    public FunctionGetter(String name, int id, int color) {
+        super(name, id, color);
         // TODO Auto-generated constructor stub
     }
     

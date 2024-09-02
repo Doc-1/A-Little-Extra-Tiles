@@ -1,12 +1,17 @@
 package com.alet.common.structure.type.programable.advanced.activators;
 
-import com.alet.common.structure.type.programable.nodes.values.NodeInteger;
+import java.util.HashSet;
+
+import com.alet.common.structure.type.programable.advanced.nodes.values.NodeFunction;
+import com.alet.common.structure.type.programable.advanced.nodes.values.NodeValue;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
 
 public class FunctionOnRightClick extends FunctionActivator {
     
     public FunctionOnRightClick(int id) {
-        super("on_right_click", id, ACTIVATOR_COLOR, true, false);
-        
+        super("on_right_click", id, ACTIVATOR_COLOR);
     }
     
     @Override
@@ -16,7 +21,12 @@ public class FunctionOnRightClick extends FunctionActivator {
     
     @Override
     public void setFunctionNodes() {
-        this.senderNodes.add(new NodeInteger("int_out", "int", true, false, true));
+        this.senderNodes.add((NodeValue) new NodeFunction("event_out", "event", true).setAsSender());
+    }
+    
+    @Override
+    public boolean shouldRun(World world, HashSet<Entity> entities) {
+        return false;
     }
     
 }

@@ -9,14 +9,11 @@ import net.minecraft.world.World;
 
 public abstract class FunctionActivator extends Function {
     
-    public FunctionActivator(String name, int id, int color, boolean sender, boolean reciever) {
-        super(name, id, color, sender, reciever);
+    public FunctionActivator(String name, int id, int color) {
+        super(name, id, color);
         // TODO Auto-generated constructor stub
     }
     
-    public boolean shouldRun(World world, HashSet<Entity> entities) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+    public abstract boolean shouldRun(World world, HashSet<Entity> entities);
     
 }

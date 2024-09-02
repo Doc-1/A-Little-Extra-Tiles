@@ -50,15 +50,14 @@ public class FunctionRegistar {
     public static void registerFunction(String category, Function function) {
         category = "programmable.advanced.category." + category + ".name";
         PairList<String, GuiFunction> categoryList = guiFunctions.getValue(category);
-        if (categoryList == null) {
+        if (categoryList == null)
             categoryList = new PairList<>();
-            guiFunctions.add(category, categoryList);
-        }
+        guiFunctions.add(category, categoryList);
         String name = function.getName();
         name = "programmable.advanced." + name + ".name";
         
-        categoryList.add(name, new GuiFunction(name, getTranslatedName(name), function
-                .getColor(), function.IS_METHOD_SENDER, function.IS_METHOD_RECIEVER, function.setGuiNodes()));
+        categoryList.add(name, new GuiFunction(name, getTranslatedName(name), function.getColor(), function
+                .isMethodSender(), function.isMethodReciever(), function.setGuiNodes()));
         functions.add(new Pair<String, Class<? extends Function>>(function.getName(), function.getClass()));
     }
     
@@ -89,9 +88,10 @@ public class FunctionRegistar {
         return treeList;
     }
     
-    public static GuiFunction createFunction(String name, boolean translate, int id) {
+    public static GuiFunction createFunctionGui(String name, boolean translate, int id) {
         for (Pair<String, PairList<String, GuiFunction>> mainPair : guiFunctions) {
             for (Pair<String, GuiFunction> pair : mainPair.value) {
+                System.out.println(pair.key.equals(name));
                 if (translate) {
                     if (getTranslatedName(pair.key).equals(name))
                         return pair.value.clone(id);

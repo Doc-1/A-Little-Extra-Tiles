@@ -9,7 +9,7 @@ import com.alet.client.gui.controls.GuiDragablePanel;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.programable.advanced.FunctionRegistar;
-import com.alet.common.structure.type.programable.nodes.NodeRegistar;
+import com.alet.common.structure.type.programable.advanced.nodes.NodeRegistar;
 import com.alet.common.utils.MouseUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
@@ -124,8 +124,8 @@ public class GuiFunction extends GuiParent {
         return nbt;
     }
     
-    public static GuiFunction createBlueprintFrom(String name, int id) {
-        GuiFunction obj = FunctionRegistar.createFunction(name, true, id);
+    public static GuiFunction createFunctionFrom(String name, int id) {
+        GuiFunction obj = FunctionRegistar.createFunctionGui(name, true, id);
         return obj;
     }
     
@@ -133,7 +133,7 @@ public class GuiFunction extends GuiParent {
         return nbt.getTagList("nodes", NBT.TAG_COMPOUND);
     }
     
-    public static PairList<GuiFunction, GuiNode> getBlueprintFromNodeNBT(List<GuiFunction> blueprints, NBTTagCompound node) {
+    public static PairList<GuiFunction, GuiNode> getFunctionFromNodeNBT(List<GuiFunction> blueprints, NBTTagCompound node) {
         
         NBTTagList list = node.getTagList("connections", NBT.TAG_COMPOUND);
         PairList<GuiFunction, GuiNode> bpList = new PairList<GuiFunction, GuiNode>();
@@ -148,7 +148,7 @@ public class GuiFunction extends GuiParent {
         return bpList;
     }
     
-    public static GuiFunction getBlueprintObjectFromNBT(List<GuiFunction> blueprints, NBTTagCompound nbt) {
+    public static GuiFunction getFunctionObjectFromNBT(List<GuiFunction> blueprints, NBTTagCompound nbt) {
         String name = nbt.getString("name");
         int id = nbt.getInteger("id");
         return blueprints.stream().filter(x -> (x.name.equals(name) && x.id == id)).findFirst().get();
@@ -158,8 +158,6 @@ public class GuiFunction extends GuiParent {
         List<GuiNode> nodes = new ArrayList<>();
         nodes.addAll(this.receiverNodes);
         nodes.addAll(this.senderNodes);
-        nodes.add(this.methodReceiver);
-        nodes.add(this.methodSender);
         return nodes;
     }
     
@@ -173,23 +171,21 @@ public class GuiFunction extends GuiParent {
     public void organizeNodes(List<GuiNode> nodes) {
         if (!nodes.isEmpty() && nodes != null)
             for (GuiNode node : nodes) {
-                if (node.IS_SENDER)
+                if (node.isSender())
                     this.senderNodes.add(node);
-                else if (node.IS_RECIEVER)
+                else if (node.isReciever())
                     this.receiverNodes.add(node);
             }
-        
     }
     
     public void setMethodNodes() {
         try {
-            GuiNode receiver = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_receiver", "", false, true,
-                false);
-            GuiNode sender = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_sender", "", true, false, false);
             if (this.IS_METHOD_RECIEVER)
-                this.methodReceiver = receiver;
+                this.methodReceiver = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_receiver", "", false)
+                        .setSender(false);
             if (this.IS_METHOD_SENDER)
-                this.methodSender = sender;
+                this.methodSender = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_sender", "", false)
+                        .setSender(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -207,7 +203,7 @@ public class GuiFunction extends GuiParent {
         } else if (this.IS_METHOD_RECIEVER) {
             this.addControl(this.methodReceiver);
         } else if (this.IS_METHOD_SENDER) {
-            this.posX = this.width - 13;
+            this.methodSender.posX = this.width - 13;
             this.addControl(this.methodSender);
         }
     }
@@ -215,7 +211,7 @@ public class GuiFunction extends GuiParent {
     private void createControls() {
         int maxSpacing = 0;
         int maxWidth = font.getStringWidth(this.FUNCTION_TITLE) + 14;
-        int maxHeight = 0;
+        int maxHeight = 14;
         int y = 15;
         boolean hasModifiable = false;
         for (int i = 0; i < this.receiverNodes.size(); i++) {
@@ -226,19 +222,14 @@ public class GuiFunction extends GuiParent {
             if (i > 0) {
                 GuiNode n = this.receiverNodes.get(i - 1);
                 node.posY = n.posY + 15;
-                if (n.IS_MODIFIABLE) {
+                if (n.IS_MODIFIABLE)
                     node.posY = (i * y) + 30;
-                }
-            } else if (node.IS_MODIFIABLE && this.receiverNodes.size() == 1 && this.senderNodes.size() == 1) {
-                
+            } else if (node.IS_MODIFIABLE && this.receiverNodes.size() == 1 && this.senderNodes.size() == 1)
                 maxHeight = 30;
-                
-            } else
+            else
                 node.posY = 15;
-            
-            maxHeight = Math.max(maxHeight, node.posY);
+            maxHeight = Math.max(maxHeight, node.posY + 15);
             this.addControl(node);
-            
         }
         for (int i = 0; i < this.senderNodes.size(); i++) {
             GuiNode node = this.senderNodes.get(i);
@@ -248,10 +239,8 @@ public class GuiFunction extends GuiParent {
             if (i > 0) {
                 GuiNode n = this.senderNodes.get(i - 1);
                 node.posY = n.posY + 15;
-                
-                if (n.IS_MODIFIABLE) {
+                if (n.IS_MODIFIABLE)
                     node.posY = (i * y) + 30;
-                }
             } else if (node.IS_MODIFIABLE && (this.receiverNodes.size() == 1 || this.receiverNodes
                     .size() == 0) && (this.senderNodes.size() == 1 || this.senderNodes.size() == 0)) {
                 node.posY = 15;
@@ -261,12 +250,12 @@ public class GuiFunction extends GuiParent {
             maxHeight = Math.max(maxHeight, node.posY);
             this.addControl(node);
         }
-        int modWidth = 60;
+        /*  int modWidth = 60;
         if (hasModifiable)
-            maxWidth = Math.max(modWidth, maxWidth);
+            maxWidth = Math.max(modWidth, maxWidth);*/
         
         this.width = maxWidth + 14;
-        this.height = maxHeight + 14;
+        this.height = maxHeight;
         for (GuiNode node : this.senderNodes) {
             node.posX = this.width - node.width - 6;
         }

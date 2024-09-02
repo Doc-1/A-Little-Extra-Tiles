@@ -1,9 +1,9 @@
-package com.alet.common.structure.type.programable.nodes;
+package com.alet.common.structure.type.programable.advanced.nodes;
 
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
-import com.alet.common.structure.type.programable.nodes.values.NodeFunction;
-import com.alet.common.structure.type.programable.nodes.values.NodeInteger;
-import com.alet.common.structure.type.programable.nodes.values.NodeValue;
+import com.alet.common.structure.type.programable.advanced.nodes.values.NodeFunction;
+import com.alet.common.structure.type.programable.advanced.nodes.values.NodeInteger;
+import com.alet.common.structure.type.programable.advanced.nodes.values.NodeValue;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
 public class NodeRegistar {
@@ -29,7 +29,7 @@ public class NodeRegistar {
         return compare.name.equals(type);
     }
     
-    public static GuiNode createNode(String type, String name, String title, boolean isSender, boolean isReciever, boolean isModifiable) {
-        return guiNodes.getValue(type).clone(name, title, isSender, isReciever, isModifiable);
+    public static GuiNode createNode(String type, String name, String title, boolean isModifiable) {
+        return guiNodes.getValue(type).clone(name, title, isModifiable);
     }
 }

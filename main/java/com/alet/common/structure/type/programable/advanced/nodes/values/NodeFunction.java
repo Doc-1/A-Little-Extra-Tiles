@@ -1,22 +1,21 @@
-package com.alet.common.structure.type.programable.nodes.values;
+package com.alet.common.structure.type.programable.advanced.nodes.values;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.controls.programmable.nodes.GuiNode;
 import com.alet.client.gui.controls.programmable.nodes.values.GuiNodeValue;
 import com.alet.common.structure.type.programable.advanced.Function;
-import com.alet.common.structure.type.programable.nodes.NodeRegistar;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
 import net.minecraft.world.WorldServer;
 
 public class NodeFunction extends NodeValue<Function> {
     
-    public NodeFunction(String name, String title, boolean isSender, boolean isReciever, boolean isModifiable) {
-        super(name, NodeRegistar.FUNCTION_NODE, title, ColorUtils.WHITE, isSender, isReciever, isModifiable);
+    public NodeFunction(String name, String title, boolean isModifiable) {
+        super(name, NodeType.FUNCTION, title, ColorUtils.WHITE, isModifiable);
     }
     
     public NodeFunction() {
-        super("", NodeRegistar.FUNCTION_NODE, "", ColorUtils.WHITE);
+        super("", NodeType.FUNCTION, "", ColorUtils.WHITE);
     }
     
     @Override
@@ -27,7 +26,7 @@ public class NodeFunction extends NodeValue<Function> {
     
     @Override
     public GuiNode getGuiNode() throws Exception {
-        return new GuiNodeValue<GuiFunction>(name, TITLE, COLOR, IS_SENDER, IS_RECIEVER, IS_MODIFIABLE);
+        return new GuiNodeValue<GuiFunction>(name, TITLE, COLOR, IS_MODIFIABLE).setSender(this.isSender());
     }
     
 }

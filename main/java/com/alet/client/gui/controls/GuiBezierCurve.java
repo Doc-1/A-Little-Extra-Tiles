@@ -39,20 +39,20 @@ public class GuiBezierCurve extends GuiParent {
         GuiNode node2 = (GuiNode) p3LockOn;
         
         if (p0LockOn != null && p3LockOn == null) {
-            int xOffSet1 = node1.IS_SENDER ? node1.width - 2 : -5;
+            int xOffSet1 = node1.isSender() ? node1.width - 2 : -5;
             p0.x = (p0LockOn.posX + p0LockOn.getParent().posX) + xOffSet1;
             p0.y = p0LockOn.posY + p0LockOn.getParent().posY;
             p3.x = (int) getMousePos().x;
             p3.y = (int) getMousePos().y;
         } else if (p3LockOn != null && p0LockOn == null) {
-            int xOffSet2 = node2.IS_SENDER ? node2.width - 2 : -5;
+            int xOffSet2 = node2.isSender() ? node2.width - 2 : -5;
             p0.x = (int) getMousePos().x;
             p0.y = (int) getMousePos().y;
             p3.x = (p3LockOn.posX + p3LockOn.getParent().posX) + xOffSet2;
             p3.y = p3LockOn.posY + p3LockOn.getParent().posY;
         } else {
-            int xOffSet2 = node2.IS_SENDER ? node2.width - 2 : -5;
-            int xOffSet1 = node1.IS_SENDER ? node1.width - 2 : -5;
+            int xOffSet2 = node2.isSender() ? node2.width - 2 : -5;
+            int xOffSet1 = node1.isSender() ? node1.width - 2 : -5;
             p0.x = (p0LockOn.posX + p0LockOn.getParent().posX) + xOffSet1;
             p0.y = p0LockOn.posY + p0LockOn.getParent().posY;
             p3.x = (p3LockOn.posX + p3LockOn.getParent().posX) + xOffSet2;
