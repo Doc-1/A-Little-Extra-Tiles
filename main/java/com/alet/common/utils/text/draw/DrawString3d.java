@@ -24,7 +24,6 @@ public class DrawString3d {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         
         int i = fontRenderer.getStringWidth(text);
-        int h = fontRenderer.FONT_HEIGHT;
         Point3f midPoint = MeasurementShape.getMidPoint(startPoint, endPoint);
         
         Vec3d vecEye = player.getPositionEyes(Minecraft.getMinecraft().getRenderPartialTicks());

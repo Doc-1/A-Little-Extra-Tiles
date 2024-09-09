@@ -9,7 +9,8 @@ public class ColorAccuracy {
     private static int colorAccuracy;
     
     public static void setColorAccuracy(double colorAccuracy) {
-        ColorAccuracy.colorAccuracy = colorAccuracy <= 0 ? 1 : (int) (colorAccuracy * 239);
+        colorAccuracy = Math.abs(colorAccuracy - 1);
+        ColorAccuracy.colorAccuracy = colorAccuracy <= 0 ? 1 : (int) (colorAccuracy * 128);
     }
     
     public static int roundRGB(int colorInt) {

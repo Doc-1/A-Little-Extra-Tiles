@@ -87,7 +87,7 @@ public class SubGuiPhotoImport extends SubGui {
                         public void run() {
                             try {
                                 LittlePreviews pre = LittlePreview.getPreview(PhotoReader.photoToStack(path,
-                                    ignoreAlpha.value, imageSource.getCaption(), grid, getGui(), slider.getPercentage()));
+                                    ignoreAlpha.value, imageSource.getCaption(), grid, getGui(), slider.value));
                                 viewer.onLoaded(new AnimationPreview(pre));
                                 if (pre == null)
                                     Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
@@ -227,7 +227,7 @@ public class SubGuiPhotoImport extends SubGui {
                             public void run() {
                                 try {
                                     ItemStack stack = PhotoReader.photoToStack(path, ignoreAlpha.value, imageSource
-                                            .getCaption(), grid, getGui(), slider.getPercentage());
+                                            .getCaption(), grid, getGui(), slider.value);
                                     if (!stack.equals(ItemStack.EMPTY))
                                         getGui().sendPacketToServer(stack.getTagCompound());
                                 } catch (IOException e) {}
@@ -251,7 +251,7 @@ public class SubGuiPhotoImport extends SubGui {
             new Style("s", new ColoredDisplayStyle(0x11111111), new ColoredDisplayStyle(0xdddddddd), DisplayStyle.emptyDisplay, new ColoredDisplayStyle(0x2d9912), DisplayStyle.emptyDisplay));
         controls.add(progress);
         
-        GuiAnalogeSlider slider = new GuiAnalogeSlider("color_acc", 165, 163, 68, 14, 100, 0, 10);
+        GuiAnalogeSlider slider = new GuiAnalogeSlider("color_acc", 165, 163, 68, 14, 100, 0, 1);
         slider.setCustomTooltip("Color Accuracy");
         controls.add(slider);
     }
