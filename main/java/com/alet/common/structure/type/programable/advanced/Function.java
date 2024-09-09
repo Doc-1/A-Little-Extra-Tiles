@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
-import com.alet.client.gui.controls.programmable.nodes.GuiNode;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
 import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.advanced.nodes.values.NodeFunction;
 import com.alet.common.structure.type.programable.advanced.nodes.values.NodeValue;
@@ -71,8 +71,8 @@ public abstract class Function {
     }
     
     @SideOnly(Side.CLIENT)
-    public List<GuiNode> setGuiNodes() {
-        List<GuiNode> nodes = new ArrayList<>();
+    public List<GuiNodeValue> setGuiNodes() {
+        List<GuiNodeValue> nodes = new ArrayList<>();
         try {
             for (NodeValue node : senderNodes) {
                 nodes.add(node.getGuiNode());

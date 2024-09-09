@@ -21,7 +21,7 @@ import com.alet.client.gui.controls.menu.GuiTreePart;
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
 import com.alet.client.gui.controls.menu.GuiTreePartHolder;
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
-import com.alet.client.gui.controls.programmable.nodes.GuiNode;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
 import com.alet.client.gui.event.gui.GuiControlDragEvent;
 import com.alet.client.gui.event.gui.GuiControlKeyPressed;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
@@ -199,7 +199,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
         public boolean runWhileCollided = false;
         public AxisAlignedBB collisionArea;
         public boolean consideredEventsConditions = false;
-        public GuiNode selectedNode;
+        public GuiNodeValue selectedNode;
         NBTTagList list = new NBTTagList();
         
         public LittleProgramableStructureParser(GuiParent parent, AnimationGuiHandler handler) {
@@ -328,7 +328,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
         
         @CustomEventSubscribe
         public void controlReleased(GuiControlReleaseEvent event) {
-            if (event.source instanceof GuiNode) {
+            if (event.source instanceof GuiNodeValue) {
                 
             }
             
@@ -351,16 +351,16 @@ public class LittleProgramableStructureALET extends LittleStructure {
         @CustomEventSubscribe
         public void controlClicked(GuiControlClickEvent event) {
             GuiDragablePanel drag = (GuiDragablePanel) this.parent.get("drag");
-            if (event.source instanceof GuiNode) {
+            if (event.source instanceof GuiNodeValue) {
                 
                 GuiFunction blueprint = (GuiFunction) topControl(drag.controls, GuiFunction.class);
-                GuiNode node = (GuiNode) event.source;
+                GuiNodeValue node = (GuiNodeValue) event.source;
                 if (this.selectedNode != null) {
                     
-                    GuiNode sender = node.isSender() ? node : null;
+                    GuiNodeValue sender = node.isSender() ? node : null;
                     if (sender == null)
                         sender = selectedNode.isSender() ? selectedNode : null;
-                    GuiNode receiver = node.isReciever() ? node : null;
+                    GuiNodeValue receiver = node.isReciever() ? node : null;
                     if (receiver == null)
                         receiver = selectedNode.isReciever() ? selectedNode : null;
                     

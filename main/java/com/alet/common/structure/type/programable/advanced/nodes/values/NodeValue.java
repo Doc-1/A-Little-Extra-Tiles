@@ -1,6 +1,6 @@
 package com.alet.common.structure.type.programable.advanced.nodes.values;
 
-import com.alet.client.gui.controls.programmable.nodes.GuiNode;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
 import com.alet.common.structure.type.programable.advanced.nodes.Node;
 
 import net.minecraft.world.WorldServer;
@@ -23,7 +23,7 @@ public abstract class NodeValue<V> extends Node {
     public abstract void setNodeValue(WorldServer server);
     
     @SideOnly(Side.CLIENT)
-    public abstract GuiNode getGuiNode() throws Exception;
+    public abstract GuiNodeValue getGuiNode() throws Exception;
     
     @SideOnly(Side.SERVER)
     public V getNodeValue() {

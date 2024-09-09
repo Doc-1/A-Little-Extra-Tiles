@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.alet.client.gui.controls.GuiDragablePanel;
-import com.alet.client.gui.controls.programmable.nodes.GuiNode;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
 import com.alet.common.structure.type.programable.advanced.FunctionRegistar;
 import com.alet.common.structure.type.programable.advanced.nodes.NodeRegistar;
@@ -33,21 +33,21 @@ public class GuiFunction extends GuiParent {
     private int mousePosY = 0;
     public int color;
     public boolean selected = false;
-    public GuiNode selectedNode;
+    public GuiNodeValue selectedNode;
     
     //Identification Fields
     public final String FUNCTION_TITLE;
     public int id;
     
     //Nodes Fields
-    public GuiNode methodSender;
-    public GuiNode methodReceiver;
-    public List<GuiNode> senderNodes = new ArrayList<GuiNode>();
-    public List<GuiNode> receiverNodes = new ArrayList<GuiNode>();
+    public GuiNodeValue methodSender;
+    public GuiNodeValue methodReceiver;
+    public List<GuiNodeValue> senderNodes = new ArrayList<GuiNodeValue>();
+    public List<GuiNodeValue> receiverNodes = new ArrayList<GuiNodeValue>();
     public final boolean IS_METHOD_SENDER;
     public final boolean IS_METHOD_RECIEVER;
     
-    public GuiFunction(String title, String name, int id, int color, boolean isSender, boolean isReceiver, List<GuiNode> nodes) {
+    public GuiFunction(String title, String name, int id, int color, boolean isSender, boolean isReceiver, List<GuiNodeValue> nodes) {
         super(name, 0, 0, 0, 0);
         this.id = id;
         this.color = color;
@@ -60,13 +60,13 @@ public class GuiFunction extends GuiParent {
         createMethodControls();
     }
     
-    public GuiFunction(String name, String title, int color, boolean isSender, boolean isReceiver, List<GuiNode> nodes) {
+    public GuiFunction(String name, String title, int color, boolean isSender, boolean isReceiver, List<GuiNodeValue> nodes) {
         this(title, name, 0, color, isSender, isReceiver, nodes);
     }
     
     public GuiFunction getNextBlueprint() {
         if (this.methodSender.receiverConnections != null && !this.methodSender.receiverConnections.isEmpty())
-            return this.methodSender.receiverConnections.get(0).getBlueprint();
+            return ((GuiNodeValue) this.methodSender.receiverConnections.get(0)).getBlueprint();
         else
             return null;
     }
@@ -95,15 +95,16 @@ public class GuiFunction extends GuiParent {
     
     public NBTTagCompound createNodeNBT(NBTTagCompound nbt) {
         NBTTagList l = new NBTTagList();
-        List<GuiNode> combined = new ArrayList<GuiNode>();
+        List<GuiNodeValue> combined = new ArrayList<GuiNodeValue>();
         combined.addAll(this.receiverNodes);
         if (this.methodReceiver != null)
             combined.add(this.methodReceiver);
-        for (GuiNode node : combined) {
+        for (GuiNodeValue node : combined) {
             NBTTagCompound n = new NBTTagCompound();
             n.setString("node", node.name);
             NBTTagList list = new NBTTagList();
-            for (GuiNode receiver : node.receiverConnections) {
+            List<GuiNodeValue> s = node.receiverConnections;
+            for (GuiNodeValue receiver : s) {
                 NBTTagCompound nb = new NBTTagCompound();
                 nb.setString("node", receiver.name);
                 nb.setString("name", receiver.getParent().name);
@@ -133,16 +134,16 @@ public class GuiFunction extends GuiParent {
         return nbt.getTagList("nodes", NBT.TAG_COMPOUND);
     }
     
-    public static PairList<GuiFunction, GuiNode> getFunctionFromNodeNBT(List<GuiFunction> blueprints, NBTTagCompound node) {
+    public static PairList<GuiFunction, GuiNodeValue> getFunctionFromNodeNBT(List<GuiFunction> blueprints, NBTTagCompound node) {
         
         NBTTagList list = node.getTagList("connections", NBT.TAG_COMPOUND);
-        PairList<GuiFunction, GuiNode> bpList = new PairList<GuiFunction, GuiNode>();
+        PairList<GuiFunction, GuiNodeValue> bpList = new PairList<GuiFunction, GuiNodeValue>();
         for (NBTBase d : list) {
             if (d instanceof NBTTagCompound) {
                 NBTTagCompound nbt = (NBTTagCompound) d;
                 GuiFunction bp = blueprints.stream().filter(x -> x.name.equals(nbt.getString("name")) && x.id == nbt
                         .getInteger("id")).findFirst().get();
-                bpList.add(new Pair<GuiFunction, GuiNode>(bp, (GuiNode) bp.get(nbt.getString("node"))));
+                bpList.add(new Pair<GuiFunction, GuiNodeValue>(bp, (GuiNodeValue) bp.get(nbt.getString("node"))));
             }
         }
         return bpList;
@@ -154,23 +155,23 @@ public class GuiFunction extends GuiParent {
         return blueprints.stream().filter(x -> (x.name.equals(name) && x.id == id)).findFirst().get();
     }
     
-    public List<GuiNode> getNodes() {
-        List<GuiNode> nodes = new ArrayList<>();
+    public List<GuiNodeValue> getNodes() {
+        List<GuiNodeValue> nodes = new ArrayList<>();
         nodes.addAll(this.receiverNodes);
         nodes.addAll(this.senderNodes);
         return nodes;
     }
     
-    public GuiNode getNode(String name) {
-        Optional<GuiNode> node = this.getNodes().stream().filter(x -> x.name.equals(name)).findFirst();
+    public GuiNodeValue getNode(String name) {
+        Optional<GuiNodeValue> node = this.getNodes().stream().filter(x -> x.name.equals(name)).findFirst();
         if (node.isPresent())
             return node.get();
         return null;
     }
     
-    public void organizeNodes(List<GuiNode> nodes) {
+    public void organizeNodes(List<GuiNodeValue> nodes) {
         if (!nodes.isEmpty() && nodes != null)
-            for (GuiNode node : nodes) {
+            for (GuiNodeValue node : nodes) {
                 if (node.isSender())
                     this.senderNodes.add(node);
                 else if (node.isReciever())
@@ -215,12 +216,12 @@ public class GuiFunction extends GuiParent {
         int y = 15;
         boolean hasModifiable = false;
         for (int i = 0; i < this.receiverNodes.size(); i++) {
-            GuiNode node = this.receiverNodes.get(i);
+            GuiNodeValue node = this.receiverNodes.get(i);
             maxSpacing = Math.max(maxSpacing, font.getStringWidth(node.TITLE)) + 20;
             if (node.IS_MODIFIABLE)
                 hasModifiable = true;
             if (i > 0) {
-                GuiNode n = this.receiverNodes.get(i - 1);
+                GuiNodeValue n = this.receiverNodes.get(i - 1);
                 node.posY = n.posY + 15;
                 if (n.IS_MODIFIABLE)
                     node.posY = (i * y) + 30;
@@ -232,12 +233,12 @@ public class GuiFunction extends GuiParent {
             this.addControl(node);
         }
         for (int i = 0; i < this.senderNodes.size(); i++) {
-            GuiNode node = this.senderNodes.get(i);
+            GuiNodeValue node = this.senderNodes.get(i);
             maxWidth = Math.max(maxWidth, maxSpacing + font.getStringWidth(node.TITLE) + 5);
             if (node.IS_MODIFIABLE)
                 hasModifiable = true;
             if (i > 0) {
-                GuiNode n = this.senderNodes.get(i - 1);
+                GuiNodeValue n = this.senderNodes.get(i - 1);
                 node.posY = n.posY + 15;
                 if (n.IS_MODIFIABLE)
                     node.posY = (i * y) + 30;
@@ -256,7 +257,7 @@ public class GuiFunction extends GuiParent {
         
         this.width = maxWidth + 14;
         this.height = maxHeight;
-        for (GuiNode node : this.senderNodes) {
+        for (GuiNodeValue node : this.senderNodes) {
             node.posX = this.width - node.width - 6;
         }
     }
@@ -314,15 +315,15 @@ public class GuiFunction extends GuiParent {
         }
     }
     
-    public void nodeClicked(GuiNode node, boolean selected) {
+    public void nodeClicked(GuiNodeValue node, boolean selected) {
         node.selected = selected;
         if (node.selected)
             this.selectedNode = node;
         else
             this.selectedNode = null;
         for (GuiControl control : this.controls) {
-            if (control instanceof GuiNode && !control.equals(node)) {
-                GuiNode n = (GuiNode) control;
+            if (control instanceof GuiNodeValue && !control.equals(node)) {
+                GuiNodeValue n = (GuiNodeValue) control;
                 n.selected = false;
             }
             

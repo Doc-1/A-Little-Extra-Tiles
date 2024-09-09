@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
+import com.alet.common.structure.type.programable.advanced.nodes.Node.NodeType;
 import com.alet.common.structure.type.programable.advanced.nodes.NodeRegistar;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
@@ -13,7 +14,7 @@ import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlClickEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
-public class GuiNode extends GuiParent {
+public class GuiNodeValue<V> extends GuiParent {
     
     //GUI Fields
     public final String TITLE;
@@ -21,17 +22,22 @@ public class GuiNode extends GuiParent {
     public boolean selected = false;
     
     //Connection Fields
-    public GuiNode senderConnection;
-    public List<GuiNode> receiverConnections = new ArrayList<GuiNode>();
+    public GuiNodeValue senderConnection;
+    public List<GuiNodeValue> receiverConnections = new ArrayList<>();
     public final boolean IS_MODIFIABLE;
     private boolean isSender;
-    private boolean isReciever;
     
-    public GuiNode(String name, String title, int color, boolean isModifiable) throws Exception {
+    V v;
+    
+    public GuiNodeValue(String name, NodeType type, String title, int color, boolean isModifiable) throws Exception {
         super(name, 0, 0, (!title.equals("")) ? font.getStringWidth(title) + 7 : 1, 1);
         this.TITLE = title;
         this.IS_MODIFIABLE = isModifiable;
         this.COLOR = color;
+    }
+    
+    public void setValue(V v) {
+        
     }
     
     public boolean isSender() {
@@ -39,12 +45,11 @@ public class GuiNode extends GuiParent {
     }
     
     public boolean isReciever() {
-        return isReciever;
+        return !isSender;
     }
     
-    public GuiNode setSender(boolean isSender) {
+    public GuiNodeValue setSender(boolean isSender) {
         this.isSender = isSender;
-        this.isReciever = !isSender;
         return this;
     }
     
@@ -62,7 +67,7 @@ public class GuiNode extends GuiParent {
         this.raiseEvent(new GuiControlReleaseEvent(this, x, y, button));
     }
     
-    public boolean canConnect(GuiNode secondNode) {
+    public boolean canConnect(GuiNodeValue secondNode) {
         if (secondNode == null)
             return false;
         System.out.println(this.isSender() + " " + secondNode.isReciever());
@@ -80,9 +85,9 @@ public class GuiNode extends GuiParent {
             return false;
         if (secondNode.isConnected() && NodeRegistar.matchType(NodeRegistar.FUNCTION_NODE, secondNode))
             return false;
-        if (this.isReciever && this.isConnected())
+        if (this.isReciever() && this.isConnected())
             return false;
-        if (secondNode.isReciever && secondNode.isConnected())
+        if (secondNode.isReciever() && secondNode.isConnected())
             return false;
         /*
         PairList<GuiNode, GuiNode> nodeConnections1 = ((GuiFunction) this.parent).nodeConnections;
@@ -92,9 +97,9 @@ public class GuiNode extends GuiParent {
         return true;
     }
     
-    public void connect(GuiNode secondNode) {
+    public void connect(GuiNodeValue secondNode) {
         
-        if (secondNode.isReciever) {
+        if (secondNode.isReciever()) {
             secondNode.senderConnection = this;
             this.receiverConnections.add(secondNode);
         }
@@ -111,10 +116,10 @@ public class GuiNode extends GuiParent {
         return !this.receiverConnections.isEmpty() || this.senderConnection != null;
     }
     
-    public boolean alreadyConnectedTo(GuiNode secondNode) {
+    public boolean alreadyConnectedTo(GuiNodeValue secondNode) {
         if (this.senderConnection == secondNode)
             return true;
-        for (GuiNode node : this.receiverConnections) {
+        for (GuiNodeValue node : this.receiverConnections) {
             if (node.equals(secondNode))
                 return true;
         }
@@ -128,7 +133,7 @@ public class GuiNode extends GuiParent {
         if (this.isSender) {
             font.drawStringWithShadow(this.TITLE, this.width - font.getStringWidth(TITLE) - 11, -1, ColorUtils.WHITE);
             xOffSet = this.width - 7;
-        } else if (this.isReciever) {
+        } else if (this.isReciever()) {
             font.drawStringWithShadow(this.TITLE, 8, -1, ColorUtils.WHITE);
             xOffSet = 0;
         }
@@ -144,7 +149,7 @@ public class GuiNode extends GuiParent {
     public boolean mousePressed(int x, int y, int button) {
         boolean results = super.mousePressed(x, y, button);
         GuiFunction blueprint = (GuiFunction) topControl(this.getParent().getParent().getControls(), GuiFunction.class);
-        GuiNode node = (GuiNode) topControl(blueprint.getControls(), this.getClass());
+        GuiNodeValue node = (GuiNodeValue) topControl(blueprint.getControls(), this.getClass());
         if (node == this)
             this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
         return results;
@@ -168,13 +173,13 @@ public class GuiNode extends GuiParent {
         return false;
     }
     
-    public boolean isDataTypeEqual(GuiNode secondNode) {
+    public boolean isDataTypeEqual(GuiNodeValue secondNode) {
         return this.name.equals(secondNode.name);
     }
     
-    public GuiNode clone(String name, String title, boolean isModifiable) {
+    public GuiNodeValue clone(String name, String title, boolean isModifiable) {
         try {
-            return new GuiNode(name, title, COLOR, isModifiable);
+            return new GuiNodeValue(name, null, title, COLOR, isModifiable);
         } catch (Exception e) {
             e.printStackTrace();
         }

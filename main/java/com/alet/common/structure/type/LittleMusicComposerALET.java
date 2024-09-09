@@ -184,14 +184,16 @@ public class LittleMusicComposerALET extends LittleStructure {
             this.pos = getPos();
             tick++;
             playSound(tick);
-            getInput(0).updateState(BooleanUtils.toBits(0, 1));
+            this.getInput(0).updateState(BooleanUtils.toBits(0, 1));
             if (tick > duration) {
                 tick = 0;
                 play = false;
-                getInput(0).updateState(BooleanUtils.toBits(1, 1));
+                this.getInput(0).updateState(BooleanUtils.toBits(1, 1));
+                this.getOutput(0).updateState(BooleanUtils.toBits(0, 1));
             }
         } else {
             tick = 0;
+            this.getOutput(0).updateState(BooleanUtils.toBits(0, 1));
         }
         
     }

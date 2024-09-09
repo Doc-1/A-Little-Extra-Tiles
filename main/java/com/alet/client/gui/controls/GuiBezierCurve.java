@@ -2,7 +2,7 @@ package com.alet.client.gui.controls;
 
 import javax.vecmath.Point2i;
 
-import com.alet.client.gui.controls.programmable.nodes.GuiNode;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
 import com.alet.common.utils.RenderUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
@@ -35,8 +35,8 @@ public class GuiBezierCurve extends GuiParent {
     @Override
     protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
         int multi = 20;
-        GuiNode node1 = (GuiNode) p0LockOn;
-        GuiNode node2 = (GuiNode) p3LockOn;
+        GuiNodeValue node1 = (GuiNodeValue) p0LockOn;
+        GuiNodeValue node2 = (GuiNodeValue) p3LockOn;
         
         if (p0LockOn != null && p3LockOn == null) {
             int xOffSet1 = node1.isSender() ? node1.width - 2 : -5;

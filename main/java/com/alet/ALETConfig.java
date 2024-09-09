@@ -42,9 +42,9 @@ public class ALETConfig {
     }
     
     public static class Client {
-        @CreativeConfig
-        @CreativeConfig.IntRange(min = 0, max = 239)
-        public int colorAccuracy = 0;
+        //    @CreativeConfig
+        //     @CreativeConfig.IntRange(min = 0, max = 239)
+        //  public int colorAccuracy = 0;
         
         @CreativeConfig
         public boolean showAgain = true;
@@ -54,7 +54,8 @@ public class ALETConfig {
         @CreativeConfig
         public List<String> measurementName = Arrays.asList("m", "mm", "cm", "in", "feet");
         @CreativeConfig
-        public List<String> measurementEquation = Arrays.asList("M * 1", "M * 1000", "M * 100", "M * 39.3700787", "M * 3.28084");
+        public List<String> measurementEquation = Arrays.asList("M * 1", "M * 1000", "M * 100", "M * 39.3700787",
+            "M * 3.28084");
     }
     
     /*
@@ -82,19 +83,8 @@ public class ALETConfig {
         return universal.maxPixelAmount;
     }
     
-    public int getColorAccuracy() {
-        return client.colorAccuracy;
-    }
-    
     public int getMaxPixelText() {
         return universal.maxPixelText;
-    }
-    
-    public boolean isColorAccuracy() {
-        if (client.colorAccuracy != 0) {
-            return true;
-        }
-        return false;
     }
     
     /*

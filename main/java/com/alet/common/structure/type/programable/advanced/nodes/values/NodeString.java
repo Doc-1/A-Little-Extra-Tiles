@@ -1,7 +1,6 @@
 package com.alet.common.structure.type.programable.advanced.nodes.values;
 
-import com.alet.client.gui.controls.programmable.nodes.GuiNode;
-import com.alet.client.gui.controls.programmable.nodes.values.GuiNodeValue;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
 import net.minecraft.world.WorldServer;
@@ -22,8 +21,8 @@ public class NodeString extends NodeValue<String> {
     }
     
     @Override
-    public GuiNode getGuiNode() throws Exception {
-        return new GuiNodeValue<String>(name, TITLE, COLOR, IS_MODIFIABLE).setSender(this.isSender());
+    public GuiNodeValue getGuiNode() throws Exception {
+        return new GuiNodeValue<String>(name, NODE_TYPE, TITLE, COLOR, IS_MODIFIABLE).setSender(this.isSender());
     }
     
 }

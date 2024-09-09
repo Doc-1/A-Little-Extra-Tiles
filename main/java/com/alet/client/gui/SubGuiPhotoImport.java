@@ -2,7 +2,6 @@ package com.alet.client.gui;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +15,13 @@ import com.alet.client.gui.message.SubGuiErrorMessage;
 import com.alet.client.gui.message.SubGuiNoPathMessage;
 import com.alet.common.utils.CopyUtils;
 import com.alet.common.utils.photo.AtlasSpriteToPath;
-import com.alet.common.utils.photo.PhotoConverter;
 import com.alet.common.utils.photo.PhotoReader;
 import com.alet.littletiles.gui.controls.GuiAnimationViewerAlet;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.DisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.SubGui;
+import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
@@ -37,6 +36,8 @@ import com.creativemd.littletiles.common.tile.preview.LittlePreview;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
+
+import net.minecraft.item.ItemStack;
 
 public class SubGuiPhotoImport extends SubGui {
     
@@ -66,7 +67,6 @@ public class SubGuiPhotoImport extends SubGui {
             public void onClicked(int x, int y, int button) {
                 GuiTextfield imageWidth = (GuiTextfield) get("imageWidth");
                 GuiTextfield imageHeight = (GuiTextfield) get("imageHeight");
-                GuiLongTextField file = (GuiLongTextField) get("file");
                 GuiComboBox imageSource = (GuiComboBox) get("imageSource");
                 int resizeX = Integer.parseInt(imageWidth.text);
                 int resizeY = Integer.parseInt(imageHeight.text);
@@ -78,14 +78,31 @@ public class SubGuiPhotoImport extends SubGui {
                     
                     GuiComboBox contextBox = (GuiComboBox) get("grid");
                     int grid = Integer.parseInt(contextBox.getCaption());
-                    try {
-                        GuiDepressedCheckBox ignoreAlpha = (GuiDepressedCheckBox) get("ignoreAlpha");
-                        String path = getPath();
-                        LittlePreviews pre = LittlePreview.getPreview(PhotoReader.photoToStack(path, ignoreAlpha.value, imageSource.getCaption(), grid, getGui()));
-                        viewer.onLoaded(new AnimationPreview(pre));
-                        if (pre == null)
-                            Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
-                    } catch (NullPointerException | IOException e) {}
+                    
+                    GuiDepressedCheckBox ignoreAlpha = (GuiDepressedCheckBox) get("ignoreAlpha");
+                    GuiAnalogeSlider slider = (GuiAnalogeSlider) get("color_acc");
+                    String path = getPath();
+                    Runnable run = (new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                LittlePreviews pre = LittlePreview.getPreview(PhotoReader.photoToStack(path,
+                                    ignoreAlpha.value, imageSource.getCaption(), grid, getGui(), slider.getPercentage()));
+                                viewer.onLoaded(new AnimationPreview(pre));
+                                if (pre == null)
+                                    Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
+                            } catch (NullPointerException | IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        
+                    });
+                    if (thread != null) {
+                        thread.interrupt();
+                        thread = null;
+                    }
+                    thread = new Thread(run);
+                    thread.start();
                 }
                 
             }
@@ -99,7 +116,6 @@ public class SubGuiPhotoImport extends SubGui {
                 GuiCheckBox keepAspect = (GuiCheckBox) get("keepAspect");
                 boolean result = super.onKeyPressed(character, key);
                 if (result && !this.text.isEmpty() && keepAspect.value) {
-                    System.out.println(key);
                     imageHeight.text = String.valueOf((int) (aspectRatio * Double.parseDouble(imageWidth.text)));
                 }
                 return result;
@@ -119,7 +135,6 @@ public class SubGuiPhotoImport extends SubGui {
                 GuiCheckBox keepAspect = (GuiCheckBox) get("keepAspect");
                 boolean result = super.onKeyPressed(character, key);
                 if (result && !imageHeight.text.isEmpty() && keepAspect.value) {
-                    System.out.println(key);
                     imageWidth.text = String.valueOf((int) (Double.parseDouble(imageHeight.text) / aspectRatio));
                 }
                 return result;
@@ -131,7 +146,8 @@ public class SubGuiPhotoImport extends SubGui {
         imageHeight.setNumbersOnly();
         
         controls.add(new GuiDepressedCheckBox("ignoreAlpha", "Ignore Alpha", 0, 47, 70, 16, "", false, false));
-        controls.add(new GuiDepressedCheckBox("keepAspect", translate("Keep Aspect Ratio?"), 0, 63, 101, 16, "", false, false));
+        controls.add(new GuiDepressedCheckBox("keepAspect", translate(
+            "Keep Aspect Ratio?"), 0, 63, 101, 16, "", false, false));
         
         controls.add(new GuiButton("autoScale", "Auto Scale Image?", 0, 80, 90) {
             @Override
@@ -178,7 +194,6 @@ public class SubGuiPhotoImport extends SubGui {
             @Override
             public void onClicked(int x, int y, int button) {
                 GuiLongTextField file = (GuiLongTextField) get("file");
-                StringSelection stringSelection = new StringSelection(file.text);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 String path = CopyUtils.getCopiedFilePath(clipboard);
                 if (path == null)
@@ -194,7 +209,6 @@ public class SubGuiPhotoImport extends SubGui {
             
             @Override
             public void onClicked(int x, int y, int button) {
-                GuiLongTextField file = (GuiLongTextField) get("file");
                 GuiComboBox imageSource = (GuiComboBox) get("imageSource");
                 int resizeX = Integer.parseInt(imageWidth.text);
                 int resizeY = Integer.parseInt(imageHeight.text);
@@ -205,10 +219,25 @@ public class SubGuiPhotoImport extends SubGui {
                     } else {
                         PhotoReader.setScale(resizeX, resizeY);
                         GuiDepressedCheckBox ignoreAlpha = (GuiDepressedCheckBox) get("ignoreAlpha");
+                        GuiAnalogeSlider slider = (GuiAnalogeSlider) get("color_acc");
                         GuiComboBox contextBox = (GuiComboBox) get("grid");
                         int grid = Integer.parseInt(contextBox.getCaption());
-                        PhotoConverter converter = new PhotoConverter(path, ignoreAlpha.value, imageSource.getCaption(), grid, this.getGui());
-                        thread = new Thread(converter);
+                        Runnable run = new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ItemStack stack = PhotoReader.photoToStack(path, ignoreAlpha.value, imageSource
+                                            .getCaption(), grid, getGui(), slider.getPercentage());
+                                    if (!stack.equals(ItemStack.EMPTY))
+                                        getGui().sendPacketToServer(stack.getTagCompound());
+                                } catch (IOException e) {}
+                            }
+                        };
+                        if (thread != null) {
+                            thread.interrupt();
+                            thread = null;
+                        }
+                        thread = new Thread(run);
                         thread.start();
                     }
                 else
@@ -218,8 +247,13 @@ public class SubGuiPhotoImport extends SubGui {
         controls.add(print);
         
         GuiProgressBar progress = new GuiProgressBar("progress", 165, 184, 142, 10, 150, 0);
-        progress.setStyle(new Style("s", new ColoredDisplayStyle(0x11111111), new ColoredDisplayStyle(0xdddddddd), DisplayStyle.emptyDisplay, new ColoredDisplayStyle(0x2d9912), DisplayStyle.emptyDisplay));
+        progress.setStyle(
+            new Style("s", new ColoredDisplayStyle(0x11111111), new ColoredDisplayStyle(0xdddddddd), DisplayStyle.emptyDisplay, new ColoredDisplayStyle(0x2d9912), DisplayStyle.emptyDisplay));
         controls.add(progress);
+        
+        GuiAnalogeSlider slider = new GuiAnalogeSlider("color_acc", 165, 163, 68, 14, 100, 0, 10);
+        slider.setCustomTooltip("Color Accuracy");
+        controls.add(slider);
     }
     
     @CustomEventSubscribe
@@ -354,7 +388,8 @@ public class SubGuiPhotoImport extends SubGui {
     }
     
     public void createBlockControl() {
-        addControl(new GuiStack("listBlock", 0, 26, 140, getPlayer(), LittleSubGuiUtils.getCollector(getPlayer()), true, true));
+        addControl(new GuiStack("listBlock", 0, 26, 140, getPlayer(), LittleSubGuiUtils.getCollector(
+            getPlayer()), true, true));
         addControl(new GuiDepressedCheckBox("north", "N", 119, 67, 17, 17, "", true));
         addControl(new GuiDepressedCheckBox("east", "E", 136, 83, 17, 17, "", false));
         addControl(new GuiDepressedCheckBox("south", "S", 119, 99, 17, 17, "", false));
@@ -364,7 +399,8 @@ public class SubGuiPhotoImport extends SubGui {
     }
     
     public void createItemControl() {
-        addControl(new GuiStack("listItem", 0, 26, 140, getPlayer(), LittleItemSelector.getCollector(getPlayer()), true, false));
+        addControl(new GuiStack("listItem", 0, 26, 140, getPlayer(), LittleItemSelector.getCollector(
+            getPlayer()), true, false));
     }
     
     public String getPath() {
@@ -386,11 +422,9 @@ public class SubGuiPhotoImport extends SubGui {
     }
     
     public void updatePhotoData() {
-        GuiLongTextField file = (GuiLongTextField) get("file");
         GuiTextfield imageWidth = (GuiTextfield) get("imageWidth");
         GuiTextfield imageHeight = (GuiTextfield) get("imageHeight");
         GuiButton autoScale = (GuiButton) get("autoScale");
-        GuiCheckBox keepAspect = (GuiCheckBox) get("keepAspect");
         GuiComboBox imageSource = (GuiComboBox) get("imageSource");
         if (PhotoReader.photoExists(getPath(), imageSource.getCaption())) {
             String path = getPath();
@@ -412,7 +446,7 @@ public class SubGuiPhotoImport extends SubGui {
     @Override
     public void onClosed() {
         if (thread != null) {
-            thread.currentThread().interrupt();
+            thread.interrupt();
             thread = null;
         }
         super.onClosed();

@@ -1,8 +1,7 @@
 package com.alet.common.structure.type.programable.advanced.nodes.values;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
-import com.alet.client.gui.controls.programmable.nodes.GuiNode;
-import com.alet.client.gui.controls.programmable.nodes.values.GuiNodeValue;
+import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
 import com.alet.common.structure.type.programable.advanced.Function;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
@@ -25,8 +24,8 @@ public class NodeFunction extends NodeValue<Function> {
     }
     
     @Override
-    public GuiNode getGuiNode() throws Exception {
-        return new GuiNodeValue<GuiFunction>(name, TITLE, COLOR, IS_MODIFIABLE).setSender(this.isSender());
+    public GuiNodeValue getGuiNode() throws Exception {
+        return new GuiNodeValue<GuiFunction>(name, NODE_TYPE, TITLE, COLOR, IS_MODIFIABLE).setSender(this.isSender());
     }
     
 }
