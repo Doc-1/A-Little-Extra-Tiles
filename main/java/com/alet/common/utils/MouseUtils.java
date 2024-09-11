@@ -31,17 +31,20 @@ public class MouseUtils {
     public static void addCursor(String name, int width, int height, String modid, String location) {
         
         try {
-            BufferedImage image = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(modid, location)).getInputStream());
+            BufferedImage image = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(
+                new ResourceLocation(modid, location)).getInputStream());
             BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics2D = resizedImage.createGraphics();
             //For some reason the cursor renders upside down. Rotating it to flip it back over.
-            graphics2D.translate((resizedImage.getHeight() - resizedImage.getWidth()) / 2, (resizedImage.getHeight() - resizedImage.getWidth()) / 2);
+            graphics2D.translate((resizedImage.getHeight() - resizedImage.getWidth()) / 2, (resizedImage
+                    .getHeight() - resizedImage.getWidth()) / 2);
             graphics2D.rotate(Math.toRadians(180), resizedImage.getHeight() / 2, resizedImage.getWidth() / 2);
             
             graphics2D.drawImage(image, 0, 0, width, height, null);
             graphics2D.dispose();
-            Cursor cursor = new Cursor(resizedImage.getWidth(), resizedImage.getHeight(), resizedImage.getWidth() / 2, resizedImage.getHeight() / 2, 1, IntBuffer
-                    .wrap(resizedImage.getRGB(0, 0, resizedImage.getWidth(), resizedImage.getHeight(), null, 0, resizedImage.getWidth())), null);
+            Cursor cursor = new Cursor(resizedImage.getWidth(), resizedImage.getHeight(), resizedImage
+                    .getWidth() / 2, resizedImage.getHeight() / 2, 1, IntBuffer.wrap(resizedImage.getRGB(0, 0, resizedImage
+                            .getWidth(), resizedImage.getHeight(), null, 0, resizedImage.getWidth())), null);
             listOfCursors.put(name, cursor);
         } catch (Exception e) {
             

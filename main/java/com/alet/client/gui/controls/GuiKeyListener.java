@@ -2,7 +2,7 @@ package com.alet.client.gui.controls;
 
 import org.lwjgl.input.Keyboard;
 
-import com.alet.client.gui.event.gui.GuiControlKeyPressed;
+import com.alet.client.gui.event.GuiControlKeyPressed;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;

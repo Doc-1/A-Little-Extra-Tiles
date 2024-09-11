@@ -88,7 +88,8 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
     @Override
     @SideOnly(Side.CLIENT)
     public List<RenderBox> getRenderingCubes(IBlockState state, TileEntity te, ItemStack stack) {
-        LittleStructureTypePremade premade = (LittleStructureTypePremade) LittleStructureRegistry.getStructureType(premadeToRender);
+        LittleStructureTypePremade premade = (LittleStructureTypePremade) LittleStructureRegistry.getStructureType(
+            premadeToRender);
         LittlePreviews previews = LittleStructurePremade.getPreviews(premade.id).copy();
         List<RenderBox> cubes = premade.getRenderingCubes(previews);
         if (cubes == null) {
@@ -239,12 +240,13 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
         if (!worldIn.isRemote)
             return;
         Minecraft mc = Minecraft.getMinecraft();
-        ParticleSettings settings = new ParticleSettings(0.0F, ColorUtils.RGBAToInt(127, 20, 239, 255), 40, 0, 1, 1, 0, LittleParticleTexture.dust_fade_out, false, true);
+        ParticleSettings settings = new ParticleSettings(0.0F, ColorUtils.RGBAToInt(127, 20, 239,
+            255), 40, 0, 1, 1, 0, LittleParticleTexture.dust_fade_out, false, true);
         double randX = ((Math.random() * (0.5 - -0.5)) + -0.5);
         double randY = ((Math.random() * (0.5 - -0.5)) + -0.5);
         double randZ = ((Math.random() * (0.5 - -0.5)) + -0.5);
-        mc.effectRenderer
-                .addEffect(new LittleParticle(worldIn, new Vector3d(player.posX + randX, player.posY + randY + 1.5, player.posZ + randZ), new Vector3d(0D, -0.2D, 0D), settings));
+        mc.effectRenderer.addEffect(
+            new LittleParticle(worldIn, new Vector3d(player.posX + randX, player.posY + randY + 1.5, player.posZ + randZ), new Vector3d(0D, -0.2D, 0D), settings));
     }
     
     @Override
@@ -290,7 +292,8 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
     
     public static LittleStructurePremadeEntry getPremade(ItemStack stack) {
         if (stack.hasTagCompound())
-            return LittleStructurePremade.getStructurePremadeEntry(stack.getTagCompound().getCompoundTag("structure").getString("id"));
+            return LittleStructurePremade.getStructurePremadeEntry(stack.getTagCompound().getCompoundTag("structure")
+                    .getString("id"));
         return null;
     }
     

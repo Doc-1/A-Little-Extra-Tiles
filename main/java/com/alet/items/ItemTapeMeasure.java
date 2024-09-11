@@ -4,7 +4,7 @@ import javax.vecmath.Point3f;
 
 import com.alet.client.ALETClient;
 import com.alet.client.gui.SubGuiTapeMeasure;
-import com.alet.client.render.tapemeasure.TapeRenderer;
+import com.alet.client.tapemeasure.TapeRenderer;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.utils.NBTUtils;
 import com.alet.common.utils.StructureUtils;

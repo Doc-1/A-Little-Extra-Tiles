@@ -242,7 +242,8 @@ public class SubGuiAnimatorsWorkbench extends SubGui implements IAnimationContro
         GuiScrollBox scrollTimeline = new GuiScrollBox("scrollTimeline", 20, 187, 468, 101);
         controls.add(scrollTimeline);
         List<TimelineChannelALET> channels = new ArrayList<>();
-        scrollTimeline.controls.add(new GuiTimelineALET("timeline", -1, -1, 462, 1000, 10, channels, handler).setSidebarWidth(32));
+        scrollTimeline.controls.add(new GuiTimelineALET("timeline", -1, -1, 462, 1000, 10, channels, handler)
+                .setSidebarWidth(32));
         controls.add(new GuiDoorEventsButtonALET("children_activate", 93, 107, null, null));
         
         controls.add(new GuiLabel("Tick At:", 219, 173));
@@ -310,7 +311,8 @@ public class SubGuiAnimatorsWorkbench extends SubGui implements IAnimationContro
                     if (!previews.isEmpty()) {
                         GuiTree tree = (GuiTree) this.parent.get("tree");
                         GuiTimelineALET timeline = (GuiTimelineALET) this.parent.get("timeline");
-                        LittleAdvancedDoor structure = (LittleAdvancedDoor) StructureTileList.create(previews.structureNBT, null);
+                        LittleAdvancedDoor structure = (LittleAdvancedDoor) StructureTileList.create(previews.structureNBT,
+                            null);
                         SubGuiAnimatorsWorkbench.this.structure = structure;
                         GuiDoorEventsButtonALET children = (GuiDoorEventsButtonALET) parent.get("children_activate");
                         children.update(previews, structure);

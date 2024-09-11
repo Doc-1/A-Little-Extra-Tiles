@@ -30,7 +30,9 @@ public class SubContainerBlock extends SubContainer {
     @Override
     public void onPacketReceive(NBTTagCompound nbt) {
         ItemStack stack = slot.getStackInSlot(0);
-        if (stack.getItem() instanceof ItemLittleRecipe || stack.getItem() instanceof ItemLittleRecipeAdvanced || (getPlayer().capabilities.isCreativeMode && stack.isEmpty())) {
+        if (stack.getItem() instanceof ItemLittleRecipe || stack
+                .getItem() instanceof ItemLittleRecipeAdvanced || (getPlayer().capabilities.isCreativeMode && stack
+                        .isEmpty())) {
             ItemStack newStack = StructureStringUtils.importStructure(nbt);
             if (stack.getItem() instanceof ItemLittleRecipe) {
                 stack.setTagCompound(newStack.getTagCompound());

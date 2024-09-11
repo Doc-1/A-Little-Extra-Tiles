@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
-import com.alet.client.gui.event.gui.GuiControlReleaseEvent;
+import com.alet.client.gui.event.GuiControlReleaseEvent;
 import com.alet.common.structure.type.programable.advanced.nodes.Node.NodeType;
 import com.alet.common.structure.type.programable.advanced.nodes.NodeRegistar;
 import com.creativemd.creativecore.common.gui.GuiControl;

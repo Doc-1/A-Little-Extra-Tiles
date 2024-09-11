@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.ALET;
-import com.alet.client.gui.controls.thread.ThreadCollectFrames;
+import com.alet.client.gui.thread.ThreadCollectFrames;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
@@ -75,8 +75,9 @@ public class GuiGIF extends GuiControl {
             GlStateManager.pushMatrix();
             
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager
-                    .tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             GlStateManager.enableAlpha();
             this.mc.getTextureManager().bindTexture(locations.get(count));

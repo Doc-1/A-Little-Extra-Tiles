@@ -20,8 +20,8 @@ public class RenderUtils {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager
-                .tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.pushMatrix();
         GlStateManager.glLineWidth(6F);
         GlStateManager.scale(0.05, 0.05, 1);
@@ -63,8 +63,10 @@ public class RenderUtils {
     public static Point2i cubicBezier(Point2i p0, Point2i p1, Point2i p2, Point2i p3, double t, Point2i pFinal) {
         if (pFinal.equals(null))
             pFinal = new Point2i();
-        pFinal.x = (int) (Math.pow(1 - t, 3) * p0.x + Math.pow(1 - t, 2) * 3 * t * p1.x + (1 - t) * 3 * t * t * p2.x + t * t * t * p3.x);
-        pFinal.y = (int) (Math.pow(1 - t, 3) * p0.y + Math.pow(1 - t, 2) * 3 * t * p1.y + (1 - t) * 3 * t * t * p2.y + t * t * t * p3.y);
+        pFinal.x = (int) (Math.pow(1 - t, 3) * p0.x + Math.pow(1 - t,
+            2) * 3 * t * p1.x + (1 - t) * 3 * t * t * p2.x + t * t * t * p3.x);
+        pFinal.y = (int) (Math.pow(1 - t, 3) * p0.y + Math.pow(1 - t,
+            2) * 3 * t * p1.y + (1 - t) * 3 * t * t * p2.y + t * t * t * p3.y);
         return pFinal;
     }
 }

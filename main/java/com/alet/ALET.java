@@ -17,14 +17,12 @@ import org.apache.logging.log4j.Logger;
 import com.alet.client.ALETClient;
 import com.alet.client.container.SubContainerAnimatorWorkbench;
 import com.alet.client.container.SubContainerBasic;
-import com.alet.client.container.SubContainerBlock;
 import com.alet.client.container.SubContainerFillingCabinet;
 import com.alet.client.container.SubContainerItemScanner;
 import com.alet.client.container.SubContainerLittleHopper;
 import com.alet.client.container.SubContainerPhotoImport;
 import com.alet.client.container.SubContainerTypeWriter;
 import com.alet.client.gui.SubGuiAnimatorsWorkbench;
-import com.alet.client.gui.SubGuiBlock;
 import com.alet.client.gui.SubGuiFillingCabinet;
 import com.alet.client.gui.SubGuiItemScanner;
 import com.alet.client.gui.SubGuiLittleHopper;
@@ -35,7 +33,6 @@ import com.alet.client.gui.SubGuiPhotoImport;
 import com.alet.client.gui.SubGuiSignalEventsALET;
 import com.alet.client.gui.SubGuiTypeWriter;
 import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
-import com.alet.client.sounds.SoundsHandler;
 import com.alet.common.blocks.BasicBlock;
 import com.alet.common.blocks.TransparentBlock;
 import com.alet.common.packet.PacketDropItem;
@@ -50,6 +47,7 @@ import com.alet.common.packet.PacketUpdateBreakBlock;
 import com.alet.common.packet.PacketUpdateMutateFromServer;
 import com.alet.common.packet.PacketUpdateNBT;
 import com.alet.common.packet.PacketUpdateStructureFromClient;
+import com.alet.common.sounds.SoundsRegister;
 import com.alet.common.structure.connection.RopeConnection;
 import com.alet.common.structure.type.LittleAlwaysOnLight;
 import com.alet.common.structure.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
@@ -85,8 +83,8 @@ import com.alet.common.structure.type.premade.signal.LittleSignalSevenSegmentedD
 import com.alet.common.structure.type.premade.signal.LittleStructureTypeCircuit;
 import com.alet.common.structure.type.premade.transfer.LittleTransferItemScanner;
 import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
-import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.advanced.FunctionRegistar;
+import com.alet.common.structure.type.programable.advanced.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.advanced.nodes.NodeRegistar;
 import com.alet.common.structure.type.programable.basic.LittleTriggerBoxStructureALET;
 import com.alet.items.ItemJumpTool;
@@ -299,19 +297,6 @@ public class ALET {
                 return defaultValue;
             }
             
-        });
-        GuiHandler.registerGuiHandler("block", new CustomGuiHandler() {
-            
-            @Override
-            @SideOnly(Side.CLIENT)
-            public SubGui getGui(EntityPlayer player, NBTTagCompound nbt) {
-                return new SubGuiBlock();
-            }
-            
-            @Override
-            public SubContainer getContainer(EntityPlayer player, NBTTagCompound nbt) {
-                return new SubContainerBlock(player);
-            }
         });
         
         GuiHandler.registerGuiHandler("noblue", new CustomGuiHandler() {
@@ -743,7 +728,7 @@ public class ALET {
         LittleStructurePremade.registerPremadeStructureType("filling_cabinet", ALET.MODID, LittleFillingCabinet.class,
             LittleStructureAttribute.TICKING).addInput("accessed", 1);
         
-        SoundsHandler.registerSounds();
+        SoundsRegister.registerSounds();
         sounds = new ArrayList<>();
         for (ResourceLocation location : SoundEvent.REGISTRY.getKeys())
             sounds.add(location.toString());
@@ -769,7 +754,6 @@ public class ALET {
     public static List<String> getFonts() {
         fontTypeNames = new ArrayList<>();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        ResourceLocation pressStart2P = new ResourceLocation(ALET.MODID, "font/PressStart2P-Regular.ttf");
         try {
             InputStream font = Minecraft.getMinecraft().getClass().getClassLoader().getResourceAsStream(
                 "assets/alet/font/PressStart2P-Regular.ttf");

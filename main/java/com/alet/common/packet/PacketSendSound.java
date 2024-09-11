@@ -1,6 +1,6 @@
 package com.alet.common.packet;
 
-import com.alet.client.sounds.Notes;
+import com.alet.common.sounds.Notes;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 
 import io.netty.buffer.ByteBuf;

@@ -28,10 +28,13 @@ public class SubGuiNoticeAtJoin extends SubGui {
     
     @Override
     public void createControls() {
-        GuiModifibleTextBox box = (new GuiModifibleTextBox("", ModifierAttribute
-                .addText(1, ColorUtils.WHITE, false, 0, "Attention this version of A Little Extra Tiles is in ALPHA. Issues will arise, report them to " + ModifierAttribute
-                        .end() + ModifierAttribute.addClickableText("https://github.com/Doc-1/A-Little-Extra-Tiles/issues") + ModifierAttribute.end() + ModifierAttribute
-                                .addDefaultText("Please note, it may take me a while to respond and resolve issues reported. In addition, any item with \"WIP\" in the name are unstable and may not fully work yet. Lastly, I do not recommend using A Little Extra Tiles on a server or world you care about. I've not encounter any world breaking bugs but it is possible.", 1), false, false, false), 0, 0, 300) {
+        GuiModifibleTextBox box = (new GuiModifibleTextBox("", ModifierAttribute.addText(1, ColorUtils.WHITE, false, 0,
+            "Attention this version of A Little Extra Tiles is in ALPHA. Issues will arise, report them to " + ModifierAttribute
+                    .end() + ModifierAttribute.addClickableText(
+                        "https://github.com/Doc-1/A-Little-Extra-Tiles/issues") + ModifierAttribute.end() + ModifierAttribute
+                                .addDefaultText(
+                                    "Please note, it may take me a while to respond and resolve issues reported. In addition, any item with \"WIP\" in the name are unstable and may not fully work yet. Lastly, I do not recommend using A Little Extra Tiles on a server or world you care about. I've not encounter any world breaking bugs but it is possible.",
+                                    1), false, false, false), 0, 0, 300) {
             @Override
             public void clickedOn(String text) {
                 if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
@@ -88,7 +91,8 @@ public class SubGuiNoticeAtJoin extends SubGui {
                 }
             } else {
                 keys.set(false);
-                CreativeConfigRegistry.ROOT.load(false, true, JsonUtils.get(ROOT, CreativeConfigRegistry.ROOT.path()), Side.CLIENT);
+                CreativeConfigRegistry.ROOT.load(false, true, JsonUtils.get(ROOT, CreativeConfigRegistry.ROOT.path()),
+                    Side.CLIENT);
                 CreativeCore.configHandler.save(Side.CLIENT);
             }
             

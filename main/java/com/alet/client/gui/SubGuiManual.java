@@ -201,30 +201,38 @@ public class SubGuiManual extends SubGui {
         addModRemove.addMenu(adding).addMenu(modifying).addMenu(removing);
         measuring.addMenu(tapeMeasure).addMenu(measurements.addMenu(box).addMenu(line).addMenu(compass));
         buildingTool.addMenu(chisel).addMenu(hammer).addMenu(glove).addMenu(paintBrush).addMenu(saw).addMenu(screwdriver);
-        drawShape.addMenu(dragBox).addMenu(dragSlice).addMenu(dragPolygon).addMenu(dragWall).addMenu(dragPillar).addMenu(dragCurves).addMenu(dragCylinder).addMenu(dragSphere)
-                .addMenu(dragPyramid).addMenu(dragTile).addMenu(dragType).addMenu(dragConnected).addMenu(dragCetered).addMenu(dragMagicWand);
-        drawMode.addMenu(defaultMode).addMenu(fillMode).addMenu(allMode).addMenu(overwriteMode).addMenu(overwriteAllMode).addMenu(replaceMode).addMenu(stencilMode)
-                .addMenu(colorizeMode);
-        buildingWTile.addMenu(whatIsTile).addMenu(addModRemove).addMenu(measuring).addMenu(buildingTool).addMenu(drawShape).addMenu(drawMode).addMenu(materialWhitelist);
+        drawShape.addMenu(dragBox).addMenu(dragSlice).addMenu(dragPolygon).addMenu(dragWall).addMenu(dragPillar).addMenu(
+            dragCurves).addMenu(dragCylinder).addMenu(dragSphere).addMenu(dragPyramid).addMenu(dragTile).addMenu(dragType)
+                .addMenu(dragConnected).addMenu(dragCetered).addMenu(dragMagicWand);
+        drawMode.addMenu(defaultMode).addMenu(fillMode).addMenu(allMode).addMenu(overwriteMode).addMenu(overwriteAllMode)
+                .addMenu(replaceMode).addMenu(stencilMode).addMenu(colorizeMode);
+        buildingWTile.addMenu(whatIsTile).addMenu(addModRemove).addMenu(measuring).addMenu(buildingTool).addMenu(drawShape)
+                .addMenu(drawMode).addMenu(materialWhitelist);
         savingStructure.addMenu(blueprint);
-        staticStructure.addMenu(fixedStructure).addMenu(ladderStructure).addMenu(bedStructure).addMenu(chairStructure).addMenu(storageStructure).addMenu(alwaysOnLightStructure)
-                .addMenu(ropeStructure);
+        staticStructure.addMenu(fixedStructure).addMenu(ladderStructure).addMenu(bedStructure).addMenu(chairStructure)
+                .addMenu(storageStructure).addMenu(alwaysOnLightStructure).addMenu(ropeStructure);
         doorStructures.addMenu(axisDoor).addMenu(slidingDoor).addMenu(advancedDoor).addMenu(doorActivator).addMenu(doorLock);
         advancedStructures.addMenu(triggerStructures).addMenu(stateMutatorStructures).addMenu(camPlayerStructures);
         audioStructures.addMenu(musicComposerStructure);
-        usingStructure.addMenu(savingStructure).addMenu(staticStructure).addMenu(doorStructures).addMenu(advancedStructures).addMenu(audioStructures);
+        usingStructure.addMenu(savingStructure).addMenu(staticStructure).addMenu(doorStructures).addMenu(advancedStructures)
+                .addMenu(audioStructures);
         whatIsSignal.addMenu(signalingGUI);
         logicGates.addMenu(and).addMenu(or).addMenu(not).addMenu(nand).addMenu(nor).addMenu(xor).addMenu(xnor);
         bitwiseGates.addMenu(andB).addMenu(orB).addMenu(notB).addMenu(xorB);
         math.addMenu(add).addMenu(sub).addMenu(multi).addMenu(div);
-        staticStructureSignal.addMenu(bedSignal).addMenu(chairSignal).addMenu(storageSignal).addMenu(noclipSignal).addMenu(lightSignal).addMenu(messageSignal);
-        doorStructureSignal.addMenu(axisDoorSignal).addMenu(slidingDoorSignal).addMenu(advancedDoorSignal).addMenu(doorActivatorSignal).addMenu(doorLockSignal);
+        staticStructureSignal.addMenu(bedSignal).addMenu(chairSignal).addMenu(storageSignal).addMenu(noclipSignal).addMenu(
+            lightSignal).addMenu(messageSignal);
+        doorStructureSignal.addMenu(axisDoorSignal).addMenu(slidingDoorSignal).addMenu(advancedDoorSignal).addMenu(
+            doorActivatorSignal).addMenu(doorLockSignal);
         audioStructureSignal.addMenu(musicComposerSignal);
         advancedStructureSignal.addMenu(triggerSignal).addMenu(stateMutatorSignal).addMenu(camPlayerSignal);
-        structureSignal.addMenu(staticStructureSignal).addMenu(doorStructureSignal).addMenu(advancedStructureSignal).addMenu(audioStructureSignal);
-        usingSignaling.addMenu(whatIsSignal).addMenu(logicGates).addMenu(bitwiseGates).addMenu(math).addMenu(structureSignal);
-        littleCircuit.addMenu(circuitClock).addMenu(circuitPulser).addMenu(circuitColorMon).addMenu(circuitMagnitdue).addMenu(circuitMath).addMenu(circuitMemory)
-                .addMenu(circuitRand).addMenu(circuitSwitch).addMenu(circuitSplitter).addMenu(circuitCombiner);
+        structureSignal.addMenu(staticStructureSignal).addMenu(doorStructureSignal).addMenu(advancedStructureSignal).addMenu(
+            audioStructureSignal);
+        usingSignaling.addMenu(whatIsSignal).addMenu(logicGates).addMenu(bitwiseGates).addMenu(math).addMenu(
+            structureSignal);
+        littleCircuit.addMenu(circuitClock).addMenu(circuitPulser).addMenu(circuitColorMon).addMenu(circuitMagnitdue)
+                .addMenu(circuitMath).addMenu(circuitMemory).addMenu(circuitRand).addMenu(circuitSwitch).addMenu(
+                    circuitSplitter).addMenu(circuitCombiner);
         listOfMenus.add(welcome);
         listOfMenus.add(buildingWTile);
         listOfMenus.add(usingStructure);
@@ -262,40 +270,54 @@ public class SubGuiManual extends SubGui {
     public void getWelcomeAletMsg() {}
     
     public void getDrawShape() {
-        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0, "Draw Shapes", false, true, false) + ModifierAttribute
-                .addText(1, white, false, 2, "    A ", false, false, false) + ModifierAttribute
-                        .addText(1.1, 0x00FFFF, false, 0, "Draw Shape", true, false, false) + ModifierAttribute
-                                .addText(1, white, false, 0, ", is the type of shape that the little tools can use. The draw shape can remove,add or edit tiles, depending on the tool and placement mode that is used.", false, false, false), 0, 0, 350));
+        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0, "Draw Shapes",
+            false, true, false) + ModifierAttribute.addText(1, white, false, 2, "    A ", false, false,
+                false) + ModifierAttribute.addText(1.1, 0x00FFFF, false, 0, "Draw Shape", true, false,
+                    false) + ModifierAttribute.addText(1, white, false, 0,
+                        ", is the type of shape that the little tools can use. The draw shape can remove,add or edit tiles, depending on the tool and placement mode that is used.",
+                        false, false, false), 0, 0, 350));
     }
     
     public void getDrawShapeBox() {
-        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0, "Draw Shape: Box", false, true, false) + ModifierAttribute
-                .addText(1, white, false, 2, "    The Box draw shape is a simple shape. As the name implies this draw shape allows you draw a squares, rectangles, or cubes. To draw with this shape right click to set point A then right click again to set point B. This will then place the cube.", false, false, false) + ModifierAttribute
-                        .addText(1, white, false, 1, "    There are two settings with the box draw shape, Hallow and Thinkness. Hallow lets you place a cube with a hallow center and thickness is how thick the walls will be. The thickness is based off of the grid size. If you are using grid size 32 than thickness of 16 would mean the wall is 16/32 or 1/2 the size of block.", false, false, false), 0, 0, 350));
+        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0, "Draw Shape: Box",
+            false, true, false) + ModifierAttribute.addText(1, white, false, 2,
+                "    The Box draw shape is a simple shape. As the name implies this draw shape allows you draw a squares, rectangles, or cubes. To draw with this shape right click to set point A then right click again to set point B. This will then place the cube.",
+                false, false, false) + ModifierAttribute.addText(1, white, false, 1,
+                    "    There are two settings with the box draw shape, Hallow and Thinkness. Hallow lets you place a cube with a hallow center and thickness is how thick the walls will be. The thickness is based off of the grid size. If you are using grid size 32 than thickness of 16 would mean the wall is 16/32 or 1/2 the size of block.",
+                    false, false, false), 0, 0, 350));
         scrollBoxPage.addControl(new GuiGIF("", "assets/alet/gif/box.gif", 0, 110, 1));
     }
     
     public void getDrawShapeSlice() {
-        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0, "Draw Shape: Slice", false, true, false) + ModifierAttribute
-                .addText(1, white, false, 2, "    The Slice draw shape allows you to draw a slice or slope." + " To draw with this shape right click to set point A then right click again to set point B. This will then place the slice. You can use the arrow keys to change the" + " facing of the slope.", false, false, false), 0, 0, 350));
+        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0,
+            "Draw Shape: Slice", false, true, false) + ModifierAttribute.addText(1, white, false, 2,
+                "    The Slice draw shape allows you to draw a slice or slope." + " To draw with this shape right click to set point A then right click again to set point B. This will then place the slice. You can use the arrow keys to change the" + " facing of the slope.",
+                false, false, false), 0, 0, 350));
         scrollBoxPage.addControl(new GuiGIF("", "assets/alet/gif/slice.gif", 0, 65, 1));
-        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0, "Draw Shape: Slice Corner", false, true, false) + ModifierAttribute
-                .addText(1, ColorUtils.WHITE, false, 2, "    The Corner Slices draw shape allows you to draw a slice or sloped corner." + " To draw with this shape right click to set point A then right click again to set point B. This will then place the corner slice. You can use the arrow keys to change the" + " facing of the slope.", false, false, false) + ModifierAttribute
-                        .addText(1, ColorUtils.WHITE, false, 1, "    There is a setting for both Inner and Outer Corner Slice called second-type that will switch it to an alternate " + "corner slope. The type of corner you want to use will depend on the shape you are going for.", false, false, false), 0, 255, 350));
+        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, white, false, 0,
+            "Draw Shape: Slice Corner", false, true, false) + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2,
+                "    The Corner Slices draw shape allows you to draw a slice or sloped corner." + " To draw with this shape right click to set point A then right click again to set point B. This will then place the corner slice. You can use the arrow keys to change the" + " facing of the slope.",
+                false, false, false) + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 1,
+                    "    There is a setting for both Inner and Outer Corner Slice called second-type that will switch it to an alternate " + "corner slope. The type of corner you want to use will depend on the shape you are going for.",
+                    false, false, false), 0, 255, 350));
         scrollBoxPage.addControl(new GuiGIF("", "assets/alet/gif/inner_slice.gif", 0, 360, 1));
         scrollBoxPage.addControl(new GuiGIF("", "assets/alet/gif/inner_slice_2.gif", 0, 535, 1));
     }
     
     public void getLogicGateMsg() {
-        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Logic Gates", false, true, false) + ModifierAttribute
-                .addText(1, ColorUtils.WHITE, false, 2, "    Logic gates are fundemental to digital circuits. They are used in majority of electronic devices in some way." + " Within a circuit the gate will determine the output by either recieving two or one signal input(s). With the results being created by boolean algebra." + " A boolean is either two values, true being 1 or false being 0. Each gate will result in a differet boolean value.", false, false, false) + ModifierAttribute
-                        .addText(1, ColorUtils.WHITE, false, 2, "    With LittleTile's signaling logic gates too are fundemental to any opperation you wish preform." + " Signals in LittleTiles can be thought of as redstone. If you are familiar with redstone then you'd know of RS-Latch, T Flip-Flop, Counters, Radomizers, and more." + " All of these can be done with signaling however, it is completely different from redstone. As with signaling you are directly working with the logic gates" + " that are used to accomplish these circuits. Whereas, with redstone you can place some dust and pistons and you have a T Flip-Flop done. But, for those that" + " may be discuraged by this. There are premade circuits for these common redstone circuits.", false, false, false), 0, 0, 350));
+        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0,
+            "Logic Gates", false, true, false) + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2,
+                "    Logic gates are fundemental to digital circuits. They are used in majority of electronic devices in some way." + " Within a circuit the gate will determine the output by either recieving two or one signal input(s). With the results being created by boolean algebra." + " A boolean is either two values, true being 1 or false being 0. Each gate will result in a differet boolean value.",
+                false, false, false) + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2,
+                    "    With LittleTile's signaling logic gates too are fundemental to any opperation you wish preform." + " Signals in LittleTiles can be thought of as redstone. If you are familiar with redstone then you'd know of RS-Latch, T Flip-Flop, Counters, Radomizers, and more." + " All of these can be done with signaling however, it is completely different from redstone. As with signaling you are directly working with the logic gates" + " that are used to accomplish these circuits. Whereas, with redstone you can place some dust and pistons and you have a T Flip-Flop done. But, for those that" + " may be discuraged by this. There are premade circuits for these common redstone circuits.",
+                    false, false, false), 0, 0, 350));
         
     }
     
     public void getAndMsg() {
-        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0, "Logic Gate: And", false, true, false) + ModifierAttribute
-                .addText(1, ColorUtils.WHITE, false, 2, "    The logic gate, And, compares two values to see if they are true.", false, false, false), 0, 0, 350));
+        scrollBoxPage.addControl(new GuiModifibleTextBox("", ModifierAttribute.addText(2, ColorUtils.WHITE, false, 0,
+            "Logic Gate: And", false, true, false) + ModifierAttribute.addText(1, ColorUtils.WHITE, false, 2,
+                "    The logic gate, And, compares two values to see if they are true.", false, false, false), 0, 0, 350));
         scrollBoxPage.addControl(new GuiTable("", "", 0, 100, 50, 15, 5, 3, false));
     }
     

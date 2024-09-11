@@ -65,7 +65,8 @@ public class PacketSendGuiToClient extends CreativeCorePacket {
     @SideOnly(Side.CLIENT)
     private void photoImporterNoBluePrint(EntityPlayer player, SubGuiPhotoImport gui) {
         ItemStack stack = ((SubContainerPhotoImport) gui.container).slot.getStackInSlot(0);
-        if (!(stack.getItem() instanceof ItemLittleRecipe || stack.getItem() instanceof ItemLittleRecipeAdvanced) && !player.isCreative()) {
+        if (!(stack.getItem() instanceof ItemLittleRecipe || stack.getItem() instanceof ItemLittleRecipeAdvanced) && !player
+                .isCreative()) {
             if (gui != null)
                 Layer.addLayer(gui, new SubGuiNoBluePrintMessage());
         }
@@ -74,7 +75,8 @@ public class PacketSendGuiToClient extends CreativeCorePacket {
     @SideOnly(Side.CLIENT)
     private void typewriterNoBluePrint(EntityPlayer player, SubGuiTypeWriter gui) {
         ItemStack stack = ((SubContainerTypeWriter) gui.container).slot.getStackInSlot(0);
-        if (!(stack.getItem() instanceof ItemLittleRecipe || stack.getItem() instanceof ItemLittleRecipeAdvanced) && !player.isCreative()) {
+        if (!(stack.getItem() instanceof ItemLittleRecipe || stack.getItem() instanceof ItemLittleRecipeAdvanced) && !player
+                .isCreative()) {
             if (gui != null)
                 Layer.addLayer(gui, new SubGuiNoBluePrintMessage());
         }

@@ -1,7 +1,7 @@
 package com.alet.common.structure.type.programable.advanced.flows;
 
-import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.advanced.Function;
+import com.alet.common.structure.type.programable.advanced.LittleProgramableStructureALET;
 
 import net.minecraft.world.WorldServer;
 

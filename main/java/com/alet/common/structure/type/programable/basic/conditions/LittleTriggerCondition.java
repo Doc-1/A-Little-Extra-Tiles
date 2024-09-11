@@ -1,7 +1,6 @@
 package com.alet.common.structure.type.programable.basic.conditions;
 
 import com.alet.common.structure.type.programable.basic.LittleTriggerObject;
-import com.alet.common.structure.type.programable.basic.events.LittleTriggerEvent;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -21,7 +20,7 @@ public abstract class LittleTriggerCondition extends LittleTriggerObject {
     }
     
     public boolean conditionRunEvent() {
-        if (completed) 
+        if (completed)
             return true;
         return conditionPassed();
     }

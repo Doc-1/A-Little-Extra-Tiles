@@ -75,7 +75,8 @@ public class ALETEventHandler {
             try {
                 BlockTile blockTile = (BlockTile) block;
                 TEResult result = blockTile.loadTeAndTile(world, pos, player);
-                if (result.isComplete() && result.parent.isStructure() && result.parent.getStructure() instanceof ILeftClickListener) {
+                if (result.isComplete() && result.parent.isStructure() && result.parent
+                        .getStructure() instanceof ILeftClickListener) {
                     ((ILeftClickListener) result.parent.getStructure()).onLeftClick(player);
                     return true;
                 }

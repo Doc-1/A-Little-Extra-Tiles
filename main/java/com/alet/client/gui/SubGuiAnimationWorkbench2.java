@@ -78,7 +78,8 @@ public class SubGuiAnimationWorkbench2 extends SubGui implements IAnimationContr
                 if (!previews.isEmpty()) {
                     GuiTree tree = (GuiTree) parent.get("tree");
                     GuiTimelineALET timeline = (GuiTimelineALET) parent.get("timeline");
-                    LittleAdvancedDoor structure = (LittleAdvancedDoor) StructureTileList.create(previews.structureNBT, null);
+                    LittleAdvancedDoor structure = (LittleAdvancedDoor) StructureTileList.create(previews.structureNBT,
+                        null);
                     GuiDoorEventsButtonALET children = (GuiDoorEventsButtonALET) parent.get("children_activate");
                     
                     children.update(previews, parent.structure);

@@ -3,7 +3,7 @@ package com.alet.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.client.sounds.Notes;
+import com.alet.common.sounds.Notes;
 import com.alet.common.structure.type.LittleMusicComposerALET.LittleMusicComposerParserALET;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;

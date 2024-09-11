@@ -10,23 +10,23 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TransparentBlock extends BlockBreakable {
-	
-	public TransparentBlock(String name) {
-		super(Material.GLASS, false);
-		setUnlocalizedName(name);
-		setRegistryName(name);
-	}
-	
-	public int quantityDropped(Random random) {
-		return 0;
-	}
-	
-	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
-		return BlockRenderLayer.CUTOUT;
-	}
-	
-	public boolean isFullCube(IBlockState state) {
-		return false;
-	}
+    
+    public TransparentBlock(String name) {
+        super(Material.GLASS, false);
+        setUnlocalizedName(name);
+        setRegistryName(name);
+    }
+    
+    public int quantityDropped(Random random) {
+        return 0;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT;
+    }
+    
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 }

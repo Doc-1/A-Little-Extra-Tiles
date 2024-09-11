@@ -22,7 +22,8 @@ import net.minecraft.world.World;
 
 public class EntitySit extends Entity implements IWorldPositionProvider, INoPushEntity {
     
-    public static final DataParameter<NBTTagCompound> CONNECTION = EntityDataManager.createKey(EntitySit.class, DataSerializers.COMPOUND_TAG);
+    public static final DataParameter<NBTTagCompound> CONNECTION = EntityDataManager.createKey(EntitySit.class,
+        DataSerializers.COMPOUND_TAG);
     public static final DataParameter<Float> CHAIRX = EntityDataManager.createKey(EntitySit.class, DataSerializers.FLOAT);
     public static final DataParameter<Float> CHAIRY = EntityDataManager.createKey(EntitySit.class, DataSerializers.FLOAT);
     public static final DataParameter<Float> CHAIRZ = EntityDataManager.createKey(EntitySit.class, DataSerializers.FLOAT);

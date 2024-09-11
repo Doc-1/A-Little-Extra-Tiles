@@ -7,7 +7,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALETConfig;
 import com.alet.client.gui.controls.GuiColorablePanel;
-import com.alet.common.utils.shape.MeasurementShapeRegistar;
+import com.alet.client.tapemeasure.shape.measurement.MeasurementShapeRegistar;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
@@ -170,8 +170,6 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
             NBTTagList l = stackNBT.getTagList("measurement_" + index, NBT.TAG_COMPOUND);
             nbt = l.getCompoundTagAt(0);
         }
-        List<String> contextNames = LittleGridContext.getNames();
-        
         int contextSize = ItemTapeMeasure.getSelectedContext(nbt).size;
         int colorInt = nbt.hasKey("color") ? nbt.getInteger("color") : ColorUtils.WHITE;
         String shape = nbt.hasKey("shape") ? nbt.getString("shape") : "";

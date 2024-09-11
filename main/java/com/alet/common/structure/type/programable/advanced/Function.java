@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.controls.programmable.nodes.GuiNodeValue;
-import com.alet.common.structure.type.programable.LittleProgramableStructureALET;
 import com.alet.common.structure.type.programable.advanced.nodes.values.NodeFunction;
 import com.alet.common.structure.type.programable.advanced.nodes.values.NodeValue;
 

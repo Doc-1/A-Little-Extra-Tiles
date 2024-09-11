@@ -2,7 +2,7 @@ package com.alet.common.utils.text.draw;
 
 import javax.vecmath.Point3f;
 
-import com.alet.common.utils.shape.tapemeasure.MeasurementShape;
+import com.alet.client.tapemeasure.shape.measurement.MeasurementShape;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

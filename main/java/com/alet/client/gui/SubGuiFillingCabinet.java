@@ -75,7 +75,8 @@ public class SubGuiFillingCabinet extends SubGui {
         GuiMenuPart details = new GuiMenuPart("", "Structure details", EnumPartType.Leaf);
         
         List<GuiTreePart> listOfMenus = new ArrayList<GuiTreePart>();
-        listOfMenus.add(sortBy.addMenu(name).addMenu(date).addMenu(structureType).addMenu(size).addMenu(ascending).addMenu(descending));
+        listOfMenus.add(sortBy.addMenu(name).addMenu(date).addMenu(structureType).addMenu(size).addMenu(ascending).addMenu(
+            descending));
         listOfMenus.add(showFolder);
         listOfMenus.add(newFolder);
         listOfMenus.add(delete);

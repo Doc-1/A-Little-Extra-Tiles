@@ -2,8 +2,8 @@ package com.alet.client.gui.override;
 
 import org.lwjgl.util.Color;
 
-import com.alet.client.gui.tutorial.controls.GuiTutorialBox;
-import com.alet.client.gui.tutorial.controls.TutorialData;
+import com.alet.client.gui.controls.tutorial.GuiTutorialBox;
+import com.alet.client.gui.controls.tutorial.TutorialData;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
