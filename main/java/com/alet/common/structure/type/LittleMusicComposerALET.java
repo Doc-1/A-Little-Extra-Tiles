@@ -189,11 +189,10 @@ public class LittleMusicComposerALET extends LittleStructure {
                 tick = 0;
                 play = false;
                 this.getInput(0).updateState(BooleanUtils.toBits(1, 1));
-                this.getOutput(0).updateState(BooleanUtils.toBits(0, 1));
+                this.getOutput(0).toggle();
             }
         } else {
             tick = 0;
-            this.getOutput(0).updateState(BooleanUtils.toBits(0, 1));
         }
         
     }
