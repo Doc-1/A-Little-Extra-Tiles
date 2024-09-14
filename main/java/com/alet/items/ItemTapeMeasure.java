@@ -194,16 +194,15 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     public void tick(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
         NBTTagCompound stackNBT = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
         
-        if (!stackNBT.hasNoTags()) {
-            LittleGridContext context = getSelectedContext(stackNBT);
-            LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
-            if (LittleAction.isUsingSecondMode(player))
-                result.sideHit = result.sideHit.getOpposite();
-            Point3f posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
-                result.sideHit);
-            
-            TapeRenderer.renderCursor(posEdit, context);
-        }
+        LittleGridContext context = getSelectedContext(stackNBT);
+        LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
+        if (LittleAction.isUsingSecondMode(player))
+            result.sideHit = result.sideHit.getOpposite();
+        Point3f posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
+            result.sideHit);
+        
+        TapeRenderer.renderCursor(posEdit, context);
+        
     }
     
     public void onKeyPress(int pressedKey, EntityPlayer player, ItemStack stack) {

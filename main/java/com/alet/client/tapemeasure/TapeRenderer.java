@@ -1,8 +1,6 @@
 package com.alet.client.tapemeasure;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.vecmath.Point3f;
 
@@ -99,11 +97,15 @@ public class TapeRenderer {
                         }
                         //NBTUtils.readDoubleArray(positions, key)
                     }
-                    List<Point3f> listOfPoints = new ArrayList<>();
-                    listOfPoints.add(point1);
-                    listOfPoints.add(point2);
-                    listOfPoints.add(point3);
-                    listOfPoints.add(point4);
+                    HashMap<Integer, Point3f> listOfP = new HashMap<>();
+                    if (point1 != null)
+                        listOfP.put(0, point1);
+                    if (point2 != null)
+                        listOfP.put(1, point2);
+                    if (point3 != null)
+                        listOfP.put(2, point3);
+                    if (point4 != null)
+                        listOfP.put(3, point4);
                     MeasurementShape shape = MeasurementShapeRegistar.getMeasurementShape(shapeName);
                     cachedMeasurements.put(index, shape);
                     float r = color.getRed() / 255F;
@@ -126,7 +128,7 @@ public class TapeRenderer {
                     GlStateManager.disableDepth();
                     
                     bufferbuilder.begin(2, DefaultVertexFormats.POSITION_COLOR);
-                    shape.tryDrawShape(listOfPoints, context, r, g, b, 1F);
+                    shape.tryDrawShape(listOfP, context, r, g, b, 1F);
                     tessellator.draw();
                     
                     GlStateManager.enableTexture2D();

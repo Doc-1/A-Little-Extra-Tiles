@@ -1,6 +1,7 @@
 package com.alet.client.tapemeasure.shape.measurement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Point3f;
@@ -23,7 +24,7 @@ public class MeasurementShapeLine extends MeasurementShape {
     }
     
     @Override
-    protected List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context) {
+    protected List<String> getMeasurementUnits(HashMap<Integer, Point3f> points, LittleGridContext context) {
         List<String> units = new ArrayList<>();
         Point3f pos = points.get(0);
         Point3f pos2 = points.get(1);
@@ -68,17 +69,17 @@ public class MeasurementShapeLine extends MeasurementShape {
     }
     
     @Override
-    protected void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+    protected void drawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         Point3f p1 = points.get(0);
         Point3f p2 = points.get(1);
         MeasurementShapeBox.drawCube(p1, context.size, 1F, 0F, 0F, 1.0F);
         MeasurementShapeBox.drawCube(p2, context.size, 0F, 1F, 0F, 1.0F);
-        List<Point3f> linePoints = drawLine(p1, p2, context.size, red, green, blue, alpha);
+        HashMap<Integer, Point3f> linePoints = drawLine(p1, p2, context.size, red, green, blue, alpha);
         drawText(linePoints, getMeasurementUnits(linePoints, context), context.size, pointsNeeded);
     }
     
     @Override
-    protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
+    protected void drawText(HashMap<Integer, Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
         float[] angles = getLineAngle(points.get(0), points.get(1));
         DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0), points.get(
             1), ColorUtils.WHITE, true, 0);

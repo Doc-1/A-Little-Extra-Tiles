@@ -1,6 +1,7 @@
 package com.alet.client.tapemeasure.shape.measurement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Point3f;
@@ -28,8 +29,8 @@ public class MeasurementShapeBox extends MeasurementShape {
     }
     
     @Override
-    protected void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
-        List<Point3f> boxPoints = drawBox(points.get(0), points.get(1), context.size, red, green, blue, alpha);
+    protected void drawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+        HashMap<Integer, Point3f> boxPoints = drawBox(points.get(0), points.get(1), context.size, red, green, blue, alpha);
         drawCube(points.get(0), context.size, 1.0F, 0.0F, 0.0F, alpha);
         drawCube(points.get(1), context.size, 0.0F, 1.0F, 0.0F, alpha);
         drawText(boxPoints, tryGetMeasurementUnits(points, context), context.size, ColorUtils.WHITE);
@@ -42,7 +43,7 @@ public class MeasurementShapeBox extends MeasurementShape {
     }
     
     @Override
-    protected List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context) {
+    protected List<String> getMeasurementUnits(HashMap<Integer, Point3f> points, LittleGridContext context) {
         Point3f pos = points.get(0);
         Point3f pos2 = points.get(1);
         List<String> measurmentUnits = new ArrayList<>();
@@ -105,7 +106,7 @@ public class MeasurementShapeBox extends MeasurementShape {
     }
     
     @Override
-    protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
+    protected void drawText(HashMap<Integer, Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
         AxisAlignedBB[] boxes = new AxisAlignedBB[6];
         AxisAlignedBB xFrontFace = new AxisAlignedBB(points.get(1).x, points.get(1).y, points.get(1).z, points.get(
             4).x, points.get(4).y, points.get(4).z);

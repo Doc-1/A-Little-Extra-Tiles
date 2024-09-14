@@ -1,6 +1,7 @@
 package com.alet.client.tapemeasure.shape.measurement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Point3f;
@@ -21,7 +22,7 @@ public class MeasurementShapeCompass extends MeasurementShape {
     }
     
     @Override
-    protected void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+    protected void drawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         Point3f p1 = points.get(0);
         Point3f p2 = points.get(1);
         Point3f p3 = points.get(2);
@@ -34,7 +35,7 @@ public class MeasurementShapeCompass extends MeasurementShape {
     }
     
     @Override
-    protected List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context) {
+    protected List<String> getMeasurementUnits(HashMap<Integer, Point3f> points, LittleGridContext context) {
         List<String> units = new ArrayList<>();
         Point3f C = points.get(0); //is angle C
         Point3f A = points.get(1); //is angle A
@@ -49,12 +50,12 @@ public class MeasurementShapeCompass extends MeasurementShape {
         double c2 = Math.pow(c, 2);
         
         double val = (b2 + c2 - a2) / (2 * b * c);
-        List<Point3f> CA = new ArrayList<>();
-        CA.add(C);
-        CA.add(A);
-        List<Point3f> AB = new ArrayList<>();
-        AB.add(A);
-        AB.add(B);
+        HashMap<Integer, Point3f> CA = new HashMap<>();
+        CA.put(0, C);
+        CA.put(1, A);
+        HashMap<Integer, Point3f> AB = new HashMap<>();
+        AB.put(0, A);
+        AB.put(1, B);
         units.add("Degrees: " + cleanDouble(Math.toDegrees(Math.acos(val))));
         units.addAll(MeasurementShapeRegistar.getMeasurementShape("Line").getMeasurementUnits(CA, context));
         units.addAll(MeasurementShapeRegistar.getMeasurementShape("Line").getMeasurementUnits(AB, context));
@@ -69,7 +70,7 @@ public class MeasurementShapeCompass extends MeasurementShape {
     }
     
     @Override
-    protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
+    protected void drawText(HashMap<Integer, Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
         DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(1), points.get(
             1), ColorUtils.WHITE, true, 0);
         DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(0), points.get(

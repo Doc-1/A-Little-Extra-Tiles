@@ -1,5 +1,6 @@
 package com.alet.client.tapemeasure.shape.measurement;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Point3f;
@@ -17,19 +18,19 @@ public class SpacedPattern extends MeasurementShape {
     }
     
     @Override
-    protected void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
+    protected void drawText(HashMap<Integer, Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
         // TODO Auto-generated method stub
         
     }
     
     @Override
-    protected void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+    protected void drawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         // TODO Auto-generated method stub
         
     }
     
     @Override
-    protected List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context) {
+    protected List<String> getMeasurementUnits(HashMap<Integer, Point3f> points, LittleGridContext context) {
         // TODO Auto-generated method stub
         return null;
     }

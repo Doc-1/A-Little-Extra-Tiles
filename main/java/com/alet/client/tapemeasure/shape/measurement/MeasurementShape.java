@@ -2,6 +2,7 @@ package com.alet.client.tapemeasure.shape.measurement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
@@ -32,6 +33,14 @@ public abstract class MeasurementShape {
     
     public String getKey() {
         return shapeName;
+    }
+    
+    public boolean hasPointsNeeded(HashMap<Integer, Point3f> points) {
+        for (int i = 0; i < pointsNeeded; i++) {
+            if (!points.containsKey(i))
+                return false;
+        }
+        return true;
     }
     
     @SideOnly(Side.CLIENT)
@@ -205,7 +214,7 @@ public abstract class MeasurementShape {
         buffer.pos(maxX, minY, minZ).color(red, green, blue, 0.0F).endVertex();
     }
     
-    public static List<Point3f> drawLine(Point3f p1, Point3f p2, int contextSize, float red, float green, float blue, float alpha) {
+    public static HashMap<Integer, Point3f> drawLine(Point3f p1, Point3f p2, int contextSize, float red, float green, float blue, float alpha) {
         
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -217,9 +226,9 @@ public abstract class MeasurementShape {
         double maxX = p2.x + conDiv;
         double maxY = p2.y + conDiv;
         double maxZ = p2.z + conDiv;
-        List<Point3f> points = new ArrayList<>();
-        points.add(new Point3f((float) minX, (float) minY, (float) minZ));
-        points.add(new Point3f((float) maxX, (float) maxY, (float) maxZ));
+        HashMap<Integer, Point3f> points = new HashMap<>();
+        points.put(0, new Point3f((float) minX, (float) minY, (float) minZ));
+        points.put(1, new Point3f((float) maxX, (float) maxY, (float) maxZ));
         
         bufferbuilder.pos(minX - 0.001, minY - 0.001, minZ - 0.001).color(red, green, blue, 0.0F).endVertex();
         bufferbuilder.pos(maxX - 0.001, maxY - 0.001, maxZ - 0.001).color(red, green, blue, 1.0F).endVertex();
@@ -227,7 +236,7 @@ public abstract class MeasurementShape {
         return points;
     }
     
-    public static List<Point3f> drawCube(Point3f point, int contextSize, float red, float green, float blue, float alpha) {
+    public static HashMap<Integer, Point3f> drawCube(Point3f point, int contextSize, float red, float green, float blue, float alpha) {
         double conDiv = 1D / contextSize;
         double minX = (point.x);
         double minY = (point.y);
@@ -236,15 +245,15 @@ public abstract class MeasurementShape {
         double maxX = (point.x + conDiv);
         double maxY = (point.y + conDiv);
         double maxZ = (point.z + conDiv);
-        List<Point3f> points = new ArrayList<>();
-        points.add(new Point3f((float) minX, (float) minY, (float) minZ));
-        points.add(new Point3f((float) maxX, (float) maxY, (float) maxZ));
+        HashMap<Integer, Point3f> points = new HashMap<>();
+        points.put(0, new Point3f((float) minX, (float) minY, (float) minZ));
+        points.put(1, new Point3f((float) maxX, (float) maxY, (float) maxZ));
         drawBoundingBox(TapeRenderer.bufferbuilder, minX - 0.001, minY - 0.001, minZ - 0.001, maxX + 0.001, maxY + 0.001,
             maxZ + 0.001, red, green, blue, alpha);
         return points;
     }
     
-    public static List<Point3f> drawBox(Point3f point1, Point3f point2, int contextSize, float red, float green, float blue, float alpha) {
+    public static HashMap<Integer, Point3f> drawBox(Point3f point1, Point3f point2, int contextSize, float red, float green, float blue, float alpha) {
         float conDiv = (float) (1D / contextSize);
         float minX = point1.x;
         float minY = point1.y;
@@ -266,39 +275,39 @@ public abstract class MeasurementShape {
             minY += conDiv;
             maxY -= conDiv;
         }
-        List<Point3f> points = new ArrayList<>();
-        points.add(new Point3f(minX, minY, minZ));
-        points.add(new Point3f(maxX, minY, minZ));
-        points.add(new Point3f(minX, minY, maxZ));
-        points.add(new Point3f(maxX, minY, maxZ));
+        HashMap<Integer, Point3f> points = new HashMap<>();
+        points.put(0, new Point3f(minX, minY, minZ));
+        points.put(1, new Point3f(maxX, minY, minZ));
+        points.put(2, new Point3f(minX, minY, maxZ));
+        points.put(3, new Point3f(maxX, minY, maxZ));
         
-        points.add(new Point3f(maxX, maxY, maxZ));
-        points.add(new Point3f(minX, maxY, maxZ));
-        points.add(new Point3f(maxX, maxY, minZ));
-        points.add(new Point3f(minX, maxY, minZ));
+        points.put(4, new Point3f(maxX, maxY, maxZ));
+        points.put(5, new Point3f(minX, maxY, maxZ));
+        points.put(6, new Point3f(maxX, maxY, minZ));
+        points.put(7, new Point3f(minX, maxY, minZ));
         drawBoundingBox(TapeRenderer.bufferbuilder, minX - 0.001, minY - 0.001, minZ - 0.001, maxX + 0.001, maxY + 0.001,
             maxZ + 0.001, red, green, blue, alpha);
         return points;
     }
     
-    protected abstract void drawText(List<Point3f> points, List<String> measurementUnits, int contextSize, int colorInt);
+    protected abstract void drawText(HashMap<Integer, Point3f> points, List<String> measurementUnits, int contextSize, int colorInt);
     
-    public void tryDrawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
+    public void tryDrawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         
-        if (points != null && !points.isEmpty() && points.size() >= this.pointsNeeded) {
+        if (points != null && !points.isEmpty() && this.hasPointsNeeded(points)) {
             drawShape(points, context, red, green, blue, alpha);
         }
     }
     
-    protected abstract void drawShape(List<Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha);
+    protected abstract void drawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha);
     
-    public List<String> tryGetMeasurementUnits(List<Point3f> points, LittleGridContext context) {
+    public List<String> tryGetMeasurementUnits(HashMap<Integer, Point3f> points, LittleGridContext context) {
         if (points != null && points.size() >= this.pointsNeeded)
             return getMeasurementUnits(points, context);
         return new ArrayList<String>();
     }
     
-    protected abstract List<String> getMeasurementUnits(List<Point3f> points, LittleGridContext context);
+    protected abstract List<String> getMeasurementUnits(HashMap<Integer, Point3f> points, LittleGridContext context);
     
     public abstract List<GuiControl> getCustomSettings(NBTTagCompound nbt, LittleGridContext context);
     
