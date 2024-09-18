@@ -51,9 +51,7 @@ public class LittleTriggerActivatorGlobal extends LittleTriggerActivator {
     public boolean shouldRun(World world, HashSet<Entity> entities) {
         entities.clear();
         entities.addAll(world.loadedEntityList);
-        if (!entities.isEmpty())
-            return true;
-        return false;
+        return !entities.isEmpty();
     }
     
     @Override

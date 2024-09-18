@@ -3,6 +3,7 @@ package com.alet.common.structure.type.programable.basic.conditions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.client.gui.controls.GuiConnectedCheckBoxes;
 import com.alet.common.structure.type.programable.basic.LittleTriggerObject;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiPanel;
@@ -28,6 +29,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
     
     int tick = 0;
     int childID = 0;
+    boolean onClose = false;
     
     public LittleTriggerConditionDoorTick(int id) {
         super(id);
@@ -47,12 +49,13 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
                 int i = -1;
                 if (s1.length > 1)
                     i = Integer.parseInt(s1[1].replace("-", ""));
-                if (i == tick && door.animation.controller.getCurrentState().name.equals("closed"))
+                boolean flag = onClose ? door.animation.controller.getCurrentState().name.equals(
+                    "opened") : door.animation.controller.getCurrentState().name.equals("closed");
+                if (i == tick && flag)
                     return true;
             } else
                 return false;
         } catch (CorruptedConnectionException | NotYetConnectedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return false;
@@ -62,6 +65,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
     public LittleTriggerObject deserializeNBT(NBTTagCompound nbt) {
         tick = nbt.getInteger("door_tick");
         childID = nbt.getInteger("child_id");
+        onClose = nbt.getBoolean("on_close");
         return this;
     }
     
@@ -69,6 +73,7 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
     public NBTTagCompound serializeNBT(NBTTagCompound nbt) {
         nbt.setInteger("door_tick", tick);
         nbt.setInteger("child_id", childID);
+        nbt.setBoolean("on_close", onClose);
         return nbt;
     }
     
@@ -83,7 +88,6 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
         GuiDoorComboBox combo = new GuiDoorComboBox("doorList", 0, 5, 200, doorNames, stacks, childIDs);
         int select = 0;
         for (int i = 0; i < doorHierarchy.size(); i++) {
-            System.out.println(doorHierarchy.get(i).index);
             if (doorHierarchy.get(i).index == this.childID) {
                 select = i;
                 break;
@@ -93,6 +97,14 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
         panel.raiseEvent(new GuiControlChangedEvent(combo));
         panel.addControl(combo);
         panel.addControl(new GuiTextfield("door_tick", tick + "", 0, 30, 50, 10).setNumbersOnly());
+        GuiConnectedCheckBoxes doorState = new GuiConnectedCheckBoxes("door_state", 0, 50).addCheckBox("on_open",
+            "On Opening").addCheckBox("on_close", "On Closing");
+        panel.addControl(doorState);
+        if (!onClose)
+            doorState.setSelected("on_open");
+        else
+            doorState.setSelected("on_close");
+        
     }
     
     @SideOnly(Side.CLIENT)
@@ -171,6 +183,10 @@ public class LittleTriggerConditionDoorTick extends LittleTriggerCondition {
             GuiDoorComboBox combo = (GuiDoorComboBox) source;
             if (!combo.lines.isEmpty())
                 this.childID = combo.childIDs.get(combo.index);
+        }
+        if (source.is("door_state")) {
+            GuiConnectedCheckBoxes doorState = (GuiConnectedCheckBoxes) source;
+            this.onClose = doorState.getSelected().name.equals("on_close");
         }
     }
     

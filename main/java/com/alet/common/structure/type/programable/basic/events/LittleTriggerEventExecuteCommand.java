@@ -69,11 +69,14 @@ public class LittleTriggerEventExecuteCommand extends LittleTriggerEvent {
     
     @Override
     public boolean runEvent() {
-        for (Entity entity : this.getEntities()) {
-            ICommandSender sender = new StructureCommandSender(entity, structure);
-            if (this.isSenderPlayer)
-                sender = new EntityCommandSender(entity);
-            entity.world.getMinecraftServer().getCommandManager().executeCommand(sender, this.command);
+        if (this.isSenderPlayer)
+            for (Entity entity : this.getEntities()) {
+                ICommandSender sender = new EntityCommandSender(entity);
+                entity.world.getMinecraftServer().getCommandManager().executeCommand(sender, this.command);
+            }
+        else {
+            ICommandSender sender = new StructureCommandSender(null, structure);
+            structure.mainBlock.getWorld().getMinecraftServer().getCommandManager().executeCommand(sender, this.command);
         }
         return true;
     }

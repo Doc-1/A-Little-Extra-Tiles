@@ -202,7 +202,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             result.sideHit);
         
         TapeRenderer.renderCursor(posEdit, context);
-        
     }
     
     public void onKeyPress(int pressedKey, EntityPlayer player, ItemStack stack) {
