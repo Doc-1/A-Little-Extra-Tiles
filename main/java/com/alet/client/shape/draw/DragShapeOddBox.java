@@ -1,4 +1,4 @@
-package com.alet.client.tapemeasure.shape.draw;
+package com.alet.client.shape.draw;
 
 import com.creativemd.littletiles.common.util.place.PlacementPosition;
 

@@ -4,20 +4,16 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
-import com.alet.client.gui.overlay.GuiAxisIndicatorAletControl;
+import com.alet.client.shape.draw.DragShapeCenteredBox;
+import com.alet.client.shape.draw.DragShapeCenteredCylinder;
+import com.alet.client.shape.draw.DragShapeCenteredSphere;
+import com.alet.client.shape.draw.DragShapePixel;
+import com.alet.client.shape.draw.LittleShapeMagicWand;
 import com.alet.client.tapemeasure.TapeRenderer;
-import com.alet.client.tapemeasure.shape.draw.DragShapeCenteredBox;
-import com.alet.client.tapemeasure.shape.draw.DragShapeCenteredCylinder;
-import com.alet.client.tapemeasure.shape.draw.DragShapeCenteredSphere;
-import com.alet.client.tapemeasure.shape.draw.DragShapePixel;
-import com.alet.client.tapemeasure.shape.draw.LittleShapeMagicWand;
 import com.alet.common.command.UpdateFontsCommand;
 import com.alet.common.event.ALETEventHandler;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;
-import com.creativemd.littletiles.client.LittleTilesClient;
-import com.creativemd.littletiles.client.render.overlay.OverlayControl;
-import com.creativemd.littletiles.client.render.overlay.OverlayRenderer.OverlayPositionType;
 import com.creativemd.littletiles.common.util.shape.ShapeRegistry;
 import com.creativemd.littletiles.common.util.shape.ShapeRegistry.ShapeType;
 import com.creativemd.littletiles.server.LittleTilesServer;
@@ -84,8 +80,8 @@ public class ALETClient extends LittleTilesServer {
         //MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
         MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
         
-        LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER)
-                .setShouldRender(() -> TapeRenderer.slotID != -1));
+        // LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER)
+        //       .setShouldRender(() -> TapeRenderer.slotID != -1));
         //LittleTilesClient.overlay.add(new OverlayControl(new GuiDisplayMeasurements("display"), OverlayPositionType.CENTER)
         //        .setShouldRender(() -> !TapeRenderer.tapemeasure.isEmpty()));
         

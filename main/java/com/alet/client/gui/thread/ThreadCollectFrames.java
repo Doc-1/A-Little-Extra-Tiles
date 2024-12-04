@@ -14,24 +14,31 @@ public class ThreadCollectFrames extends Thread {
     public List<BufferedImage> textures = new ArrayList<BufferedImage>();
     Minecraft mc = Minecraft.getMinecraft();
     public boolean finished = false;
-    public String gif;
+    GifDecoder decoder = new GifDecoder();
     
     public ThreadCollectFrames(String gif) {
         start();
-        this.gif = gif;
+        decoder.read(getClass().getClassLoader().getResourceAsStream(gif));
+    }
+    
+    public int getWidth() {
+        
+        return decoder.getImage().getWidth();
     }
     
     @Override
     public void run() {
-        GifDecoder d = new GifDecoder();
-        d.read(getClass().getClassLoader().getResourceAsStream(this.gif));
-        int n = d.getFrameCount();
+        int n = decoder.getFrameCount();
         for (int i = 0; i < n; i++) {
-            BufferedImage f = d.getFrame(i); // frame i
+            BufferedImage f = decoder.getFrame(i); // frame i
             textures.add(f);
-            delay.add(d.getDelay(i) / 15);
+            delay.add(decoder.getDelay(i) / 15);
         }
         finished = true;
+    }
+    
+    public int getHeight() {
+        return decoder.getImage().getHeight();
     }
     
 }

@@ -7,7 +7,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.ALETConfig;
 import com.alet.client.gui.controls.GuiColorablePanel;
-import com.alet.client.tapemeasure.shape.measurement.MeasurementShapeRegistar;
+import com.alet.client.tapemeasure.measurement.MeasurementShapeRegistar;
 import com.alet.items.ItemTapeMeasure;
 import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
 import com.alet.littletiles.gui.controls.GuiColorPickerAlet;

@@ -6,9 +6,9 @@ import javax.vecmath.Point3f;
 
 import org.lwjgl.util.Color;
 
-import com.alet.client.tapemeasure.shape.measurement.MeasurementShape;
-import com.alet.client.tapemeasure.shape.measurement.MeasurementShapeBox;
-import com.alet.client.tapemeasure.shape.measurement.MeasurementShapeRegistar;
+import com.alet.client.tapemeasure.measurement.MeasurementShape;
+import com.alet.client.tapemeasure.measurement.MeasurementShapeBox;
+import com.alet.client.tapemeasure.measurement.MeasurementShapeRegistar;
 import com.alet.common.utils.NBTUtils;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;

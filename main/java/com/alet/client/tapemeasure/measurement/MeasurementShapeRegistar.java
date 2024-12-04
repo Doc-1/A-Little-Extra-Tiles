@@ -1,4 +1,4 @@
-package com.alet.client.tapemeasure.shape.measurement;
+package com.alet.client.tapemeasure.measurement;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

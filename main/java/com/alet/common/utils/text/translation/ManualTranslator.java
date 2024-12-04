@@ -21,10 +21,11 @@ public class ManualTranslator {
     
     public static String translateToLocal(String page) {
         String lang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
-        InputStream stream = Minecraft.getMinecraft().getClass().getClassLoader().getResourceAsStream("assets/alet/lang/manual/" + page.toLowerCase() + "." + lang + ".lang");
+        System.out.println("assets/alet/lang/manual/" + page.toLowerCase() + "." + lang + ".lang");
+        InputStream stream = Minecraft.getMinecraft().getClass().getClassLoader().getResourceAsStream(
+            "assets/alet/lang/manual/" + page.toLowerCase() + "." + lang + ".lang");
         
         ManualTranslator.inject(stream);
-        
         return stream == null ? "" : ManualTranslator.tryTranslateKey("manual.page");
     }
     
@@ -46,7 +47,7 @@ public class ManualTranslator {
             
             for (String s : IOUtils.readLines(inputstream, StandardCharsets.UTF_8)) {
                 if (!s.isEmpty() && s.charAt(0) != '#') {
-                    String[] astring = (String[]) Iterables.toArray(EQUAL_SIGN_SPLITTER.split(s), String.class);
+                    String[] astring = Iterables.toArray(EQUAL_SIGN_SPLITTER.split(s), String.class);
                     
                     if (astring != null && astring.length == 2) {
                         String s1 = astring[0];

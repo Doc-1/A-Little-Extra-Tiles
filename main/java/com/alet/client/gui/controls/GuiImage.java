@@ -18,6 +18,16 @@ public class GuiImage extends GuiControl {
     public DynamicTexture texture;
     public double scale;
     
+    public GuiImage(String name, BufferedImage image, int x, int y, double scale) {
+        super(name, x, y, 0, 0);
+        this.marginWidth = 0;
+        this.width = (int) (image.getWidth() * scale);
+        this.height = (int) (image.getHeight() * scale);
+        this.scale = scale;
+        texture = new DynamicTexture(image);
+        
+    }
+    
     public GuiImage(String name, String path, int x, int y, double scale) {
         super(name, x, y, 0, 0);
         this.marginWidth = 0;
@@ -47,21 +57,16 @@ public class GuiImage extends GuiControl {
     @Override
     protected void renderContent(GuiRenderHelper helper, Style style, int width, int height) {
         if (texture != null) {
-            ResourceLocation location = this.mc.getTextureManager().getDynamicTextureLocation(ALET.MODID, texture);
+            ResourceLocation location = mc.getTextureManager().getDynamicTextureLocation(ALET.MODID, texture);
             
-            this.mc.getTextureManager().bindTexture(location);
-            int i = 3;
-            //helper.drawTexturedModalRect(location, 0, 0, image.getWidth() / i, image.getHeight() / i, image.getWidth() / i, image.getHeight() / i);
-            // helper.drawTexturedModalRect(new ResourceLocation(LittleForge.MODID, "textures/gui/arrow.png"), 187 * 16, 1 * 16, 0, 0, 16 * 16, 16 * 16);
-            //TextureStretchDisplayStyle s = new TextureStretchDisplayStyle(location, 0, 50, image.getWidth() / 3, image.getHeight() / 3);
-            //TextureDisplayStyle s = new TextureDisplayStyle(location, image.getWidth() / i, image.getHeight() / i);
-            // s.renderStyle(helper, width, height);
+            mc.getTextureManager().bindTexture(location);
             
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager
-                    .tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             GlStateManager.enableAlpha();
             // GlStateManager.disableLighting();

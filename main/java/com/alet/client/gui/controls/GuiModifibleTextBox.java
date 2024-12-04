@@ -1,5 +1,8 @@
 package com.alet.client.gui.controls;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -17,6 +20,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
 
@@ -25,22 +29,25 @@ public class GuiModifibleTextBox extends GuiTextBox {
     List<String> listOfText = new ArrayList<String>();
     List<ModifyText> listOfModifyText = new ArrayList<ModifyText>();
     Map<Float[], ModifyText> locationTextMap = new LinkedHashMap<Float[], ModifyText>();
-    List<ModifyText> locationImageList = new ArrayList<ModifyText>();
+    Map<Float[], ModifyText> locationImageMap = new LinkedHashMap<Float[], ModifyText>();
     Map<Float[], ModifyText> locationClickableMap = new LinkedHashMap<Float[], ModifyText>();
     
     ModifyTextMap map = new ModifyTextMap();
-    public static final Pattern FORMATTING_NEWLINE_PATTERN = Pattern.compile("\\{newLines:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
-    public static final Pattern FORMATTING_SCALE_PATTERN = Pattern.compile("\\{scale:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
+    public static final Pattern FORMATTING_NEWLINE_PATTERN = Pattern.compile(
+        "\\{newLines:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
+    public static final Pattern FORMATTING_SCALE_PATTERN = Pattern.compile(
+        "\\{scale:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
     public static final Pattern FORMATTING_ITALIC_PATTERN = Pattern.compile("\\{italic\\}");
     public static final Pattern FORMATTING_BOLD_PATTERN = Pattern.compile("\\{bold\\}");
     public static final Pattern FORMATTING_UNDERLINED_PATTERN = Pattern.compile("\\{underline\\}");
     public static final Pattern FORMATTING_CLICKABLE_PATTERN = Pattern.compile("\\{clickable\\}");
-    public static final Pattern FORMATTING_COLOR_PATTERN = Pattern.compile("\\{color:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
+    public static final Pattern FORMATTING_COLOR_PATTERN = Pattern.compile(
+        "\\{color:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
     public static final Pattern FORMATTING_END_PATTERN = Pattern.compile("\\{end\\}");
     public static final Pattern FORMATTING_NUMBER_PATTERN = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
     public static final Pattern FORMATTING_SIMPLE_NUMBER_PATTERN = Pattern.compile("[0-9]+");
     public static final Pattern FORMATTING_DOUBLE_PATTERN = Pattern.compile("[-+]?[0-9]+(\\.+[0-9]+)?");
-    public static final Pattern FORMATTING_IMAGE_PATTERN = Pattern.compile("\\{image:[-+]?[0-9]+,[-+]?[0-9]+,[-+]?[0-9]+(\\.+[0-9]+)?,[a-zA-Z.]+\\}");
+    public static final Pattern FORMATTING_IMAGE_PATTERN = Pattern.compile("\\{image:[a-zA-Z]+\\.[a-zA-Z]+\\}");
     public static final Pattern FORMATTING_FILE_PATTERN = Pattern.compile("[a-zA-Z]+\\.[a-zA-Z]+");
     
     public GuiModifibleTextBox(String name, String text, int x, int y, int width) {
@@ -74,7 +81,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
             Matcher matcherEnd = FORMATTING_END_PATTERN.matcher(text);
             
             ModifyText modText = new ModifyText(0, ColorUtils.WHITE, false, 0, "");
-            
+            modText.scale = 1;
+            modText.color = -1;
+            modText.newLines = 0;
             if (matcherScale.find()) {
                 modText.scale = ModifierAttribute.getScale(matcherScale.group());
                 text = text.replaceAll(FORMATTING_SCALE_PATTERN.pattern(), "");
@@ -86,7 +95,12 @@ public class GuiModifibleTextBox extends GuiTextBox {
             }
             
             if (matcherClickable.find()) {
-                modText.clickable = ModifierAttribute.isClickable(matcherClickable.group());
+                boolean result = ModifierAttribute.isClickable(matcherClickable.group());
+                modText.clickable = result;
+                modText.italic = result;
+                modText.underline = result;
+                if (result)
+                    modText.color = 0x0000EE;
                 text = text.replaceAll(FORMATTING_CLICKABLE_PATTERN.pattern(), "");
             }
             
@@ -107,21 +121,21 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 text = text.replaceAll(FORMATTING_UNDERLINED_PATTERN.pattern(), "");
             }
             if (matcherImage.find()) {
-                ImageData data = ModifierAttribute.getImagePos(matcherImage.group());
-                modText.imageX = data.x;
-                modText.imageY = data.y;
-                modText.imageScale = data.scale;
-                modText.imageName = new String(data.imageName);
+                String imageName = ModifierAttribute.getImageName(matcherImage.group());
+                String fileType = imageName.split("\\.")[1];
+                if (fileType.equals("png") || fileType.equals("jpeg"))
+                    modText.setImagePath("assets/alet/images/" + imageName);
+                
+                modText.newLines = 1;
+                modText.scale = 0.2;
                 text = text.replaceAll(FORMATTING_IMAGE_PATTERN.pattern(), "");
             }
             if (matcherEnd.find()) {
                 text = text.replaceAll(FORMATTING_END_PATTERN.pattern(), "");
                 modText.text = text;
             }
-            if (modText.imageName == "")
-                listOfModifyText.add(modText);
-            else
-                this.locationImageList.add(modText);
+            System.out.println(modText.text);
+            listOfModifyText.add(modText);
         }
     }
     
@@ -129,7 +143,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
         List<ModifyText> list = new ArrayList<ModifyText>();
         for (ModifyText modText : listOfModifyText) {
             boolean flag1 = false;
-            if (!modText.clickable)
+            if (!modText.clickable && modText.imagePath == null)
                 for (String s : modText.text.split("((?<= )|(?= ))")) {
                     ModifyText copy = modText.copy();
                     if (flag1)
@@ -142,20 +156,23 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 list.add(modText);
         }
         int widthCount = 0;
-        int i = 0;
+        int line = 0;
         
         for (ModifyText modText : list) {
+            
             double scale = modText.scale;
-            i += modText.newLines;
-            if (modText.newLines != 0) {
+            line += modText.newLines;
+            if (modText.newLines != 0)
                 widthCount = 0;
-            }
+            
             widthCount += font.getStringWidth(modText.text) * scale;
+            
             if (widthCount >= this.width + 10) {
                 if (modText.text.equals(" "))
                     modText.text = "";
+                
                 widthCount = (int) (font.getStringWidth(modText.text) * scale);
-                i++;
+                line++;
             }
             if (modText.bold)
                 modText.text = TextFormatting.BOLD + modText.text + TextFormatting.RESET;
@@ -163,7 +180,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 modText.text = TextFormatting.ITALIC + modText.text + TextFormatting.RESET;
             if (modText.underline)
                 modText.text = TextFormatting.UNDERLINE + modText.text + TextFormatting.RESET;
-            this.map.add(i, modText);
+            this.map.add(line, modText);
         }
     }
     
@@ -178,19 +195,33 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 y += (map.maxNewLine(key) - 1) * map.maxHeight(key);
             List<ModifyText> modTextList = entry.getValue();
             for (ModifyText modText : modTextList) {
-                float textHeight = (float) (font.FONT_HEIGHT * modText.scale);
-                float maxTextHeight = map.maxHeight(key);
-                float addY = textHeight - maxTextHeight;
                 
-                if (modText.clickable)
-                    this.locationClickableMap.put(new Float[] { (float) (x / modText.scale), (float) ((y - addY) / modText.scale) }, modText);
-                else
-                    this.locationTextMap.put(new Float[] { (float) (x / modText.scale), (float) ((y - addY) / modText.scale) }, modText);
+                int height = font.FONT_HEIGHT;
+                float scaledHeight = (float) (height * modText.scale);
+                float maxHeight = map.maxHeight(key);
+                float addY = scaledHeight - maxHeight;
+                
+                if (modText.imagePath != null) {
+                    this.locationImageMap.put(new Float[] { (modText.imageWidth / 2) - (this.width / 2), y + 2 }, modText);
+                } else if (modText.clickable)
+                    this.locationClickableMap.put(
+                        new Float[] { (float) (x / modText.scale), (float) ((y - addY) / modText.scale) }, modText);
+                else {
+                    this.locationTextMap.put(
+                        new Float[] { (float) (x / modText.scale), (float) ((y - addY) / modText.scale) }, modText);
+                    
+                }
+                
+                if (modText.imagePath != null)
+                    y += (float) (modText.imageHeight * modText.scale);
+                
                 x += font.getStringWidth(modText.text) * modText.scale;
+                
             }
             y += map.maxHeight(key) + 1;
         }
         this.height = (int) y + 9;
+        
     }
     
     public boolean isMouseOverClickable(int posX, int posY) {
@@ -198,8 +229,8 @@ public class GuiModifibleTextBox extends GuiTextBox {
             float x = entry.getKey()[0];
             float y = entry.getKey()[1];
             ModifyText modText = entry.getValue();
-            modText.mouseOver = (posX >= x && posX < x + ((font
-                    .getStringWidth(modText.text) + 5) * modText.scale) && posY >= y + 5 && posY < y + 2 + (font.FONT_HEIGHT * modText.scale));
+            modText.mouseOver = (posX >= x && posX < x + ((font.getStringWidth(
+                modText.text) + 5) * modText.scale) && posY >= y + 5 && posY < y + 2 + (font.FONT_HEIGHT * modText.scale));
         }
         return false;
     }
@@ -212,15 +243,25 @@ public class GuiModifibleTextBox extends GuiTextBox {
     }
     
     public void addImages() {
-        for (ModifyText text : this.locationImageList) {
+        for (Entry<Float[], ModifyText> entry : this.locationImageMap.entrySet()) {
+            String fileType = entry.getValue().imagePath.split("\\.")[1];
+            if (fileType.equals("png") || fileType.equals("jpeg")) {
+                GuiModifibleTextBox.this.getParent().addControl(new GuiImage("", entry.getValue().imagePath, entry
+                        .getKey()[0].intValue(), entry.getKey()[1].intValue(), entry.getValue().scale));
+            }
+        }
+        
+        /* for (ModifyText text : this.locationImageList) {
             String fileType = text.imageName.split("\\.")[1];
             if (fileType.equals("png") || fileType.equals("jpeg"))
-                GuiModifibleTextBox.this.getParent().addControl(new GuiImage("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, text.imageScale));
+                GuiModifibleTextBox.this.getParent().addControl(
+                    new GuiImage("", TextureUtil.readBufferedImage(getClass().getClassLoader().getResourceAsStream(path)), text.imageX, text.imageY, text.imageScale));
             else if (fileType.equals("gif"))
-                GuiModifibleTextBox.this.getParent().addControl(new GuiGIF("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, text.imageScale));
+                GuiModifibleTextBox.this.getParent().addControl(
+                    new GuiGIF("", "assets/alet/images/" + text.imageName, text.imageX, text.imageY, text.imageScale));
             GuiModifibleTextBox.this.getParent().refreshControls();
-        }
-        //
+        }*/
+        
     }
     
     @Override
@@ -262,6 +303,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 font.drawString(modText.text, x, y, modText.color, true);
             GlStateManager.popMatrix();
         }
+        
     }
     
     @Override
@@ -393,40 +435,16 @@ public class GuiModifibleTextBox extends GuiTextBox {
             return matcher.find();
         }
         
-        public static ImageData getImagePos(String image) {
-            Matcher matcher = FORMATTING_DOUBLE_PATTERN.matcher(image);
-            int count = 0;
-            double[] pos = new double[3];
-            while (matcher.find()) {
-                pos[count] = Double.parseDouble(matcher.group());
-                count++;
-            }
-            Matcher m = FORMATTING_DOUBLE_PATTERN.matcher(image);
-            matcher = FORMATTING_FILE_PATTERN.matcher(image);
+        public static String getImageName(String image) {
+            Matcher matcher = FORMATTING_FILE_PATTERN.matcher(image);
             matcher.find();
-            String imageName = matcher.group();
-            ImageData data = new ImageData((int) pos[0], (int) pos[1], pos[2], imageName);
-            return data;
+            return matcher.group();
         }
         
-    }
-    
-    private static class ImageData {
-        public int x;
-        public int y;
-        public double scale;
-        public String imageName;
-        
-        public ImageData(int x, int y, double scale, String imageName) {
-            this.x = x;
-            this.y = y;
-            this.scale = scale;
-            this.imageName = imageName;
-        }
     }
     
     private class ModifyText {
-        public double scale = 0;
+        public double scale = 1;
         public int color = ColorUtils.WHITE;
         public boolean clickable = false;
         public boolean italic = false;
@@ -435,10 +453,9 @@ public class GuiModifibleTextBox extends GuiTextBox {
         public String text = "";
         public int newLines = 0;
         public boolean mouseOver = false;
-        public int imageX = 0;
-        public int imageY = 0;
-        public double imageScale = 0;
-        public String imageName = "";
+        private String imagePath;
+        public float imageWidth;
+        public float imageHeight;
         
         @SuppressWarnings("unused")
         public ModifyText() {
@@ -451,6 +468,21 @@ public class GuiModifibleTextBox extends GuiTextBox {
             this.clickable = clickable;
             this.text = text;
             this.newLines = newLines;
+        }
+        
+        public ModifyText setImagePath(String imagePath) {
+            this.imagePath = imagePath;
+            BufferedImage image = null;
+            InputStream stream = null;
+            stream = getClass().getClassLoader().getResourceAsStream(imagePath);
+            try {
+                image = TextureUtil.readBufferedImage(stream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.imageWidth = image.getWidth();
+            this.imageHeight = image.getHeight();
+            return this;
         }
         
         public ModifyText setText(String text) {
@@ -470,7 +502,8 @@ public class GuiModifibleTextBox extends GuiTextBox {
         public boolean equals(Object obj) {
             ModifyText text = ModifyText.class.cast(obj);
             
-            return this.scale == text.scale && this.clickable == text.clickable && this.color == text.color && this.newLines == text.newLines && this.text.equals(text.text);
+            return this.scale == text.scale && this.clickable == text.clickable && this.color == text.color && this.newLines == text.newLines && this.text
+                    .equals(text.text);
         }
         
         @Override
@@ -498,10 +531,21 @@ public class GuiModifibleTextBox extends GuiTextBox {
             return max;
         }
         
+        public int maxImageHeight(int key) {
+            int max = 0;
+            for (ModifyText modText : this.get(key)) {
+                max = (int) Math.max(modText.scale * modText.imageHeight, max);
+            }
+            
+            return max;
+            
+        }
+        
         public float maxHeight(int key) {
             float max = font.FONT_HEIGHT;
-            for (ModifyText modText : this.get(key))
+            for (ModifyText modText : this.get(key)) {
                 max = (float) Math.max(modText.scale * font.FONT_HEIGHT, max);
+            }
             
             return max;
         }

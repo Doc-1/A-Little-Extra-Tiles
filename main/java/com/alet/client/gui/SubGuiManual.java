@@ -12,9 +12,9 @@ import com.alet.client.gui.controls.GuiModifibleTextBox.ModifierAttribute;
 import com.alet.client.gui.controls.GuiScalableTextBox;
 import com.alet.client.gui.controls.GuiTable;
 import com.alet.client.gui.controls.menu.GuiTree;
-import com.alet.client.gui.controls.menu.GuiTreePartManual;
 import com.alet.client.gui.controls.menu.GuiTreePart;
 import com.alet.client.gui.controls.menu.GuiTreePart.EnumPartType;
+import com.alet.client.gui.controls.menu.GuiTreePartManual;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
@@ -254,8 +254,9 @@ public class SubGuiManual extends SubGui {
         scrollBoxPage.scrolled.set(0);
         if (!part.equals(this.selected)) {
             scrollBoxPage.removeControls(" ");
-            GuiTreePartManual paper = (GuiTreePartManual) part;
+            GuiTreePartManual paper = part;
             GuiModifibleTextBox box = new GuiModifibleTextBox("", part.getPage(), 0, 0, 350);
+            
             scrollBoxPage.addControl(box);
             box.addImages();
             tree.highlightPart(paper);

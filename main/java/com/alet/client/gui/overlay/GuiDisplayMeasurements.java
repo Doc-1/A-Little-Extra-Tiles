@@ -7,7 +7,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.client.gui.overlay.controls.GuiOverlayTextList;
 import com.alet.client.tapemeasure.TapeRenderer;
-import com.alet.client.tapemeasure.shape.measurement.MeasurementShape;
+import com.alet.client.tapemeasure.measurement.MeasurementShape;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;

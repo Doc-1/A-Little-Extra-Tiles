@@ -58,6 +58,14 @@ public class SubGuiFillingCabinet extends SubGui {
     }
     
     @Override
+    public void onTick() {
+        for (int i = 0; i < controls.size(); i++) {
+            GuiControl control = controls.get(i);
+            control.onTick();
+        }
+    }
+    
+    @Override
     public void createControls() {
         SubContainer contain = this.container;
         

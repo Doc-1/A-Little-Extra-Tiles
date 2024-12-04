@@ -1,4 +1,4 @@
-package com.alet.client.tapemeasure.shape.draw;
+package com.alet.client.shape.draw;
 
 import java.util.ArrayList;
 import java.util.List;
