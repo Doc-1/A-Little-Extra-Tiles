@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import org.lwjgl.util.Color;
 
+import com.alet.client.gui.SubGuiManual;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
@@ -45,10 +46,16 @@ public class GuiModifibleTextBox extends GuiTextBox {
         "\\{color:[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?\\}");
     public static final Pattern FORMATTING_END_PATTERN = Pattern.compile("\\{end\\}");
     public static final Pattern FORMATTING_NUMBER_PATTERN = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+    public static final Pattern FORMATTING_STRING_PARTERN = Pattern.compile("[a-zA-Z]+");
     public static final Pattern FORMATTING_SIMPLE_NUMBER_PATTERN = Pattern.compile("[0-9]+");
     public static final Pattern FORMATTING_DOUBLE_PATTERN = Pattern.compile("[-+]?[0-9]+(\\.+[0-9]+)?");
     public static final Pattern FORMATTING_IMAGE_PATTERN = Pattern.compile("\\{image:[a-zA-Z]+\\.[a-zA-Z]+\\}");
     public static final Pattern FORMATTING_FILE_PATTERN = Pattern.compile("[a-zA-Z]+\\.[a-zA-Z]+");
+    public static final Pattern FORMATTING_CENTER_PATTERN = Pattern.compile("\\{center\\}");
+    
+    public static final Pattern FORMATTING_KEYWORD_PATTERN = Pattern.compile("\\{key\\}");
+    
+    public static final Pattern FORMATTING_REFRENCE_PATTERN = Pattern.compile("\\{ref:[a-zA-Z]+\\}");
     
     public GuiModifibleTextBox(String name, String text, int x, int y, int width) {
         super(name, text, x, y, width);
@@ -76,65 +83,92 @@ public class GuiModifibleTextBox extends GuiTextBox {
             Matcher matcherBold = FORMATTING_BOLD_PATTERN.matcher(text);
             Matcher matcherItalic = FORMATTING_ITALIC_PATTERN.matcher(text);
             Matcher matcherUnderline = FORMATTING_UNDERLINED_PATTERN.matcher(text);
+            Matcher matcherKeyword = FORMATTING_KEYWORD_PATTERN.matcher(text);
+            Matcher matcherCenter = FORMATTING_CENTER_PATTERN.matcher(text);
             Matcher matcherColor = FORMATTING_COLOR_PATTERN.matcher(text);
             Matcher matcherImage = FORMATTING_IMAGE_PATTERN.matcher(text);
             Matcher matcherEnd = FORMATTING_END_PATTERN.matcher(text);
+            Matcher matcherRef = FORMATTING_REFRENCE_PATTERN.matcher(text);
             
             ModifyText modText = new ModifyText(0, ColorUtils.WHITE, false, 0, "");
             modText.scale = 1;
             modText.color = -1;
             modText.newLines = 0;
             if (matcherScale.find()) {
-                modText.scale = ModifierAttribute.getScale(matcherScale.group());
+                Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(matcherScale.group());
+                matcher.find();
+                modText.scale = Double.parseDouble(matcher.group());
                 text = text.replaceAll(FORMATTING_SCALE_PATTERN.pattern(), "");
             }
-            
             if (matcherNewLine.find()) {
-                modText.newLines = ModifierAttribute.getNewLines(matcherNewLine.group());
+                Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(matcherNewLine.group());
+                matcher.find();
+                modText.newLines = Integer.parseInt(matcher.group());
                 text = text.replaceAll(FORMATTING_NEWLINE_PATTERN.pattern(), "");
             }
             
             if (matcherClickable.find()) {
-                boolean result = ModifierAttribute.isClickable(matcherClickable.group());
-                modText.clickable = result;
-                modText.italic = result;
-                modText.underline = result;
-                if (result)
-                    modText.color = 0x0000EE;
+                modText.clickable = true;
+                modText.italic = true;
+                modText.underline = true;
+                modText.color = 0x0000EE;
                 text = text.replaceAll(FORMATTING_CLICKABLE_PATTERN.pattern(), "");
             }
-            
+            if (matcherRef.find()) {
+                Matcher matcher = FORMATTING_STRING_PARTERN.matcher(matcherRef.group().split(":")[1]);
+                matcher.find();
+                modText.clickable = true;
+                modText.italic = true;
+                modText.underline = true;
+                modText.color = 0x0000EE;
+                modText.refrence = matcher.group();
+                text = text.replaceAll(FORMATTING_REFRENCE_PATTERN.pattern(), "");
+            }
             if (matcherColor.find()) {
-                modText.color = ModifierAttribute.getColor(matcherColor.group());
+                Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(matcherColor.group());
+                matcher.find();
+                modText.color = Integer.parseInt(matcher.group());
                 text = text.replaceAll(FORMATTING_COLOR_PATTERN.pattern(), "");
             }
             if (matcherBold.find()) {
-                modText.bold = ModifierAttribute.isBold(matcherBold.group());
+                modText.bold = true;
                 text = text.replaceAll(FORMATTING_BOLD_PATTERN.pattern(), "");
             }
+            if (matcherCenter.find()) {
+                modText.center = true;
+                text = text.replaceAll(FORMATTING_CENTER_PATTERN.pattern(), "");
+            }
             if (matcherItalic.find()) {
-                modText.italic = ModifierAttribute.isItalic(matcherItalic.group());
+                modText.italic = true;
                 text = text.replaceAll(FORMATTING_ITALIC_PATTERN.pattern(), "");
             }
             if (matcherUnderline.find()) {
-                modText.underline = ModifierAttribute.isUnderline(matcherUnderline.group());
+                modText.underline = true;
                 text = text.replaceAll(FORMATTING_UNDERLINED_PATTERN.pattern(), "");
             }
+            if (matcherKeyword.find()) {
+                modText.scale = 1.1D;
+                modText.italic = true;
+                modText.color = 65535;
+                text = text.replaceAll(FORMATTING_KEYWORD_PATTERN.pattern(), "");
+            }
             if (matcherImage.find()) {
-                String imageName = ModifierAttribute.getImageName(matcherImage.group());
-                String fileType = imageName.split("\\.")[1];
+                String imageName = matcherImage.group();
+                Matcher matcher = FORMATTING_FILE_PATTERN.matcher(imageName);
+                matcher.find();
+                imageName = matcher.group();
+                String fileType = matcher.group().split("\\.")[1];
                 if (fileType.equals("png") || fileType.equals("jpeg"))
                     modText.setImagePath("assets/alet/images/" + imageName);
                 
-                modText.newLines = 1;
-                modText.scale = 0.2;
+                modText.newLines = 2;
+                modText.scale = 0.28;
                 text = text.replaceAll(FORMATTING_IMAGE_PATTERN.pattern(), "");
             }
             if (matcherEnd.find()) {
                 text = text.replaceAll(FORMATTING_END_PATTERN.pattern(), "");
                 modText.text = text;
             }
-            System.out.println(modText.text);
             listOfModifyText.add(modText);
         }
     }
@@ -143,7 +177,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
         List<ModifyText> list = new ArrayList<ModifyText>();
         for (ModifyText modText : listOfModifyText) {
             boolean flag1 = false;
-            if (!modText.clickable && modText.imagePath == null)
+            if (!modText.clickable && modText.imagePath == null && !modText.center)
                 for (String s : modText.text.split("((?<= )|(?= ))")) {
                     ModifyText copy = modText.copy();
                     if (flag1)
@@ -159,7 +193,6 @@ public class GuiModifibleTextBox extends GuiTextBox {
         int line = 0;
         
         for (ModifyText modText : list) {
-            
             double scale = modText.scale;
             line += modText.newLines;
             if (modText.newLines != 0)
@@ -202,14 +235,17 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 float addY = scaledHeight - maxHeight;
                 
                 if (modText.imagePath != null) {
-                    this.locationImageMap.put(new Float[] { (modText.imageWidth / 2) - (this.width / 2), y + 2 }, modText);
+                    this.locationImageMap.put(
+                        new Float[] { (float) ((this.width / 2) - ((modText.imageWidth * modText.scale) / 2)), y + 2 },
+                        modText);
                 } else if (modText.clickable)
                     this.locationClickableMap.put(
                         new Float[] { (float) (x / modText.scale), (float) ((y - addY) / modText.scale) }, modText);
                 else {
-                    this.locationTextMap.put(
-                        new Float[] { (float) (x / modText.scale), (float) ((y - addY) / modText.scale) }, modText);
-                    
+                    float nX = (float) (x / modText.scale);
+                    if (modText.center)
+                        nX = (float) ((this.width / 2) - ((font.getStringWidth(modText.text) * modText.scale) / 2));
+                    this.locationTextMap.put(new Float[] { nX, (float) ((y - addY) / modText.scale) }, modText);
                 }
                 
                 if (modText.imagePath != null)
@@ -246,8 +282,8 @@ public class GuiModifibleTextBox extends GuiTextBox {
         for (Entry<Float[], ModifyText> entry : this.locationImageMap.entrySet()) {
             String fileType = entry.getValue().imagePath.split("\\.")[1];
             if (fileType.equals("png") || fileType.equals("jpeg")) {
-                GuiModifibleTextBox.this.getParent().addControl(new GuiImage("", entry.getValue().imagePath, entry
-                        .getKey()[0].intValue(), entry.getKey()[1].intValue(), entry.getValue().scale));
+                this.getParent().addControl(new GuiImage("", entry.getValue().imagePath, entry.getKey()[0].intValue(), entry
+                        .getKey()[1].intValue(), entry.getValue().scale));
             }
         }
         
@@ -270,6 +306,10 @@ public class GuiModifibleTextBox extends GuiTextBox {
             if (modText.mouseOver) {
                 playSound(SoundEvents.UI_BUTTON_CLICK);
                 clickedOn(modText.text);
+                if (!modText.refrence.isEmpty()) {
+                    SubGuiManual gui = (SubGuiManual) this.getParent().getOrigin();
+                    gui.gotoPage(modText.refrence);
+                }
                 modText.mouseOver = false;
             }
         }
@@ -394,53 +434,6 @@ public class GuiModifibleTextBox extends GuiTextBox {
             return addText(1, ColorUtils.WHITE, true, 0, text, true, true, true);
         }
         
-        public static double getScale(String scale) {
-            Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(scale);
-            matcher.find();
-            String s = matcher.group();
-            return Double.parseDouble(s);
-        }
-        
-        public static int getColor(String color) {
-            Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(color);
-            matcher.find();
-            String s = matcher.group();
-            return Integer.parseInt(s);
-        }
-        
-        public static int getNewLines(String newLines) {
-            Matcher matcher = FORMATTING_NUMBER_PATTERN.matcher(newLines);
-            matcher.find();
-            String s = matcher.group();
-            return Integer.parseInt(s);
-        }
-        
-        public static boolean isClickable(String clickable) {
-            Matcher matcher = FORMATTING_CLICKABLE_PATTERN.matcher(clickable);
-            return matcher.find();
-        }
-        
-        public static boolean isBold(String clickable) {
-            Matcher matcher = FORMATTING_BOLD_PATTERN.matcher(clickable);
-            return matcher.find();
-        }
-        
-        public static boolean isItalic(String clickable) {
-            Matcher matcher = FORMATTING_ITALIC_PATTERN.matcher(clickable);
-            return matcher.find();
-        }
-        
-        public static boolean isUnderline(String clickable) {
-            Matcher matcher = FORMATTING_UNDERLINED_PATTERN.matcher(clickable);
-            return matcher.find();
-        }
-        
-        public static String getImageName(String image) {
-            Matcher matcher = FORMATTING_FILE_PATTERN.matcher(image);
-            matcher.find();
-            return matcher.group();
-        }
-        
     }
     
     private class ModifyText {
@@ -448,6 +441,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
         public int color = ColorUtils.WHITE;
         public boolean clickable = false;
         public boolean italic = false;
+        public boolean center = false;
         public boolean underline = false;
         public boolean bold = false;
         public String text = "";
@@ -456,6 +450,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
         private String imagePath;
         public float imageWidth;
         public float imageHeight;
+        public String refrence = "";
         
         @SuppressWarnings("unused")
         public ModifyText() {
