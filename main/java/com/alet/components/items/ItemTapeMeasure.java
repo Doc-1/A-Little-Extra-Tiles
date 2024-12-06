@@ -164,12 +164,20 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         return (selected.hasKey("context") && selected.getInteger("context") >= 0 && selected.getInteger(
             "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
                 "context")] : ItemMultiTiles.currentContext;
+        
+    }
+    
+    public static int getColorAt(NBTTagCompound stackNBT, int index) {
+        NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(index + "");
+        
+        return selected.hasKey("color") ? selected.getInteger("color") : ColorUtils.WHITE;
+        
     }
     
     @Override
     public void tick(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
         NBTTagCompound stackNBT = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
-        
+        int index = stackNBT.hasKey("index") ? stack.getTagCompound().getInteger("index") : 0;
         LittleGridContext context = getSelectedContext(stackNBT);
         LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
         if (LittleAction.isUsingSecondMode(player))
@@ -177,9 +185,9 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         Point3f posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
             result.sideHit);
         
-        TapeRenderer.renderCursor(posEdit, context);
+        TapeRenderer.renderCursor(posEdit, getColorAt(stackNBT, index), context);
         if (ALETClient.clearMeasurment.isPressed())
-            clear(stack, stack.getTagCompound().getInteger("index"), player);
+            clear(stack, index, player);
     }
     
     @Override

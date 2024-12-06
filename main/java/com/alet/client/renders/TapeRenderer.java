@@ -141,12 +141,12 @@ public class TapeRenderer {
         }
     }
     
-    public static void renderCursor(Point3f posCursor, LittleGridContext context) {
+    public static void renderCursor(Point3f posCursor, int color, LittleGridContext context) {
         
-        Color color = ColorUtils.IntToRGBA(ColorUtils.WHITE);
-        float r = color.getRed() / 255F;
-        float g = color.getGreen() / 255F;
-        float b = color.getBlue() / 255F;
+        Color c = ColorUtils.IntToRGBA(color);
+        float r = c.getRed() / 255F;
+        float g = c.getGreen() / 255F;
+        float b = c.getBlue() / 255F;
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
