@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.alet.client.gui.controls.programmable.functions.GuiFunction;
 import com.alet.client.gui.event.GuiControlReleaseEvent;
-import com.alet.common.structure.type.programable.advanced.nodes.Node.NodeType;
-import com.alet.common.structure.type.programable.advanced.nodes.NodeRegistar;
+import com.alet.common.structures.type.programable.advanced.nodes.NodeRegistar;
+import com.alet.common.structures.type.programable.advanced.nodes.Node.NodeType;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;

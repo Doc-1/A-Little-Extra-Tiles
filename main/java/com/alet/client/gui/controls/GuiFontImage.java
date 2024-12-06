@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.Map;
 
 import com.alet.ALET;
-import com.alet.font.FontReader;
+import com.alet.common.utils.photo.FontReader;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;

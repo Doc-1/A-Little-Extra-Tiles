@@ -7,8 +7,6 @@ import java.util.List;
 import javax.vecmath.Point3f;
 
 import com.alet.ALETConfig;
-import com.alet.common.utils.text.draw.DrawString3d;
-import com.alet.common.utils.text.draw.DrawString3d.DrawPosition;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -152,43 +150,43 @@ public class MeasurementShapeBox extends MeasurementShape {
         if (index != -1) {
             
             if (index == 2 || index == 5)
-                DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0),
-                    points.get(1), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0), points.get(1),
+                    ColorUtils.WHITE, true, 0);
             if (index == 2 || index == 4)
-                DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(2),
-                    points.get(3), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(2), points.get(3),
+                    ColorUtils.WHITE, true, 0);
             if (index == 2 || index == 0)
-                DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(1),
-                    points.get(3), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(1), points.get(3),
+                    ColorUtils.WHITE, true, 0);
             if (index == 2 || index == 1)
-                DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(0),
-                    points.get(2), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(0), points.get(2),
+                    ColorUtils.WHITE, true, 0);
             
             if (index == 4 || index == 3)
-                DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(4),
-                    points.get(5), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(4), points.get(5),
+                    ColorUtils.WHITE, true, 0);
             if (index == 5 || index == 3)
-                DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(6),
-                    points.get(7), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(6), points.get(7),
+                    ColorUtils.WHITE, true, 0);
             if (index == 1 || index == 3)
-                DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(5),
-                    points.get(7), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(5), points.get(7),
+                    ColorUtils.WHITE, true, 0);
             if (index == 0 || index == 3)
-                DrawString3d.drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(4),
-                    points.get(6), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(2), contextSize, DrawPosition.Middle, points.get(4), points.get(6),
+                    ColorUtils.WHITE, true, 0);
             
             if (index == 5 || index == 1)
-                DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(0),
-                    points.get(7), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(0), points.get(7),
+                    ColorUtils.WHITE, true, 0);
             if (index == 0 || index == 5)
-                DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(1),
-                    points.get(6), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(1), points.get(6),
+                    ColorUtils.WHITE, true, 0);
             if (index == 4 || index == 1)
-                DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(2),
-                    points.get(5), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(2), points.get(5),
+                    ColorUtils.WHITE, true, 0);
             if (index == 0 || index == 4)
-                DrawString3d.drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(3),
-                    points.get(4), ColorUtils.WHITE, true, 0);
+                drawStringOnLine(measurementUnits.get(1), contextSize, DrawPosition.Middle, points.get(3), points.get(4),
+                    ColorUtils.WHITE, true, 0);
             
         }
         /*

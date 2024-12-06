@@ -60,7 +60,6 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
     @Override
     @SideOnly(Side.CLIENT)
     public void applyCustomOpenGLHackery(ItemStack stack, TransformType cameraTransformType) {
-        Minecraft mc = Minecraft.getMinecraft();
         
         if (cameraTransformType == TransformType.FIRST_PERSON_RIGHT_HAND) {
             GlStateManager.scale(2.0D, 2.0D, 2.0D);
@@ -76,7 +75,7 @@ public class ItemJumpTool extends Item implements ICreativeRendered {
         if (cameraTransformType == TransformType.GUI)
             GlStateManager.scale(1.6D, 1.6D, 1.6D);
         
-        if (cameraTransformType == cameraTransformType.THIRD_PERSON_RIGHT_HAND) {
+        if (cameraTransformType == TransformType.THIRD_PERSON_RIGHT_HAND) {
             GlStateManager.scale(2.2D, 2.2D, 2.2D);
             GlStateManager.translate(0.1D, -.02D, 0.10D);
             GlStateManager.rotate(3.0F, 0.0F, 1.0F, 0.0F);

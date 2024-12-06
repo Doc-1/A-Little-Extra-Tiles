@@ -7,8 +7,6 @@ import java.util.List;
 import javax.vecmath.Point3f;
 
 import com.alet.ALETConfig;
-import com.alet.common.utils.text.draw.DrawString3d;
-import com.alet.common.utils.text.draw.DrawString3d.DrawPosition;
 import com.alet.items.ItemTapeMeasure;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -80,9 +78,8 @@ public class MeasurementShapeLine extends MeasurementShape {
     
     @Override
     protected void drawText(HashMap<Integer, Point3f> points, List<String> measurementUnits, int contextSize, int colorInt) {
-        float[] angles = getLineAngle(points.get(0), points.get(1));
-        DrawString3d.drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0), points.get(
-            1), ColorUtils.WHITE, true, 0);
+        drawStringOnLine(measurementUnits.get(0), contextSize, DrawPosition.Middle, points.get(0), points.get(1),
+            ColorUtils.WHITE, true, 0);
     }
     
 }

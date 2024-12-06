@@ -3,13 +3,12 @@ package com.alet.items;
 import javax.vecmath.Point3f;
 
 import com.alet.client.ALETClient;
-import com.alet.client.gui.SubGuiTapeMeasure;
+import com.alet.client.gui.origins.SubGuiTapeMeasure;
 import com.alet.client.tapemeasure.TapeRenderer;
-import com.alet.common.packet.PacketUpdateNBT;
+import com.alet.common.events.TapeMeasureKeyEventHandler;
+import com.alet.common.packets.PacketUpdateNBT;
 import com.alet.common.utils.NBTUtils;
 import com.alet.common.utils.StructureUtils;
-import com.alet.common.utils.TapeMeasureKeyEventHandler;
-import com.alet.tiles.SelectLittleTile;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -167,27 +166,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         return (selected.hasKey("context") && selected.getInteger("context") >= 0 && selected.getInteger(
             "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
                 "context")] : ItemMultiTiles.currentContext;
-    }
-    
-    public class PosData {
-        public SelectLittleTile tilePosMin;
-        public SelectLittleTile tilePosMax;
-        public SelectLittleTile tilePosCursor;
-        public RayTraceResult result;
-        
-        public PosData(SelectLittleTile posMin, SelectLittleTile posMax, SelectLittleTile posCursor, RayTraceResult res) {
-            tilePosMin = posMin;
-            tilePosMax = posMax;
-            tilePosCursor = posCursor;
-            result = res;
-        }
-        
-        public PosData(SelectLittleTile pos, SelectLittleTile posCursor, RayTraceResult res) {
-            tilePosMin = pos;
-            tilePosMax = pos;
-            tilePosCursor = posCursor;
-            result = res;
-        }
     }
     
     @Override

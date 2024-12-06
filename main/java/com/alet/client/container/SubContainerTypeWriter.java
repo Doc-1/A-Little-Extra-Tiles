@@ -1,6 +1,6 @@
 package com.alet.client.container;
 
-import com.alet.common.packet.PacketSendGuiToClient;
+import com.alet.common.packets.PacketSendGuiToClient;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.mc.WorldUtils;

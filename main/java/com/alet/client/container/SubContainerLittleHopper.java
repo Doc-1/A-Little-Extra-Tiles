@@ -1,6 +1,6 @@
 package com.alet.client.container;
 
-import com.alet.common.structure.type.premade.transfer.LittleTransferLittleHopper;
+import com.alet.common.structures.type.premade.transfer.LittleTransferLittleHopper;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.utils.mc.InventoryUtils;
 

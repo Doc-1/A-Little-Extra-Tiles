@@ -1,6 +1,6 @@
 package com.alet.client.container;
 
-import com.alet.common.structure.type.premade.LittleAnimatorBench;
+import com.alet.common.structures.type.premade.LittleAnimatorBench;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 
 import net.minecraft.entity.player.EntityPlayer;

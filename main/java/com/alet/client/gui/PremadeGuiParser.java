@@ -1,6 +1,6 @@
 package com.alet.client.gui;
 
-import com.alet.common.packet.PacketUpdateStructureFromClient;
+import com.alet.common.packets.PacketUpdateStructureFromClient;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.littletiles.common.structure.LittleStructure;

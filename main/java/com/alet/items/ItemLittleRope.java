@@ -2,8 +2,8 @@ package com.alet.items;
 
 import java.util.List;
 
-import com.alet.client.gui.SubGuiLittleRope;
-import com.alet.common.entity.RopeData;
+import com.alet.client.gui.origins.SubGuiLittleRope;
+import com.alet.common.entities.RopeData;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.LittleTiles;

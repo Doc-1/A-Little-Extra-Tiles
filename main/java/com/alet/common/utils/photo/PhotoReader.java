@@ -20,7 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
-import com.alet.client.gui.SubGuiPhotoImport;
+import com.alet.client.gui.origins.SubGuiPhotoImport;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiProgressBar;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -48,7 +48,6 @@ public class PhotoReader {
     public static boolean isRescale = false;
     
     public static InputStream load(String url) throws IOException {
-        long requestTime = System.currentTimeMillis();
         URLConnection connection = new URL(url).openConnection();
         connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
         return connection.getInputStream();
@@ -71,8 +70,7 @@ public class PhotoReader {
         return resized;
     }
     
-    public static BufferedImage getImage(String input, String uploadOption) throws IOException {
-        InputStream in = null;
+    public static BufferedImage getImage(InputStream in, String input, String uploadOption) throws IOException {
         File file = null;
         BufferedImage image = null;
         if (uploadOption.equals("Print From Item") || uploadOption.equals("Print From Block")) {
@@ -86,35 +84,49 @@ public class PhotoReader {
             file = new File(input);
             image = ImageIO.read(file);
         }
+        
         return image;
     }
     
     public static int getPixelWidth(String input, String uploadOption) {
         BufferedImage image = null;
+        InputStream in = null;
         try {
-            image = getImage(input, uploadOption);
+            image = getImage(in, input, uploadOption);
         } catch (IOException e) {
             return 1;
+        } finally {
+            if (in != null)
+                IOUtils.closeQuietly(in);
         }
         return image.getWidth();
     }
     
     public static int getPixelLength(String input, String uploadOption) {
         BufferedImage image = null;
-        
+        InputStream in = null;
         try {
-            image = getImage(input, uploadOption);
+            image = getImage(in, input, uploadOption);
         } catch (IOException e) {
             return 1;
+        } finally {
+            if (in != null)
+                IOUtils.closeQuietly(in);
         }
         return image.getHeight();
     }
     
     public static boolean photoExists(String input, String uploadOption) {
         BufferedImage image = null;
+        InputStream in = null;
         try {
-            image = getImage(input, uploadOption);
-        } catch (IOException e) {}
+            image = getImage(in, input, uploadOption);
+        } catch (IOException e) {
+            
+        } finally {
+            if (in != null)
+                IOUtils.closeQuietly(in);
+        }
         return image != null;
     }
     
@@ -126,105 +138,105 @@ public class PhotoReader {
      *            The context or grid size of the tile.
      * @return
      *         Returns the NBT data for the structure */
-    public static ItemStack photoToStack(String input, boolean ignoreAlpha, String uploadOption, int grid, SubGui gui, double colorPerc) throws IOException {
+    public static ItemStack photoToStack(String input, boolean ignoreAlpha, String uploadOption, int grid, SubGui gui, double colorPerc) {
         GuiProgressBar progress = (GuiProgressBar) ((SubGuiPhotoImport) gui).get("progress");
         
-        InputStream in = null;
-        File file = null;
         BufferedImage image = null;
         int color = 0;
         int maxPixelAmount = ALET.CONFIG.getMaxPixelAmount();
         ColorAccuracy.setColorAccuracy(colorPerc);
+        
+        InputStream in = null;
         try {
-            image = getImage(input, uploadOption);
-            
-            if (PhotoReader.isRescale) {
-                if (!(PhotoReader.scaleX < 1) || !(PhotoReader.scaleY < 1)) {
-                    image = PhotoReader.resize(image, PhotoReader.scaleY, PhotoReader.scaleX);
-                }
-                PhotoReader.isRescale = false;
-            }
-            
-            if (image != null) {
-                int width = image.getWidth();
-                int height = image.getHeight();
-                
-                byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-                boolean hasAlphaChannel = image.getAlphaRaster() != null;
-                int[][] result = new int[height][width];
-                //System.out.println(width + ", " + height + ", " + maxPixelAmount);
-                if (((width * height) <= maxPixelAmount)) {
-                    
-                    if (hasAlphaChannel) {
-                        final int pixelLength = 4;
-                        for (int pixel = 0, row = height - 1, col = 0; pixel + 3 < pixels.length; pixel += pixelLength) {
-                            int argb = 0;
-                            argb += ((pixels[pixel] & 0xff) << 24); // alpha
-                            argb += (pixels[pixel + 1] & 0xff); // blue
-                            argb += ((pixels[pixel + 2] & 0xff) << 8); // green
-                            argb += ((pixels[pixel + 3] & 0xff) << 16); // red
-                            result[row][col] = argb;
-                            col++;
-                            if (col == width) {
-                                col = 0;
-                                row--;
-                            }
-                            //progress.pos = Math.abs((((double) row / height) * 100) - 100) / 3;
-                        }
-                    } else {
-                        final int pixelLength = 3;
-                        for (int pixel = 0, row = height - 1, col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
-                            int argb = 0;
-                            argb += -16777216; // 255 alpha
-                            argb += (pixels[pixel] & 0xff); // blue
-                            argb += ((pixels[pixel + 1] & 0xff) << 8); // green
-                            argb += ((pixels[pixel + 2] & 0xff) << 16); // red
-                            result[row][col] = argb;
-                            col++;
-                            if (col == width) {
-                                col = 0;
-                                row--;
-                            }
-                        }
-                    }
-                }
-                LittleGridContext context = LittleGridContext.get(grid);
-                List<LittlePreview> tiles = new ArrayList<>();
-                LittleTileColored colorTile;
-                for (int row = 0; row < result.length; row++) {
-                    for (int col = 0; col < result[row].length; col++) {
-                        
-                        color = ColorAccuracy.roundRGB(result[row][col]);
-                        
-                        if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
-                            if (ignoreAlpha) {
-                                Color c = ColorUtils.IntToRGBA(color);
-                                c.setAlpha(255);
-                                color = ColorUtils.RGBAToInt(c);
-                            }
-                            colorTile = new LittleTileColored(LittleTiles.dyeableBlock, BlockLittleDyeable.LittleDyeableType.CLEAN
-                                    .getMetadata(), color);
-                            colorTile.setBox(new LittleBox(new LittleVec(col, row, 0)));
-                            tiles.add(colorTile.getPreviewTile());
-                        }
-                    }
-                    //progress.pos += (33 / (double) result.length);
-                }
-                ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
-                LittlePreviews previews = new LittlePreviews(context);
-                for (LittlePreview tile : tiles) {
-                    previews.addWithoutCheckingPreview(tile);
-                }
-                savePreview(previews, stack, progress); // save tiles to itemstacks
-                return stack;
-            }
-            
+            image = getImage(in, input, uploadOption);
         } catch (IOException e) {
             
         } finally {
-            IOUtils.closeQuietly(in);
-            
+            if (in != null)
+                IOUtils.closeQuietly(in);
         }
+        
+        if (PhotoReader.isRescale) {
+            if (!(PhotoReader.scaleX < 1) || !(PhotoReader.scaleY < 1)) {
+                image = PhotoReader.resize(image, PhotoReader.scaleY, PhotoReader.scaleX);
+            }
+            PhotoReader.isRescale = false;
+        }
+        
+        if (image != null) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            
+            byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+            boolean hasAlphaChannel = image.getAlphaRaster() != null;
+            int[][] result = new int[height][width];
+            //System.out.println(width + ", " + height + ", " + maxPixelAmount);
+            if (((width * height) <= maxPixelAmount)) {
+                
+                if (hasAlphaChannel) {
+                    final int pixelLength = 4;
+                    for (int pixel = 0, row = height - 1, col = 0; pixel + 3 < pixels.length; pixel += pixelLength) {
+                        int argb = 0;
+                        argb += ((pixels[pixel] & 0xff) << 24); // alpha
+                        argb += (pixels[pixel + 1] & 0xff); // blue
+                        argb += ((pixels[pixel + 2] & 0xff) << 8); // green
+                        argb += ((pixels[pixel + 3] & 0xff) << 16); // red
+                        result[row][col] = argb;
+                        col++;
+                        if (col == width) {
+                            col = 0;
+                            row--;
+                        }
+                        //progress.pos = Math.abs((((double) row / height) * 100) - 100) / 3;
+                    }
+                } else {
+                    final int pixelLength = 3;
+                    for (int pixel = 0, row = height - 1, col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
+                        int argb = 0;
+                        argb += -16777216; // 255 alpha
+                        argb += (pixels[pixel] & 0xff); // blue
+                        argb += ((pixels[pixel + 1] & 0xff) << 8); // green
+                        argb += ((pixels[pixel + 2] & 0xff) << 16); // red
+                        result[row][col] = argb;
+                        col++;
+                        if (col == width) {
+                            col = 0;
+                            row--;
+                        }
+                    }
+                }
+            }
+            LittleGridContext context = LittleGridContext.get(grid);
+            List<LittlePreview> tiles = new ArrayList<>();
+            LittleTileColored colorTile;
+            for (int row = 0; row < result.length; row++) {
+                for (int col = 0; col < result[row].length; col++) {
+                    
+                    color = ColorAccuracy.roundRGB(result[row][col]);
+                    
+                    if (!ColorUtils.isInvisible(color)) { // no need to add transparent tiles
+                        if (ignoreAlpha) {
+                            Color c = ColorUtils.IntToRGBA(color);
+                            c.setAlpha(255);
+                            color = ColorUtils.RGBAToInt(c);
+                        }
+                        colorTile = new LittleTileColored(LittleTiles.dyeableBlock, BlockLittleDyeable.LittleDyeableType.CLEAN
+                                .getMetadata(), color);
+                        colorTile.setBox(new LittleBox(new LittleVec(col, row, 0)));
+                        tiles.add(colorTile.getPreviewTile());
+                    }
+                }
+                //progress.pos += (33 / (double) result.length);
+            }
+            ItemStack stack = new ItemStack(LittleTiles.recipeAdvanced); // create empty advanced recipe itemstack
+            LittlePreviews previews = new LittlePreviews(context);
+            for (LittlePreview tile : tiles) {
+                previews.addWithoutCheckingPreview(tile);
+            }
+            savePreview(previews, stack, progress); // save tiles to itemstacks
+            return stack;
+        }
+        
         PhotoReader.isRescale = false;
         return ItemStack.EMPTY;
     }

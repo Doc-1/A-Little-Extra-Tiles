@@ -1,9 +1,13 @@
 package com.alet.client.gui.controls;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,7 +18,7 @@ import java.util.regex.Pattern;
 
 import org.lwjgl.util.Color;
 
-import com.alet.client.gui.SubGuiManual;
+import com.alet.client.gui.origins.SubGuiManual;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
@@ -56,6 +60,10 @@ public class GuiModifibleTextBox extends GuiTextBox {
     public static final Pattern FORMATTING_KEYWORD_PATTERN = Pattern.compile("\\{key\\}");
     
     public static final Pattern FORMATTING_REFRENCE_PATTERN = Pattern.compile("\\{ref:[a-zA-Z]+\\}");
+    public static final Pattern FORMATTING_URL_PATTERN = Pattern.compile(
+        "\\{url:\"https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)\"\\}");
+    public static final Pattern FORMATTING_URL_ADDRESS_PATTERN = Pattern.compile(
+        "https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)");
     
     public GuiModifibleTextBox(String name, String text, int x, int y, int width) {
         super(name, text, x, y, width);
@@ -89,6 +97,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
             Matcher matcherImage = FORMATTING_IMAGE_PATTERN.matcher(text);
             Matcher matcherEnd = FORMATTING_END_PATTERN.matcher(text);
             Matcher matcherRef = FORMATTING_REFRENCE_PATTERN.matcher(text);
+            Matcher matcherURL = FORMATTING_URL_PATTERN.matcher(text);
             
             ModifyText modText = new ModifyText(0, ColorUtils.WHITE, false, 0, "");
             modText.scale = 1;
@@ -106,12 +115,22 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 modText.newLines = Integer.parseInt(matcher.group());
                 text = text.replaceAll(FORMATTING_NEWLINE_PATTERN.pattern(), "");
             }
-            
+            if (matcherURL.find()) {
+                System.out.println("da");
+                Matcher matcher = FORMATTING_URL_ADDRESS_PATTERN.matcher(matcherURL.group());
+                matcher.find();
+                modText.clickable = true;
+                modText.italic = true;
+                modText.underline = true;
+                modText.color = 0x2222FF;
+                modText.url = matcher.group();
+                text = text.replaceAll(FORMATTING_URL_PATTERN.pattern(), "");
+            }
             if (matcherClickable.find()) {
                 modText.clickable = true;
                 modText.italic = true;
                 modText.underline = true;
-                modText.color = 0x0000EE;
+                modText.color = 0x2222FF;
                 text = text.replaceAll(FORMATTING_CLICKABLE_PATTERN.pattern(), "");
             }
             if (matcherRef.find()) {
@@ -120,7 +139,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 modText.clickable = true;
                 modText.italic = true;
                 modText.underline = true;
-                modText.color = 0x0000EE;
+                modText.color = 0x2222FF;
                 modText.refrence = matcher.group();
                 text = text.replaceAll(FORMATTING_REFRENCE_PATTERN.pattern(), "");
             }
@@ -267,6 +286,11 @@ public class GuiModifibleTextBox extends GuiTextBox {
             ModifyText modText = entry.getValue();
             modText.mouseOver = (posX >= x && posX < x + ((font.getStringWidth(
                 modText.text) + 5) * modText.scale) && posY >= y + 5 && posY < y + 2 + (font.FONT_HEIGHT * modText.scale));
+            if (modText.mouseOver && !modText.url.isEmpty()) {
+                customTooltip = new ArrayList<>(Arrays.asList(modText.url));
+                break;
+            } else
+                customTooltip = null;
         }
         return false;
     }
@@ -309,6 +333,13 @@ public class GuiModifibleTextBox extends GuiTextBox {
                 if (!modText.refrence.isEmpty()) {
                     SubGuiManual gui = (SubGuiManual) this.getParent().getOrigin();
                     gui.gotoPage(modText.refrence);
+                }
+                if (!modText.url.isEmpty()) {
+                    try {
+                        Desktop.getDesktop().browse(new URL(modText.url).toURI());
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
+                    }
                 }
                 modText.mouseOver = false;
             }
@@ -451,6 +482,7 @@ public class GuiModifibleTextBox extends GuiTextBox {
         public float imageWidth;
         public float imageHeight;
         public String refrence = "";
+        public String url = "";
         
         @SuppressWarnings("unused")
         public ModifyText() {
