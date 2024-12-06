@@ -53,8 +53,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
      * @param index
      *            What index the player is selected in the GUI */
     public void clear(ItemStack stack, int index, EntityPlayer player) {
-        NBTTagCompound nbt = stack.getTagCompound();
-        
+        setDefaultMeasurmentNBT(stack, index);
         PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
     }
     
@@ -179,7 +178,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             result.sideHit);
         
         TapeRenderer.renderCursor(posEdit, context);
-        
         if (ALETClient.clearMeasurment.isPressed())
             clear(stack, stack.getTagCompound().getInteger("index"), player);
     }
