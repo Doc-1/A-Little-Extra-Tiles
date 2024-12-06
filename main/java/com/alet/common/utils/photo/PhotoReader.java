@@ -70,63 +70,49 @@ public class PhotoReader {
         return resized;
     }
     
-    public static BufferedImage getImage(InputStream in, String input, String uploadOption) throws IOException {
+    public static BufferedImage getImage(String input, String uploadOption) {
+        InputStream in = null;
         File file = null;
         BufferedImage image = null;
-        if (uploadOption.equals("Print From Item") || uploadOption.equals("Print From Block")) {
-            in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-            //in = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(input)).getInputStream();
-            image = ImageIO.read(in);
-        } else if (uploadOption.equals("Print From URL")) {
-            in = PhotoReader.load(input);
-            image = ImageIO.read(in);
-        } else if (uploadOption.equals("Print From File")) {
-            file = new File(input);
-            image = ImageIO.read(file);
+        try {
+            if (uploadOption.equals("Print From Item") || uploadOption.equals("Print From Block")) {
+                in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
+                //in = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(input)).getInputStream();
+                image = ImageIO.read(in);
+            } else if (uploadOption.equals("Print From URL")) {
+                in = PhotoReader.load(input);
+                image = ImageIO.read(in);
+            } else if (uploadOption.equals("Print From File")) {
+                file = new File(input);
+                image = ImageIO.read(file);
+            }
+        } catch (IOException e) {
+            
+        } finally {
+            IOUtils.closeQuietly(in);
         }
-        
         return image;
     }
     
     public static int getPixelWidth(String input, String uploadOption) {
         BufferedImage image = null;
-        InputStream in = null;
-        try {
-            image = getImage(in, input, uploadOption);
-        } catch (IOException e) {
-            return 1;
-        } finally {
-            if (in != null)
-                IOUtils.closeQuietly(in);
-        }
+        
+        image = getImage(input, uploadOption);
+        
         return image.getWidth();
     }
     
     public static int getPixelLength(String input, String uploadOption) {
         BufferedImage image = null;
-        InputStream in = null;
-        try {
-            image = getImage(in, input, uploadOption);
-        } catch (IOException e) {
-            return 1;
-        } finally {
-            if (in != null)
-                IOUtils.closeQuietly(in);
-        }
+        
+        image = getImage(input, uploadOption);
+        
         return image.getHeight();
     }
     
     public static boolean photoExists(String input, String uploadOption) {
         BufferedImage image = null;
-        InputStream in = null;
-        try {
-            image = getImage(in, input, uploadOption);
-        } catch (IOException e) {
-            
-        } finally {
-            if (in != null)
-                IOUtils.closeQuietly(in);
-        }
+        image = getImage(input, uploadOption);
         return image != null;
     }
     
@@ -146,15 +132,7 @@ public class PhotoReader {
         int maxPixelAmount = ALET.CONFIG.getMaxPixelAmount();
         ColorAccuracy.setColorAccuracy(colorPerc);
         
-        InputStream in = null;
-        try {
-            image = getImage(in, input, uploadOption);
-        } catch (IOException e) {
-            
-        } finally {
-            if (in != null)
-                IOUtils.closeQuietly(in);
-        }
+        image = getImage(input, uploadOption);
         
         if (PhotoReader.isRescale) {
             if (!(PhotoReader.scaleX < 1) || !(PhotoReader.scaleY < 1)) {
