@@ -297,11 +297,12 @@ public abstract class MeasurementShape {
     
     protected abstract void drawText(HashMap<Integer, Point3f> points, List<String> measurementUnits, int contextSize, int colorInt);
     
-    public void tryDrawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
-        
+    public boolean tryDrawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha) {
         if (points != null && !points.isEmpty() && this.hasPointsNeeded(points)) {
             drawShape(points, context, red, green, blue, alpha);
+            return true;
         }
+        return false;
     }
     
     protected abstract void drawShape(HashMap<Integer, Point3f> points, LittleGridContext context, float red, float green, float blue, float alpha);

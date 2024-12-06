@@ -1,4 +1,4 @@
-package com.alet.events;
+package com.alet.client.events;
 
 import com.alet.ALETConfig;
 import com.alet.common.gui.override.HandlerSubGuiOverride;

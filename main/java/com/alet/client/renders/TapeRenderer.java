@@ -63,6 +63,7 @@ public class TapeRenderer {
         }
         if (!tapemeasure.isEmpty() && tapemeasure.hasTagCompound()) {
             NBTTagCompound stackNBT = tapemeasure.getTagCompound();
+            int selected = stackNBT.hasKey("index") ? stackNBT.getInteger("index") : 0;
             if (stackNBT.hasKey("measurements")) {
                 NBTTagCompound measurements = (NBTTagCompound) stackNBT.getTag("measurements");
                 for (String key : measurements.getKeySet()) {
@@ -98,16 +99,15 @@ public class TapeRenderer {
                         //NBTUtils.readDoubleArray(positions, key)
                     }
                     HashMap<Integer, Point3f> listOfP = new HashMap<>();
-                    if (point1 != null)
+                    if (point1 != null && (point1 != lastKnownCursorPos || index == selected))
                         listOfP.put(0, point1);
-                    if (point2 != null)
+                    if (point2 != null && point2 != lastKnownCursorPos || index == selected)
                         listOfP.put(1, point2);
-                    if (point3 != null)
+                    if (point3 != null && point3 != lastKnownCursorPos || index == selected)
                         listOfP.put(2, point3);
-                    if (point4 != null)
+                    if (point4 != null && point4 != lastKnownCursorPos || index == selected)
                         listOfP.put(3, point4);
                     MeasurementShape shape = MeasurementShapeRegistar.getMeasurementShape(shapeName);
-                    cachedMeasurements.put(index, shape);
                     float r = color.getRed() / 255F;
                     float g = color.getGreen() / 255F;
                     float b = color.getBlue() / 255F;
