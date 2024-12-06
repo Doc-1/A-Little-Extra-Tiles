@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.alet.common.gui.container.SubContainerPhotoImport;
 import com.alet.common.gui.container.SubContainerTypeWriter;
-import com.alet.common.gui.controls.Layer;
-import com.alet.common.gui.message.SubGuiNoBluePrintMessage;
+import com.alet.common.gui.messages.SubGuiNoBluePrintMessage;
 import com.alet.common.gui.origins.SubGuiPhotoImport;
 import com.alet.common.gui.origins.SubGuiTypeWriter;
+import com.alet.common.utils.GuiLayerUtils;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.mc.ContainerSub;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
@@ -68,7 +68,7 @@ public class PacketSendGuiToClient extends CreativeCorePacket {
         if (!(stack.getItem() instanceof ItemLittleRecipe || stack.getItem() instanceof ItemLittleRecipeAdvanced) && !player
                 .isCreative()) {
             if (gui != null)
-                Layer.addLayer(gui, new SubGuiNoBluePrintMessage());
+                GuiLayerUtils.addLayer(gui, new SubGuiNoBluePrintMessage());
         }
     }
     
@@ -78,7 +78,7 @@ public class PacketSendGuiToClient extends CreativeCorePacket {
         if (!(stack.getItem() instanceof ItemLittleRecipe || stack.getItem() instanceof ItemLittleRecipeAdvanced) && !player
                 .isCreative()) {
             if (gui != null)
-                Layer.addLayer(gui, new SubGuiNoBluePrintMessage());
+                GuiLayerUtils.addLayer(gui, new SubGuiNoBluePrintMessage());
         }
     }
 }

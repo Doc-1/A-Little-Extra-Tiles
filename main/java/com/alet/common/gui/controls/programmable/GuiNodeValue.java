@@ -1,12 +1,11 @@
-package com.alet.common.gui.controls.programmable.nodes;
+package com.alet.common.gui.controls.programmable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.gui.controls.programmable.functions.GuiFunction;
-import com.alet.common.gui.event.GuiControlReleaseEvent;
-import com.alet.components.structures.type.programable.advanced.nodes.NodeRegistar;
+import com.alet.common.gui.events.GuiControlReleaseEvent;
 import com.alet.components.structures.type.programable.advanced.nodes.Node.NodeType;
+import com.alet.regestries.NodeRegistery;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -81,9 +80,9 @@ public class GuiNodeValue<V> extends GuiParent {
             return false;
         if (!this.isDataTypeEqual(secondNode))
             return false;
-        if (this.isConnected() && NodeRegistar.matchType(NodeRegistar.FUNCTION_NODE, this))
+        if (this.isConnected() && NodeRegistery.matchType(NodeRegistery.FUNCTION_NODE, this))
             return false;
-        if (secondNode.isConnected() && NodeRegistar.matchType(NodeRegistar.FUNCTION_NODE, secondNode))
+        if (secondNode.isConnected() && NodeRegistery.matchType(NodeRegistery.FUNCTION_NODE, secondNode))
             return false;
         if (this.isReciever() && this.isConnected())
             return false;

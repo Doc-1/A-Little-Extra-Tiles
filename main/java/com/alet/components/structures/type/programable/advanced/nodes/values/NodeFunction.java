@@ -1,7 +1,7 @@
 package com.alet.components.structures.type.programable.advanced.nodes.values;
 
-import com.alet.common.gui.controls.programmable.functions.GuiFunction;
-import com.alet.common.gui.controls.programmable.nodes.GuiNodeValue;
+import com.alet.common.gui.controls.programmable.GuiFunction;
+import com.alet.common.gui.controls.programmable.GuiNodeValue;
 import com.alet.components.structures.type.programable.advanced.Function;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 

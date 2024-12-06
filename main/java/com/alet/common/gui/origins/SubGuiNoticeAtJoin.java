@@ -41,7 +41,6 @@ public class SubGuiNoticeAtJoin extends SubGui {
                     try {
                         Desktop.getDesktop().browse(new URI("https://github.com/Doc-1/A-Little-Extra-Tiles/issues"));
                     } catch (IOException | URISyntaxException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -60,7 +59,7 @@ public class SubGuiNoticeAtJoin extends SubGui {
             @Override
             public void onClicked(int x, int y, int button) {
                 ALETConfig.client.showAgain = false;
-                ICreativeConfigHolder holder = (ICreativeConfigHolder) CreativeConfigRegistry.ROOT;
+                ICreativeConfigHolder holder = CreativeConfigRegistry.ROOT;
                 ArrayList<String> list = new ArrayList<String>();
                 list.add("alet");
                 list.add("client");

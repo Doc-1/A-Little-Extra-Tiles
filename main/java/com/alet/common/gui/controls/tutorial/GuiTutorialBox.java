@@ -30,7 +30,7 @@ public class GuiTutorialBox extends GuiParent {
     public int guiHeight;
     public int index = 0;
     public boolean closed = true;
-    public List<TutorialData> tutorialMap = new ArrayList<TutorialData>();
+    public List<TutorialTip> tutorialMap = new ArrayList<TutorialTip>();
     public GuiTutorialBox instance;
     
     public GuiTutorialBox(String name, int x, int y, int height, int guiWidth, int guiHeight) {
@@ -41,7 +41,7 @@ public class GuiTutorialBox extends GuiParent {
         this.guiHeight = guiHeight;
         setStyle(backgroundStyle);
         instance = this;
-        TutorialData.setGuiDimensions(guiWidth, guiHeight);
+        TutorialTip.setGuiDimensions(guiWidth, guiHeight);
         closedControls();
     }
     
@@ -164,7 +164,7 @@ public class GuiTutorialBox extends GuiParent {
     public void updateHighlightedControl() {
         GuiControlHighlighter highlight = (GuiControlHighlighter) this.get("highlight");
         ((GuiTextfield) this.get("page")).text = TextFormatting.DARK_GRAY + "" + TextFormatting.BOLD + (index + 1) + "";
-        TutorialData data = (TutorialData) tutorialMap.get(index);
+        TutorialTip data = (TutorialTip) tutorialMap.get(index);
         GuiTextBox textBox = (GuiTextBox) this.getGui().get("textBox");
         textBox.text = data.tutorial;
         data.setPos(this.posX, this.posY);

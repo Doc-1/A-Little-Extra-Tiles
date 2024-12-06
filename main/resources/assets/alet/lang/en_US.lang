@@ -33,9 +33,9 @@ item.LTPremade.combiner_4_to_16.name=Combiner (4-bit to 16-bit)
 item.LTPremade.combiner_16_to_32.name=Combiner (32-bit to 16-bit)
 
 
-item.LTPremade.single_cable32.name=Single Cable (32-bit)
-item.LTPremade.single_input32.name=Single Input (32-bit)
-item.LTPremade.single_output32.name=Single Output (32-bit)
+item.LTPremade.signal_cable32.name=Single Cable (32-bit)
+item.LTPremade.signal_input32.name=Single Input (32-bit)
+item.LTPremade.signal_output32.name=Single Output (32-bit)
 
 item.LTPremade.little_hopper.name=Little Hopper
 item.LTPremade.signal_color_display_16.name=Signal Colored Display (64-bits)

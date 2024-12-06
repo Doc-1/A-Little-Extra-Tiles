@@ -1,4 +1,4 @@
-package com.alet.common.gui.controls.programmable.functions;
+package com.alet.common.gui.controls.programmable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,11 +6,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.alet.common.gui.controls.GuiDragablePanel;
-import com.alet.common.gui.controls.programmable.nodes.GuiNodeValue;
-import com.alet.common.gui.event.GuiControlReleaseEvent;
+import com.alet.common.gui.events.GuiControlReleaseEvent;
 import com.alet.common.utils.MouseUtils;
-import com.alet.components.structures.type.programable.advanced.FunctionRegistar;
-import com.alet.components.structures.type.programable.advanced.nodes.NodeRegistar;
+import com.alet.regestries.FunctionRegistery;
+import com.alet.regestries.NodeRegistery;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -126,7 +125,7 @@ public class GuiFunction extends GuiParent {
     }
     
     public static GuiFunction createFunctionFrom(String name, int id) {
-        GuiFunction obj = FunctionRegistar.createFunctionGui(name, true, id);
+        GuiFunction obj = FunctionRegistery.createFunctionGui(name, true, id);
         return obj;
     }
     
@@ -182,10 +181,10 @@ public class GuiFunction extends GuiParent {
     public void setMethodNodes() {
         try {
             if (this.IS_METHOD_RECIEVER)
-                this.methodReceiver = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_receiver", "", false)
+                this.methodReceiver = NodeRegistery.createNode(NodeRegistery.FUNCTION_NODE, "method_receiver", "", false)
                         .setSender(false);
             if (this.IS_METHOD_SENDER)
-                this.methodSender = NodeRegistar.createNode(NodeRegistar.FUNCTION_NODE, "method_sender", "", false)
+                this.methodSender = NodeRegistery.createNode(NodeRegistery.FUNCTION_NODE, "method_sender", "", false)
                         .setSender(true);
         } catch (Exception e) {
             e.printStackTrace();

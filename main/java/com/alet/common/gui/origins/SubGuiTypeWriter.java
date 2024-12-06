@@ -19,11 +19,11 @@ import com.alet.common.gui.controls.GuiColorPickerAlet;
 import com.alet.common.gui.controls.GuiDepressedCheckBox;
 import com.alet.common.gui.controls.GuiGlyphSelector;
 import com.alet.common.gui.controls.GuiLongTextField;
-import com.alet.common.gui.controls.Layer;
 import com.alet.common.gui.controls.tutorial.GuiTutorialBox;
-import com.alet.common.gui.controls.tutorial.TutorialData;
-import com.alet.common.gui.message.SubGuiNoTextInFieldMessage;
+import com.alet.common.gui.controls.tutorial.TutorialTip;
+import com.alet.common.gui.messages.SubGuiNoTextInFieldMessage;
 import com.alet.common.utils.CopyUtils;
+import com.alet.common.utils.GuiLayerUtils;
 import com.alet.common.utils.photo.FontReader;
 import com.alet.common.utils.photo.PhotoReader;
 import com.alet.components.structures.type.premade.LittleTypeWriter;
@@ -246,7 +246,7 @@ public class SubGuiTypeWriter extends SubGui {
             public void onClicked(int x, int y, int button) {
                 GuiLongTextField input = (GuiLongTextField) get("input");
                 if (input.text.equals(""))
-                    Layer.addLayer(getGui(),
+                    GuiLayerUtils.addLayer(getGui(),
                         new SubGuiNoTextInFieldMessage("for the text that will be exported", "digit(s) and or character(s)"));
                 else {
                     GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
@@ -302,7 +302,7 @@ public class SubGuiTypeWriter extends SubGui {
             public void onClicked(int x, int y, int button) {
                 GuiLongTextField input = (GuiLongTextField) get("input");
                 if (input.text.equals(""))
-                    Layer.addLayer(getGui(),
+                    GuiLayerUtils.addLayer(getGui(),
                         new SubGuiNoTextInFieldMessage("for the text that will be exported", "digit(s) and or character(s)"));
                 else {
                     GuiColorPickerAlet picker = (GuiColorPickerAlet) get("picker");
@@ -334,56 +334,56 @@ public class SubGuiTypeWriter extends SubGui {
         
         GuiTutorialBox boxx = new GuiTutorialBox("ih", -110, 0, 180, width, height);
         GuiColorPickerAlet picker = ((GuiColorPickerAlet) get("picker"));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "fontType"), "right", "Clicking on this will open a dropdown menu that lets you select the type of font your text will print with. You can add custom font(s) by going to your Minecraft directory, the same place you add mods too, and look for a folder called Fonts."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "fontType"), "right", "The readme.txt file inside will explain further on how to bring your new fonts into the game."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "search"), "right", "This is the search text field. It allows you to search for specific font(s)."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "fontSize"), "right", "This is the font size text field. It allows you to change the font size that your text will print in."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "grid"), "right", "This is the grid drop down menu. Clicking on this will open a dropdown menu that allows you to change the grid size that your text will print with."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "grid"), "right", "The grid size is how small or large each tile will be. Grid 8 is 1/8th the size of a block. Grid 16 is 1/16th the size of a block. Grid 32 is 1/32nd the size of a block and so on."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "input"), "right", "This is the input text field where you type whatever text you want to print."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "Paste"), "right", "This is the paste button. It will allow you to paste text into the text field that you have copied."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "glyph"), "right", "This is the glyph drop down menu. Clicking on this will open a dropdown menu that displays all glyphs (or characters) that the font you have selected has. You can click on the glyphs to add it into the input text field. However, some glyphs are unusable, such as Wingding."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "italic"), "right", "This is the italic button. Clicking on this will cause the text to print with the italic attribute."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "bold"), "right", "This is the bold button. Clicking on this will cause the text to print with the bold attribute."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "underline"), "right", "This is the underline button. Clicking on this will cause the text to print with the underline attribute."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "strikethrough"), "right", "This is the strikethrough button. Clicking on this will cause the text to print with the strikethrough attribute."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "rotation"), "right", "This is the rotation slider. You can click and drag to change the roation of the text."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "picker"), "right", "This is the color picker. With it you can set the color your font will print in."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "picker"), "right", "Each color slider can go from 0 to 255. To change the value:            -You can use the arrows on either side of the sliders.            -You can click and drag on a slider. -You can right click a slider and enter a value manualy."));
-        boxx.tutorialMap.add(new TutorialData(picker.get("r"), "right", "This is the red color slider."));
-        boxx.tutorialMap.add(new TutorialData(picker.get("g"), "right", "This is the green color slider."));
-        boxx.tutorialMap.add(new TutorialData(picker.get("b"), "right", "This is the blue color slider."));
-        boxx.tutorialMap.add(new TutorialData(picker.get(
+        boxx.tutorialMap.add(new TutorialTip(picker.get("r"), "right", "This is the red color slider."));
+        boxx.tutorialMap.add(new TutorialTip(picker.get("g"), "right", "This is the green color slider."));
+        boxx.tutorialMap.add(new TutorialTip(picker.get("b"), "right", "This is the blue color slider."));
+        boxx.tutorialMap.add(new TutorialTip(picker.get(
             "a"), "right", "This is the alpha slider. How transparent the color is."));
-        boxx.tutorialMap.add(new TutorialData(picker.get(
+        boxx.tutorialMap.add(new TutorialTip(picker.get(
             "s"), "right", "This is the shader slider. It allows you to easly change how dark or light a color is."));
-        boxx.tutorialMap.add(new TutorialData(picker.get(
+        boxx.tutorialMap.add(new TutorialTip(picker.get(
             "more"), "right", "Click on this to open the color palette. It allows you to save your currently selected color for later use."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "imgWidth"), "left", "This is the width text field. It will display how many tiles the structure's width will be. You can also change the value."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "imgHeight"), "left", "This is the height text field. It will display how many tiles the structure's height will be. You can also change the value."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "renderer"), "left", "This is the preview viewer. Here you can view what the structure will look like before placing it into the world."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "refresh"), "left", "This is the refresh button. Click on this to update the preview in the preview viewer."));
-        boxx.tutorialMap.add(new TutorialData(get(
+        boxx.tutorialMap.add(new TutorialTip(get(
             "Print"), "left", "This is the print button. Click on this to print your structure."));
         controls.add(boxx);
         moveControlToTop(get("ih"));

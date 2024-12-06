@@ -1,4 +1,4 @@
-package com.alet.common.gui.message;
+package com.alet.common.gui.messages;
 
 import com.alet.ALET;
 import com.creativemd.creativecore.common.gui.container.SubGui;

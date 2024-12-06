@@ -3,8 +3,8 @@ package com.alet.components.structures.type.programable.advanced;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.gui.controls.programmable.functions.GuiFunction;
-import com.alet.common.gui.controls.programmable.nodes.GuiNodeValue;
+import com.alet.common.gui.controls.programmable.GuiFunction;
+import com.alet.common.gui.controls.programmable.GuiNodeValue;
 import com.alet.components.structures.type.programable.advanced.nodes.values.NodeFunction;
 import com.alet.components.structures.type.programable.advanced.nodes.values.NodeValue;
 

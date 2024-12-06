@@ -20,14 +20,15 @@ import com.alet.common.gui.controls.menu.GuiTree;
 import com.alet.common.gui.controls.menu.GuiTreePart;
 import com.alet.common.gui.controls.menu.GuiTreePartHolder;
 import com.alet.common.gui.controls.menu.GuiTreePart.EnumPartType;
-import com.alet.common.gui.controls.programmable.functions.GuiFunction;
-import com.alet.common.gui.controls.programmable.nodes.GuiNodeValue;
-import com.alet.common.gui.event.GuiControlDragEvent;
-import com.alet.common.gui.event.GuiControlKeyPressed;
-import com.alet.common.gui.event.GuiControlReleaseEvent;
+import com.alet.common.gui.controls.programmable.GuiFunction;
+import com.alet.common.gui.controls.programmable.GuiNodeValue;
+import com.alet.common.gui.events.GuiControlDragEvent;
+import com.alet.common.gui.events.GuiControlKeyPressed;
+import com.alet.common.gui.events.GuiControlReleaseEvent;
 import com.alet.common.utils.MouseUtils;
 import com.alet.components.structures.type.programable.advanced.Function.FunctionType;
 import com.alet.components.structures.type.programable.advanced.activators.FunctionOnRightClick;
+import com.alet.regestries.FunctionRegistery;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
@@ -239,7 +240,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
             }
             */
             
-            GuiTree tree = new GuiTree("tree", 0, 0, 194, FunctionRegistar.treeList(), true, 0, 0, 50);
+            GuiTree tree = new GuiTree("tree", 0, 0, 194, FunctionRegistery.treeList(), true, 0, 0, 50);
             GuiScrollBox box = new GuiScrollBox("scrole_box", 0, 0, 143, 199);
             box.addControl(tree);
             parent.addControl(drag);
@@ -255,8 +256,8 @@ public class LittleProgramableStructureALET extends LittleStructure {
             parent.addControl(new GuiIconDepressedButton("drag_toggle", 230, 0, 3, false).setCustomTooltip(
                 "Not Implemented Yet"));
             FunctionOnRightClick r = new FunctionOnRightClick(0);
-            drag.addControl(FunctionRegistar.createFunctionGui("programmable.advanced.on_right_click.name", false, 0));
-            drag.addControl(FunctionRegistar.createFunctionGui("programmable.advanced.debug_message.name", false, 1));
+            drag.addControl(FunctionRegistery.createFunctionGui("programmable.advanced.on_right_click.name", false, 0));
+            drag.addControl(FunctionRegistery.createFunctionGui("programmable.advanced.debug_message.name", false, 1));
             /*
             BlueprintInteger i = new BlueprintInteger(0);
             BlueprintDouble bp = new BlueprintDouble(1);
@@ -335,7 +336,7 @@ public class LittleProgramableStructureALET extends LittleStructure {
                 GuiTreePartHolder<String> menu = (GuiTreePartHolder<String>) event.source;
                 if (drag.isMouseOver()) {
                     Vec3d pos = drag.getMousePos();
-                    GuiFunction bp = FunctionRegistar.createFunctionGui(menu.key, false, this.guiFunctions.size());
+                    GuiFunction bp = FunctionRegistery.createFunctionGui(menu.key, false, this.guiFunctions.size());
                     
                     bp.posX = (int) pos.x;
                     bp.posY = (int) pos.y;

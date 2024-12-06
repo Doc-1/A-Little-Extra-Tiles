@@ -1,4 +1,4 @@
-package com.alet.components.structures.type.programable.advanced;
+package com.alet.regestries;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -7,7 +7,8 @@ import java.util.List;
 import com.alet.common.gui.controls.menu.GuiTreePart;
 import com.alet.common.gui.controls.menu.GuiTreePartHolder;
 import com.alet.common.gui.controls.menu.GuiTreePart.EnumPartType;
-import com.alet.common.gui.controls.programmable.functions.GuiFunction;
+import com.alet.common.gui.controls.programmable.GuiFunction;
+import com.alet.components.structures.type.programable.advanced.Function;
 import com.alet.components.structures.type.programable.advanced.activators.FunctionOnRightClick;
 import com.alet.components.structures.type.programable.advanced.events.FunctionDebugMessage;
 import com.alet.components.structures.type.programable.advanced.flows.FunctionForLoop;
@@ -16,7 +17,7 @@ import com.creativemd.creativecore.common.utils.type.PairList;
 
 import net.minecraft.util.text.translation.I18n;
 
-public class FunctionRegistar {
+public class FunctionRegistery {
     public static PairList<String, PairList<String, GuiFunction>> guiFunctions = new PairList<>();
     
     public static PairList<String, Class<? extends Function>> functions = new PairList<String, Class<? extends Function>>();

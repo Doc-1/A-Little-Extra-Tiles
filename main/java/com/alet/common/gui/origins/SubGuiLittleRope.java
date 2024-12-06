@@ -4,7 +4,7 @@ import org.lwjgl.util.Color;
 
 import com.alet.common.gui.controls.GuiColorPickerAlet;
 import com.alet.common.gui.controls.tutorial.GuiTutorialBox;
-import com.alet.common.gui.controls.tutorial.TutorialData;
+import com.alet.common.gui.controls.tutorial.TutorialTip;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -38,20 +38,20 @@ public class SubGuiLittleRope extends SubGuiConfigure {
         controls.add(new GuiColorPickerAlet("color", 0, 85, ColorUtils.IntToRGBA(color), true, 0));
         
         GuiTutorialBox tutBox = new GuiTutorialBox(name, 0, 0, 180, this.width, this.height);
-        tutBox.tutorialMap.add(new TutorialData(get(
+        tutBox.tutorialMap.add(new TutorialTip(get(
             "thickness"), "leftout", "This is used to set the radius of the rope. At 0.5 it will be the same size as a block."));
-        tutBox.tutorialMap.add(new TutorialData(get(
+        tutBox.tutorialMap.add(new TutorialTip(get(
             "tautness"), "leftout", "This is used to set how far the rope droops. At 0.1 the curve will be half a block down."));
-        tutBox.tutorialMap.add(new TutorialData(get("color"), "leftout", "This is used to set the color of the rope."));
+        tutBox.tutorialMap.add(new TutorialTip(get("color"), "leftout", "This is used to set the color of the rope."));
         GuiColorPickerAlet picker = (GuiColorPickerAlet) get("color");
-        tutBox.tutorialMap.add(new TutorialData(picker.get("r"), "leftout", "This is the red color slider."));
-        tutBox.tutorialMap.add(new TutorialData(picker.get("g"), "leftout", "This is the green color slider."));
-        tutBox.tutorialMap.add(new TutorialData(picker.get("b"), "leftout", "This is the blue color slider."));
-        tutBox.tutorialMap.add(new TutorialData(picker.get(
+        tutBox.tutorialMap.add(new TutorialTip(picker.get("r"), "leftout", "This is the red color slider."));
+        tutBox.tutorialMap.add(new TutorialTip(picker.get("g"), "leftout", "This is the green color slider."));
+        tutBox.tutorialMap.add(new TutorialTip(picker.get("b"), "leftout", "This is the blue color slider."));
+        tutBox.tutorialMap.add(new TutorialTip(picker.get(
             "a"), "leftout", "This is the alpha slider. How transparent the color is."));
-        tutBox.tutorialMap.add(new TutorialData(picker.get(
+        tutBox.tutorialMap.add(new TutorialTip(picker.get(
             "s"), "leftout", "This is the shader slider. It allows you to easly change how dark or light a color is."));
-        tutBox.tutorialMap.add(new TutorialData(picker.get(
+        tutBox.tutorialMap.add(new TutorialTip(picker.get(
             "more"), "leftout", "Click on this to open the color palette. It allows you to save your currently selected color for later use."));
         controls.add(tutBox);
     }

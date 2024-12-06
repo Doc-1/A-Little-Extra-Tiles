@@ -13,13 +13,13 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.alet.common.gui.controls.GuiAnimationViewerAlet;
-import com.alet.common.gui.controls.Layer;
 import com.alet.common.gui.controls.menu.GuiMenu;
 import com.alet.common.gui.controls.menu.GuiMenuPart;
 import com.alet.common.gui.controls.menu.GuiPopupMenu;
 import com.alet.common.gui.controls.menu.GuiTree;
 import com.alet.common.gui.controls.menu.GuiTreePart;
 import com.alet.common.gui.controls.menu.GuiTreePart.EnumPartType;
+import com.alet.common.utils.GuiLayerUtils;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
@@ -301,9 +301,9 @@ public class SubGuiFillingCabinet extends SubGui {
                 }
             } else if (((GuiMenuPart) event.source).caption.equals("Rename")) {
                 if (this.selectedFile.type.canHold())
-                    Layer.addLayer(this, new SubGuiRenameFile(getPath(""), this));
+                    GuiLayerUtils.addLayer(this, new SubGuiRenameFile(getPath(""), this));
                 else
-                    Layer.addLayer(this, new SubGuiRenameFile(getPath(this.selectedFile.caption), this));
+                    GuiLayerUtils.addLayer(this, new SubGuiRenameFile(getPath(this.selectedFile.caption), this));
             } else if (((GuiMenuPart) event.source).caption.equals("New folder")) {
                 File f1 = getNewFolder();
                 f1.mkdir();
@@ -312,7 +312,7 @@ public class SubGuiFillingCabinet extends SubGui {
                 
                 String file = getBlueprintFromSelectedFile();
                 if (file != null) {
-                    Layer.addLayer(this, new SubGuiBlueprintDetails(file, getPath(selectedFile.caption)));
+                    GuiLayerUtils.addLayer(this, new SubGuiBlueprintDetails(file, getPath(selectedFile.caption)));
                 }
             }
         }

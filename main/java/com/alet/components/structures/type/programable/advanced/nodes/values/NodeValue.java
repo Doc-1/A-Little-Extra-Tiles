@@ -1,6 +1,6 @@
 package com.alet.components.structures.type.programable.advanced.nodes.values;
 
-import com.alet.common.gui.controls.programmable.nodes.GuiNodeValue;
+import com.alet.common.gui.controls.programmable.GuiNodeValue;
 import com.alet.components.structures.type.programable.advanced.nodes.Node;
 
 import net.minecraft.world.WorldServer;

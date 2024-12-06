@@ -26,11 +26,11 @@ import javax.sound.midi.Track;
 import com.alet.client.sounds.Notes;
 import com.alet.client.sounds.Sound;
 import com.alet.common.gui.controls.GuiLongTextField;
-import com.alet.common.gui.controls.Layer;
-import com.alet.common.gui.message.SubGuiNoPathMessage;
-import com.alet.common.gui.message.SubGuiTooManyChannels;
+import com.alet.common.gui.messages.SubGuiNoPathMessage;
+import com.alet.common.gui.messages.SubGuiTooManyChannels;
 import com.alet.common.gui.origins.SubGuiSoundSettings;
 import com.alet.common.utils.CopyUtils;
+import com.alet.common.utils.GuiLayerUtils;
 import com.alet.packets.PacketSendSound;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -567,13 +567,13 @@ public class LittleMusicComposerALET extends LittleStructure {
                                 pauseUpdate = false;
                                 updateTimeLine();
                             } else {
-                                Layer.addLayer(parent.getGui(), new SubGuiTooManyChannels(midiFile.getName()));
+                                GuiLayerUtils.addLayer(parent.getGui(), new SubGuiTooManyChannels(midiFile.getName()));
                             }
                         } catch (InvalidMidiDataException | IOException | MidiUnavailableException e) {
                             e.printStackTrace();
                         }
             } else
-                Layer.addLayer(parent.getGui(), new SubGuiNoPathMessage(".mid"));
+                GuiLayerUtils.addLayer(parent.getGui(), new SubGuiNoPathMessage(".mid"));
             
         }
         
@@ -654,7 +654,7 @@ public class LittleMusicComposerALET extends LittleStructure {
             @Override
             public void onClicked(int x, int y, int button) {
                 SubGuiSoundSettings channelSettings = new SubGuiSoundSettings(littleSoundPlayerParserALET);
-                Layer.addLayer(getGui(), channelSettings);
+                GuiLayerUtils.addLayer(getGui(), channelSettings);
                 
             }
             

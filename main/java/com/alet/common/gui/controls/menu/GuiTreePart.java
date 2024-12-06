@@ -3,8 +3,8 @@ package com.alet.common.gui.controls.menu;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.common.gui.event.GuiControlDragEvent;
-import com.alet.common.gui.event.GuiControlReleaseEvent;
+import com.alet.common.gui.events.GuiControlDragEvent;
+import com.alet.common.gui.events.GuiControlReleaseEvent;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;

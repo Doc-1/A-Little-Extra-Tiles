@@ -11,10 +11,10 @@ import com.alet.common.gui.controls.GuiAnimationViewerAlet;
 import com.alet.common.gui.controls.GuiDepressedCheckBox;
 import com.alet.common.gui.controls.GuiLongTextField;
 import com.alet.common.gui.controls.GuiStack;
-import com.alet.common.gui.controls.Layer;
-import com.alet.common.gui.message.SubGuiErrorMessage;
-import com.alet.common.gui.message.SubGuiNoPathMessage;
+import com.alet.common.gui.messages.SubGuiErrorMessage;
+import com.alet.common.gui.messages.SubGuiNoPathMessage;
 import com.alet.common.utils.CopyUtils;
+import com.alet.common.utils.GuiLayerUtils;
 import com.alet.common.utils.photo.PhotoReader;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.DisplayStyle;
@@ -71,7 +71,7 @@ public class SubGuiPhotoImport extends SubGui {
                 int resizeY = Integer.parseInt(imageHeight.text);
                 
                 if (resizeX * resizeY > ALET.CONFIG.getMaxPixelAmount()) {
-                    Layer.addLayer(getGui(), new SubGuiErrorMessage(resizeX * resizeY));
+                    GuiLayerUtils.addLayer(getGui(), new SubGuiErrorMessage(resizeX * resizeY));
                 } else {
                     PhotoReader.setScale(resizeX, resizeY);
                     
@@ -88,7 +88,7 @@ public class SubGuiPhotoImport extends SubGui {
                                 imageSource.getCaption(), grid, getGui(), slider.value));
                             viewer.onLoaded(new AnimationPreview(pre));
                             if (pre == null)
-                                Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
+                                GuiLayerUtils.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
                         }
                         
                     });
@@ -210,7 +210,7 @@ public class SubGuiPhotoImport extends SubGui {
                 String path = getPath();
                 if (PhotoReader.photoExists(path, imageSource.getCaption()))
                     if (resizeX * resizeY > ALET.CONFIG.getMaxPixelAmount()) {
-                        Layer.addLayer(getGui(), new SubGuiErrorMessage(resizeX * resizeY));
+                        GuiLayerUtils.addLayer(getGui(), new SubGuiErrorMessage(resizeX * resizeY));
                     } else {
                         PhotoReader.setScale(resizeX, resizeY);
                         GuiDepressedCheckBox ignoreAlpha = (GuiDepressedCheckBox) get("ignoreAlpha");
@@ -235,7 +235,7 @@ public class SubGuiPhotoImport extends SubGui {
                         thread.start();
                     }
                 else
-                    Layer.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
+                    GuiLayerUtils.addLayer(getGui(), new SubGuiNoPathMessage(".png or .jpeg"));
             }
         });
         controls.add(print);

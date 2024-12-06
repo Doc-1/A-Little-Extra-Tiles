@@ -1,12 +1,12 @@
-package com.alet.components.structures.type.programable.advanced.nodes;
+package com.alet.regestries;
 
-import com.alet.common.gui.controls.programmable.nodes.GuiNodeValue;
+import com.alet.common.gui.controls.programmable.GuiNodeValue;
 import com.alet.components.structures.type.programable.advanced.nodes.values.NodeFunction;
 import com.alet.components.structures.type.programable.advanced.nodes.values.NodeInteger;
 import com.alet.components.structures.type.programable.advanced.nodes.values.NodeValue;
 import com.creativemd.creativecore.common.utils.type.PairList;
 
-public class NodeRegistar {
+public class NodeRegistery {
     
     public static PairList<String, GuiNodeValue> guiNodes = new PairList<>();
     public static final String FUNCTION_NODE = "function";

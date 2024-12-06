@@ -1,4 +1,4 @@
-package com.alet.common.gui.event;
+package com.alet.common.gui.events;
 
 import org.lwjgl.input.Keyboard;
 

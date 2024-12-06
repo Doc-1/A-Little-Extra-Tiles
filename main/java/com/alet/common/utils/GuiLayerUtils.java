@@ -1,4 +1,4 @@
-package com.alet.common.gui.controls;
+package com.alet.common.utils;
 
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.premade.SubContainerEmpty;
@@ -7,7 +7,7 @@ import com.creativemd.creativecore.common.packet.gui.GuiLayerPacket;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class Layer {
+public class GuiLayerUtils {
 	
 	public static void addLayer(SubGui parentGui, SubGui dialog) {
 		NBTTagCompound nbt = new NBTTagCompound();
