@@ -15,81 +15,81 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.alet.client.ALETClient;
-import com.alet.client.container.SubContainerAnimatorWorkbench;
-import com.alet.client.container.SubContainerBasic;
-import com.alet.client.container.SubContainerFillingCabinet;
-import com.alet.client.container.SubContainerLittleHopper;
-import com.alet.client.container.SubContainerPhotoImport;
-import com.alet.client.container.SubContainerTypeWriter;
-import com.alet.client.gui.message.SubGuiNoBluePrintMessage;
-import com.alet.client.gui.origins.SubGuiAnimatorsWorkbench;
-import com.alet.client.gui.origins.SubGuiFillingCabinet;
-import com.alet.client.gui.origins.SubGuiLittleHopper;
-import com.alet.client.gui.origins.SubGuiMagnitudeComparator;
-import com.alet.client.gui.origins.SubGuiManual;
-import com.alet.client.gui.origins.SubGuiNoticeAtJoin;
-import com.alet.client.gui.origins.SubGuiPhotoImport;
-import com.alet.client.gui.origins.SubGuiSignalEventsALET;
-import com.alet.client.gui.origins.SubGuiTypeWriter;
-import com.alet.common.blocks.BasicBlock;
-import com.alet.common.blocks.TransparentBlock;
-import com.alet.common.packets.PacketDropItem;
-import com.alet.common.packets.PacketGetServerCams;
-import com.alet.common.packets.PacketGetServerScoreboard;
-import com.alet.common.packets.PacketLeftClick;
-import com.alet.common.packets.PacketPlaySound;
-import com.alet.common.packets.PacketSendGuiToClient;
-import com.alet.common.packets.PacketSendServerCams;
-import com.alet.common.packets.PacketSendSound;
-import com.alet.common.packets.PacketUpdateBreakBlock;
-import com.alet.common.packets.PacketUpdateMutateFromServer;
-import com.alet.common.packets.PacketUpdateNBT;
-import com.alet.common.packets.PacketUpdateStructureFromClient;
-import com.alet.common.sounds.SoundsRegister;
-import com.alet.common.structures.connection.RopeConnection;
-import com.alet.common.structures.type.LittleAlwaysOnLight;
-import com.alet.common.structures.type.LittleCamPlayerALET;
-import com.alet.common.structures.type.LittleLockALET;
-import com.alet.common.structures.type.LittleMusicComposerALET;
-import com.alet.common.structures.type.LittleRemoteActivatorALET;
-import com.alet.common.structures.type.LittleRopeConnectionALET;
-import com.alet.common.structures.type.LittleStateMutatorALET;
-import com.alet.common.structures.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
-import com.alet.common.structures.type.premade.LittleAdjustableFixedStructure;
-import com.alet.common.structures.type.premade.LittleAnimatorBench;
-import com.alet.common.structures.type.premade.LittleFillingCabinet;
-import com.alet.common.structures.type.premade.LittlePhotoImporter;
-import com.alet.common.structures.type.premade.LittleTypeWriter;
-import com.alet.common.structures.type.premade.PickupItemPremade;
-import com.alet.common.structures.type.premade.signal.LittleCircuitClock;
-import com.alet.common.structures.type.premade.signal.LittleCircuitDisplay16;
-import com.alet.common.structures.type.premade.signal.LittleCircuitMath;
-import com.alet.common.structures.type.premade.signal.LittleCircuitNVRAM;
-import com.alet.common.structures.type.premade.signal.LittleCircuitNumberToAscii;
-import com.alet.common.structures.type.premade.signal.LittleCircuitPulser;
-import com.alet.common.structures.type.premade.signal.LittleCircuitROM;
-import com.alet.common.structures.type.premade.signal.LittleCircuitRandomNumber;
-import com.alet.common.structures.type.premade.signal.LittleCircuitSignalSwitch;
-import com.alet.common.structures.type.premade.signal.LittleCircuitTransformer;
-import com.alet.common.structures.type.premade.signal.LittleMagnitudeComparator;
-import com.alet.common.structures.type.premade.signal.LittleSignalColoredDisplay;
-import com.alet.common.structures.type.premade.signal.LittleSignalInputQuick;
-import com.alet.common.structures.type.premade.signal.LittleSignalOutputQuick;
-import com.alet.common.structures.type.premade.signal.LittleSignalSevenSegmentedDisplay;
-import com.alet.common.structures.type.premade.signal.LittleStructureTypeCircuit;
-import com.alet.common.structures.type.premade.signal.LittleSignalInputQuick.LittleStructureTypeInputQuick;
-import com.alet.common.structures.type.premade.signal.LittleSignalOutputQuick.LittleStructureTypeOutputQuick;
-import com.alet.common.structures.type.premade.transfer.LittleTransferLittleHopper;
-import com.alet.common.structures.type.programable.advanced.FunctionRegistar;
-import com.alet.common.structures.type.programable.advanced.LittleProgramableStructureALET;
-import com.alet.common.structures.type.programable.advanced.nodes.NodeRegistar;
-import com.alet.common.structures.type.programable.basic.LittleTriggerBoxStructureALET;
-import com.alet.items.ItemJumpTool;
-import com.alet.items.ItemLittleManual;
-import com.alet.items.ItemLittleRope;
-import com.alet.items.ItemLittleScissors;
-import com.alet.items.ItemTapeMeasure;
-import com.alet.items.premade.ItemPremadePlaceable;
+import com.alet.common.gui.container.SubContainerAnimatorWorkbench;
+import com.alet.common.gui.container.SubContainerBasic;
+import com.alet.common.gui.container.SubContainerFillingCabinet;
+import com.alet.common.gui.container.SubContainerLittleHopper;
+import com.alet.common.gui.container.SubContainerPhotoImport;
+import com.alet.common.gui.container.SubContainerTypeWriter;
+import com.alet.common.gui.message.SubGuiNoBluePrintMessage;
+import com.alet.common.gui.origins.SubGuiAnimatorsWorkbench;
+import com.alet.common.gui.origins.SubGuiFillingCabinet;
+import com.alet.common.gui.origins.SubGuiLittleHopper;
+import com.alet.common.gui.origins.SubGuiMagnitudeComparator;
+import com.alet.common.gui.origins.SubGuiManual;
+import com.alet.common.gui.origins.SubGuiNoticeAtJoin;
+import com.alet.common.gui.origins.SubGuiPhotoImport;
+import com.alet.common.gui.origins.SubGuiSignalEventsALET;
+import com.alet.common.gui.origins.SubGuiTypeWriter;
+import com.alet.components.blocks.BasicBlock;
+import com.alet.components.blocks.TransparentBlock;
+import com.alet.components.items.ItemJumpTool;
+import com.alet.components.items.ItemLittleManual;
+import com.alet.components.items.ItemLittleRope;
+import com.alet.components.items.ItemLittleScissors;
+import com.alet.components.items.ItemTapeMeasure;
+import com.alet.components.items.premade.ItemPremadePlaceable;
+import com.alet.components.structures.connection.RopeConnection;
+import com.alet.components.structures.type.LittleAlwaysOnLight;
+import com.alet.components.structures.type.LittleAlwaysOnLight.LittleAlwaysOnLightStructureParser;
+import com.alet.components.structures.type.LittleCamPlayerALET;
+import com.alet.components.structures.type.LittleLockALET;
+import com.alet.components.structures.type.LittleMusicComposerALET;
+import com.alet.components.structures.type.LittleRemoteActivatorALET;
+import com.alet.components.structures.type.LittleRopeConnectionALET;
+import com.alet.components.structures.type.LittleStateMutatorALET;
+import com.alet.components.structures.type.premade.LittleAdjustableFixedStructure;
+import com.alet.components.structures.type.premade.LittleAnimatorBench;
+import com.alet.components.structures.type.premade.LittleFillingCabinet;
+import com.alet.components.structures.type.premade.LittlePhotoImporter;
+import com.alet.components.structures.type.premade.LittleTypeWriter;
+import com.alet.components.structures.type.premade.PickupItemPremade;
+import com.alet.components.structures.type.premade.signal.LittleSignalColoredDisplay;
+import com.alet.components.structures.type.premade.signal.LittleSignalInputQuick;
+import com.alet.components.structures.type.premade.signal.LittleSignalInputQuick.LittleStructureTypeInputQuick;
+import com.alet.components.structures.type.premade.signal.LittleSignalOutputQuick;
+import com.alet.components.structures.type.premade.signal.LittleSignalOutputQuick.LittleStructureTypeOutputQuick;
+import com.alet.components.structures.type.premade.signal.LittleSignalSevenSegmentedDisplay;
+import com.alet.components.structures.type.premade.signal.LittleStructureTypeCircuit;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitClock;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitDisplay16;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitMagnitudeComparator;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitMath;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitNVRAM;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitNumberToAscii;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitPulser;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitROM;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitRandomNumber;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitSignalSwitch;
+import com.alet.components.structures.type.premade.signal.circuit.LittleCircuitTransformer;
+import com.alet.components.structures.type.premade.transfer.LittleTransferLittleHopper;
+import com.alet.components.structures.type.programable.advanced.FunctionRegistar;
+import com.alet.components.structures.type.programable.advanced.LittleProgramableStructureALET;
+import com.alet.components.structures.type.programable.advanced.nodes.NodeRegistar;
+import com.alet.components.structures.type.programable.basic.LittleTriggerBoxStructureALET;
+import com.alet.packets.PacketDropItem;
+import com.alet.packets.PacketGetServerCams;
+import com.alet.packets.PacketGetServerScoreboard;
+import com.alet.packets.PacketLeftClick;
+import com.alet.packets.PacketPlaySound;
+import com.alet.packets.PacketSendGuiToClient;
+import com.alet.packets.PacketSendServerCams;
+import com.alet.packets.PacketSendSound;
+import com.alet.packets.PacketUpdateBreakBlock;
+import com.alet.packets.PacketUpdateMutateFromServer;
+import com.alet.packets.PacketUpdateNBT;
+import com.alet.packets.PacketUpdateStructureFromClient;
+import com.alet.regestries.SoundsRegister;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -133,8 +133,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -182,7 +180,6 @@ public class ALET {
     }.setBackgroundImageName("item_search.png");
     
     public static List<String> fontTypeNames;
-    public static List<String> sounds;
     
     public static Item littleScissors;
     public static Item littleRope;
@@ -635,7 +632,7 @@ public class ALET {
             new LittleStructureTypeCircuit("signal_pulser", ALET.MODID, LittleCircuitPulser.class, LittleStructureAttribute.PREMADE, ALET.MODID))
                 .setNotSnapToGrid();
         LittleStructurePremade.registerPremadeStructureType(
-            new LittleStructureTypeCircuit("magnitude_comparator_32", ALET.MODID, LittleMagnitudeComparator.class, LittleStructureAttribute.PREMADE, ALET.MODID))
+            new LittleStructureTypeCircuit("magnitude_comparator_32", ALET.MODID, LittleCircuitMagnitudeComparator.class, LittleStructureAttribute.PREMADE, ALET.MODID))
                 .setNotSnapToGrid();/*
                                     LittleStructurePremade
                                     .registerPremadeStructureType(new LittleStructureTypeCircuit("random_generator_1bit", ALET.MODID, LittleCircuitRandomNumber.class, LittleStructureAttribute.TICKING, ALET.MODID))
@@ -713,10 +710,6 @@ public class ALET {
             LittleStructureAttribute.TICKING).addInput("accessed", 1);
         
         SoundsRegister.registerSounds();
-        sounds = new ArrayList<>();
-        for (ResourceLocation location : SoundEvent.REGISTRY.getKeys())
-            sounds.add(location.toString());
-        
     }
     
     @EventHandler

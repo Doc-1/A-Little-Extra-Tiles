@@ -20,7 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
-import com.alet.client.gui.origins.SubGuiPhotoImport;
+import com.alet.common.gui.origins.SubGuiPhotoImport;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiProgressBar;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -77,7 +77,6 @@ public class PhotoReader {
         try {
             if (uploadOption.equals("Print From Item") || uploadOption.equals("Print From Block")) {
                 in = PhotoReader.class.getClassLoader().getResourceAsStream(input);
-                //in = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(input)).getInputStream();
                 image = ImageIO.read(in);
             } else if (uploadOption.equals("Print From URL")) {
                 in = PhotoReader.load(input);

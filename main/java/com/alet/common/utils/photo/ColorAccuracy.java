@@ -2,7 +2,7 @@ package com.alet.common.utils.photo;
 
 import org.lwjgl.util.Color;
 
-import com.alet.littletiles.common.utils.mc.ColorUtilsAlet;
+import com.alet.common.utils.ColorUtilsAlet;
 
 public class ColorAccuracy {
     

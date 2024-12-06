@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
-import com.alet.client.shape.draw.DragShapeCenteredBox;
-import com.alet.client.shape.draw.DragShapeCenteredCylinder;
-import com.alet.client.shape.draw.DragShapeCenteredSphere;
-import com.alet.client.shape.draw.DragShapePixel;
-import com.alet.client.shape.draw.LittleShapeMagicWand;
-import com.alet.client.tapemeasure.TapeRenderer;
-import com.alet.common.commands.UpdateFontsCommand;
-import com.alet.common.events.ALETEventHandler;
+import com.alet.client.renders.TapeRenderer;
+import com.alet.client.shapes.draw.DragShapeCenteredBox;
+import com.alet.client.shapes.draw.DragShapeCenteredCylinder;
+import com.alet.client.shapes.draw.DragShapeCenteredSphere;
+import com.alet.client.shapes.draw.DragShapePixel;
+import com.alet.client.shapes.draw.LittleShapeMagicWand;
+import com.alet.events.ALETEventHandler;
+import com.alet.server.commands.UpdateFontsCommand;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;
 import com.creativemd.littletiles.common.util.shape.ShapeRegistry;
