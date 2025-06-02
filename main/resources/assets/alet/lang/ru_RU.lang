@@ -1,0 +1,149 @@
+item.LTPremade.photoimporter.name=Импортер фотографий
+item.LTPremade.typewriter.name=Печатная машинка
+item.LTPremade.filling_cabinet.name=Шкаф наполнения (WIP)
+
+item.LTPremade.signal_memory_32.name=Ячейка памяти (32-bit)
+
+item.LTPremade.magnitude_comparator.name=Компаратор величин (4-bit)
+
+item.LTPremade.clock_10hz.name=Часы 10Hz
+item.LTPremade.clock_5hz.name=Часы 5Hz
+item.LTPremade.clock_2hz.name=Часы 2Hz
+item.LTPremade.clock_1hz.name=Часы 1Hz
+
+item.LTPremade.display_16.name=Цветной монитор (ASCII)
+item.LTPremade.signal_pulser.name=Генератор сигнала
+item.LTPremade.signal_magnitude_comparator_32.name=Компаратор величин (32-bit)
+
+item.LTPremade.random_generator_1bit.name=Random Генератор (1-bit)
+item.LTPremade.random_generator_4bit.name=Random Генератор (4-bit)
+item.LTPremade.random_generator_16bit.name=Random Генератор (16-bit)
+item.LTPremade.random_generator_32bit.name=Random Генератор (32-bit)
+
+item.LTPremade.signal_dec_to_ascii.name=Кодировщик числа в ASCII
+item.LTPremade.signal_math.name=Математическая операция (32-bit)
+item.LTPremade.signal_switch_32.name=Выключатель (32-bit)
+
+item.LTPremade.splitter_4_to_1.name=Сплиттер (4-bit в 1-bit)
+item.LTPremade.splitter_16_to_4.name=Сплиттер (16-bit в 4-bit)
+item.LTPremade.splitter_32_to_16.name=Сплиттер (16-bit в 32-bit)
+
+item.LTPremade.combiner_1_to_4.name=Комбинатор (1-bit в 4-bit)
+item.LTPremade.combiner_4_to_16.name=Комбинатор (4-bit в 16-bit)
+item.LTPremade.combiner_16_to_32.name=Комбинатор (32-bit в 16-bit)
+
+
+item.LTPremade.single_cable32.name=Одиночный кабель (32-bit)
+item.LTPremade.single_input32.name=Одиночный вход (32-bit)
+item.LTPremade.single_output32.name=Один выход (32-bit)
+
+item.LTPremade.little_hopper.name=Little Хоппер
+item.LTPremade.signal_color_display_16.name=Цветной дисплей сигнала (64-bits)
+item.LTPremade.seven_segement_display.name=Сигнальный семисегментный дисплей (8-bits)
+
+item.LTPremade.signal_quick_output1.name=Быстрый вывод (1-bit) (WIP)
+item.LTPremade.signal_quick_output4.name=Быстрый вывод (4-bit) (WIP)
+item.LTPremade.signal_quick_output16.name=Быстрый вывод (16-bit) (WIP)
+item.LTPremade.signal_quick_output32.name=Быстрый вывод (32-bit) (WIP)
+
+item.LTPremade.signal_quick_input1.name=Быстрый ввод (1-bit) (WIP)
+item.LTPremade.signal_quick_input4.name=Быстрый ввод (4-bit) (WIP)
+item.LTPremade.signal_quick_input16.name=Быстрый ввод (16-bit) (WIP)
+item.LTPremade.signal_quick_input32.name=Быстрый ввод (32-bit) (WIP)
+
+itemGroup.alet=Little Схемы
+
+
+trigger.advanced.category.event.name=События
+trigger.advanced.category.condition.name=Условия
+trigger.advanced.category.cast.name=В ролях
+trigger.advanced.category.value.name=Ценности
+trigger.advanced.category.getter.name=добытчики
+trigger.advanced.category.activator.name=Активаторы
+trigger.advanced.category.flow_control.name=Элементы управления потоком
+
+trigger.advanced.join_string.name=Присоединиться к строке
+trigger.advanced.string.name=Нить
+trigger.advanced.integer.name=Целое число
+trigger.advanced.double.name=Двойной
+trigger.advanced.double_to_int.name=Двойной перевод в Int
+
+trigger.advanced.tile_collision.name=Столкновение с плиткой
+trigger.advanced.right_click.name=При щелчке правой кнопкой мыши
+trigger.advanced.equal_to.name=Равно целому числу
+trigger.advanced.modify_motion.name=Изменить движение
+trigger.advanced.message.name=Сообщение в чат
+trigger.advanced.branch.name=Ветвь
+trigger.advanced.get_entity_position.name=Получить позицию сущности
+trigger.advanced.get_entity_name.name=Получить имя объекта
+
+trigger.collision_area.name=Столкновение с областью
+trigger.global.name=Глобальный
+trigger.trigger_selector.name=Целевой селектор
+trigger.right_click.name=При щелчке правой кнопкой мыши
+trigger.collision_tiles.name=Столкновение с плиткой
+trigger.category.simple.name=Простой
+trigger.category.advanced.name=Передовой
+
+trigger.tick_delay.name=Тиковая задержка
+trigger.has_item.name=Имеет предмет
+trigger.successful_command.name=Успешная команда
+trigger.is_entity.name=Является ли сущность
+trigger.scoreboard.name=Табло
+
+trigger.modify_health.name=Изменить здоровье
+trigger.modify_motion.name=Изменить движение
+trigger.modify_inventory.name=Изменить инвентарь
+trigger.modify_scoreboard.name=Изменить табло
+trigger.execute_command.name=Выполнить команду
+trigger.set_spawn.name=Установить спавн
+trigger.play_sound.name=Воспроизвести звук
+trigger.set_signal.name=Установить сигнал
+trigger.count_tick.name=Подсчитайте тик
+trigger.mouse_activation.name=Активация мышью
+trigger.signal_activation.name=Активация сигнала
+
+trigger.listener.collision.name=Столкновение с плиткой
+trigger.listener.right_click.name=Щелкните правой кнопкой мыши
+trigger.listener.aabb_collision.name=Столкновение с областью
+trigger.listener.global.name=Глобальный
+
+trigger.category.listener.name=Слушатели
+trigger.category.codition.name=Условия
+trigger.category.event.name=События
+
+
+item.tapemeasure.name=Рулетка (WIP)
+item.little_rope.name=веревка (WIP)
+item.little_scissor.name=Little ножницы (WIP)
+item.little_manual.name=Little Руководство (WIP)
+
+tile.smoothbrick.name=Кирпич без границ
+tile.smoothgroutbrick.name=Кирпичный раствор без границ
+tile.smoothoakplank.name=Дубовые доски без полей
+tile.smoothdarkoakplank.name=Доски из темного дуба без полей
+tile.smoothbirchplank.name=Березовые доски без полей
+tile.smoothjungleplank.name=Доски для джунглей без границ
+tile.smoothspruceplank.name=Еловые доски без полей
+tile.smoothacaciaplank.name=Доски из акации без полей
+
+config.alet.allowURL.comment=Если отключенные пользователи не могут печатать по URL-ссылке.
+config.alet.maxPixelAmount.comment=Это установит максимальное количество пикселей, которое может иметь фотография при печати.
+config.alet.maxPixelText.comment=Это установит максимальное количество пикселей, которое может иметь текст при печати.
+config.alet.colorAccuracy.comment=Это изменит количество цветов, к которым принтер имеет доступ. Ноль — это все доступные цвета.
+
+structure.trigger_box.name=Программируемый
+structure.programable_structure.name=(WIP) Программируемый Adv
+structure.door_lock.name=Замок
+structure.state_activator.name=Государственный мутатор
+structure.music_composer.name=Музыкальный композитор
+structure.always_on_light.name=Всегда на свете
+structure.lead_connection.name=(WIP)Веревочный соединитель
+structure.cam_player.name=Кэм-плеер
+structure.remote_activator.name=Удаленный активатор
+
+structure.category.sound=Аудио
+structure.category.advance=Продвигать
+
+alet.tapemeasure.tooltip='%s' для настройки инструмента\n'%s', '%s' для изменения\nвыбранного измерения\n'%s' для очистки измерения
+gui.little_hopper.title=Little Хоппер
