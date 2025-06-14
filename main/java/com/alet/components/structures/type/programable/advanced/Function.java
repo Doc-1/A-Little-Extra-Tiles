@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class Function {
     
     //Executing structure
-    public LittleProgramableStructureALET structure;
+    public LittleAdvancedProgramableStructure structure;
     
     //Identification Field
     private final String NAME;

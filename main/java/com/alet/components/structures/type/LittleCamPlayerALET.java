@@ -3,7 +3,7 @@ package com.alet.components.structures.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.packets.PacketGetServerCams;
+import com.alet.common.packets.PacketGetServerCams;
 import com.creativemd.cmdcam.common.packet.StartPathPacket;
 import com.creativemd.cmdcam.common.utils.CamPath;
 import com.creativemd.cmdcam.server.CMDCamServer;

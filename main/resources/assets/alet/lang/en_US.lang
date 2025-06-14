@@ -11,7 +11,7 @@ item.LTPremade.clock_5hz.name=Clock 5Hz
 item.LTPremade.clock_2hz.name=Clock 2Hz
 item.LTPremade.clock_1hz.name=Clock 1Hz
 
-item.LTPremade.display_16.name=Colored Monitor (ASCII)
+item.LTPremade.ascii_display.name=Colored ASCII Monitor 
 item.LTPremade.signal_pulser.name=Signal Pulser
 item.LTPremade.signal_magnitude_comparator_32.name=Magnitude Comparator (32-bit)
 
@@ -41,15 +41,15 @@ item.LTPremade.little_hopper.name=Little Hopper
 item.LTPremade.signal_color_display_16.name=Signal Colored Display (64-bits)
 item.LTPremade.seven_segement_display.name=Signal Seven Segment Display (8-bits)
 
-item.LTPremade.signal_quick_output1.name=Quick Output (1-bit) (WIP)
-item.LTPremade.signal_quick_output4.name=Quick Output (4-bit) (WIP)
-item.LTPremade.signal_quick_output16.name=Quick Output (16-bit) (WIP)
-item.LTPremade.signal_quick_output32.name=Quick Output (32-bit) (WIP)
+item.LTPremade.signal_quick_output1.name=Quick Output (1-bit)
+item.LTPremade.signal_quick_output4.name=Quick Output (4-bit)
+item.LTPremade.signal_quick_output16.name=Quick Output (16-bit)
+item.LTPremade.signal_quick_output32.name=Quick Output (32-bit)
 
-item.LTPremade.signal_quick_input1.name=Quick Input (1-bit) (WIP)
-item.LTPremade.signal_quick_input4.name=Quick Input (4-bit) (WIP)
-item.LTPremade.signal_quick_input16.name=Quick Input (16-bit) (WIP)
-item.LTPremade.signal_quick_input32.name=Quick Input (32-bit) (WIP)
+item.LTPremade.signal_quick_input1.name=Quick Input (1-bit)
+item.LTPremade.signal_quick_input4.name=Quick Input (4-bit)
+item.LTPremade.signal_quick_input16.name=Quick Input (16-bit)
+item.LTPremade.signal_quick_input32.name=Quick Input (32-bit)
 
 itemGroup.alet=Little Circuits
 

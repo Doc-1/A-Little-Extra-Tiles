@@ -15,6 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.alet.client.ALETClient;
+import com.alet.client.registries.FunctionRegistery;
+import com.alet.client.registries.NodeRegistery;
+import com.alet.client.registries.SoundsRegister;
 import com.alet.common.gui.container.SubContainerAnimatorWorkbench;
 import com.alet.common.gui.container.SubContainerBasic;
 import com.alet.common.gui.container.SubContainerFillingCabinet;
@@ -23,13 +26,14 @@ import com.alet.common.gui.container.SubContainerPhotoImport;
 import com.alet.common.gui.container.SubContainerTypeWriter;
 import com.alet.common.gui.messages.SubGuiNoBluePrintMessage;
 import com.alet.common.gui.origins.SubGuiAnimatorsWorkbench;
-import com.alet.common.gui.origins.SubGuiFillingCabinet;
-import com.alet.common.gui.origins.SubGuiLittleHopper;
-import com.alet.common.gui.origins.SubGuiManual;
 import com.alet.common.gui.origins.SubGuiNoticeAtJoin;
-import com.alet.common.gui.origins.SubGuiPhotoImport;
 import com.alet.common.gui.origins.SubGuiSignalEventsALET;
-import com.alet.common.gui.origins.SubGuiTypeWriter;
+import com.alet.common.gui.structure.premade.SubGuiLittleHopper;
+import com.alet.common.gui.structure.premade.SubGuiPhotoImport;
+import com.alet.common.gui.structure.premade.SubGuiTypeWriter;
+import com.alet.common.gui.structure.premade.filling_cabinet.SubGuiFillingCabinet;
+import com.alet.common.gui.tool.SubGuiManual;
+import com.alet.common.packets.PacketRegistery;
 import com.alet.components.blocks.BasicBlock;
 import com.alet.components.blocks.TransparentBlock;
 import com.alet.components.items.ItemJumpTool;
@@ -38,15 +42,11 @@ import com.alet.components.items.ItemLittleRope;
 import com.alet.components.items.ItemLittleScissors;
 import com.alet.components.items.ItemTapeMeasure;
 import com.alet.components.structures.connection.RopeConnection;
+import com.alet.components.structures.regestries.StructureTypeRegestery;
+import com.alet.components.structures.regestries.premade.PremadeStructureRegistery;
 import com.alet.components.structures.type.premade.LittleAnimatorBench;
 import com.alet.components.structures.type.premade.LittleFillingCabinet;
 import com.alet.components.structures.type.premade.transfer.LittleTransferLittleHopper;
-import com.alet.regestries.FunctionRegistery;
-import com.alet.regestries.NodeRegistery;
-import com.alet.regestries.PacketRegistery;
-import com.alet.regestries.PremadeStructureRegistery;
-import com.alet.regestries.SoundsRegister;
-import com.alet.regestries.StructureTypeRegestery;
 import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.creativecore.common.gui.container.SubContainer;
 import com.creativemd.creativecore.common.gui.container.SubGui;
@@ -91,7 +91,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = ALET.MODID, name = ALET.NAME, version = ALET.VERSION, guiFactory = "com.alet.client.ALETSettings",
-        dependencies = "required-after:creativecore;required-after:littletiles")
+        dependencies = "required-after:creativecore;required-after:kirosblocks;required-after:littletiles")
 @Mod.EventBusSubscriber
 public class ALET {
     

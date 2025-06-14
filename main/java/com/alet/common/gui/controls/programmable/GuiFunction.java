@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.alet.client.registries.FunctionRegistery;
+import com.alet.client.registries.NodeRegistery;
 import com.alet.common.gui.controls.GuiDragablePanel;
 import com.alet.common.gui.events.GuiControlReleaseEvent;
 import com.alet.common.utils.MouseUtils;
-import com.alet.regestries.FunctionRegistery;
-import com.alet.regestries.NodeRegistery;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -271,7 +271,6 @@ public class GuiFunction extends GuiParent {
             this.mousePosY = (int) this.getMousePos().y;
             
             if (this.isMouseOver()) {
-                this.selected = true;
                 this.raiseEvent(new GuiControlClickEvent(this, x, y, button));
             }
         }

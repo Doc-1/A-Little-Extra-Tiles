@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class LittleTriggerObject {
     
     public int id;
-    public LittleTriggerBoxStructureALET structure;
+    public LittleProgramableStructure structure;
     
     public LittleTriggerObject(int id) {
         this.id = id;

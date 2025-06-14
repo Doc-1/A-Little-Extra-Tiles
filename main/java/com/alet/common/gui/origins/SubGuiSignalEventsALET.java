@@ -3,7 +3,7 @@ package com.alet.common.gui.origins;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alet.packets.PacketUpdateStructureFromClient;
+import com.alet.common.packets.PacketUpdateStructureFromClient;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiListBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;

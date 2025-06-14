@@ -3,11 +3,13 @@ package com.alet.components.items;
 import javax.vecmath.Point3f;
 
 import com.alet.client.ALETClient;
-import com.alet.client.renders.TapeRenderer;
-import com.alet.common.gui.origins.SubGuiTapeMeasure;
-import com.alet.common.utils.NBTUtils;
+import com.alet.client.render.overlay.DrawMeasurements;
+import com.alet.client.tool.shaper.MeasurementHandler;
+import com.alet.client.tool.shaper.MeasurementHandler.Measurements;
+import com.alet.common.gui.tool.SubGuiTapeMeasure;
+import com.alet.common.packets.PacketUpdateNBT;
+import com.alet.common.placement.measurments.type.LittleMeasurementType;
 import com.alet.common.utils.StructureUtils;
-import com.alet.packets.PacketUpdateNBT;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
@@ -17,7 +19,6 @@ import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.api.ILittlePlacer;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
-import com.creativemd.littletiles.common.item.ItemMultiTiles;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
@@ -53,7 +54,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
      * @param index
      *            What index the player is selected in the GUI */
     public void clear(ItemStack stack, int index, EntityPlayer player) {
-        setDefaultMeasurmentNBT(stack, index);
+        // setDefaultMeasurmentNBT(stack, index);
         PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
     }
     
@@ -77,27 +78,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         return 50;
     }
     
-    public static void setDefaultStackNBT(ItemStack stack) {
-        NBTTagCompound nbtStack = new NBTTagCompound();
-        nbtStack.setInteger("index", 0);
-        nbtStack.setTag("measurements", new NBTTagCompound());
-        stack.setTagCompound(nbtStack);
-    }
-    
-    public static void setDefaultMeasurmentNBT(ItemStack stack, int index) {
-        NBTTagCompound stackNBT = stack.getTagCompound();
-        NBTTagCompound measurements = stackNBT.getCompoundTag("measurements");
-        NBTTagCompound data = new NBTTagCompound();
-        data.setInteger("context", ItemMultiTiles.currentContext.index);
-        data.setString("shape", "Box");
-        data.setInteger("color", ColorUtils.WHITE);
-        data.setTag("positions", new NBTTagCompound());
-        measurements.setTag(index + "", data);
-        stackNBT.setTag("measurements", measurements);
-        stack.setTagCompound(stackNBT);
-        
-    }
-    
     @Override
     public boolean onRightClick(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
         return onBlockInteract(world, plr, stack, position, result, true);
@@ -108,86 +88,44 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
         return onBlockInteract(world, plr, stack, position, result, false);
     }
     
-    public boolean onBlockInteract(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result, boolean rightClick) {
-        
-        int index = 0;
-        NBTTagCompound stackNBT = new NBTTagCompound();
-        if (stack.hasTagCompound()) {
-            stackNBT = stack.getTagCompound();
-            index = stackNBT.hasKey("index") ? stackNBT.getInteger("index") : 0;
-        } else {
-            setDefaultStackNBT(stack);
-            setDefaultMeasurmentNBT(stack, 0);
-            stackNBT = stack.getTagCompound();
-        }
-        
-        LittleGridContext context = getSelectedContext(stackNBT);
+    public boolean onBlockInteract(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult r, boolean rightClick) {
+        Measurements tapeMeasure = MeasurementHandler.getOrCreateTapeMeasure(stack);
+        LittleMeasurementType measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
+        LittleGridContext context = measurement.getGrid();
         int contextSize = context.size;
         RayTraceResult res = plr.rayTrace(6.0, Minecraft.getMinecraft().getRenderPartialTicks());
-        LittleAbsoluteVec absPos = new LittleAbsoluteVec(res, context);
-        
+        LittleAbsoluteVec absRes = new LittleAbsoluteVec(res, context);
+        measurement.setColor(ColorUtils.MAGENTA);
         if (LittleAction.isUsingSecondMode(plr))
             position.facing = position.facing.getOpposite();
         
-        Point3f posOffsetted = StructureUtils.facingOffset(absPos.getPosX(), absPos.getPosY(), absPos.getPosZ(), contextSize,
+        Point3f result = StructureUtils.facingOffset(absRes.getPosX(), absRes.getPosY(), absRes.getPosZ(), contextSize,
             position.facing);
-        
-        int additional = rightClick ? 1 : 0;
+        int pointIndex = rightClick ? 1 : 0;
         if (GuiScreen.isCtrlKeyDown())
-            additional += 2;
-        NBTTagCompound data = ((NBTTagCompound) stackNBT.getTag("measurements")).getCompoundTag(index + "");
-        NBTTagCompound pos = new NBTTagCompound();
-        NBTTagCompound positions = new NBTTagCompound();
-        if (data.hasKey("positions"))
-            positions = data.getCompoundTag("positions");
-        pos.setTag("pos", NBTUtils.writeDoubleArrayFrom(posOffsetted.x, posOffsetted.y, posOffsetted.z));
-        pos.setString("facing", position.facing.getName());
-        positions.setTag(additional + "", pos);
-        data.setTag("positions", positions);
-        stack.setTagCompound(stackNBT);
-        PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
+            pointIndex += 2;
+        measurement.setPoint(pointIndex, result);
+        stack.setTagCompound(MeasurementHandler.serialize(stack));
+        //PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
         return false;
-        
-    }
-    
-    public static LittleGridContext getSelectedContext(NBTTagCompound stackNBT) {
-        NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(stackNBT.getInteger("index") + "");
-        
-        return (selected.hasKey("context") && selected.getInteger("context") >= 0 && selected.getInteger(
-            "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
-                "context")] : ItemMultiTiles.currentContext;
-    }
-    
-    public static LittleGridContext getContextAt(NBTTagCompound stackNBT, int index) {
-        NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(index + "");
-        
-        return (selected.hasKey("context") && selected.getInteger("context") >= 0 && selected.getInteger(
-            "context") < LittleGridContext.gridSizes.length) ? LittleGridContext.context[selected.getInteger(
-                "context")] : ItemMultiTiles.currentContext;
-        
-    }
-    
-    public static int getColorAt(NBTTagCompound stackNBT, int index) {
-        NBTTagCompound selected = stackNBT.getCompoundTag("measurements").getCompoundTag(index + "");
-        
-        return selected.hasKey("color") ? selected.getInteger("color") : ColorUtils.WHITE;
         
     }
     
     @Override
     public void tick(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
-        NBTTagCompound stackNBT = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
-        int index = stackNBT.hasKey("index") ? stack.getTagCompound().getInteger("index") : 0;
-        LittleGridContext context = getSelectedContext(stackNBT);
+        
+        Measurements tapeMeasure = MeasurementHandler.getOrCreateTapeMeasure(stack);
+        LittleMeasurementType measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
+        LittleGridContext context = measurement.getGrid();
         LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
         if (LittleAction.isUsingSecondMode(player))
             result.sideHit = result.sideHit.getOpposite();
         Point3f posEdit = StructureUtils.facingOffset(pos.getPosX(), pos.getPosY(), pos.getPosZ(), context.size,
             result.sideHit);
         
-        TapeRenderer.renderCursor(posEdit, getColorAt(stackNBT, index), context);
-        if (ALETClient.clearMeasurment.isPressed())
-            clear(stack, index, player);
+        DrawMeasurements.renderCursor(posEdit, measurement.getColor(), context);
+        //   if (ALETClient.clearMeasurment.isPressed())
+        //  clear(stack, index, player);
     }
     
     @Override
@@ -206,7 +144,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
                 index = 9;
             stackNBT.setInteger("index", index);
             if (!stackNBT.getCompoundTag("measurements").hasKey(index + "")) {
-                setDefaultMeasurmentNBT(stack, index);
+                // setDefaultMeasurmentNBT(stack, index);
             }
             stack.setTagCompound(stackNBT);
             

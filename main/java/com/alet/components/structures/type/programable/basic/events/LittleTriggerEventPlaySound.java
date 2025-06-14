@@ -3,8 +3,8 @@ package com.alet.components.structures.type.programable.basic.events;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.common.packets.PacketPlaySound;
 import com.alet.components.structures.type.programable.basic.LittleTriggerObject;
-import com.alet.packets.PacketPlaySound;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiAnalogeSlider;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;

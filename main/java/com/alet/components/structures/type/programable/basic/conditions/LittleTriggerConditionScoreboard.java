@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import com.alet.packets.PacketGetServerScoreboard;
+import com.alet.common.packets.PacketGetServerScoreboard;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;

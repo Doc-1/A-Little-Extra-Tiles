@@ -9,15 +9,15 @@ import net.minecraft.world.WorldServer;
 
 public class FunctionExecutor {
     
-    public static void startScript(LittleProgramableStructureALET executer, FunctionActivator activator, int index) {}
+    public static void startScript(LittleAdvancedProgramableStructure executer, FunctionActivator activator, int index) {}
     
-    public static void resumeScript(LittleProgramableStructureALET executer, Function startingBlueprint) {}
+    public static void resumeScript(LittleAdvancedProgramableStructure executer, Function startingBlueprint) {}
     
     private static Function findParent(Function function, Class<? extends Function> clazz) {
         return function;
     }
     
-    public static void nextMethod(LittleProgramableStructureALET executer, Function blueprint, WorldServer server, int index) {}
+    public static void nextMethod(LittleAdvancedProgramableStructure executer, Function blueprint, WorldServer server, int index) {}
     
     private static void buildValues(List<NodeValue> nodes, WorldServer server) {}
 }

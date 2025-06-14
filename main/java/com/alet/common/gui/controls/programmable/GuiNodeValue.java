@@ -3,9 +3,9 @@ package com.alet.common.gui.controls.programmable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alet.client.registries.NodeRegistery;
 import com.alet.common.gui.events.GuiControlReleaseEvent;
 import com.alet.components.structures.type.programable.advanced.nodes.Node.NodeType;
-import com.alet.regestries.NodeRegistery;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
@@ -27,12 +27,14 @@ public class GuiNodeValue<V> extends GuiParent {
     private boolean isSender;
     
     V v;
+    public final NodeType NODE_TYPE;
     
-    public GuiNodeValue(String name, NodeType type, String title, int color, boolean isModifiable) throws Exception {
+    public GuiNodeValue(String name, NodeType type, String title, int color, boolean isModifiable) {
         super(name, 0, 0, (!title.equals("")) ? font.getStringWidth(title) + 7 : 1, 1);
         this.TITLE = title;
         this.IS_MODIFIABLE = isModifiable;
         this.COLOR = color;
+        this.NODE_TYPE = type;
     }
     
     public void setValue(V v) {
@@ -69,7 +71,6 @@ public class GuiNodeValue<V> extends GuiParent {
     public boolean canConnect(GuiNodeValue secondNode) {
         if (secondNode == null)
             return false;
-        System.out.println(this.isSender() + " " + secondNode.isReciever());
         if (this.getParent().equals(secondNode.parent))
             return false;
         if (this.isSender() && secondNode.isSender())
@@ -173,12 +174,12 @@ public class GuiNodeValue<V> extends GuiParent {
     }
     
     public boolean isDataTypeEqual(GuiNodeValue secondNode) {
-        return this.name.equals(secondNode.name);
+        return this.NODE_TYPE.equals(secondNode.NODE_TYPE);
     }
     
     public GuiNodeValue clone(String name, String title, boolean isModifiable) {
         try {
-            return new GuiNodeValue(name, null, title, COLOR, isModifiable);
+            return new GuiNodeValue(name, this.NODE_TYPE, title, COLOR, isModifiable);
         } catch (Exception e) {
             e.printStackTrace();
         }

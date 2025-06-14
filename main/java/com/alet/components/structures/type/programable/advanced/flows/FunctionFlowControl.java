@@ -1,7 +1,7 @@
 package com.alet.components.structures.type.programable.advanced.flows;
 
 import com.alet.components.structures.type.programable.advanced.Function;
-import com.alet.components.structures.type.programable.advanced.LittleProgramableStructureALET;
+import com.alet.components.structures.type.programable.advanced.LittleAdvancedProgramableStructure;
 
 import net.minecraft.world.WorldServer;
 
@@ -18,7 +18,7 @@ public abstract class FunctionFlowControl extends Function {
     
     public abstract boolean doesLoop();
     
-    public abstract Function looping(LittleProgramableStructureALET executer, WorldServer server);
+    public abstract Function looping(LittleAdvancedProgramableStructure executer, WorldServer server);
     
     public abstract boolean reachedMaxLoop();
     

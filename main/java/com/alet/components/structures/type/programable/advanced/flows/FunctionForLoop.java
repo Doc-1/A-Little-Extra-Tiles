@@ -1,7 +1,7 @@
 package com.alet.components.structures.type.programable.advanced.flows;
 
 import com.alet.components.structures.type.programable.advanced.Function;
-import com.alet.components.structures.type.programable.advanced.LittleProgramableStructureALET;
+import com.alet.components.structures.type.programable.advanced.LittleAdvancedProgramableStructure;
 
 import net.minecraft.world.WorldServer;
 
@@ -31,7 +31,7 @@ public class FunctionForLoop extends FunctionFlowControl {
     }
     
     @Override
-    public Function looping(LittleProgramableStructureALET executer, WorldServer server) {
+    public Function looping(LittleAdvancedProgramableStructure executer, WorldServer server) {
         // TODO Auto-generated method stub
         return null;
     }

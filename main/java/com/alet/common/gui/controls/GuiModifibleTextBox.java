@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 import org.lwjgl.util.Color;
 
-import com.alet.common.gui.origins.SubGuiManual;
+import com.alet.common.gui.tool.SubGuiManual;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;

@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 
 import com.alet.client.events.ALETEventHandler;
-import com.alet.client.renders.TapeRenderer;
-import com.alet.client.shapes.draw.DragShapeCenteredBox;
-import com.alet.client.shapes.draw.DragShapeCenteredCylinder;
-import com.alet.client.shapes.draw.DragShapeCenteredSphere;
-import com.alet.client.shapes.draw.DragShapePixel;
-import com.alet.client.shapes.draw.LittleShapeMagicWand;
+import com.alet.client.events.ALETTapeMeasureEventHandler;
+import com.alet.client.render.overlay.DrawMeasurements;
+import com.alet.common.placement.shape.type.LittleShapeCenteredBox;
+import com.alet.common.placement.shape.type.LittleShapeCenteredCylinder;
+import com.alet.common.placement.shape.type.LittleShapeCenteredSphere;
+import com.alet.common.placement.shape.type.LittleShapeMagicWand;
+import com.alet.common.placement.shape.type.LittleShapePixel;
 import com.alet.server.commands.UpdateFontsCommand;
 import com.creativemd.creativecore.client.CreativeCoreClient;
 import com.creativemd.creativecore.client.rendering.model.CreativeBlockRenderHelper;
@@ -67,18 +68,19 @@ public class ALETClient extends LittleTilesServer {
         clearMeasurment = new KeyBinding("Clear Measurement", net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL, KeyModifier.ALT, Keyboard.KEY_C, "key.categories.littletiles");
         ClientRegistry.registerKeyBinding(clearMeasurment);
         ShapeRegistry.registerShape("magic_wand", new LittleShapeMagicWand(), ShapeType.SELECTOR);
-        ShapeRegistry.registerShape("centered_box", new DragShapeCenteredBox(), ShapeType.SHAPE);
-        ShapeRegistry.registerShape("centered_cylider", new DragShapeCenteredCylinder(), ShapeType.SHAPE);
-        ShapeRegistry.registerShape("centered_sphere", new DragShapeCenteredSphere(), ShapeType.SHAPE);
-        ShapeRegistry.registerShape("pixel", new DragShapePixel(), ShapeType.SHAPE);
+        ShapeRegistry.registerShape("centered_box", new LittleShapeCenteredBox(), ShapeType.SHAPE);
+        ShapeRegistry.registerShape("centered_cylider", new LittleShapeCenteredCylinder(), ShapeType.SHAPE);
+        ShapeRegistry.registerShape("centered_sphere", new LittleShapeCenteredSphere(), ShapeType.SHAPE);
+        ShapeRegistry.registerShape("pixel", new LittleShapePixel(), ShapeType.SHAPE);
         
         //ShapeRegistry.registerShape("fill", new DragShapeFill(), ShapeType.SHAPE);
         
         ClientCommandHandler.instance.registerCommand(new UpdateFontsCommand());
         
-        MinecraftForge.EVENT_BUS.register(new TapeRenderer());
+        MinecraftForge.EVENT_BUS.register(new DrawMeasurements());
         //MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
         MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
+        MinecraftForge.EVENT_BUS.register(new ALETTapeMeasureEventHandler());
         
         // LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER)
         //       .setShouldRender(() -> TapeRenderer.slotID != -1));

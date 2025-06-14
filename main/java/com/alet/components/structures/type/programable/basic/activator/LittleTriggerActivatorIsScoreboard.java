@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import com.alet.common.packets.PacketGetServerScoreboard;
 import com.alet.components.structures.type.programable.basic.LittleTriggerObject;
-import com.alet.packets.PacketGetServerScoreboard;
 import com.creativemd.creativecore.common.gui.CoreControl;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;

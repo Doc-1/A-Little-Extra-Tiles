@@ -20,7 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.util.Color;
 
 import com.alet.ALET;
-import com.alet.common.gui.origins.SubGuiPhotoImport;
+import com.alet.common.gui.structure.premade.SubGuiPhotoImport;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiProgressBar;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;

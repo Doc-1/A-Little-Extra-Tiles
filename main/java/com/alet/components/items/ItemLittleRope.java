@@ -2,7 +2,7 @@ package com.alet.components.items;
 
 import java.util.List;
 
-import com.alet.common.gui.origins.SubGuiLittleRope;
+import com.alet.common.gui.tool.SubGuiLittleRope;
 import com.alet.components.entities.RopeData;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
