@@ -1,6 +1,6 @@
 package com.alet.common.packets;
 
-import com.alet.components.structures.type.LittleStateMutatorALET;
+import com.alet.components.structures.type.LittleStateMutator;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 import com.creativemd.littletiles.common.action.LittleAction;
 import com.creativemd.littletiles.common.action.LittleActionException;
@@ -34,7 +34,7 @@ public class PacketUpdateMutateFromServer extends CreativeCorePacket {
     @Override
     public void executeClient(EntityPlayer player) {
         try {
-            LittleStateMutatorALET structure = (LittleStateMutatorALET) location.find(player.world);
+            LittleStateMutator structure = (LittleStateMutator) location.find(player.world);
             structure.changeMaterialState();
         } catch (LittleActionException e) {}
         

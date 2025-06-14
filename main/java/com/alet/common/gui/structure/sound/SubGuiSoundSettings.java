@@ -1,10 +1,9 @@
-package com.alet.common.gui.structure;
+package com.alet.common.gui.structure.sound;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.alet.client.sounds.Notes;
-import com.alet.components.structures.type.LittleMusicComposerALET.LittleMusicComposerParserALET;
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiCheckBox;
@@ -22,7 +21,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class SubGuiSoundSettings extends SubGui {
     
-    public LittleMusicComposerParserALET littleSoundPlayerParserALET;
+    public final LittleMusicComposerGui soundPlayerGui;
     public static List<String> soundList = new ArrayList<String>();
     static {
         soundList.add("nosound");
@@ -45,9 +44,9 @@ public class SubGuiSoundSettings extends SubGui {
         soundList.add("xylobone");
     }
     
-    public SubGuiSoundSettings(LittleMusicComposerParserALET littleSoundPlayerParserALET) {
+    public SubGuiSoundSettings(LittleMusicComposerGui littleSoundPlayerParserALET) {
         super(350, 251);
-        this.littleSoundPlayerParserALET = littleSoundPlayerParserALET;
+        this.soundPlayerGui = littleSoundPlayerParserALET;
     }
     
     @Override
@@ -60,7 +59,7 @@ public class SubGuiSoundSettings extends SubGui {
             }
         });
         
-        String[] channelsounds = littleSoundPlayerParserALET.channelSounds;
+        String[] channelsounds = soundPlayerGui.channelSounds;
         int i = 0;
         for (String sound : channelsounds) {
             i++;
@@ -75,8 +74,8 @@ public class SubGuiSoundSettings extends SubGui {
         }
         
         controls.add(new GuiLabel("Volume: ", 0, 0));
-        controls.add(new GuiTextfield("Volume", littleSoundPlayerParserALET.volume + "", 40, 0, 40, 9).setFloatOnly());
-        controls.add(new GuiCheckBox("local", "Play From Block", 0, 18, littleSoundPlayerParserALET.local).setCustomTooltip(
+        controls.add(new GuiTextfield("Volume", soundPlayerGui.volume + "", 40, 0, 40, 9).setFloatOnly());
+        controls.add(new GuiCheckBox("local", "Play From Block", 0, 18, soundPlayerGui.local).setCustomTooltip(
             "True: Play sound from the Structure", "False: Play globally to all players"));
     }
     
@@ -94,22 +93,22 @@ public class SubGuiSoundSettings extends SubGui {
                 Notes note = Notes.getNoteFromPitch(0);
                 playSound(new SoundEvent(new ResourceLocation(note.getResourceLocation(sound))));
                 
-                GuiComboBoxHeight[] comboBoxes = new GuiComboBoxHeight[littleSoundPlayerParserALET.channelSounds.length];
-                for (int i = 0; i < littleSoundPlayerParserALET.channelSounds.length; i++)
+                GuiComboBoxHeight[] comboBoxes = new GuiComboBoxHeight[soundPlayerGui.channelSounds.length];
+                for (int i = 0; i < soundPlayerGui.channelSounds.length; i++)
                     comboBoxes[i] = (GuiComboBoxHeight) get("sounds" + (i + 1));
                 
                 GuiTextfield volume = (GuiTextfield) get("volume");
                 
-                for (int i = 0; i < littleSoundPlayerParserALET.channelSounds.length; i++)
-                    littleSoundPlayerParserALET.channelSounds[i] = comboBoxes[i].getCaption();
+                for (int i = 0; i < soundPlayerGui.channelSounds.length; i++)
+                    soundPlayerGui.channelSounds[i] = comboBoxes[i].getCaption();
                 
-                littleSoundPlayerParserALET.volume = Integer.parseInt(volume.text);
-                littleSoundPlayerParserALET.updateTimeLine();
+                soundPlayerGui.volume = Integer.parseInt(volume.text);
+                soundPlayerGui.updateTimeLine();
             }
         }
         if (event.source.is("local")) {
             GuiCheckBox local = (GuiCheckBox) get("local");
-            littleSoundPlayerParserALET.local = local.value;
+            soundPlayerGui.local = local.value;
         }
         
         return super.raiseEvent(event);

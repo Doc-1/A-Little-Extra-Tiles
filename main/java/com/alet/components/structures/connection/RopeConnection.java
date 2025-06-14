@@ -8,7 +8,7 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import com.alet.components.entities.RopeData;
-import com.alet.components.structures.type.LittleRopeConnectionALET;
+import com.alet.components.structures.type.LittleRopeConnection;
 import com.creativemd.creativecore.common.utils.math.Rotation;
 import com.creativemd.creativecore.common.utils.math.RotationUtils;
 import com.creativemd.creativecore.common.utils.math.collision.MatrixUtils;
@@ -51,7 +51,7 @@ public class RopeConnection {
     private Vector3d targetCenter;
     public Vector3d backupTargetCenter;
     private Vector3d lastTargetCenter;
-    private LittleRopeConnectionALET targetStructure;
+    private LittleRopeConnection targetStructure;
     public final boolean IS_HEAD;
     
     public int targetStructureIndex;
@@ -173,12 +173,12 @@ public class RopeConnection {
         return !lastRelPos.equals(newRelPos) || !Objects.equal(lastWorldUUID, newWorldUUID);
     }
     
-    public LittleRopeConnectionALET getTarget() {
+    public LittleRopeConnection getTarget() {
         if (this.targetStructure == null)
             try {
                 LittleStructure tar = getStructure();
-                if (tar instanceof LittleRopeConnectionALET) {
-                    this.targetStructure = (LittleRopeConnectionALET) tar;
+                if (tar instanceof LittleRopeConnection) {
+                    this.targetStructure = (LittleRopeConnection) tar;
                 }
             } catch (CorruptedConnectionException | NotYetConnectedException e) {}
         return targetStructure;
@@ -235,8 +235,8 @@ public class RopeConnection {
             throw new NotYetConnectedException();
         for (IStructureTileList struct : te.structures()) {
             LittleStructure structure = struct.getStructure();
-            if (structure != null && structure instanceof LittleRopeConnectionALET) {
-                LittleRopeConnectionALET rope = (LittleRopeConnectionALET) structure;
+            if (structure != null && structure instanceof LittleRopeConnection) {
+                LittleRopeConnection rope = (LittleRopeConnection) structure;
                 if (rope.getIndex() == this.targetStructureIndex)
                     return rope;
             }
@@ -244,22 +244,22 @@ public class RopeConnection {
         throw new MissingStructureException(te.getPos());
     }
     
-    public LittleRopeConnectionALET scanAfterPlace() throws CorruptedConnectionException, NotYetConnectedException {
+    public LittleRopeConnection scanAfterPlace() throws CorruptedConnectionException, NotYetConnectedException {
         
         this.backupTargetCenter = null;
-        if (((LittleRopeConnectionALET) parent).prevBlockPosition == null)
+        if (((LittleRopeConnection) parent).prevBlockPosition == null)
             throw new MissingBlockException(null);
         BlockPos absoluteCoord = getStructurePosition();
         World world = getWorld();
         if (world == null)
             throw new MissingStructureException(absoluteCoord);
-        BlockPos original = unrotatedPos.add(((LittleRopeConnectionALET) parent).prevBlockPosition);
+        BlockPos original = unrotatedPos.add(((LittleRopeConnection) parent).prevBlockPosition);
         MutableBlockPos mPos = new MutableBlockPos();
         for (int x = absoluteCoord.getX() - 1; x <= absoluteCoord.getX() + 1; x++)
             for (int y = absoluteCoord.getY() - 1; y <= absoluteCoord.getY() + 1; y++)
                 for (int z = absoluteCoord.getZ() - 1; z <= absoluteCoord.getZ() + 1; z++) {
                     mPos.setPos(x, y, z);
-                    LittleRopeConnectionALET st = scanAfterPlaceBlock(world, mPos, original);
+                    LittleRopeConnection st = scanAfterPlaceBlock(world, mPos, original);
                     if (st != null) {
                         return st;
                     }
@@ -268,7 +268,7 @@ public class RopeConnection {
         throw new MissingStructureException(absoluteCoord);
     }
     
-    public LittleRopeConnectionALET scanAfterPlaceBlock(World world, BlockPos pos, BlockPos original) throws CorruptedConnectionException, NotYetConnectedException {
+    public LittleRopeConnection scanAfterPlaceBlock(World world, BlockPos pos, BlockPos original) throws CorruptedConnectionException, NotYetConnectedException {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         if (!WorldUtils.checkIfChunkExists(chunk))
             throw new NotYetConnectedException();
@@ -279,8 +279,8 @@ public class RopeConnection {
             TileEntityLittleTiles te = (TileEntityLittleTiles) t;
             for (IStructureTileList tile : te.structures()) {
                 LittleStructure s = tile.getStructure();
-                if (s instanceof LittleRopeConnectionALET) {
-                    LittleRopeConnectionALET rope = (LittleRopeConnectionALET) s;
+                if (s instanceof LittleRopeConnection) {
+                    LittleRopeConnection rope = (LittleRopeConnection) s;
                     if (rope.prevStructureIndex == targetStructureIndex && rope.prevBlockPosition.equals(original)) {
                         this.targetStructureIndex = rope.getIndex();
                         this.relativePos = rope.getPos().subtract(parent.getPos());

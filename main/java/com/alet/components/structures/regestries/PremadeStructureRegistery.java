@@ -1,4 +1,4 @@
-package com.alet.components.structures.regestries.premade;
+package com.alet.components.structures.regestries;
 
 import com.alet.ALET;
 import com.alet.components.structures.type.premade.LittleAdjustableFixedStructure;
