@@ -16,15 +16,16 @@ public class PacketIncrementalNBTSync extends CreativeCorePacket {
         // TODO Auto-generated constructor stub
     }
     
-    NBTTagCompound delta;
+    NBTTagCompound deltaModified;
+    NBTTagCompound deltaRemoved;
     
     public PacketIncrementalNBTSync(ItemStack stack, NBTTagCompound origin, NBTTagCompound change) {
         NBTTagCompound modified = change.copy();
         //delta = change.copy();
         parseNBT(origin, change, modified);
         //  stack.setTagCompound(modified);
-        delta = modified.copy();
-        System.out.println(delta);
+        deltaModified = modified.copy();
+        System.out.println(deltaModified);
     }
     
     private void parseNBT(NBTTagCompound origin, NBTTagCompound change, NBTTagCompound modified) {
@@ -75,12 +76,12 @@ public class PacketIncrementalNBTSync extends CreativeCorePacket {
     
     @Override
     public void writeBytes(ByteBuf buf) {
-        ByteBufUtils.writeTag(buf, delta);
+        ByteBufUtils.writeTag(buf, deltaModified);
     }
     
     @Override
     public void readBytes(ByteBuf buf) {
-        delta = ByteBufUtils.readTag(buf);
+        deltaModified = ByteBufUtils.readTag(buf);
         
     }
     
@@ -95,7 +96,7 @@ public class PacketIncrementalNBTSync extends CreativeCorePacket {
         ItemStack stack = player.getHeldItemMainhand();
         NBTTagCompound nbt = stack.getTagCompound() != null ? stack.getTagCompound().copy() : new NBTTagCompound();
         
-        mergeNBT(nbt, delta);
+        mergeNBT(nbt, deltaModified);
         System.out.println(nbt);
         stack.setTagCompound(nbt);
     }
@@ -104,37 +105,16 @@ public class PacketIncrementalNBTSync extends CreativeCorePacket {
         for (String key : toMerge.getKeySet()) {
             NBTBase merge = toMerge.getTag(key);
             
-            if (!target.hasKey(key)) {
-                // Clone the tag to avoid shared references
+            if (!target.hasKey(key))
                 target.setTag(key, merge.copy());
-            } else {
+            else {
                 NBTBase targetBase = target.getTag(key);
                 
-                // Handle nested compound
-                if (merge instanceof NBTTagCompound && targetBase instanceof NBTTagCompound) {
+                if (merge instanceof NBTTagCompound && targetBase instanceof NBTTagCompound)
                     mergeNBT((NBTTagCompound) targetBase, (NBTTagCompound) merge);
-                }
-                
-                // Handle list (merge by appending)
-                else if (merge instanceof NBTTagList && targetBase instanceof NBTTagList) {
-                    NBTTagList mergedList = new NBTTagList();
-                    NBTTagList baseList = (NBTTagList) merge;
-                    NBTTagList targetList = (NBTTagList) targetBase;
-                    
-                    for (int i = 0; i < targetList.tagCount(); i++) {
-                        mergedList.appendTag(targetList.get(i).copy());
-                    }
-                    for (int i = 0; i < baseList.tagCount(); i++) {
-                        mergedList.appendTag(baseList.get(i).copy());
-                    }
-                    
-                    target.setTag(key, mergedList);
-                }
-                
-                // Otherwise, override
-                else {
+                else
                     target.setTag(key, merge.copy());
-                }
+                
             }
         }
     }
