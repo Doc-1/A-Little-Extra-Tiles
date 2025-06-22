@@ -1,4 +1,4 @@
-package com.alet.common.placement.measurments.type;
+package com.alet.common.measurment.shape.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 
 import net.minecraft.item.ItemStack;
 
-public class LittleMeasurementPattern extends LittleMeasurementType {
+public class LittleMeasurementPattern extends LittleMeasurement {
     
     public LittleMeasurementPattern(String shapeName) {
         super(2, shapeName);

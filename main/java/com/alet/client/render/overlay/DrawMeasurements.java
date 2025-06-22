@@ -4,9 +4,7 @@ import javax.vecmath.Point3f;
 
 import org.lwjgl.util.Color;
 
-import com.alet.client.tool.shaper.MeasurementHandler;
-import com.alet.common.placement.measurments.type.LittleMeasurementBox;
-import com.alet.common.placement.measurments.type.LittleMeasurementType;
+import com.alet.common.measurment.shape.type.LittleMeasurementBox;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 
@@ -31,10 +29,10 @@ public class DrawMeasurements {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void renderShape(RenderWorldLastEvent event) {
-        EntityPlayer player = mc.player;
-        
-        MeasurementHandler.getTapeMeasures().forEach(tapeMeasure -> {
-            LittleMeasurementType measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
+        //EntityPlayer player = mc.player;
+        /*
+        MeasurementRecord.getAllMeasurements().forEach(tapeMeasure -> {
+            LittleMeasurement measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
             
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
@@ -62,7 +60,7 @@ public class DrawMeasurements {
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
             
-        });
+        });*/
         
     }
     

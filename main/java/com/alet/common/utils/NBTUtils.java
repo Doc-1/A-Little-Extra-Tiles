@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.common.util.Constants.NBT;
 
 public class NBTUtils {
     
@@ -37,8 +38,8 @@ public class NBTUtils {
         return list;
     }
     
-    public static double[] readDoubleArray(NBTTagCompound nbt, String key, int type) {
-        NBTTagList list = nbt.getTagList(key, type);
+    public static double[] readDoubleArray(NBTTagCompound nbt, String key) {
+        NBTTagList list = nbt.getTagList(key, NBT.TAG_DOUBLE);
         double[] array = new double[list.tagCount()];
         for (int i = 0; i < list.tagCount(); i++)
             array[i] = ((NBTTagDouble) list.get(i)).getDouble();

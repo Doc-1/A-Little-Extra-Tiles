@@ -1,4 +1,4 @@
-package com.alet.common.placement.measurments.type;
+package com.alet.common.measurment.shape.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,14 +6,14 @@ import java.util.List;
 
 import javax.vecmath.Point3f;
 
-import com.alet.common.placement.measurments.LittleMeasurementRegistry;
+import com.alet.common.measurment.shape.LittleMeasurementRegistry;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
 import net.minecraft.item.ItemStack;
 
-public class LittleMeasurementCompass extends LittleMeasurementType {
+public class LittleMeasurementCompass extends LittleMeasurement {
     
     public LittleMeasurementCompass(String name) {
         super(3, name);

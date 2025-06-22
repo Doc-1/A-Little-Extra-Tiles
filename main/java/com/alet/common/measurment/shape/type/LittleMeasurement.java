@@ -1,4 +1,4 @@
-package com.alet.common.placement.measurments.type;
+package com.alet.common.measurment.shape.type;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class LittleMeasurementType {
+public abstract class LittleMeasurement {
     
     protected int pointsNeeded;
     protected final String shapeName;
@@ -39,7 +39,7 @@ public abstract class LittleMeasurementType {
     protected LittleGridContext grid;
     protected HashMap<Integer, Point3f> points;
     
-    public LittleMeasurementType(int pointsNeeded, String shapeName) {
+    public LittleMeasurement(int pointsNeeded, String shapeName) {
         this.pointsNeeded = pointsNeeded;
         this.shapeName = shapeName;
         this.grid = LittleGridContext.get();
@@ -54,9 +54,8 @@ public abstract class LittleMeasurementType {
         data.setInteger("color", this.color);
         NBTTagCompound positions = new NBTTagCompound();
         points.forEach((x, p) -> {
-            NBTTagCompound pos = new NBTTagCompound();
-            pos.setTag("pos", NBTUtils.writeDoubleArrayFrom(p.x, p.y, p.z));
-            positions.setTag(x + "", pos);
+            positions.setTag(x + "", NBTUtils.writeDoubleArrayFrom(p.x, p.y, p.z));
+            
         });
         data.setTag("positions", positions);
         return data;
@@ -66,7 +65,17 @@ public abstract class LittleMeasurementType {
         this.setGrid(nbt.getInteger("context"));
         this.setColor(nbt.getInteger("color"));
         NBTTagCompound positions = nbt.getCompoundTag("positions");
-        positions.getSize();
+        
+        positions.getKeySet().forEach(x -> {
+            double[] arr = NBTUtils.readDoubleArray(positions, x);
+            points.put(Integer.parseInt(x), new Point3f((float) arr[0], (float) arr[1], (float) arr[2]));
+        });
+        
+    }
+    
+    public static LittleMeasurement createFrom(NBTTagCompound nbt) {
+        
+        return null;
     }
     
     public int getColor() {
@@ -419,7 +428,7 @@ public abstract class LittleMeasurementType {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         
         int i = fontRenderer.getStringWidth(text);
-        Point3f midPoint = LittleMeasurementType.getMidPoint(startPoint, endPoint);
+        Point3f midPoint = LittleMeasurement.getMidPoint(startPoint, endPoint);
         
         Vec3d vecEye = player.getPositionEyes(Minecraft.getMinecraft().getRenderPartialTicks());
         

@@ -1,4 +1,4 @@
-package com.alet.common.placement.measurments.type;
+package com.alet.common.measurment.shape.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 
 import net.minecraft.item.ItemStack;
 
-public class LittleMeasurementLine extends LittleMeasurementType {
+public class LittleMeasurementLine extends LittleMeasurement {
     
     public LittleMeasurementLine(String name) {
         super(2, name);

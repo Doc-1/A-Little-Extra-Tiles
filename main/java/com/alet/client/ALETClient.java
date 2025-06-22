@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 
 import com.alet.client.events.ALETEventHandler;
-import com.alet.client.events.ALETTapeMeasureEventHandler;
 import com.alet.client.render.overlay.DrawMeasurements;
 import com.alet.common.placement.shape.type.LittleShapeCenteredBox;
 import com.alet.common.placement.shape.type.LittleShapeCenteredCylinder;
@@ -80,7 +79,6 @@ public class ALETClient extends LittleTilesServer {
         MinecraftForge.EVENT_BUS.register(new DrawMeasurements());
         //MinecraftForge.EVENT_BUS.register(new TapeMeasureKeyEventHandler());
         MinecraftForge.EVENT_BUS.register(new ALETEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ALETTapeMeasureEventHandler());
         
         // LittleTilesClient.overlay.add(new OverlayControl(new GuiAxisIndicatorAletControl("axis"), OverlayPositionType.CENTER)
         //       .setShouldRender(() -> TapeRenderer.slotID != -1));

@@ -1,12 +1,5 @@
-package com.alet.common.placement.measurments.type;
+package com.alet.common.measurment.shape.type;
 
-import com.creativemd.littletiles.common.item.ItemMultiTiles;
-import com.creativemd.littletiles.common.util.grid.LittleGridContext;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 
 public class Circle {
@@ -17,6 +10,7 @@ public class Circle {
     }
     
     public static void drawCircle(Vec3d pos, Vec3d pos2, float red, float green, float blue, float alpha) {
+        /*
         EntityPlayer player = Minecraft.getMinecraft().player;
         LittleGridContext context = LittleGridContext.get(ItemMultiTiles.currentContext.size);
         //radius = context.toVanillaGrid(radius);

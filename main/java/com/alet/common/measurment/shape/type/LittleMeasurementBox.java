@@ -1,4 +1,4 @@
-package com.alet.common.placement.measurments.type;
+package com.alet.common.measurment.shape.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
-public class LittleMeasurementBox extends LittleMeasurementType {
+public class LittleMeasurementBox extends LittleMeasurement {
     
     public LittleMeasurementBox(String name) {
         super(2, name);

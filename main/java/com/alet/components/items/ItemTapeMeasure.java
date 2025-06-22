@@ -1,14 +1,17 @@
 package com.alet.components.items;
 
+import java.util.Set;
+import java.util.UUID;
+
 import javax.vecmath.Point3f;
 
 import com.alet.client.ALETClient;
 import com.alet.client.render.overlay.DrawMeasurements;
-import com.alet.client.tool.shaper.MeasurementHandler;
-import com.alet.client.tool.shaper.MeasurementHandler.Measurements;
 import com.alet.common.gui.tool.SubGuiTapeMeasure;
-import com.alet.common.packets.PacketUpdateNBT;
-import com.alet.common.placement.measurments.type.LittleMeasurementType;
+import com.alet.common.measurment.shape.LittleMeasurementRegistry;
+import com.alet.common.measurment.shape.type.LittleMeasurement;
+import com.alet.common.packets.tool.tapemeasure.PacketIncrementalNBTSync;
+import com.alet.common.packets.tool.tapemeasure.PacketUpdateNBT;
 import com.alet.common.utils.StructureUtils;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.Rotation;
@@ -17,10 +20,9 @@ import com.creativemd.littletiles.LittleTiles;
 import com.creativemd.littletiles.client.LittleTilesClient;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.action.LittleAction;
-import com.creativemd.littletiles.common.api.ILittlePlacer;
+import com.creativemd.littletiles.common.api.ILittleTool;
 import com.creativemd.littletiles.common.container.SubContainerConfigure;
 import com.creativemd.littletiles.common.tile.math.vec.LittleAbsoluteVec;
-import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.creativemd.littletiles.common.util.place.IMarkMode;
 import com.creativemd.littletiles.common.util.place.MarkMode;
@@ -34,14 +36,16 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip {
+public class ItemTapeMeasure extends Item implements ILittleTool, IItemTooltip {
     
     public static int measurementType = 0;
     
@@ -79,43 +83,88 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     }
     
     @Override
-    public boolean onRightClick(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
-        return onBlockInteract(world, plr, stack, position, result, true);
+    public boolean onRightClick(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
+        return onBlockInteract(world, player, stack, position, result, true);
     }
     
     @Override
-    public boolean onClickBlock(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult result) {
-        return onBlockInteract(world, plr, stack, position, result, false);
+    public boolean onClickBlock(World world, EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
+        return onBlockInteract(world, player, stack, position, result, false);
+    }
+    
+    /** @param stack
+     *            Only provide this with the Player's main held item stack */
+    public static void initNBTData(ItemStack stack) {
+        NBTTagCompound nbt = stack.getTagCompound() != null ? stack.getTagCompound() : new NBTTagCompound();
+        
+        if (!nbt.hasUniqueId("UUID"))
+            nbt.setUniqueId("UUID", UUID.randomUUID());
+        
+        if (!nbt.hasKey("index"))
+            nbt.setInteger("index", 0);
+        
+        stack.setTagCompound(nbt);
     }
     
     public boolean onBlockInteract(World world, EntityPlayer plr, ItemStack stack, PlacementPosition position, RayTraceResult r, boolean rightClick) {
-        Measurements tapeMeasure = MeasurementHandler.getOrCreateTapeMeasure(stack);
-        LittleMeasurementType measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
+        initNBTData(stack);
+        
+        NBTTagCompound origin = stack.getTagCompound();
+        int originIndex = origin.getInteger("index");
+        NBTTagCompound originMeasurements = origin.hasKey("measurements") ? origin.getCompoundTag(
+            "measurements") : new NBTTagCompound();
+        NBTTagCompound originMeasurement = originMeasurements.hasKey(originIndex + "") ? originMeasurements.getCompoundTag(
+            originIndex + "") : new NBTTagCompound();
+        String originMeasurementShape = originMeasurement.hasKey("shape") ? originMeasurement.getString("shape") : "Box";
+        LittleMeasurement measurement = LittleMeasurementRegistry.getMeasurementShape(originMeasurementShape);
+        
+        measurement.deserialize(originMeasurement);
+        measurement.setColor(ColorUtils.MAGENTA);
+        measurement.setGrid(4);
         LittleGridContext context = measurement.getGrid();
         int contextSize = context.size;
         RayTraceResult res = plr.rayTrace(6.0, Minecraft.getMinecraft().getRenderPartialTicks());
         LittleAbsoluteVec absRes = new LittleAbsoluteVec(res, context);
-        measurement.setColor(ColorUtils.MAGENTA);
         if (LittleAction.isUsingSecondMode(plr))
             position.facing = position.facing.getOpposite();
         
         Point3f result = StructureUtils.facingOffset(absRes.getPosX(), absRes.getPosY(), absRes.getPosZ(), contextSize,
             position.facing);
+        
         int pointIndex = rightClick ? 1 : 0;
         if (GuiScreen.isCtrlKeyDown())
             pointIndex += 2;
         measurement.setPoint(pointIndex, result);
-        stack.setTagCompound(MeasurementHandler.serialize(stack));
-        //PacketHandler.sendPacketToServer(new PacketUpdateNBT(stack));
+        
+        NBTTagCompound change = origin.copy();
+        NBTTagCompound measurements = new NBTTagCompound();
+        measurements.setTag("0", measurement.serialize());
+        change.setTag("measurements", measurements);
+        //stack.setTagCompound(change);
+        System.out.println(change);
+        PacketHandler.sendPacketToServer(new PacketIncrementalNBTSync(stack, origin, change));
+        
         return false;
         
+    }
+    
+    public static void mergeChanged(NBTTagCompound target, NBTTagCompound incoming) {
+        Set<String> keys = incoming.getKeySet();
+        
+        for (String key : keys) {
+            NBTBase newValue = incoming.getTag(key);
+            NBTBase oldValue = target.getTag(key);
+            
+            if (!newValue.equals(oldValue)) {
+                target.setTag(key, newValue.copy()); // Apply only if changed
+            }
+        }
     }
     
     @Override
     public void tick(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result) {
         
-        Measurements tapeMeasure = MeasurementHandler.getOrCreateTapeMeasure(stack);
-        LittleMeasurementType measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
+        LittleMeasurement measurement = LittleMeasurementRegistry.getMeasurementShape("Box");
         LittleGridContext context = measurement.getGrid();
         LittleAbsoluteVec pos = new LittleAbsoluteVec(result, context);
         if (LittleAction.isUsingSecondMode(player))
@@ -124,6 +173,7 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
             result.sideHit);
         
         DrawMeasurements.renderCursor(posEdit, measurement.getColor(), context);
+        
         //   if (ALETClient.clearMeasurment.isPressed())
         //  clear(stack, index, player);
     }
@@ -179,29 +229,6 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     }
     
     @Override
-    public boolean hasLittlePreview(ItemStack stack) {
-        return true;
-    }
-    
-    @Override
-    public LittlePreviews getLittlePreview(ItemStack stack) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public void saveLittlePreview(ItemStack stack, LittlePreviews previews) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
-    public boolean containsIngredients(ItemStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
     public Object[] tooltipData(ItemStack stack) {
         return new Object[] { LittleTilesClient.configure.getDisplayName(), LittleTilesClient.up
                 .getDisplayName(), LittleTilesClient.down.getDisplayName(), ALETClient.clearMeasurment.getDisplayName() };
@@ -211,6 +238,12 @@ public class ItemTapeMeasure extends Item implements ILittlePlacer, IItemTooltip
     @SideOnly(Side.CLIENT)
     public IMarkMode onMark(EntityPlayer player, ItemStack stack, PlacementPosition position, RayTraceResult result, PlacementPreview previews) {
         return new MarkMode(player, position, previews);
+    }
+    
+    @Override
+    public void flip(EntityPlayer player, ItemStack stack, Axis axis, boolean client) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

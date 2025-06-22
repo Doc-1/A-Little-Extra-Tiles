@@ -1,32 +1,18 @@
 package com.alet.common.gui.tool;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.lwjgl.util.Color;
-
-import com.alet.ALETConfig;
-import com.alet.client.tool.shaper.MeasurementHandler;
-import com.alet.client.tool.shaper.MeasurementHandler.Measurements;
 import com.alet.common.gui.controls.GuiColorPickerAlet;
 import com.alet.common.gui.controls.GuiColorablePanel;
 import com.alet.common.gui.controls.GuiColoredSteppedSliderAlet;
-import com.alet.common.placement.measurments.LittleMeasurementRegistry;
-import com.alet.common.placement.measurments.type.LittleMeasurementType;
+import com.alet.common.measurment.shape.LittleMeasurementRegistry;
+import com.alet.common.measurment.shape.type.LittleMeasurement;
 import com.alet.common.utils.ColorUtilsAlet;
-import com.alet.components.items.ItemTapeMeasure;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBox;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiComboBoxExtension;
-import com.creativemd.creativecore.common.gui.controls.gui.GuiScrollBox;
 import com.creativemd.creativecore.common.gui.event.gui.GuiControlChangedEvent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.creativemd.littletiles.client.gui.configure.SubGuiConfigure;
 import com.creativemd.littletiles.common.item.ItemMultiTiles;
-import com.creativemd.littletiles.common.util.grid.LittleGridContext;
 import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -43,8 +29,8 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
     }
     
     public void saveConfiguration(int index) {
-        Measurements tapeMeasure = MeasurementHandler.getOrCreateTapeMeasure(stack);
-        
+        //Measurements tapeMeasure = MeasurementRecord.getOrCreateTapeMeasure(stack);
+        /*
         int context = ((GuiComboBox) this.get("context")).index;
         String shape = ((GuiComboBox) this.get("shape")).getCaption();
         GuiColorPickerAlet colorPicker = (GuiColorPickerAlet) this.get("picker");
@@ -60,17 +46,19 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         
         int color = ColorUtilsAlet.RGBAToInt(r, g, b, 0);
         
-        LittleMeasurementType measurement = tapeMeasure.getOrCreateMeasurement(index, shape);
+        LittleMeasurement measurement = tapeMeasure.getOrCreateMeasurement(index, shape);
         measurement.setColor(color);
         measurement.setGrid(context);
+        */
     }
     
     @Override
     public void createControls() {
+        /*
         List<String> contextNames = LittleGridContext.getNames();
         
-        Measurements tapeMeasure = MeasurementHandler.getOrCreateTapeMeasure(stack);
-        LittleMeasurementType measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
+        Measurements tapeMeasure = MeasurementRecord.getOrCreateTapeMeasure(stack);
+        LittleMeasurement measurement = tapeMeasure.getOrCreateMeasurement(tapeMeasure.index);
         LittleGridContext contextSize = measurement.getGrid();
         int colorInt = measurement.getColor();
         String shape = measurement.getKey();
@@ -116,7 +104,7 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
                             settings.controls = new ArrayList<>();
                             flag = true;
                         }
-                        LittleMeasurementType shape = LittleMeasurementRegistry.getMeasurementShape(shapeBox.getCaption());
+                        LittleMeasurement shape = LittleMeasurementRegistry.getMeasurementShape(shapeBox.getCaption());
                         shape.customSettingsUpdateControl(stack, flag).forEach(x -> {
                             settings.addControl(x);
                         });
@@ -160,16 +148,17 @@ public class SubGuiTapeMeasure extends SubGuiConfigure {
         
         GuiScrollBox settings = new GuiScrollBox("settings", 0, 102, 135, 92);
         controls.add(settings);
-        LittleMeasurementType s = LittleMeasurementRegistry.getMeasurementShape(shapeBox.getCaption());
+        LittleMeasurement s = LittleMeasurementRegistry.getMeasurementShape(shapeBox.getCaption());
         s.getCustomSettings(stack).forEach(x -> {
             settings.addControl(x);
         });
+        */
     }
     
     @CustomEventSubscribe
     public void onControlChanged(GuiControlChangedEvent event) {
         GuiComboBox shapeBox = (GuiComboBox) this.get("shape");
-        LittleMeasurementType shape = LittleMeasurementRegistry.getMeasurementShape(shapeBox.getCaption());
+        LittleMeasurement shape = LittleMeasurementRegistry.getMeasurementShape(shapeBox.getCaption());
         if (shape.customSettingsChangedEvent(event, stack))
             saveConfiguration();
     }

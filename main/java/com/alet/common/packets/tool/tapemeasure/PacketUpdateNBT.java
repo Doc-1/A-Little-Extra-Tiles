@@ -1,4 +1,4 @@
-package com.alet.common.packets;
+package com.alet.common.packets.tool.tapemeasure;
 
 import com.alet.ALET;
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;

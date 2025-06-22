@@ -1,13 +1,13 @@
-package com.alet.common.packets;
+package com.alet.common.packets.tool.tapemeasure;
 
 import com.creativemd.creativecore.common.packet.CreativeCorePacket;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketAddTapeMeasureToClient extends CreativeCorePacket {
+public class PacketRecordMeasurements extends CreativeCorePacket {
     
-    public PacketAddTapeMeasureToClient() {
+    public PacketRecordMeasurements() {
         // TODO Auto-generated constructor stub
     }
     
@@ -31,7 +31,6 @@ public class PacketAddTapeMeasureToClient extends CreativeCorePacket {
     
     @Override
     public void executeServer(EntityPlayer player) {
-        // TODO Auto-generated method stub
         
     }
     

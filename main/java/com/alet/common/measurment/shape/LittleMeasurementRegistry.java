@@ -1,19 +1,19 @@
-package com.alet.common.placement.measurments;
+package com.alet.common.measurment.shape;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-import com.alet.common.placement.measurments.type.LittleMeasurementBox;
-import com.alet.common.placement.measurments.type.LittleMeasurementCompass;
-import com.alet.common.placement.measurments.type.LittleMeasurementLine;
-import com.alet.common.placement.measurments.type.LittleMeasurementPattern;
-import com.alet.common.placement.measurments.type.LittleMeasurementType;
+import com.alet.common.measurment.shape.type.LittleMeasurement;
+import com.alet.common.measurment.shape.type.LittleMeasurementBox;
+import com.alet.common.measurment.shape.type.LittleMeasurementCompass;
+import com.alet.common.measurment.shape.type.LittleMeasurementLine;
+import com.alet.common.measurment.shape.type.LittleMeasurementPattern;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 public class LittleMeasurementRegistry {
-    private static LinkedHashMap<String, Class<? extends LittleMeasurementType>> registeredShapes = new LinkedHashMap<>();
+    private static LinkedHashMap<String, Class<? extends LittleMeasurement>> registeredShapes = new LinkedHashMap<>();
     
     static {
         try {
@@ -26,17 +26,17 @@ public class LittleMeasurementRegistry {
         }
     }
     
-    public static void registerLittleMeasurement(String name, Class<? extends LittleMeasurementType> shapeClass) throws Exception {
+    public static void registerLittleMeasurement(String name, Class<? extends LittleMeasurement> shapeClass) throws Exception {
         if (!registeredShapes.containsKey(name)) {
             registeredShapes.put(name, shapeClass);
         } else
             throw new Exception(name + " already exists");
     }
     
-    public static LittleMeasurementType createMeasurementShape(NBTTagCompound dataNBT) {
+    public static LittleMeasurement createMeasurementShape(NBTTagCompound dataNBT) {
         try {
             String name = dataNBT.getString("name");
-            LittleMeasurementType measurementShape = registeredShapes.get(name).getDeclaredConstructor(String.class).newInstance(
+            LittleMeasurement measurementShape = registeredShapes.get(name).getDeclaredConstructor(String.class).newInstance(
                 name);
             measurementShape.deserialize(dataNBT);
             return measurementShape;
@@ -47,7 +47,7 @@ public class LittleMeasurementRegistry {
         
     }
     
-    public static LittleMeasurementType getMeasurementShape(String measurementShapeName) {
+    public static LittleMeasurement getMeasurementShape(String measurementShapeName) {
         try {
             return registeredShapes.get(measurementShapeName).getDeclaredConstructor(String.class).newInstance(
                 measurementShapeName);
