@@ -33,6 +33,7 @@ import com.alet.common.gui.structure.premade.SubGuiPhotoImport;
 import com.alet.common.gui.structure.premade.SubGuiTypeWriter;
 import com.alet.common.gui.structure.premade.filling_cabinet.SubGuiFillingCabinet;
 import com.alet.common.gui.tool.SubGuiManual;
+import com.alet.common.measurment.management.LittleMeasurementsList;
 import com.alet.common.packets.PacketRegistery;
 import com.alet.components.blocks.BasicBlock;
 import com.alet.components.blocks.TransparentBlock;
@@ -78,6 +79,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -374,6 +376,8 @@ public class ALET {
     
     @EventHandler
     public void Init(FMLInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(LittleMeasurementsList.class);
+        
         CreativeConfigRegistry.ROOT.registerValue(MODID, CONFIG = new ALETConfig());
         PacketRegistery.registerPackets();
         SoundsRegister.registerSounds();
