@@ -6,7 +6,9 @@ import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.gui.container.SubGui;
+import com.creativemd.creativecore.common.utils.mc.ColorUtils;
 import com.docvin.alet.components.gui.controls.hierarchy.GuiHierarchyBaseItem;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.function.BiConsumer;
 
@@ -48,4 +50,31 @@ public class GuiTreeNode extends GuiHierarchyBaseItem {
             this.style = DISPLAY;
     }
 
+    @Override
+    protected void renderContent(GuiRenderHelper helper, Style style, int x, int y) {
+        super.renderContent(helper, style, x, y);
+        int color = ColorUtils.WHITE;
+        if (this.getHierarchyPosition().isContainer()) {
+            GlStateManager.pushMatrix();
+            color = (color & 16579836) >> 2 | color & -16777216;
+            GlStateManager.translate(4, 2, 0);
+            if (this.isOpened()) {
+                GlStateManager.translate(6, 3, 0);
+                GlStateManager.rotate(90, 0, 0, 1);
+            }
+            for (int f = 0; f < 4; f++) {
+                helper.drawRect(f, f + 1, f + 1, f + 2, color);
+                helper.drawRect(f, 7 - f, f + 1, 8 - f, color);
+            }
+            if (this.isOpened()) {
+                GlStateManager.translate(-1, 1, 0);
+            }
+            color = ColorUtils.WHITE;
+            for (int f = 0; f < 4; f++) {
+                helper.drawRect(f, f, f + 1, f + 1, color);
+                helper.drawRect(f, 6 - f, f + 1, 7 - f, color);
+            }
+            GlStateManager.popMatrix();
+        }
+    }
 }

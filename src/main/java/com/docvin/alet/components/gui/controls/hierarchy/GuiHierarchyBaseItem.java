@@ -18,9 +18,10 @@ public abstract class GuiHierarchyBaseItem extends GuiControl {
     @NotNull
     private final BiConsumer<SubGui, GuiControl> action;
     @Nullable
-    protected GuiHierarchyBaseItem parent;
+    protected GuiHierarchyBaseItem container;
     protected List<GuiHierarchyBaseItem> items = new ArrayList<>();
     boolean isSelected = false;
+    boolean isOpened = false;
     private String title;
     private GuiHierarchyBaseMenu menu;
 
@@ -30,8 +31,28 @@ public abstract class GuiHierarchyBaseItem extends GuiControl {
         this.setTitle(title);
     }
 
+    public List<GuiHierarchyBaseItem> getItems() {
+        return items;
+    }
+
+    public List<GuiHierarchyBaseItem> getNestedItems() {
+        if (this.items != null)
+            return getNestedItems(new ArrayList<>(), this.items);
+        return new ArrayList<>();
+    }
+
+    private List<GuiHierarchyBaseItem> getNestedItems(ArrayList<GuiHierarchyBaseItem> nestedItems, List<GuiHierarchyBaseItem> items) {
+        if (this.items != null) {
+            nestedItems.addAll(items);
+            for (GuiHierarchyBaseItem item : items) {
+                this.getNestedItems(nestedItems, item.items);
+            }
+        }
+        return nestedItems;
+    }
+
     public HierarchyPosition getHierarchyPosition() {
-        if (parent != null) {
+        if (container != null) {
             if (this.items.isEmpty())
                 return HierarchyPosition.ITEM;
             else
@@ -44,10 +65,36 @@ public abstract class GuiHierarchyBaseItem extends GuiControl {
         }
     }
 
+    public int getContainerCount() {
+        return getContainerNesting().size();
+    }
+
+    private List<GuiHierarchyBaseItem> getContainerNesting() {
+        if (this.container != null)
+            return getContainerNesting(new ArrayList<>(), this.container);
+        return new ArrayList<>();
+    }
+
+    private List<GuiHierarchyBaseItem> getContainerNesting(ArrayList<GuiHierarchyBaseItem> nestedContainers, GuiHierarchyBaseItem container) {
+        if (container != null) {
+            nestedContainers.add(container);
+            getContainerNesting(nestedContainers, container.container);
+        }
+        return nestedContainers;
+    }
+
     public GuiHierarchyBaseItem addItem(@NotNull GuiHierarchyBaseItem item) {
         item.menu = this.menu;
-        this.items.add(item.setParent(this));
+        this.items.add(item.setContainer(this));
         return this;
+    }
+
+    public boolean isOpened() {
+        return this.isOpened;
+    }
+
+    public void setOpenedState(boolean opened) {
+        isOpened = opened;
     }
 
     public boolean isSelected() {
@@ -62,9 +109,16 @@ public abstract class GuiHierarchyBaseItem extends GuiControl {
     public void mouseReleased(int x, int y, int button) {
         if (button == 0 && this.isMouseOver(x, y)) {
             setSelected(!this.isSelected);
-            this.getMenu().onNodeSelected(this);
+            if (this.isSelected())
+                this.getMenu().onNodeSelected(this);
             if (this.getHierarchyPosition().isContainer())
-                this.menu.onNodeOpened(this);
+                if (!this.isOpened) {
+                    this.isOpened = true;
+                    this.menu.onNodeOpened(this);
+                } else {
+                    this.isOpened = false;
+                    this.menu.onNodeClosed(this);
+                }
             action.accept(this.getGui(), this);
         }
     }
@@ -77,8 +131,8 @@ public abstract class GuiHierarchyBaseItem extends GuiControl {
         this.menu = guiHierarchyBaseMenu;
     }
 
-    protected GuiHierarchyBaseItem setParent(GuiHierarchyBaseItem parent) {
-        this.parent = parent;
+    protected GuiHierarchyBaseItem setContainer(GuiHierarchyBaseItem container) {
+        this.container = container;
         return this;
     }
 
@@ -102,28 +156,5 @@ public abstract class GuiHierarchyBaseItem extends GuiControl {
         GlStateManager.translate(10, 0, 0);
         helper.drawStringWithShadow(this.getTitle(), helper.getStringWidth(this.getTitle()), this.height, color);
         GlStateManager.popMatrix();
-
-        if (this.getHierarchyPosition().isContainer()) {
-            GlStateManager.pushMatrix();
-            color = (color & 16579836) >> 2 | color & -16777216;
-            GlStateManager.translate(4, 2, 0);
-            if (this.isSelected) {
-                GlStateManager.translate(6, 3, 0);
-                GlStateManager.rotate(90, 0, 0, 1);
-            }
-            for (int f = 0; f < 4; f++) {
-                helper.drawRect(f, f + 1, f + 1, f + 2, color);
-                helper.drawRect(f, 7 - f, f + 1, 8 - f, color);
-            }
-            if (this.isSelected) {
-                GlStateManager.translate(-1, 1, 0);
-            }
-            color = ColorUtils.WHITE;
-            for (int f = 0; f < 4; f++) {
-                helper.drawRect(f, f, f + 1, f + 1, color);
-                helper.drawRect(f, 6 - f, f + 1, 7 - f, color);
-            }
-            GlStateManager.popMatrix();
-        }
     }
 }

@@ -13,7 +13,15 @@ public class SubGuiManual extends SubGui {
         tree.addItem(new GuiTreeNode("", "Opening", (subGui, guiControl) -> {
         }));
         tree.addItem(new GuiTreeNode("", "Closing", (subGui, guiControl) -> {
-        }).addItem(new GuiTreeNode("", "Testing", (subGui, guiControl) -> {
+        }).addItem(new GuiTreeNode("", "Testing1", (subGui, guiControl) -> {
+        })).addItem(new GuiTreeNode("", "Testing2", (subGui, guiControl) -> {
+                }).addItem(new GuiTreeNode("", "Testing5", (subGui, guiControl) -> {
+                })).addItem(new GuiTreeNode("", "Testing6", (subGui, guiControl) -> {
+                }))
+        ).addItem(new GuiTreeNode("", "Testing3", (subGui, guiControl) -> {
+        })).addItem(new GuiTreeNode("", "Testing4", (subGui, guiControl) -> {
         })));
+        tree.addItem(new GuiTreeNode("", "Another one", (subGui, guiControl) -> {
+        }));
     }
 }

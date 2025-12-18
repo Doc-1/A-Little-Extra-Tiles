@@ -12,22 +12,18 @@ public class GuiHierarchyBaseMenu extends GuiScrollBox {
 
 
     public void addItem(GuiHierarchyBaseItem baseItem) {
-        int count = this.getControls().size();
-        int offset = 14;
-        if (count > 0)
-            baseItem.posY += offset;
         baseItem.setMenu(this);
-        this.addControl(baseItem);
+        updateControl(baseItem, controls.size());
+        controls.add(baseItem);
     }
 
     @Override
     public void addControl(GuiControl control) {
-        if (control instanceof GuiHierarchyBaseItem) {
-            super.addControl(control);
-        }
+        if (control instanceof GuiHierarchyBaseItem)
+            addItem((GuiHierarchyBaseItem) control);
     }
 
-    private void deselectAllItems(GuiHierarchyBaseItem excludedItem) {
+    public void deselectAllItems(GuiHierarchyBaseItem excludedItem) {
         for (Object control : this.getControls())
             if (control instanceof GuiHierarchyBaseItem && control != excludedItem) {
                 GuiHierarchyBaseItem item = (GuiHierarchyBaseItem) control;
@@ -35,8 +31,6 @@ public class GuiHierarchyBaseMenu extends GuiScrollBox {
                 if (item.getHierarchyPosition().isContainer())
                     deselectAllItems(excludedItem, item);
             }
-
-
     }
 
     private void deselectAllItems(GuiHierarchyBaseItem excludedItem, GuiHierarchyBaseItem item) {
@@ -49,14 +43,13 @@ public class GuiHierarchyBaseMenu extends GuiScrollBox {
         }
     }
 
+
+    public void onNodeClosed(GuiHierarchyBaseItem baseItem) {
+    }
+
     public void onNodeOpened(GuiHierarchyBaseItem baseItem) {
-        for (GuiHierarchyBaseItem item : baseItem.items) {
-            System.out.println(item);
-        }
     }
 
     public void onNodeSelected(GuiHierarchyBaseItem baseItem) {
-        deselectAllItems(baseItem);
-        System.out.println(baseItem);
     }
 }
