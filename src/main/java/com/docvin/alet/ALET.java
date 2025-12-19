@@ -1,14 +1,17 @@
 package com.docvin.alet;
 
+import com.ALETConfig;
+import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
 import com.creativemd.littletiles.LittleTiles;
 import com.docvin.alet.client.eventhandler.SubGuiEventHandler;
-import com.docvin.alet.common.gui.override.SubGuiBluePrintOverride;
+import com.docvin.alet.common.gui.override.OverrideBluePrintGui;
 import com.docvin.alet.common.registries.ALETGuis;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +25,7 @@ public class ALET {
     @Mod.Instance
     public static ALET instance;
 
+    public static ALETConfig CONFIG;
     public static CreativeTabs littleCircuitTab = new CreativeTabs("alet") {
 
         @Override
@@ -36,6 +40,11 @@ public class ALET {
         }
     }.setBackgroundImageName("item_search.png");
 
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+
+        CreativeConfigRegistry.ROOT.registerValue(Tags.MOD_ID, CONFIG = new ALETConfig());
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -46,7 +55,7 @@ public class ALET {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        new SubGuiBluePrintOverride();
+        new OverrideBluePrintGui();
 
     }
 

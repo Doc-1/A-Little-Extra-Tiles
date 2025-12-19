@@ -2,7 +2,7 @@ package com.docvin.alet.client.eventhandler;
 
 import com.creativemd.creativecore.common.gui.container.SubGui;
 import com.creativemd.creativecore.common.gui.mc.ContainerSub;
-import com.docvin.alet.common.gui.override.SubGuiOverride;
+import com.docvin.alet.common.gui.override.OverrideSubGui;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -44,7 +44,7 @@ public class SubGuiEventHandler {
 
     @SubscribeEvent
     public void openedGui(SubGuiEvent.OnGuiOpenedEvent event) {
-        SubGuiOverride.overrideGui(event.getGui());
+        OverrideSubGui.overrideGui(event.getGui());
     }
 
     @SubscribeEvent
@@ -53,6 +53,6 @@ public class SubGuiEventHandler {
 
     @SubscribeEvent
     public void changedGui(SubGuiEvent.GuiChangedToEvent event) {
-        SubGuiOverride.overrideGui(event.getChangedToGui());
+        OverrideSubGui.overrideGui(event.getChangedToGui());
     }
 }
