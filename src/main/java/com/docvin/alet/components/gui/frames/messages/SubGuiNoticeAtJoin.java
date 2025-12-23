@@ -83,7 +83,7 @@ public class SubGuiNoticeAtJoin extends SubGui {
                 ALETConfig.client.showAgain = false;
                 ICreativeConfigHolder holder = CreativeConfigRegistry.ROOT;
                 ArrayList<String> list = new ArrayList<String>();
-                list.add("alet");
+                list.add("assets/alet");
                 list.add("client");
                 list.add("showAgain");
                 findConfigValue(holder, list);

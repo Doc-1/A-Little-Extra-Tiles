@@ -128,7 +128,7 @@ public enum Notes {
                 return n;
             }
         }
-        return null;
+        return F4;
     }
 
     public static Notes getNoteFromPos(int pos) {
@@ -146,7 +146,7 @@ public enum Notes {
                 return n;
             }
         }
-        return null;
+        return F4;
     }
 
     public static List<String> allNotes() {

@@ -58,7 +58,7 @@ public class LittleMusicComposerGui extends LittleStructureGuiParser {
     public int tempo = 120;
     public boolean changeTempo = false;
     @SideOnly(Side.CLIENT)
-    private KeyControl selected;
+    private KeyControl<Double> selected;
 
     public LittleMusicComposerGui(GuiParent parent, AnimationGuiHandler handler) {
         super(parent, handler);
@@ -71,6 +71,7 @@ public class LittleMusicComposerGui extends LittleStructureGuiParser {
         parent.controls.add(new GuiSignalEventsButton("signal", 0, 191, previews, structure, getStructureType()));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected void createControls(LittlePreviews previews, LittleStructure structure) {
         LittleMusicComposer soundPlayer = structure instanceof LittleMusicComposer ? (LittleMusicComposer) structure : null;
@@ -92,9 +93,9 @@ public class LittleMusicComposerGui extends LittleStructureGuiParser {
             tempo = soundPlayer.tempo;
             changeTempo = soundPlayer.changeTempo;
         }
-        GuiScrollBox box = new GuiScrollBox("scroll_box", 0, 0, 200, 150);
+        GuiScrollBox box = new GuiScrollBox("scroll_box", 0, 0, 338, 150);
         box.addControl(
-                new GuiTimeline("timeline", 0, 0, 192, 187, soundPlayer != null ? soundPlayer.duration : 100, channels, handler)
+                new GuiTimeline("timeline", 0, 0, 330, 187, soundPlayer != null ? soundPlayer.duration : 100, channels, handler)
                         .setSidebarWidth(25));
         parent.controls.add(box);
         //parent.controls.add(new GuiTextfield("keyValue", "", 158, 0, 35, 10).setFloatOnly().setEnabled(false).setCustomTooltip("Pitch"));
@@ -121,7 +122,7 @@ public class LittleMusicComposerGui extends LittleStructureGuiParser {
                     return;
                 try {
                     input.text = path;
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -160,14 +161,15 @@ public class LittleMusicComposerGui extends LittleStructureGuiParser {
         updateTimeLine();
     }
 
+    @SuppressWarnings("unchecked")
     @CustomEventSubscribe
     @SideOnly(Side.CLIENT)
     public void onKeySelected(KeySelectedEvent event) {
 
         GuiComboBox textfield = (GuiComboBox) parent.get("keyValue");
-        selected = (KeyControl) event.source;
 
-        if (((KeyControl) event.source).value instanceof Double) {
+        if (event.source instanceof KeyControl<?> && ((KeyControl<?>) event.source).value instanceof Double) {
+            selected = (KeyControl<Double>) event.source;
             textfield.setEnabled(true);
             textfield.setVisible(true);
             Notes note = Notes.getNoteFromPitch((int) Double.parseDouble("" + selected.value));

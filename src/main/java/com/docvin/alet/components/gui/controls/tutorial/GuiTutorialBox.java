@@ -1,6 +1,5 @@
 package com.docvin.alet.components.gui.controls.tutorial;
 
-import com.alet.common.gui.controls.GuiColorablePanel;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
@@ -10,6 +9,7 @@ import com.creativemd.creativecore.common.gui.controls.gui.GuiLabel;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextBox;
 import com.creativemd.creativecore.common.gui.controls.gui.GuiTextfield;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.docvin.alet.components.gui.controls.parents.GuiColoredPanel;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.util.Color;
 
@@ -146,7 +146,7 @@ public class GuiTutorialBox extends GuiParent {
                 return false;
             }
         });
-        addControl(new GuiColorablePanel("pageBackground", 23, this.width + 58, 48, 10, new Color(0, 0, 0), new Color(198, 198, 198)));
+        addControl(new GuiColoredPanel("pageBackground", 23, this.width + 58, 48, 10, new Color(0, 0, 0), new Color(198, 198, 198)));
         GuiControlHighlighter highlighter = new GuiControlHighlighter("highlight", null, this.boxPosX, this.boxPosY);
         addControl(highlighter);
         updateHighlightedControl();

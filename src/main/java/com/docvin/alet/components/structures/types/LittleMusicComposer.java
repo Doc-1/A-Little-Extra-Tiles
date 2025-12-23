@@ -1,7 +1,5 @@
 package com.docvin.alet.components.structures.types;
 
-import com.alet.client.sounds.Notes;
-import com.alet.common.packets.PacketSendSound;
 import com.creativemd.creativecore.common.packet.PacketHandler;
 import com.creativemd.creativecore.common.utils.math.BooleanUtils;
 import com.creativemd.littletiles.common.action.LittleActionException;
@@ -12,6 +10,8 @@ import com.creativemd.littletiles.common.structure.registry.LittleStructureType;
 import com.creativemd.littletiles.common.structure.signal.output.InternalSignalOutput;
 import com.creativemd.littletiles.common.tile.LittleTile;
 import com.creativemd.littletiles.common.tile.parent.IStructureTileList;
+import com.docvin.alet.client.sounds.Notes;
+import com.docvin.alet.common.packets.PacketSendSound;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LittleMusicComposer extends LittleStructure {
 
@@ -32,7 +33,6 @@ public class LittleMusicComposer extends LittleStructure {
     public int tick = 0;
     public BlockPos pos;
     public boolean play = false;
-    public int coursor;
     public boolean playLocal = false;
     public int volume = 1;
 
@@ -150,17 +150,17 @@ public class LittleMusicComposer extends LittleStructure {
             ValueTimeline channel = channels[i];
             String channelSound = channelSounds[i];
             if (channel != null && channel.getPointsCopy().containsKey(tick)) {
-                pitch.add(channel.getPointsCopy().getValue(tick).intValue());
+                pitch.add(Objects.requireNonNull(channel.getPointsCopy().getValue(tick)).intValue());
                 timeLine.add(channel);
                 sound.add(channelSound);
             }
         }
 
-        if (timeLine != null && !timeLine.isEmpty())
+        if (!timeLine.isEmpty())
             for (int i = 0; i < timeLine.size(); i++) {
                 if (timeLine.get(i).getPointsCopy().containsKey(tick)) {
                     Notes note = Notes.getNoteFromPitch(pitch.get(i));
-                    if (sound.get(i) == "no sound")
+                    if (Objects.equals(sound.get(i), "no sound"))
                         return;
                     if (note != null)
                         PacketHandler.sendPacketToAllPlayers(new PacketSendSound(pitch.get(i), volume, playLocal, pos, sound

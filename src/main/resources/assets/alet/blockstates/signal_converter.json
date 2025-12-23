@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "alet:container_converter" },
+        "facing=south": { "model": "alet:container_converter", "y": 180 },
+        "facing=west":  { "model": "alet:container_converter", "y": 270 },
+        "facing=east":  { "model": "alet:container_converter", "y": 90 }
+    }
+}

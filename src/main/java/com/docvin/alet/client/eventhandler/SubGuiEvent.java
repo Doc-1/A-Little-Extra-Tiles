@@ -21,6 +21,21 @@ public class SubGuiEvent extends Event {
         }
     }
 
+    public static class GuiScreenResizedEvent extends SubGuiEvent {
+        private final int screenWidth;
+        private final int screenHeight;
+
+        public GuiScreenResizedEvent(SubGui gui, int screenWidth, int screenHeight) {
+            super(gui);
+            this.screenWidth = screenWidth;
+            this.screenHeight = screenHeight;
+        }
+
+        public int[] getNewDim() {
+            return new int[]{screenWidth, screenHeight};
+        }
+    }
+
     public static class OnGuiClosedEvent extends SubGuiEvent {
         public OnGuiClosedEvent(SubGui gui) {
             super(gui);
@@ -39,5 +54,5 @@ public class SubGuiEvent extends Event {
             return changedToGui;
         }
     }
-    
+
 }

@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "alet:tapemeasure",
+    "data": 0
+  },
+  "pattern": [
+    "III",
+    "LPI",
+    "PPI"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "L": {
+      "item": "minecraft:dye",
+      "data": 4
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  }
+}

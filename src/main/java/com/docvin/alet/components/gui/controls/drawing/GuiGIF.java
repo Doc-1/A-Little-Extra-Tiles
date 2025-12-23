@@ -1,12 +1,12 @@
 package com.docvin.alet.components.gui.controls.drawing;
 
-import com.alet.ALET;
-import com.alet.common.gui.thread.ThreadCollectFrames;
 import com.creativemd.creativecore.common.gui.GuiControl;
 import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.ColoredDisplayStyle;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
+import com.docvin.alet.Tags;
+import com.docvin.alet.common.gui.thread.ThreadCollectFrames;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -57,7 +57,7 @@ public class GuiGIF extends GuiControl {
 
             BufferedImage f = collectFrames.textures.get(collectTick);
             DynamicTexture frame = new DynamicTexture(f);
-            ResourceLocation location = mc.getTextureManager().getDynamicTextureLocation(ALET.MODID, frame);
+            ResourceLocation location = mc.getTextureManager().getDynamicTextureLocation(Tags.MOD_ID, frame);
             locations.add(location);
             delay.add(collectFrames.delay.get(collectTick));
             collectTick++;

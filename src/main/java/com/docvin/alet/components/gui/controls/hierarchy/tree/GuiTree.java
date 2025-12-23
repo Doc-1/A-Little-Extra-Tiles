@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GuiTree extends GuiHierarchyBaseMenu {
 
-    public GuiTree(String name, int x, int y, int width, int height) {
+    public GuiTree(String name, int x, int y) {
         super(name, x, y);
 
     }

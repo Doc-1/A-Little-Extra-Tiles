@@ -1,6 +1,6 @@
 package com.docvin.alet.components.gui.controls.drawing.photo;
 
-import com.docvin.alet.components.gui.controls.drawing.utils.ColorUtilsAlet;
+import com.docvin.alet.common.utils.ColorUtils;
 import org.lwjgl.util.Color;
 
 public class ColorAccuracy {
@@ -14,12 +14,12 @@ public class ColorAccuracy {
 
     public static int roundRGB(int colorInt) {
         if (colorAccuracy != 0) {
-            Color color = ColorUtilsAlet.IntToRGBA(colorInt);
+            Color color = ColorUtils.IntToRGBA(colorInt);
             int r = colorAccuracy * (Math.round((float) color.getRed() / colorAccuracy));
             int g = colorAccuracy * (Math.round((float) color.getGreen() / colorAccuracy));
             int b = colorAccuracy * (Math.round((float) color.getBlue() / colorAccuracy));
             int a = color.getAlpha();
-            return ColorUtilsAlet.RGBAToInt(r, g, b, a);
+            return ColorUtils.RGBAToInt(r, g, b, a);
         }
         return 0;
     }

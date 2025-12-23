@@ -1,0 +1,1 @@
+{tiles:[{bBox:[I;0,0,0,2,5,3],tile:{color:-12829636,block:"littletiles:ltcoloredblock:10"}}],min:[I;0,0,0],size:[I;2,5,3],grid:32,count:1,structure:{topRight:[I;0,1065353216,1065353216],facing:5,id:"signal_display",frame:[I;2,0,0,4,5,3,32]}}

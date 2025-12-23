@@ -5,7 +5,7 @@ import com.creativemd.creativecore.common.gui.GuiRenderHelper;
 import com.creativemd.creativecore.common.gui.client.style.Style;
 import com.creativemd.creativecore.common.gui.container.GuiParent;
 import com.creativemd.creativecore.common.utils.mc.ColorUtils;
-import com.docvin.alet.components.gui.controls.drawing.utils.RenderUtils;
+import com.docvin.alet.common.utils.RenderUtils;
 
 import javax.vecmath.Point2i;
 
