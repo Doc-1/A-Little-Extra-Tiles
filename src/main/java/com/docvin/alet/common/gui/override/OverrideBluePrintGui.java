@@ -7,11 +7,13 @@ import com.creativemd.littletiles.client.gui.SubGuiRecipe;
 import com.creativemd.littletiles.client.gui.controls.GuiAnimationViewer;
 import com.creativemd.littletiles.common.tile.preview.LittlePreviews;
 import com.docvin.alet.components.gui.controls.hierarchy.tree.GuiTree;
+import com.docvin.alet.components.gui.controls.hierarchy.tree.GuiTreeDataNode;
 import com.docvin.alet.components.gui.controls.hierarchy.tree.GuiTreeNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
+
 
     public OverrideBluePrintGui() {
         super(SubGuiRecipe.class);
@@ -70,6 +72,7 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
 
     @Override
     public void overrideGui(SubGuiRecipe gui) {
+        this.subGui = gui;
         Minecraft mc = Minecraft.getMinecraft();
         mc.gameSettings.guiScale = 3;
         ScaledResolution res = new ScaledResolution(mc);
@@ -81,6 +84,7 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
         GuiControl clear = gui.controls.get(1);
         GuiControl tilesCount = gui.controls.get(2);
         GuiItemComboBox hierarchy = (GuiItemComboBox) gui.controls.get(3);
+        hierarchy.name = "";
         GuiAnimationViewer viewer = (GuiAnimationViewer) gui.controls.get(4);
         GuiControl play = gui.controls.get(5);
         GuiControl pause = gui.controls.get(6);
@@ -92,13 +96,17 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
         hierarchy.setEnabled(false);
         hierarchy.setVisible(false);
 
-        GuiTree tree = new GuiTree("", 0, 0);
+        GuiTree tree = new GuiTree("hierarchy", 0, 0);
         tree.width = 200;
         gui.addControl(tree);
 
-        GuiTreeNode node = new GuiTreeNode(getDisplayName(gui.previews), getDisplayName(gui.previews), (subGui1, guiControl) -> {
+        GuiTreeDataNode<Integer> node = new GuiTreeDataNode<>(getDisplayName(gui.previews), getDisplayName(gui.previews));
+        node.setAction((subGui1, guiControl) -> {
+            gui.savePreview();
+            gui.loadStack(gui.hierarchy.get(0));
         });
-        addPreviews(node, gui.previews);
+        node.setValue(0);
+        this.addPreviews(node, gui.previews);
         tree.addItem(node);
 
         name.posY = gui.height - 30;
@@ -111,9 +119,6 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
 
         tree.height = panel.height + 30;
 
-        viewer.posX = panel.posX + panel.width + 5;
-        viewer.width = gui.width - (panel.width + panel.posX) - 12;
-        viewer.height = panel.height;
 
         play.posX = panel.posX + panel.width + 55;
         pause.posX = play.posX + play.width + 2;
@@ -125,20 +130,36 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
 
         types.posX = tree.width + 4;
         types.width = panel.width;
+        gui.loadStack(gui.hierarchy.get(0));
 
     }
 
     protected void addPreviews(GuiTreeNode parentNode, LittlePreviews previews) {
-
         if (previews.hasChildren()) {
             for (LittlePreviews child : previews.getChildren()) {
-                GuiTreeNode childNode = new GuiTreeNode(getDisplayName(child), getDisplayName(child), (subGui1, guiControl) -> {
-
+                GuiTreeDataNode<SubGuiRecipe.StructureHolder> childNode = new GuiTreeDataNode<>(getDisplayName(child), getDisplayName(child));
+                childNode.setAction((subGui, guiControl) -> {
+                    if (subGui instanceof SubGuiRecipe) {
+                        SubGuiRecipe gui = (SubGuiRecipe) subGui;
+                        for (SubGuiRecipe.StructureHolder holder : gui.hierarchy) {
+                            System.out.println(childNode.getValue() + " " + holder.previews);
+                            if (childNode.getValue().equals(holder)) {
+                                gui.savePreview();
+                                gui.loadStack(holder);
+                                break;
+                            }
+                        }
+                    }
                 });
+                for (SubGuiRecipe.StructureHolder holder : this.subGui.hierarchy) {
+                    if (child.equals(holder.previews)) {
+                        childNode.setValue(holder);
+                        break;
+                    }
+                }
                 parentNode.addItem(childNode);
                 addPreviews(childNode, child);
             }
         }
-
     }
 }

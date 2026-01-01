@@ -25,6 +25,11 @@ public class GuiTreeNode extends GuiHierarchyBaseItem {
         this.style = DISPLAY;
     }
 
+    public GuiTreeNode(String name, String title) {
+        this(name, title, (subGui, guiControl) -> {
+
+        });
+    }
 
     @Override
     public GuiParent getParent() {

@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
 public abstract class GuiHierarchyBaseItem extends GuiControl {
 
     @NotNull
-    private final BiConsumer<SubGui, GuiControl> action;
+    protected BiConsumer<SubGui, GuiControl> action;
     @Nullable
     protected GuiHierarchyBaseItem container;
     protected List<GuiHierarchyBaseItem> items = new ArrayList<>();
@@ -29,6 +29,24 @@ public abstract class GuiHierarchyBaseItem extends GuiControl {
         super(name, x, y, width, height);
         this.action = action;
         this.setTitle(title);
+    }
+
+    protected GuiHierarchyBaseItem(String name, String title, int x, int y, int width, int height) {
+        this(name, title, x, y, width, height, new BiConsumer<SubGui, GuiControl>(
+        ) {
+            @Override
+            public void accept(SubGui subGui, GuiControl guiControl) {
+
+            }
+        });
+    }
+
+    public @NotNull BiConsumer<SubGui, GuiControl> getAction() {
+        return action;
+    }
+
+    public void setAction(@NotNull BiConsumer<SubGui, GuiControl> action) {
+        this.action = action;
     }
 
     public List<GuiHierarchyBaseItem> getItems() {
