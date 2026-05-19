@@ -10,7 +10,6 @@ import com.docvin.alet.components.gui.controls.hierarchy.tree.GuiTree;
 import com.docvin.alet.components.gui.controls.hierarchy.tree.GuiTreeDataNode;
 import com.docvin.alet.components.gui.controls.hierarchy.tree.GuiTreeNode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 
 public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
 
@@ -35,11 +34,11 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
     @Override
     public void onScreenResized(SubGuiRecipe gui, int width, int height) {
         Minecraft mc = Minecraft.getMinecraft();
-        gui.width = width - 10;
-        gui.height = height - 10;
-        mc.gameSettings.guiScale = 3;
-        if (gui.container != null)
-            gui.container.container.gui.setGuiSize(gui.width, gui.height);
+//        mc.gameSettings.guiScale = 1;
+//        gui.width = width - 10;
+//        gui.height = height - 10;
+//        if (gui.container != null)
+//            gui.container.container.gui.setGuiSize(gui.width, gui.height);
         GuiPanel panel = (GuiPanel) gui.controls.get(8);
         GuiControl save = gui.get("save");
         GuiAnimationViewer viewer = (GuiAnimationViewer) gui.getControls().get(4);
@@ -72,12 +71,11 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
 
     @Override
     public void overrideGui(SubGuiRecipe gui) {
-        this.subGui = gui;
-        Minecraft mc = Minecraft.getMinecraft();
-        mc.gameSettings.guiScale = 3;
-        ScaledResolution res = new ScaledResolution(mc);
-        gui.width = res.getScaledWidth() - 10;
-        gui.height = res.getScaledHeight() - 10;
+//        Minecraft mc = Minecraft.getMinecraft();
+//        mc.gameSettings.guiScale = 1;
+//        ScaledResolution res = new ScaledResolution(mc);
+//        gui.width = res.getScaledWidth() - 10;
+//        gui.height = res.getScaledHeight() - 10;
 
 
         GuiControl types = gui.controls.get(0);
@@ -92,6 +90,8 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
         GuiControl panel = gui.controls.get(8);
         GuiControl save = gui.controls.get(9);
         GuiControl name = gui.controls.get(10);
+
+        viewer.posX = 600;
 
         hierarchy.setEnabled(false);
         hierarchy.setVisible(false);
@@ -130,7 +130,6 @@ public class OverrideBluePrintGui extends OverrideSubGui<SubGuiRecipe> {
 
         types.posX = tree.width + 4;
         types.width = panel.width;
-        gui.loadStack(gui.hierarchy.get(0));
 
     }
 

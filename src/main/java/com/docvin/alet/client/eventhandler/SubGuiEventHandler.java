@@ -15,21 +15,24 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SubGuiEventHandler {
+    private static final Minecraft mc = Minecraft.getMinecraft();
     private static boolean opened = false;
     private static SubGui oldGui;
     private static ScaledResolution oldRes;
+    private static int oldGuiScale;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @SideOnly(Side.CLIENT)
     public void onClientTick(TickEvent.RenderTickEvent event) {
         if (event.side == Side.CLIENT && event.phase == TickEvent.Phase.START) {
-            Minecraft mc = Minecraft.getMinecraft();
             if (mc.player != null) {
                 if (mc.currentScreen instanceof IVanillaGUI) {
                     ContainerSub sub = (ContainerSub) mc.player.openContainer;
                     SubGui currentGui = ((ContainerSub) mc.player.openContainer).gui.getTopLayer();
 
                     if (!opened) {
+                        oldGuiScale = mc.gameSettings.guiScale;
+                        mc.gameSettings.guiScale = 2;
                         oldGui = ((ContainerSub) mc.player.openContainer).gui.getTopLayer();
                         MinecraftForge.EVENT_BUS.post(new SubGuiEvent.OnGuiOpenedEvent(oldGui));
                         opened = true;
@@ -39,11 +42,9 @@ public class SubGuiEventHandler {
                     }
 
                     ScaledResolution res = new ScaledResolution(mc);
-                    int screenWidth = res.getScaledWidth();
-                    int screenHeight = res.getScaledHeight();
 
                     if (oldRes != null && (res.getScaledHeight() != oldRes.getScaledHeight() || res.getScaledWidth() != oldRes.getScaledWidth()))
-                        MinecraftForge.EVENT_BUS.post(new SubGuiEvent.GuiScreenResizedEvent(currentGui, screenWidth, screenHeight));
+                        MinecraftForge.EVENT_BUS.post(new SubGuiEvent.GuiScreenResizedEvent(currentGui));
                     oldRes = res;
                 } else if (opened) {
                     MinecraftForge.EVENT_BUS.post(new SubGuiEvent.OnGuiClosedEvent(oldGui));
@@ -64,8 +65,13 @@ public class SubGuiEventHandler {
     public void resizedScreen(SubGuiEvent.GuiScreenResizedEvent event) {
         OverrideSubGui<SubGui> overrideSubGui = (OverrideSubGui<SubGui>) OverrideSubGui.getGuiOverride(event.getGui());
         if (overrideSubGui != null) {
-            int[] dim = event.getNewDim();
-            overrideSubGui.onScreenResized(event.getGui(), dim[0], dim[1]);
+            SubGui subGui = event.getGui();
+            int[] dim = event.getScaledResolution();
+            assert subGui.container != null;
+            subGui.setDimension(dim[0] - 10, dim[1] - 10);
+            subGui.container.container.gui.setGuiSize(dim[0], dim[1]);
+            overrideSubGui.onScreenResized(subGui, dim[0], dim[1]);
+            subGui.container.container.gui.resize();
         }
 
     }
@@ -74,12 +80,21 @@ public class SubGuiEventHandler {
     @SubscribeEvent
     public void openedGui(SubGuiEvent.OnGuiOpenedEvent event) {
         OverrideSubGui<SubGui> overrideSubGui = (OverrideSubGui<SubGui>) OverrideSubGui.getGuiOverride(event.getGui());
-        if (overrideSubGui != null)
-            overrideSubGui.overrideGui(event.getGui());
+        if (overrideSubGui != null) {
+            SubGui subGui = event.getGui();
+            int[] dim = event.getScaledResolution();
+            assert subGui.container != null;
+            subGui.setDimension(dim[0] - 10, dim[1] - 10);
+            subGui.container.container.gui.setGuiSize(dim[0], dim[1]);
+            overrideSubGui.overrideGui(subGui);
+            subGui.container.container.gui.resize();
+        }
+
     }
 
     @SubscribeEvent
     public void closedGui(SubGuiEvent.OnGuiClosedEvent event) {
+        mc.gameSettings.guiScale = oldGuiScale;
     }
 
     @SubscribeEvent

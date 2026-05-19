@@ -1,14 +1,22 @@
 package com.docvin.alet.client.eventhandler;
 
 import com.creativemd.creativecore.common.gui.container.SubGui;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class SubGuiEvent extends Event {
 
+    private static final Minecraft mc = Minecraft.getMinecraft();
     private final SubGui gui;
 
-    public SubGuiEvent(SubGui gui) {
+    private SubGuiEvent(SubGui gui) {
         this.gui = gui;
+    }
+
+    public int[] getScaledResolution() {
+        ScaledResolution s = new ScaledResolution(mc);
+        return new int[]{s.getScaledWidth(), s.getScaledHeight()};
     }
 
     public SubGui getGui() {
@@ -22,18 +30,13 @@ public class SubGuiEvent extends Event {
     }
 
     public static class GuiScreenResizedEvent extends SubGuiEvent {
-        private final int screenWidth;
-        private final int screenHeight;
 
-        public GuiScreenResizedEvent(SubGui gui, int screenWidth, int screenHeight) {
+
+        public GuiScreenResizedEvent(SubGui gui) {
             super(gui);
-            this.screenWidth = screenWidth;
-            this.screenHeight = screenHeight;
         }
 
-        public int[] getNewDim() {
-            return new int[]{screenWidth, screenHeight};
-        }
+
     }
 
     public static class OnGuiClosedEvent extends SubGuiEvent {
